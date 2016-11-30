@@ -29,9 +29,9 @@ Create a GafferPopGraph using GraphFactory.open(...)
 
 You must provide a configuration file containing a path to a Gaffer store.properties file and comma separated list of of paths for Gaffer schema files, e.g:
 
-    gremlin.graph=gaffer.gafferpop.GafferPopGraph
-    gaffer.storeproperties=conf/gaffer/store.properties
-    gaffer.schemas=conf/gaffer/schema/dataSchema.json,conf/gaffer/schema/dataTypes.json
+    gremlin.graph=uk.gov.gchq.gaffer.gafferpop.GafferPopGraph
+    uk.gov.gchq.gaffer.storeproperties=conf/gaffer/store.properties
+    uk.gov.gchq.gaffer.schemas=conf/gaffer/schema/dataSchema.json,conf/gaffer/schema/dataTypes.json
 
 To use the gremlin console download 'apache-gremlin-console-3.2.0-incubating-bin.zip'
 
@@ -56,7 +56,7 @@ To get going with the tinkerpop-modern dataset backed by a MockAccumuloStore you
     ./bin/gremlin.sh
 
     # Activate the GafferPop plugin
-    :plugin use gaffer.gafferpop.GafferPopGraph
+    :plugin use uk.gov.gchq.gaffer.gafferpop.GafferPopGraph
 ```
 
 
@@ -86,7 +86,7 @@ Gaffer mapping to TinkerPop terms
  - Vertex -> Vertex with label 'id'
  - Entity -> Vertex
  - Edge -> Edge
- - Edge ID -> gaffer.gafferpop.EdgeId(sourceId, destinationId)
+ - Edge ID -> uk.gov.gchq.gaffer.gafferpop.EdgeId(sourceId, destinationId)
 
 
 Limitations

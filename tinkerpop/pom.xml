@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>gaffer</groupId>
+        <groupId>uk.gov.gchq.gaffer</groupId>
         <artifactId>gaffer-experimental</artifactId>
-        <version>0.4.7-SNAPSHOT</version>
+        <version>0.4.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>tinkerpop</artifactId>
@@ -16,35 +16,30 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>gaffer</groupId>
+        <dependency> <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>graph</artifactId>
             <version>${gaffer.version}</version>
         </dependency>
-        <dependency>
-            <groupId>gaffer</groupId>
+        <dependency> <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>function-library</artifactId>
             <version>${gaffer.version}</version>
         </dependency>
-        <dependency>
-            <groupId>gaffer</groupId>
+        <dependency> <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>serialisation-library</artifactId>
             <version>${gaffer.version}</version>
         </dependency>
         <dependency>
-            <groupId>gaffer</groupId>
+            <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>accumulo-store</artifactId>
             <version>${gaffer.version}</version>
         </dependency>
-        <dependency>
-            <groupId>gaffer</groupId>
+        <dependency> <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>accumulo-store</artifactId>
             <version>${gaffer.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>gaffer</groupId>
+        <dependency> <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>common-util</artifactId>
             <version>${gaffer.version}</version>
         </dependency>
@@ -63,8 +58,7 @@
             <artifactId>gremlin-driver</artifactId>
             <version>${gremlin.version}</version>
         </dependency>
-        <dependency>
-            <groupId>gaffer</groupId>
+        <dependency> <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>common-util</artifactId>
             <version>${gaffer.version}</version>
             <type>test-jar</type>
