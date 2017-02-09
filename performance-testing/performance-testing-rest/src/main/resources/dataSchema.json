@@ -1,0 +1,21 @@
+{
+  "entities": {
+    "cardinality": {
+      "vertex": "vertex",
+      "properties": {
+        "edgeGroup": "string",
+        "cardinality": "hyperLogLogPlus"
+      }
+    }
+  },
+  "edges": {
+    "edge": {
+      "source": "vertex",
+      "destination": "vertex",
+      "directed": "true",
+      "properties": {
+        "count": "count.long"
+      }
+    }
+  }
+}

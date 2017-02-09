@@ -1,0 +1,53 @@
+{
+  "types": {
+    "vertex": {
+      "class": "java.lang.Integer",
+      "validateFunctions": [
+        {
+          "function": {
+            "class": "uk.gov.gchq.gaffer.function.filter.Exists"
+          }
+        }
+      ]
+    }
+  },
+  "count.long": {
+    "class": "java.lang.Long",
+    "validateFunctions": [
+      {
+        "function": {
+          "class": "uk.gov.gchq.gaffer.function.filter.IsMoreThan",
+          "orEqualTo": true,
+          "value": {
+            "java.lang.Long": 0
+          }
+        }
+      }
+    ]
+  },
+  "hyperLogLogPlus": {
+    "class": "com.clearspring.analytics.stream.cardinality.HyperLogLogPlus",
+    "aggregateFunction": "gaffer.function.simple.aggregate.HyperLogLogPlusAggregator",
+    "serialiserClass": "gaffer.serialisation.simple.HyperLogLogPlusSerialiser"
+  },
+  "true": {
+    "class": "java.lang.Boolean",
+    "validateFunctions": [
+      {
+        "function": {
+          "class": "uk.gov.gchq.gaffer.function.filter.IsTrue"
+        }
+      }
+    ]
+  },
+  "false": {
+    "class": "java.lang.Boolean",
+    "validateFunctions": [
+      {
+        "function": {
+          "class": "uk.gov.gchq.gaffer.function.filter.IsFalse"
+        }
+      }
+    ]
+  }
+}
