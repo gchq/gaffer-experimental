@@ -1,6 +1,6 @@
 {
   "types": {
-    "vertex": {
+    "vertex.int": {
       "class": "java.lang.Integer",
       "validateFunctions": [
         {
@@ -24,9 +24,24 @@
         }
       ]
     },
+    "string": {
+      "class": "java.lang.String",
+      "validateFunctions": [
+        {
+          "function": {
+            "class": "uk.gov.gchq.gaffer.function.filter.Exists"
+          }
+        }
+      ],
+      "aggregateFunction" : {
+        "class": "uk.gov.gchq.gaffer.function.aggregate.StringConcat"
+      }
+    },
     "hyperLogLogPlus": {
       "class": "com.clearspring.analytics.stream.cardinality.HyperLogLogPlus",
-      "aggregateFunction": "uk.gov.gchq.gaffer.sketches.function.aggregate.HyperLogLogPlusAggregator",
+      "aggregateFunction": {
+        "class": "uk.gov.gchq.gaffer.sketches.function.aggregate.HyperLogLogPlusAggregator"
+      },
       "serialiserClass": "uk.gov.gchq.gaffer.sketches.serialisation.HyperLogLogPlusSerialiser"
     },
     "true": {

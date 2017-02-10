@@ -1,0 +1,68 @@
+{
+  "types": {
+    "vertex.int": {
+      "class": "java.lang.Integer",
+      "validateFunctions": [
+        {
+          "function": {
+            "class": "uk.gov.gchq.gaffer.function.filter.Exists"
+          }
+        }
+      ]
+    },
+    "count.long": {
+      "class": "java.lang.Long",
+      "validateFunctions": [
+        {
+          "function": {
+            "class": "uk.gov.gchq.gaffer.function.filter.IsMoreThan",
+            "orEqualTo": true,
+            "value": {
+              "java.lang.Long": 0
+            }
+          }
+        }
+      ]
+    },
+    "string": {
+      "class": "java.lang.String",
+      "validateFunctions": [
+        {
+          "function": {
+            "class": "uk.gov.gchq.gaffer.function.filter.Exists"
+          }
+        }
+      ],
+      "aggregateFunction" : {
+        "class": "uk.gov.gchq.gaffer.function.aggregate.StringConcat"
+      }
+    },
+    "hyperLogLogPlus": {
+      "class": "com.clearspring.analytics.stream.cardinality.HyperLogLogPlus",
+      "aggregateFunction": {
+        "class": "uk.gov.gchq.gaffer.sketches.function.aggregate.HyperLogLogPlusAggregator"
+      },
+      "serialiserClass": "uk.gov.gchq.gaffer.sketches.serialisation.HyperLogLogPlusSerialiser"
+    },
+    "true": {
+      "class": "java.lang.Boolean",
+      "validateFunctions": [
+        {
+          "function": {
+            "class": "uk.gov.gchq.gaffer.function.filter.IsTrue"
+          }
+        }
+      ]
+    },
+    "false": {
+      "class": "java.lang.Boolean",
+      "validateFunctions": [
+        {
+          "function": {
+            "class": "uk.gov.gchq.gaffer.function.filter.IsFalse"
+          }
+        }
+      ]
+    }
+  }
+}

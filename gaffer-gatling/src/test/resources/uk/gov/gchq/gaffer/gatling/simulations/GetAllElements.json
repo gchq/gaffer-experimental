@@ -1,0 +1,9 @@
+{
+  "class": "uk.gov.gchq.gaffer.operation.impl.get.GetAllElements",
+  "deduplicate": false,
+  "includeEntities": true,
+  "includeEdges": "ALL",
+  "includeIncomingOutGoing": "OUTGOING",
+  "seedMatching": "EQUAL",
+  "populateProperties": true
+}

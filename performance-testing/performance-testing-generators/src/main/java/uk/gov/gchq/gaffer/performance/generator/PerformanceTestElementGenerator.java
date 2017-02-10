@@ -34,14 +34,14 @@ public class PerformanceTestElementGenerator extends OneToManyElementGenerator<S
 
         final String[] fields = extractFields(line);
 
-        final String source = fields[0];
-        final String dest = fields[1];
+        final int source = Integer.parseInt(fields[0]);
+        final int dest = Integer.parseInt(fields[1]);
 
         final Edge edge = new Edge.Builder().group("edge")
                                             .source(source)
                                             .dest(dest)
                                             .directed(true)
-                                            .property("count", 1)
+                                            .property("count", 1L)
                                             .build();
 
         final List<Element> elements = new ArrayList<>();

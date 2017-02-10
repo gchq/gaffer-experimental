@@ -58,7 +58,7 @@
                                 <gaffer.rest-api.basePath>rest/v1
                                 </gaffer.rest-api.basePath>
                                 <gaffer.schemas>
-                                    ${project.parent.basedir}/performance-testing-generators/src/main/resources/schema
+                                    ${project.build.outputDirectory}/schema
                                 </gaffer.schemas>
                                 <gaffer.storeProperties>
                                     ${project.build.outputDirectory}/mockaccumulo.properties

@@ -20,12 +20,15 @@ import io.gatling.core.Predef._
 import io.gatling.core.scenario.Simulation
 import io.gatling.http.Predef._
 
-class SimpleTest extends Simulation {
+/**
+  * Simple Simulation implementation.
+  */
+class StatusTest extends Simulation {
 
   val scn = scenario("Status test").repeat(10) {
     exec(
       http("Test status")
-        .get("http://localhost:8080/v1/status")
+        .get("http://localhost:8080/rest/v1/status")
         .check(status.is(200))
     )
   }
