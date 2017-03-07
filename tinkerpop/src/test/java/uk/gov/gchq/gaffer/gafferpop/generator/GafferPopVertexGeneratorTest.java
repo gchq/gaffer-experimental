@@ -16,22 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package gaffer.gafferpop.generator;
+package uk.gov.gchq.gaffer.gafferpop.generator;
+
+import com.google.common.collect.Lists;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality;
+import org.junit.Test;
+import uk.gov.gchq.gaffer.commonutil.TestGroups;
+import uk.gov.gchq.gaffer.commonutil.TestPropertyNames;
+import uk.gov.gchq.gaffer.data.element.Entity;
+import uk.gov.gchq.gaffer.gafferpop.GafferPopGraph;
+import uk.gov.gchq.gaffer.gafferpop.GafferPopVertex;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-
-import com.google.common.collect.Lists;
-import gaffer.commonutil.TestGroups;
-import gaffer.commonutil.TestPropertyNames;
-import gaffer.data.element.Entity;
-import gaffer.gafferpop.GafferPopGraph;
-import gaffer.gafferpop.GafferPopVertex;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality;
-import org.junit.Test;
 
 public class GafferPopVertexGeneratorTest {
     @Test

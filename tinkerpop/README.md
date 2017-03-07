@@ -1,4 +1,4 @@
-  Copyright 2016 Crown Copyright
+  Copyright 2016-2017 Crown Copyright
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ Create a GafferPopGraph using GraphFactory.open(...)
 
 You must provide a configuration file containing a path to a Gaffer store.properties file and comma separated list of of paths for Gaffer schema files, e.g:
 
-    gremlin.graph=gaffer.gafferpop.GafferPopGraph
+    gremlin.graph=uk.gov.gchq.gaffer.gaffer.gafferpop.GafferPopGraph
     gaffer.storeproperties=conf/gaffer/store.properties
     gaffer.schemas=conf/gaffer/schema/dataSchema.json,conf/gaffer/schema/dataTypes.json
 

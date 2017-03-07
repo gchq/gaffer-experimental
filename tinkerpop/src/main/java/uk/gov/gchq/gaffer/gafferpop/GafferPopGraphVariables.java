@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Crown Copyright
+ * Copyright 2016-2017 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package gaffer.gafferpop;
+package uk.gov.gchq.gaffer.gafferpop;
 
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.util.StringFactory;
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class GafferPopGraphVariables implements Graph.Variables {
     /**
-     * Variable key for the {@link gaffer.store.schema.Schema} object.
+     * Variable key for the Schema object.
      */
     public static final String SCHEMA = "schema";
 

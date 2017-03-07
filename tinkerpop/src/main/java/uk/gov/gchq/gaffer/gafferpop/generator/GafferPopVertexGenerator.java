@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Crown Copyright
+ * Copyright 2016-2017 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package gaffer.gafferpop.generator;
+package uk.gov.gchq.gaffer.gafferpop.generator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import gaffer.data.element.Edge;
-import gaffer.data.element.Element;
-import gaffer.data.element.Entity;
-import gaffer.data.generator.OneToOneElementGenerator;
-import gaffer.gafferpop.GafferPopGraph;
-import gaffer.gafferpop.GafferPopVertex;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality;
+import uk.gov.gchq.gaffer.data.element.Edge;
+import uk.gov.gchq.gaffer.data.element.Element;
+import uk.gov.gchq.gaffer.data.element.Entity;
+import uk.gov.gchq.gaffer.data.generator.OneToOneElementGenerator;
+import uk.gov.gchq.gaffer.gafferpop.GafferPopGraph;
+import uk.gov.gchq.gaffer.gafferpop.GafferPopVertex;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -70,7 +70,7 @@ public class GafferPopVertexGenerator extends OneToOneElementGenerator<GafferPop
 
         final Entity entity = ((Entity) element);
         final GafferPopVertex vertex = new GafferPopVertex(entity.getGroup(), entity.getVertex(), graph);
-        for (Entry<String, Object> entry : entity.getProperties().entrySet()) {
+        for (final Entry<String, Object> entry : entity.getProperties().entrySet()) {
             if (null != entry.getValue()) {
                 vertex.property(Cardinality.list, entry.getKey(), entry.getValue());
             }

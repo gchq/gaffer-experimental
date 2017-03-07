@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Crown Copyright
+ * Copyright 2016-2017 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package gaffer.gafferpop.groovyplugin;
+package uk.gov.gchq.gaffer.gafferpop.groovyplugin;
 
-import gaffer.data.element.IdentifierType;
-import gaffer.data.element.function.ElementFilter;
-import gaffer.data.element.function.ElementTransformer;
-import gaffer.data.elementdefinition.view.View;
-import gaffer.data.elementdefinition.view.ViewElementDefinition;
-import gaffer.function.simple.filter.Exists;
-import gaffer.function.simple.transform.Concat;
-import gaffer.gafferpop.GafferPopGraph;
 import org.apache.tinkerpop.gremlin.groovy.plugin.AbstractGremlinPlugin;
 import org.apache.tinkerpop.gremlin.groovy.plugin.IllegalEnvironmentException;
 import org.apache.tinkerpop.gremlin.groovy.plugin.PluginAcceptor;
 import org.apache.tinkerpop.gremlin.groovy.plugin.PluginInitializationException;
+import uk.gov.gchq.gaffer.data.element.IdentifierType;
+import uk.gov.gchq.gaffer.data.element.function.ElementFilter;
+import uk.gov.gchq.gaffer.data.element.function.ElementTransformer;
+import uk.gov.gchq.gaffer.data.elementdefinition.view.View;
+import uk.gov.gchq.gaffer.data.elementdefinition.view.ViewElementDefinition;
+import uk.gov.gchq.gaffer.function.filter.Exists;
+import uk.gov.gchq.gaffer.function.transform.Concat;
+import uk.gov.gchq.gaffer.gafferpop.GafferPopGraph;
 import java.util.HashSet;
 import java.util.Set;
 

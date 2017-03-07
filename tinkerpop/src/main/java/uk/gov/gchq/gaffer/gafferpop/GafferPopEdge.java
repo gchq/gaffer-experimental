@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Crown Copyright
+ * Copyright 2016-2017 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package gaffer.gafferpop;
+package uk.gov.gchq.gaffer.gafferpop;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * <p>
  * inVertex() and outVertex() methods are not supported as it is possible for a
  * edge to have multiple in vertices and multiple out vertices (due to the mapping
- * to a TinkerPop vertex to Gaffer {@link gaffer.data.element.Entity}.
+ * to a TinkerPop vertex to Gaffer Entity.
  * Use vertices(Direction) instead.
  * </p>
  * <p>

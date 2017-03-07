@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Crown Copyright
+ * Copyright 2016-2017 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,39 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package gaffer.gafferpop;
+package uk.gov.gchq.gaffer.gafferpop;
 
-import gaffer.commonutil.CommonConstants;
-import gaffer.commonutil.iterable.ChainedIterable;
-import gaffer.commonutil.iterable.CloseableIterable;
-import gaffer.commonutil.iterable.CloseableIterator;
-import gaffer.commonutil.iterable.WrappedCloseableIterable;
-import gaffer.data.element.Entity;
-import gaffer.data.elementdefinition.view.View;
-import gaffer.gafferpop.generator.GafferPopEdgeGenerator;
-import gaffer.gafferpop.generator.GafferPopVertexGenerator;
-import gaffer.graph.Graph;
-import gaffer.operation.GetOperation.IncludeIncomingOutgoingType;
-import gaffer.operation.Operation;
-import gaffer.operation.OperationChain;
-import gaffer.operation.OperationChain.Builder;
-import gaffer.operation.OperationException;
-import gaffer.operation.data.EdgeSeed;
-import gaffer.operation.data.ElementSeed;
-import gaffer.operation.data.EntitySeed;
-import gaffer.operation.impl.add.AddElements;
-import gaffer.operation.impl.generate.GenerateElements;
-import gaffer.operation.impl.generate.GenerateObjects;
-import gaffer.operation.impl.get.GetAdjacentEntitySeeds;
-import gaffer.operation.impl.get.GetAllEdges;
-import gaffer.operation.impl.get.GetAllEntities;
-import gaffer.operation.impl.get.GetEdgesBySeed;
-import gaffer.operation.impl.get.GetElements;
-import gaffer.operation.impl.get.GetEntitiesBySeed;
-import gaffer.operation.impl.get.GetRelatedEdges;
-import gaffer.operation.impl.get.GetRelatedEntities;
-import gaffer.store.schema.Schema;
-import gaffer.user.User;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.process.computer.GraphComputer;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -55,6 +24,37 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.apache.tinkerpop.gremlin.structure.util.GraphFactory;
+import uk.gov.gchq.gaffer.commonutil.CommonConstants;
+import uk.gov.gchq.gaffer.commonutil.iterable.ChainedIterable;
+import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterable;
+import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterator;
+import uk.gov.gchq.gaffer.commonutil.iterable.WrappedCloseableIterable;
+import uk.gov.gchq.gaffer.data.element.Entity;
+import uk.gov.gchq.gaffer.data.elementdefinition.view.View;
+import uk.gov.gchq.gaffer.gafferpop.generator.GafferPopEdgeGenerator;
+import uk.gov.gchq.gaffer.gafferpop.generator.GafferPopVertexGenerator;
+import uk.gov.gchq.gaffer.graph.Graph;
+import uk.gov.gchq.gaffer.operation.GetOperation.IncludeIncomingOutgoingType;
+import uk.gov.gchq.gaffer.operation.Operation;
+import uk.gov.gchq.gaffer.operation.OperationChain;
+import uk.gov.gchq.gaffer.operation.OperationChain.Builder;
+import uk.gov.gchq.gaffer.operation.OperationException;
+import uk.gov.gchq.gaffer.operation.data.EdgeSeed;
+import uk.gov.gchq.gaffer.operation.data.ElementSeed;
+import uk.gov.gchq.gaffer.operation.data.EntitySeed;
+import uk.gov.gchq.gaffer.operation.impl.add.AddElements;
+import uk.gov.gchq.gaffer.operation.impl.generate.GenerateElements;
+import uk.gov.gchq.gaffer.operation.impl.generate.GenerateObjects;
+import uk.gov.gchq.gaffer.operation.impl.get.GetAdjacentEntitySeeds;
+import uk.gov.gchq.gaffer.operation.impl.get.GetAllEdges;
+import uk.gov.gchq.gaffer.operation.impl.get.GetAllEntities;
+import uk.gov.gchq.gaffer.operation.impl.get.GetEdgesBySeed;
+import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
+import uk.gov.gchq.gaffer.operation.impl.get.GetEntitiesBySeed;
+import uk.gov.gchq.gaffer.operation.impl.get.GetRelatedEdges;
+import uk.gov.gchq.gaffer.operation.impl.get.GetRelatedEntities;
+import uk.gov.gchq.gaffer.store.schema.Schema;
+import uk.gov.gchq.gaffer.user.User;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -78,7 +78,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
     /**
      * Configuration key for a path to Gaffer store properties.
      *
-     * @see gaffer.store.StoreProperties
+     * @see uk.gov.gchq.gaffer.store.StoreProperties
      */
     public static final String STORE_PROPERTIES = "gaffer.storeproperties";
 
@@ -122,7 +122,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
         features = new GafferPopGraphFeatures();
         opOptions = new HashMap<>();
         if (configuration().containsKey(OP_OPTIONS)) {
-            for (String option : configuration().getStringArray(OP_OPTIONS)) {
+            for (final String option : configuration().getStringArray(OP_OPTIONS)) {
                 final String[] parts = option.split(":");
                 opOptions.put(parts[0], parts[1]);
             }
@@ -138,14 +138,14 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
 
     private static Graph createGraph(final Configuration configuration) {
         final Path storeProps = Paths.get(configuration.getString(STORE_PROPERTIES));
-        final Schema schema = new Schema();
-        for (String schemaPath : configuration.getStringArray(SCHEMAS)) {
-            schema.merge(Schema.fromJson(Paths.get(schemaPath)));
+        final Schema.Builder schemaBuilder = new Schema.Builder();
+        for (final String schemaPath : configuration.getStringArray(SCHEMAS)) {
+            schemaBuilder.merge(Schema.fromJson(Paths.get(schemaPath)));
         }
 
         return new Graph.Builder()
                 .storeProperties(storeProps)
-                .addSchema(schema)
+                .addSchema(schemaBuilder.build())
                 .build();
     }
 
@@ -220,7 +220,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
             getOperation = new GetEntitiesBySeed.Builder()
                     .seeds(entitySeeds)
                     .build();
-            for (EntitySeed entitySeed : entitySeeds) {
+            for (final EntitySeed entitySeed : entitySeeds) {
                 idVertices.add(new GafferPopVertex(ID_LABEL, entitySeed.getVertex(), this));
             }
         }
@@ -354,7 +354,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
     public Iterator<Edge> edges(final Object... edgeIds) {
         final boolean getAll = null == edgeIds || 0 == edgeIds.length;
 
-        final GetElements<? extends ElementSeed, gaffer.data.element.Edge> getOperation;
+        final GetElements<? extends ElementSeed, uk.gov.gchq.gaffer.data.element.Edge> getOperation;
         if (getAll) {
             getOperation = new GetAllEdges();
         } else {
@@ -365,7 +365,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
 
         return (Iterator) execute(new OperationChain.Builder()
                 .first(getOperation)
-                .then(new GenerateObjects.Builder<gaffer.data.element.Edge, GafferPopEdge>()
+                .then(new GenerateObjects.Builder<uk.gov.gchq.gaffer.data.element.Edge, GafferPopEdge>()
                         .generator(new GafferPopEdgeGenerator(this))
                         .build())
                 .build()).iterator();
@@ -462,7 +462,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
     }
 
     private <T> T execute(final OperationChain<T> opChain) {
-        for (Operation operation : opChain.getOperations()) {
+        for (final Operation operation : opChain.getOperations()) {
             operation.setOptions(opOptions);
         }
 
@@ -489,7 +489,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
                     .build();
 
             if (null == view || view.getEntityGroups().contains(ID_LABEL)) {
-                for (ElementSeed elementSeed : seeds) {
+                for (final ElementSeed elementSeed : seeds) {
                     if (elementSeed instanceof EntitySeed) {
                         idVertices.add(new GafferPopVertex(ID_LABEL, ((EntitySeed) elementSeed).getVertex(), this));
                     }
@@ -532,7 +532,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
     private CloseableIterator<GafferPopEdge> edgesWithSeedsAndView(final List<ElementSeed> seeds, final Direction direction, final View view) {
         final boolean getAll = null == seeds || seeds.isEmpty();
 
-        final GetElements<? extends ElementSeed, gaffer.data.element.Edge> getOperation;
+        final GetElements<? extends ElementSeed, uk.gov.gchq.gaffer.data.element.Edge> getOperation;
         if (getAll) {
             getOperation = new GetAllEdges.Builder()
                     .view(view)
@@ -547,7 +547,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
 
         return execute(new OperationChain.Builder()
                 .first(getOperation)
-                .then(new GenerateObjects.Builder<gaffer.data.element.Edge, GafferPopEdge>()
+                .then(new GenerateObjects.Builder<uk.gov.gchq.gaffer.data.element.Edge, GafferPopEdge>()
                         .generator(new GafferPopEdgeGenerator(this, true))
                         .build())
                 .build()).iterator();
@@ -565,7 +565,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
                 }
             } else {
                 final View.Builder viewBuilder = new View.Builder();
-                for (String label : labels) {
+                for (final String label : labels) {
                     viewBuilder.entity(label);
                 }
                 view = viewBuilder.build();
@@ -587,7 +587,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
             } else {
                 final View.Builder viewBuilder = new View.Builder();
                 final Schema schema = ((Schema) variables().get(GafferPopGraphVariables.SCHEMA).get());
-                for (String label : labels) {
+                for (final String label : labels) {
                     if (schema.isEntity(label)) {
                         viewBuilder.entity(label);
                     } else if (schema.isEdge(label)) {
@@ -606,7 +606,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
         List<ElementSeed> seeds = null;
         if (null != ids) {
             seeds = new LinkedList<>();
-            for (Object id : ids) {
+            for (final Object id : ids) {
                 if (id instanceof Vertex) {
                     seeds.add(new EntitySeed(((Vertex) id).id()));
                 } else if (id instanceof GafferPopEdge) {
@@ -628,7 +628,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
         List<EntitySeed> seeds = null;
         if (null != vertexIds) {
             seeds = new LinkedList<>();
-            for (Object vertexId : vertexIds) {
+            for (final Object vertexId : vertexIds) {
                 if (vertexId instanceof Vertex) {
                     seeds.add(new EntitySeed(((Vertex) vertexId).id()));
                 } else {
@@ -644,7 +644,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
         List<EdgeSeed> seeds = null;
         if (null != edgeIds) {
             seeds = new LinkedList<>();
-            for (Object edgeIdObj : edgeIds) {
+            for (final Object edgeIdObj : edgeIds) {
                 final EdgeId edgeId;
                 if (edgeIdObj instanceof GafferPopEdge) {
                     edgeId = ((GafferPopEdge) edgeIdObj).id();

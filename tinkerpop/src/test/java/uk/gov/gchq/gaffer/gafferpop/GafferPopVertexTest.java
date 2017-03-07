@@ -16,20 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package gaffer.gafferpop;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+package uk.gov.gchq.gaffer.gafferpop;
 
 import com.google.common.collect.Lists;
-import gaffer.commonutil.TestGroups;
-import gaffer.commonutil.TestPropertyNames;
-import gaffer.commonutil.iterable.CloseableIterator;
-import gaffer.data.elementdefinition.view.View;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -37,8 +26,19 @@ import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
+import uk.gov.gchq.gaffer.commonutil.TestGroups;
+import uk.gov.gchq.gaffer.commonutil.TestPropertyNames;
+import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterator;
+import uk.gov.gchq.gaffer.data.elementdefinition.view.View;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 public class GafferPopVertexTest {
     @Test

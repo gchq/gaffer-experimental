@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Crown Copyright
+ * Copyright 2016-2017 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package gaffer.gafferpop.generator;
+package uk.gov.gchq.gaffer.gafferpop.generator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import gaffer.data.element.Edge;
-import gaffer.data.element.Element;
-import gaffer.data.element.Entity;
-import gaffer.data.generator.OneToOneElementGenerator;
-import gaffer.gafferpop.GafferPopEdge;
-import gaffer.gafferpop.GafferPopGraph;
 import org.apache.tinkerpop.gremlin.structure.Property;
+import uk.gov.gchq.gaffer.data.element.Edge;
+import uk.gov.gchq.gaffer.data.element.Element;
+import uk.gov.gchq.gaffer.data.element.Entity;
+import uk.gov.gchq.gaffer.data.generator.OneToOneElementGenerator;
+import uk.gov.gchq.gaffer.gafferpop.GafferPopEdge;
+import uk.gov.gchq.gaffer.gafferpop.GafferPopGraph;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -64,7 +64,7 @@ public class GafferPopEdgeGenerator extends OneToOneElementGenerator<GafferPopEd
         final GafferPopEdge gafferPopEdge = new GafferPopEdge(edge.getGroup(),
                 edge.getSource(), edge.getDestination(), graph);
 
-        for (Entry<String, Object> entry : edge.getProperties().entrySet()) {
+        for (final Entry<String, Object> entry : edge.getProperties().entrySet()) {
             if (null != entry.getValue()) {
                 gafferPopEdge.property(entry.getKey(), entry.getValue());
             }
