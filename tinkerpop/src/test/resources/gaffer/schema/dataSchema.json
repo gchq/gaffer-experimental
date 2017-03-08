@@ -1,46 +1,27 @@
 {
   "entities": {
-    "person": {
-      "vertex": "person",
+    "entity": {
       "properties": {
-        "name": "name.string",
-        "age": "age.integer"
-      }
-    },
-    "software": {
-      "vertex": "software",
-      "properties": {
-        "name": "name.string",
-        "lang": "name.string"
-      }
+        "type": "string",
+        "visibility": "string",
+        "description": "string"
+      },
+      "groupBy": ["type"]
     }
   },
   "edges": {
     "knows": {
-      "source": "person",
-      "destination": "person",
-      "directed": "true",
+      "source": "entity", "destination": "entity", "directed": "true",
       "properties": {
-        "weight": "weight.double"
+        "weight": "weight"
       }
     },
-    "created": {
-      "source": "person",
-      "destination": "software",
-      "directed": "true",
+    "learns": {
+      "source": "entity", "destination": "entity", "directed": "true",
       "properties": {
-        "weight": "weight.double"
+        "weight": "weight"
       }
-    },
-    "dependsOn": {
-      "source": "software",
-      "destination": "software",
-      "directed": "true"
-    },
-    "encapsulates": {
-      "source": "software",
-      "destination": "software",
-      "directed": "true"
     }
-  }
+  },
+  "visibilityProperty": "visibility"
 }

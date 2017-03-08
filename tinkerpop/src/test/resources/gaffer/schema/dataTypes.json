@@ -1,22 +1,38 @@
 {
   "types": {
-    "person": {
-      "class": "java.lang.String"
+    "type": {
+      "class": "java.lang.String",
+      "aggregateFunction": {
+        "class": "gaffer.function.simple.aggregate.StringConcat"
+      }
     },
-    "software": {
-      "class": "java.lang.String"
+    "string": {
+      "class": "java.lang.String",
+      "aggregateFunction": {
+        "class": "gaffer.function.simple.aggregate.StringConcat"
+      }
+    },
+    "weight": {
+      "class": "java.lang.Double",
+      "aggregateFunction": {
+        "class": "gaffer.function.simple.aggregate.Max"
+      }
+    },
+    "entity": {
+      "class": "java.lang.String",
+      "aggregateFunction": {
+        "class": "gaffer.function.simple.aggregate.StringConcat"
+      }
     },
     "true": {
-      "class": "java.lang.Boolean"
-    },
-    "name.string": {
-      "class": "java.lang.String"
-    },
-    "age.integer": {
-      "class": "java.lang.Integer"
-    },
-    "weight.double": {
-      "class": "java.lang.Double"
+      "class": "java.lang.Boolean",
+      "validateFunctions": [
+        {
+          "function": {
+            "class": "gaffer.function.simple.filter.IsTrue"
+          }
+        }
+      ]
     }
   }
 }
