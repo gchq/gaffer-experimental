@@ -56,7 +56,7 @@ To get going with the tinkerpop-modern dataset backed by a MockAccumuloStore you
     ./bin/gremlin.sh
 
     # Activate the GafferPop plugin
-    :plugin use gaffer.gafferpop.GafferPopGraph
+    :plugin use uk.gov.gchq.gaffer.gafferpop.GafferPopGraph
 ```
 
 
