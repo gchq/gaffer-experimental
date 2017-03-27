@@ -49,7 +49,7 @@ public class PerformanceTestElementGeneratorTest {
                                                .storeProperties(properties)
                                                .build();
 
-        final AddElements addElements = new AddElements.Builder().elements(elements)
+        final AddElements addElements = new AddElements.Builder().input(elements)
                                                                  .build();
 
         graph.execute(addElements, new User());

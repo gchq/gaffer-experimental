@@ -126,7 +126,7 @@ public class GafferPopVertex extends GafferPopElement implements Vertex {
         return (Iterator) graph().edges(id, direction, edgeLabels);
     }
 
-    public Iterator<GafferPopEdge> edges(final Direction direction, final View view) {
+    public Iterator<? extends GafferPopEdge> edges(final Direction direction, final View view) {
         return graph().edgesWithView(id, direction, view);
     }
 
@@ -135,7 +135,7 @@ public class GafferPopVertex extends GafferPopElement implements Vertex {
         return (Iterator) graph().adjVertices(id, direction, edgeLabels);
     }
 
-    public Iterator<GafferPopVertex> vertices(final Direction direction, final View view) {
+    public Iterator<? extends GafferPopVertex> vertices(final Direction direction, final View view) {
         return graph().adjVerticesWithView(id, direction, view);
     }
 

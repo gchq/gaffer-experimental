@@ -71,9 +71,7 @@ public class PerformanceTestElementGenerator extends OneToManyElementGenerator<S
     }
 
     @Override
-    public Iterable<String> getObjects(final Iterable<Element> elements) {
+    public Iterable<String> getObjects(final Iterable<? extends Element> elements) {
         throw new UnsupportedOperationException("This generator cannot be used to generate elements.");
     }
-
-
 }

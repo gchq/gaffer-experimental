@@ -23,7 +23,7 @@ import uk.gov.gchq.gaffer.operation.OperationException;
 import uk.gov.gchq.gaffer.operation.impl.add.AddElements;
 import uk.gov.gchq.gaffer.operation.impl.generate.GenerateElements;
 import uk.gov.gchq.gaffer.performance.generator.PerformanceTestElementGenerator;
-import uk.gov.gchq.gaffer.rest.GraphFactory;
+import uk.gov.gchq.gaffer.rest.factory.GraphFactory;
 import uk.gov.gchq.gaffer.user.User;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -54,7 +54,7 @@ public class DataLoader implements ServletContextListener {
 
         final OperationChain<Void> populateChain = new OperationChain.Builder()
                 .first(new GenerateElements.Builder<String>()
-                        .objects(getData(dataPath))
+                        .input(getData(dataPath))
                         .generator(new PerformanceTestElementGenerator())
                         .build())
                 .then(new AddElements.Builder()

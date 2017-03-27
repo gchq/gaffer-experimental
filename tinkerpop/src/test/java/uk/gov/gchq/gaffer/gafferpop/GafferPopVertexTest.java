@@ -18,13 +18,6 @@
  */
 package uk.gov.gchq.gaffer.gafferpop;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-
 import com.google.common.collect.Lists;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -39,6 +32,13 @@ import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterator;
 import uk.gov.gchq.gaffer.data.elementdefinition.view.View;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 public class GafferPopVertexTest {
     @Test
@@ -101,7 +101,7 @@ public class GafferPopVertexTest {
         // Given
         final GafferPopGraph graph = mock(GafferPopGraph.class);
         final GafferPopVertex vertex = new GafferPopVertex(TestGroups.ENTITY, GafferPopGraph.ID_LABEL, graph);
-        final Iterator<GafferPopEdge> edges = mock(Iterator.class);
+        final CloseableIterator edges = mock(CloseableIterator.class);
         given(graph.edges(GafferPopGraph.ID_LABEL, Direction.IN, TestGroups.ENTITY)).willReturn(edges);
 
         // When
@@ -116,12 +116,12 @@ public class GafferPopVertexTest {
         // Given
         final GafferPopGraph graph = mock(GafferPopGraph.class);
         final GafferPopVertex vertex = new GafferPopVertex(TestGroups.ENTITY, GafferPopGraph.ID_LABEL, graph);
-        final CloseableIterator<GafferPopEdge> edges = mock(CloseableIterator.class);
+        final CloseableIterator edges = mock(CloseableIterator.class);
         final View view = mock(View.class);
         given(graph.edgesWithView(GafferPopGraph.ID_LABEL, Direction.IN, view)).willReturn(edges);
 
         // When
-        final Iterator<GafferPopEdge> resultEdges = vertex.edges(Direction.IN, view);
+        final Iterator<? extends GafferPopEdge> resultEdges = vertex.edges(Direction.IN, view);
 
         // Then
         assertSame(edges, resultEdges);
@@ -132,7 +132,7 @@ public class GafferPopVertexTest {
         // Given
         final GafferPopGraph graph = mock(GafferPopGraph.class);
         final GafferPopVertex vertex = new GafferPopVertex(TestGroups.ENTITY, GafferPopGraph.ID_LABEL, graph);
-        final CloseableIterator<GafferPopVertex> vertices = mock(CloseableIterator.class);
+        final CloseableIterator vertices = mock(CloseableIterator.class);
         given(graph.adjVertices(GafferPopGraph.ID_LABEL, Direction.IN, TestGroups.EDGE)).willReturn(vertices);
 
         // When
@@ -148,12 +148,12 @@ public class GafferPopVertexTest {
         // Given
         final GafferPopGraph graph = mock(GafferPopGraph.class);
         final GafferPopVertex vertex = new GafferPopVertex(TestGroups.ENTITY, GafferPopGraph.ID_LABEL, graph);
-        final CloseableIterator<GafferPopVertex> vertices = mock(CloseableIterator.class);
+        final CloseableIterator vertices = mock(CloseableIterator.class);
         final View view = mock(View.class);
         given(graph.adjVerticesWithView(GafferPopGraph.ID_LABEL, Direction.IN, view)).willReturn(vertices);
 
         // When
-        final Iterator<GafferPopVertex> resultVertices = vertex.vertices(Direction.IN, view);
+        final Iterator<? extends GafferPopVertex> resultVertices = vertex.vertices(Direction.IN, view);
 
         // Then
         assertSame(vertices, resultVertices);
