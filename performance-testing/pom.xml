@@ -15,6 +15,7 @@
         <module>performance-testing-rest</module>
         <module>performance-testing-demo</module>
         <module>performance-testing-example-hadoop</module>
+        <module>performance-testing-random</module>
     </modules>
 
     <dependencies>
