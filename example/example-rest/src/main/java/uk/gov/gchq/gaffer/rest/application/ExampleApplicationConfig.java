@@ -26,6 +26,7 @@ import uk.gov.gchq.gaffer.rest.serialisation.RestJsonProvider;
 public class ExampleApplicationConfig extends ApplicationConfig {
     @Override
     protected void addSystemResources() {
+        super.addSystemResources();
         resources.remove(RestJsonProvider.class);
         resources.add(ExampleRestJsonProvider.class);
     }

@@ -3,7 +3,8 @@
     "entity": {
       "vertex": "string",
       "properties": {
-        "count": "int"
+        "count": "int",
+        "cardinality": "hllp"
       }
     }
   },
@@ -18,6 +19,13 @@
     }
   },
   "types": {
+    "hllp": {
+      "class": "com.clearspring.analytics.stream.cardinality.HyperLogLogPlus",
+      "aggregateFunction": {
+        "class": "uk.gov.gchq.gaffer.sketches.function.aggregate.HyperLogLogPlusAggregator"
+      },
+      "serialiserClass": "uk.gov.gchq.gaffer.sketches.serialisation.HyperLogLogPlusSerialiser"
+    },
     "int": {
       "class": "java.lang.Integer",
       "aggregateFunction": {

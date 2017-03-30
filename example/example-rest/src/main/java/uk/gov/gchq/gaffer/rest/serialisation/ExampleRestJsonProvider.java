@@ -16,21 +16,27 @@
 
 package uk.gov.gchq.gaffer.rest.serialisation;
 
-import com.clearspring.analytics.stream.cardinality.HyperLogLog;
+import com.clearspring.analytics.stream.cardinality.HyperLogLogPlus;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import uk.gov.gchq.gaffer.sketches.serialisation.json.hyperloglogplus.HyperLogLogPlusJsonConstants;
 import uk.gov.gchq.gaffer.sketches.serialisation.json.hyperloglogplus.HyperLogLogPlusJsonDeserialiser;
 import uk.gov.gchq.gaffer.sketches.serialisation.json.hyperloglogplus.HyperLogLogPlusJsonSerialiser;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
+@Produces(MediaType.APPLICATION_JSON)
 @Provider
-public class ExampleRestJsonProvider extends RestJsonProvider {
+public class ExampleRestJsonProvider extends RestJsonProvider{
+    @Override
     protected ObjectMapper createMapper() {
         final ObjectMapper mapper = super.createMapper();
         mapper.registerModule(
-                new SimpleModule()
-                        .addSerializer((Class) HyperLogLog.class, new HyperLogLogPlusJsonSerialiser())
-                        .addDeserializer((Class) HyperLogLog.class, new HyperLogLogPlusJsonDeserialiser())
+                new SimpleModule(HyperLogLogPlusJsonConstants.HYPER_LOG_LOG_PLUS_SERIALISER_MODULE_NAME, new Version(1, 0, 0, null, null, null))
+                        .addSerializer(HyperLogLogPlus.class, new HyperLogLogPlusJsonSerialiser())
+                        .addDeserializer(HyperLogLogPlus.class, new HyperLogLogPlusJsonDeserialiser())
         );
         return mapper;
     }

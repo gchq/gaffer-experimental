@@ -21,6 +21,11 @@
     </servlet>
 
 
+    <listener>
+        <listener-class>uk.gov.gchq.gaffer.rest.DataLoader
+        </listener-class>
+    </listener>
+
     <!-- Copied from Gaffer's core REST API -->
 
     <servlet-mapping>

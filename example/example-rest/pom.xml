@@ -36,6 +36,12 @@
             <version>${project.parent.version}</version>
             <classifier>classes</classifier>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
