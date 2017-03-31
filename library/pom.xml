@@ -33,6 +33,7 @@
         <module>named-operation</module>
         <module>job-tracker-library</module>
         <module>bitmap-library</module>
+        <module>flink</module>
     </modules>
 
     <profiles>
@@ -41,12 +42,16 @@
             <properties>
                 <jackson.version>${jackson.min.version}</jackson.version>
             </properties>
-            <!-- Skip spark as requires a newer version of jackson-->
             <modules>
                 <module>core-library</module>
                 <module>hdfs-library</module>
                 <module>sketches-library</module>
+                <!-- Skip spark as requires a newer version of jackson-->
+                <!--<module>spark</module>-->
                 <module>named-operation</module>
+                <module>job-tracker-library</module>
+                <module>bitmap-library</module>
+                <module>flink-library</module>
             </modules>
         </profile>
     </profiles>

@@ -24,6 +24,8 @@ import uk.gov.gchq.gaffer.example.films.data.schema.Group;
 import uk.gov.gchq.gaffer.example.films.data.schema.Property;
 
 public class ViewingGenerator implements OneToOneElementGenerator<Viewing> {
+    private static final long serialVersionUID = -6485481614054457788L;
+
     @Override
     public Element _apply(final Viewing viewing) {
         final Edge edge = new Edge(Group.VIEWING, viewing.getUserId(), viewing.getFilmId(), true);

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import uk.gov.gchq.gaffer.data.element.Element;
+import java.io.Serializable;
 import java.util.function.Function;
 
 /**
@@ -30,5 +31,5 @@ import java.util.function.Function;
  * @param <OBJ> the type of domain object
  */
 @JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY, property = "class")
-public interface ElementGenerator<OBJ> extends Function<Iterable<? extends OBJ>, Iterable<? extends Element>> {
+public interface ElementGenerator<OBJ> extends Function<Iterable<? extends OBJ>, Iterable<? extends Element>>, Serializable {
 }

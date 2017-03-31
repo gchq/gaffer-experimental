@@ -24,6 +24,7 @@ import uk.gov.gchq.gaffer.example.films.data.Review;
 import uk.gov.gchq.gaffer.example.films.data.Viewing;
 
 public class DataGenerator implements OneToOneElementGenerator<Object> {
+    private static final long serialVersionUID = 6627403291146038688L;
     private final ViewingGenerator viewingGenerator = new ViewingGenerator();
     private final ReviewGenerator reviewGenerator = new ReviewGenerator();
     private final PersonGenerator personGenerator = new PersonGenerator();

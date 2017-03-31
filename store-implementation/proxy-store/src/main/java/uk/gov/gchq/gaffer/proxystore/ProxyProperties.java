@@ -40,6 +40,8 @@ public class ProxyProperties extends StoreProperties {
     public static final int DEFAULT_READ_TIMEOUT = 10000;
     public static final String DEFAULT_JSON_SERIALISER_CLASS = JSONSerialiser.class.getName();
 
+    private static final long serialVersionUID = 7231730546674617283L;
+
     public ProxyProperties() {
     }
 

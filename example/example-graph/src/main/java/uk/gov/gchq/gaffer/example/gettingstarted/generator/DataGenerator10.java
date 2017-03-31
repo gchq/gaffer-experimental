@@ -26,6 +26,7 @@ import java.util.Set;
 public class DataGenerator10 implements OneToManyElementGenerator<String> {
     // Fix the seed so that the results are consistent
     private static final Random RANDOM = new Random(123456789L);
+    private static final long serialVersionUID = -2674906500648969116L;
 
     @Override
     public Iterable<Element> _apply(final String line) {

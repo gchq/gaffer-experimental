@@ -49,6 +49,11 @@ Apache Spark (org.apache.spark:spark-core:2.1.0, org.apache.spark:spark-sql:2.1.
 - Apache License, Version 2.0
 
 
+Apache Flink (org.apache.flink:flink-java:1.2.0, org.apache.flink:flink-streaming-java_2.11:1.2.0, org.apache.flink:flink-clients_2.11:1.2.0)
+
+- Apache License, Version 2.0
+
+
 Clearspring analytics (com.clearspring.analytics:stream:2.8.0):
 
 - Apache License, Version 2.0

@@ -21,6 +21,7 @@ import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.data.generator.OneToOneElementGenerator;
 
 public class DataGenerator15 implements OneToOneElementGenerator<String> {
+    private static final long serialVersionUID = 4291841641398773309L;
 
     @Override
     public Element _apply(final String line) {

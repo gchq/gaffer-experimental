@@ -25,6 +25,8 @@ import uk.gov.gchq.gaffer.data.generator.OneToManyElementGenerator;
 import java.util.Arrays;
 
 public class DataGenerator9 implements OneToManyElementGenerator<String> {
+    private static final long serialVersionUID = 7976327365063504002L;
+
     @Override
     public Iterable<Element> _apply(final String line) {
         final String[] t = line.split(",");

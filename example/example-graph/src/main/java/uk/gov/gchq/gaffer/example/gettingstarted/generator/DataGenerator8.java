@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DataGenerator8 implements OneToOneElementGenerator<String> {
+    private static final long serialVersionUID = -5609951982370346171L;
 
     @Override
     public Element _apply(final String line) {

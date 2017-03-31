@@ -28,6 +28,7 @@ import uk.gov.gchq.gaffer.store.operationdeclaration.OperationDeclarations;
 import uk.gov.gchq.gaffer.store.schema.Schema;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,15 +40,18 @@ import java.util.Properties;
  * connection strings. It wraps {@link Properties} and lazy loads the all properties from a file when first used.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "storePropertiesClassName")
-public class StoreProperties implements Cloneable {
+public class StoreProperties implements Cloneable, Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(StoreProperties.class);
+
     public static final String STORE_CLASS = "gaffer.store.class";
     public static final String SCHEMA_CLASS = "gaffer.store.schema.class";
     public static final String STORE_PROPERTIES_CLASS = "gaffer.store.properties.class";
-    public static final String OPERATION_DECLARATIONS = "gaffer.store.operation.declarations";
 
+    public static final String OPERATION_DECLARATIONS = "gaffer.store.operation.declarations";
     public static final String JOB_TRACKER_CLASS = "gaffer.store.job.tracker.class";
     public static final String JOB_TRACKER_CONFIG_PATH = "gaffer.store.job.tracker.config.path";
+
+    private static final long serialVersionUID = 3191617163865534296L;
 
     private Properties props = new Properties();
 

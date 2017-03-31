@@ -57,6 +57,8 @@ public class AccumuloProperties extends StoreProperties {
     private static final String THREADS_FOR_BATCH_SCANNER_DEFAULT = "10";
     public static final String ENABLE_VALIDATOR_ITERATOR_DEFAULT = "true";
 
+    private static final long serialVersionUID = 698754355289610281L;
+
     public AccumuloProperties() {
         super();
     }

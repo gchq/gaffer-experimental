@@ -24,6 +24,8 @@ import uk.gov.gchq.gaffer.example.films.data.schema.Group;
 import uk.gov.gchq.gaffer.example.films.data.schema.Property;
 
 public class FilmGenerator implements OneToOneElementGenerator<Film> {
+    private static final long serialVersionUID = 3171139587713970005L;
+
     @Override
     public Element _apply(final Film film) {
         final Entity entity = new Entity(Group.FILM, film.getFilmId());

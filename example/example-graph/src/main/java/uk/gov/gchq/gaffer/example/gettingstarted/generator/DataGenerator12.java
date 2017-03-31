@@ -28,6 +28,7 @@ public class DataGenerator12 implements OneToManyElementGenerator<String> {
     private static final char[] CHARS = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
     // Fix the seed so that the results are consistent
     private static final Random RANDOM = new Random(123456789L);
+    private static final long serialVersionUID = -1094955342268188665L;
 
     @Override
     public Iterable<Element> _apply(final String line) {

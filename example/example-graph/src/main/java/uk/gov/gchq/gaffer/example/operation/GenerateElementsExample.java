@@ -132,6 +132,8 @@ public class GenerateElementsExample extends OperationExample {
     }
 
     public static class DomainObjectGenerator implements OneToOneElementGenerator<Object> {
+        private static final long serialVersionUID = -8502579484807904167L;
+
         @Override
         public Element _apply(final Object domainObject) {
             if (domainObject instanceof DomainObject1) {

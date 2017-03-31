@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DataGenerator13 implements OneToManyElementGenerator<String> {
+    private static final long serialVersionUID = -2865742887723052266L;
 
     @Override
     public Iterable<Element> _apply(final String line) {

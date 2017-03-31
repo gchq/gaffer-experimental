@@ -24,6 +24,8 @@ import uk.gov.gchq.gaffer.example.films.data.schema.Group;
 import uk.gov.gchq.gaffer.example.films.data.schema.Property;
 
 public class ReviewGenerator implements OneToOneElementGenerator<Review> {
+    private static final long serialVersionUID = 9048772607638126401L;
+
     @Override
     public Element _apply(final Review review) {
         final Entity entity = new Entity(Group.REVIEW, review.getFilmId());
