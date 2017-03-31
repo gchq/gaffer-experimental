@@ -5,6 +5,12 @@
       "handler": {
         "class": "uk.gov.gchq.gaffer.flink.operation.handler.AddElementsFromSocketHandler"
       }
+    },
+    {
+      "operation": "uk.gov.gchq.gaffer.flink.operation.AddElementsFromKafka",
+      "handler": {
+        "class": "uk.gov.gchq.gaffer.flink.operation.handler.AddElementsFromKafkaHandler"
+      }
     }
   ]
 }

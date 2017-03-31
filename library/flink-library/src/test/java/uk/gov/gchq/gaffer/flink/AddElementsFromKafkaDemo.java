@@ -16,27 +16,33 @@
 package uk.gov.gchq.gaffer.flink;
 
 import uk.gov.gchq.gaffer.commonutil.StreamUtil;
-import uk.gov.gchq.gaffer.flink.operation.AddElementsFromSocket;
+import uk.gov.gchq.gaffer.flink.operation.AddElementsFromKafka;
 import uk.gov.gchq.gaffer.graph.Graph;
 import uk.gov.gchq.gaffer.operation.OperationException;
 import uk.gov.gchq.gaffer.user.User;
 
 /**
- * To run the demo:
+ * To run the demo follow these steps (based on the steps in the blog: https://data-artisans.com/kafka-flink-a-practical-how-to)
  * <pre>
- * Use netcat to start a local server. In a terminal run the command: nc -l 9000
- * Run this main method via your IDE
- * In the terminal running netcat, add some elements, e.g:
+ * wget http://apache.mirror.anlx.net/kafka/0.10.2.0/kafka_2.11-0.10.2.0.tgz
+ * tar xf kafka_2.11-0.10.2.0.tgz
+ * cd kafka_2.11-0.10.2.0
+ * ./bin/zookeeper-server-start.sh ./config/zookeeper.properties
+ * ./bin/kafka-server-start.sh ./config/server.properties
+ * ./bin/kafka-topics.sh --create --topic test --zookeeper localhost:2181 --partitions 1 --replication-factor 1
+ * ./bin/kafka-console-producer.sh --topic test --broker-list localhost:9092
+ * Run this demo
+ * In the terminal running kafka-console-producer, add some elements, e.g:
  * 1,2
  * 1,3
  * 3,2
  * They must be in the format [source],[destination].
- * </pre>
  * You should see the elements have been added to Gaffer and logged in the IDE terminal
+ * </pre>
  */
-public class AddElementsFromSocketDemo {
+public class AddElementsFromKafkaDemo {
     public static void main(String[] args) throws Exception {
-        new AddElementsFromSocketDemo().run();
+        new AddElementsFromKafkaDemo().run();
     }
 
     private void run() throws OperationException {
@@ -45,10 +51,11 @@ public class AddElementsFromSocketDemo {
                 .addSchemas(StreamUtil.schemas(getClass()))
                 .build();
 
-        graph.execute(new AddElementsFromSocket.Builder()
+        graph.execute(new AddElementsFromKafka.Builder()
+                .topic("test")
+                .groupId("group1")
+                .bootstrapServers("localhost:9092")
                 .generator(new CsvToElement())
-                .hostname("localhost")
-                .port(9000)
                 .build(), new User());
     }
 }
