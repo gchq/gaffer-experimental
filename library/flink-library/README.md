@@ -30,18 +30,7 @@ In order to make use of the flink libraries you will need to include these libra
 ```
 
 You will then need to register the flink operations and their handlers with your store.
-Currently only flink operation handlers for the Accumulo Store have been written.
-To use flink with accumulo you will need to include this dependency:
+You just need to add the following to your store properties file.
 ```
- <dependency>
-  <groupId>uk.gov.gchq.gaffer</groupId>
-  <artifactId>flink-accumulo-library</artifactId>
-  <version>${gaffer.version}</version>
-</dependency>
-```
-
-Then to register the flink operations with the accumulo store you just need
-to add the following to your store properties file.
-```
-gaffer.store.operation.declarations=flinkAccumuloOperationsDeclarations.json
+gaffer.store.operation.declarations=flinkOperationsDeclarations.json
 ```

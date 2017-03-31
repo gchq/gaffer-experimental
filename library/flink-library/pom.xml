@@ -35,6 +35,13 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <groupId>uk.gov.gchq.gaffer</groupId>
+            <artifactId>store</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <!-- Flink dependencies -->
+        <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-java</artifactId>
             <version>${flink.version}</version>
@@ -60,6 +67,19 @@
             <version>${flink.version}</version>
         </dependency>
 
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>uk.gov.gchq.gaffer</groupId>
+            <artifactId>graph</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>uk.gov.gchq.gaffer</groupId>
+            <artifactId>accumulo-store</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

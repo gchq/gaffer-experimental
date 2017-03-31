@@ -46,8 +46,8 @@ public class AddElementsFromSocket implements
         this.port = port;
     }
 
-    public Function<Iterable<? extends String>, Iterable<? extends Element>> getElementGenerator() {
-        return elementGenerator;
+    public <T extends Function<Iterable<? extends String>, Iterable<? extends Element>> & Serializable> T getElementGenerator() {
+        return (T) elementGenerator;
     }
 
     public <T extends Function<Iterable<? extends String>, Iterable<? extends Element>> & Serializable> void setElementGenerator(final T elementGenerator) {

@@ -18,10 +18,10 @@ package uk.gov.gchq.gaffer.flink;
 import uk.gov.gchq.gaffer.commonutil.StreamUtil;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Element;
-import uk.gov.gchq.gaffer.data.generator.ElementGenerator;
 import uk.gov.gchq.gaffer.data.generator.OneToOneElementGenerator;
 import uk.gov.gchq.gaffer.flink.operation.AddElementsFromSocket;
 import uk.gov.gchq.gaffer.graph.Graph;
+import uk.gov.gchq.gaffer.operation.OperationException;
 import uk.gov.gchq.gaffer.user.User;
 
 /**
@@ -54,31 +54,44 @@ public class AddElementsFromSocketDemo {
     public static final int PORT = 9000;
 
     public static void main(String[] args) throws Exception {
-        final ElementGenerator<String> elementGenerator = new OneToOneElementGenerator<String>() {
-            private static final long serialVersionUID = -1393365807895711784L;
+        new AddElementsFromSocketDemo().run();
+    }
 
-            @Override
-            public Element _apply(final String csv) {
-                final String[] parts = csv.split(",");
-                return new Edge.Builder()
-                        .group("edge")
-                        .source(parts[0])
-                        .dest(parts[1])
-                        .directed(true)
-                        .property("count", 1)
-                        .build();
-            }
-        };
-
+    private void run() throws OperationException {
         final Graph graph = new Graph.Builder()
-                .storeProperties(StreamUtil.storeProps(AddElementsFromSocketDemo.class))
-                .addSchemas(StreamUtil.schemas(AddElementsFromSocketDemo.class))
+                .storeProperties(StreamUtil.openStream(getClass(), "mockaccumulostore.properties"))
+                .addSchemas(StreamUtil.schemas(getClass()))
                 .build();
 
         graph.execute(new AddElementsFromSocket.Builder()
-                .generator(elementGenerator)
+                .generator(new CsvToElement())
                 .hostname("localhost")
                 .port(PORT)
                 .build(), new User());
+    }
+
+    public static final class CsvToElement implements OneToOneElementGenerator<String> {
+        private static final long serialVersionUID = -1393365807895711784L;
+
+        @Override
+        public Element _apply(final String csv) {
+            if (null == csv) {
+                System.err.println("CSV is required in format [source],[destination]");
+                return null;
+            }
+            final String[] parts = csv.split(",");
+            if (2 != parts.length) {
+                System.err.println("CSV is required in format [source],[destination]");
+                return null;
+            }
+
+            return new Edge.Builder()
+                    .group("edge")
+                    .source(parts[0].trim())
+                    .dest(parts[1].trim())
+                    .directed(true)
+                    .property("count", 1)
+                    .build();
+        }
     }
 }

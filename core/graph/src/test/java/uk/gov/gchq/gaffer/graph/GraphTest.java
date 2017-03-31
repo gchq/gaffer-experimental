@@ -564,7 +564,7 @@ public class GraphTest {
         }
     }
 
-    static class StoreImpl extends Store {
+    public static class StoreImpl extends Store {
 
         @Override
         public Set<StoreTrait> getTraits() {

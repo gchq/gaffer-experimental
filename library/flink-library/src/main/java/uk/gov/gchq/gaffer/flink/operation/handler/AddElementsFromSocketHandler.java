@@ -15,25 +15,24 @@
  */
 package uk.gov.gchq.gaffer.flink.operation.handler;
 
-import com.google.common.collect.Iterables;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.gchq.gaffer.accumulostore.AccumuloProperties;
-import uk.gov.gchq.gaffer.accumulostore.AccumuloStore;
 import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterable;
 import uk.gov.gchq.gaffer.data.element.Element;
+import uk.gov.gchq.gaffer.data.elementdefinition.view.View;
 import uk.gov.gchq.gaffer.flink.operation.AddElementsFromSocket;
-import uk.gov.gchq.gaffer.graph.Graph;
 import uk.gov.gchq.gaffer.operation.OperationException;
 import uk.gov.gchq.gaffer.operation.impl.add.AddElements;
 import uk.gov.gchq.gaffer.operation.impl.get.GetAllElements;
 import uk.gov.gchq.gaffer.store.Context;
 import uk.gov.gchq.gaffer.store.Store;
+import uk.gov.gchq.gaffer.store.StoreProperties;
 import uk.gov.gchq.gaffer.store.operation.handler.OperationHandler;
+import uk.gov.gchq.gaffer.store.schema.Schema;
 import uk.gov.gchq.gaffer.user.User;
 import java.util.Collections;
 import java.util.Iterator;
@@ -46,11 +45,6 @@ public class AddElementsFromSocketHandler implements OperationHandler<AddElement
 
     @Override
     public Object doOperation(final AddElementsFromSocket operation, final Context context, final Store store) throws OperationException {
-        doOperation(operation, (AccumuloStore) store);
-        return null;
-    }
-
-    public void doOperation(final AddElementsFromSocket operation, final AccumuloStore store) throws OperationException {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         final Function<Iterable<? extends String>, Iterable<? extends Element>> elementGenerator = operation.getElementGenerator();
         final Class<Iterable<? extends Element>> returnClass = (Class) Iterable.class;
@@ -60,27 +54,28 @@ public class AddElementsFromSocketHandler implements OperationHandler<AddElement
         env.socketTextStream(operation.getHostname(), operation.getPort(), "\n")
                 .map(mapper)
                 .returns(returnClass)
-                .addSink(new GafferSink(store))
-                .setParallelism(1);
+                .addSink(new GafferSink(store));
 
         try {
             env.execute("Add elements from socket");
         } catch (Exception e) {
             throw new OperationException("Failed to add elements from port: " + operation.getPort(), e);
         }
+
+        return null;
     }
 
     @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "There are null checks that will initialise the fields")
     public static class GafferSink implements SinkFunction<Iterable<? extends Element>> {
         private static final long serialVersionUID = 1569145256866410621L;
         private final byte[] schema;
-        private final AccumuloProperties storeProperties;
+        private final StoreProperties storeProperties;
 
-        private transient Graph graph;
+        private transient Store store;
         private transient ConcurrentLinkedQueue<Element> queue;
         private transient boolean restart;
 
-        public GafferSink(final AccumuloStore store) {
+        public GafferSink(final Store store) {
             schema = store.getSchema().toCompactJson();
             storeProperties = store.getProperties();
         }
@@ -92,16 +87,20 @@ public class AddElementsFromSocketHandler implements OperationHandler<AddElement
                 restart = true;
             }
 
-            Iterables.addAll(queue, elements);
-            if (restart) {
+            if (null != elements) {
+                for (final Element element : elements) {
+                    if (null != element) {
+                        queue.add(element);
+                    }
+                }
+            }
+
+            if (restart && !queue.isEmpty()) {
                 restart = false;
                 new Thread(() -> {
                     try {
-                        if (null == graph) {
-                            graph = new Graph.Builder()
-                                    .storeProperties(storeProperties)
-                                    .addSchema(schema)
-                                    .build();
+                        if (null == store) {
+                            store = Store.createStore(storeProperties, Schema.fromJson(schema));
                         }
 
                         final Iterable<Element> wrappedQueue = new Iterable<Element>() {
@@ -116,12 +115,6 @@ public class AddElementsFromSocketHandler implements OperationHandler<AddElement
                                 return new Iterator<Element>() {
                                     @Override
                                     public boolean hasNext() {
-                                        //TODO: remove the thread.sleep
-                                        try {
-                                            Thread.sleep(1000);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
                                         return !queue.isEmpty();
                                     }
 
@@ -137,7 +130,7 @@ public class AddElementsFromSocketHandler implements OperationHandler<AddElement
                             }
                         };
 
-                        graph.execute(new AddElements.Builder()
+                        store.execute(new AddElements.Builder()
                                         .input(wrappedQueue)
                                         .build(),
                                 new User());
@@ -146,7 +139,13 @@ public class AddElementsFromSocketHandler implements OperationHandler<AddElement
 
                         // TODO: remove these logs
                         LOGGER.info("Finished adding batch of elements");
-                        final CloseableIterable<? extends Element> results = graph.execute(new GetAllElements(), new User());
+                        final CloseableIterable<? extends Element> results = store.execute(
+                                new GetAllElements.Builder()
+                                        .view(new View.Builder()
+                                                .entities(store.getSchema().getEntityGroups())
+                                                .edges(store.getSchema().getEdgeGroups())
+                                                .build())
+                                        .build(), new User());
                         LOGGER.info("All elements in graph:");
                         for (final Element result : results) {
                             LOGGER.info("Element = " + result);

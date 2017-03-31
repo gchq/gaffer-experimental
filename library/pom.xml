@@ -33,7 +33,7 @@
         <module>named-operation</module>
         <module>job-tracker-library</module>
         <module>bitmap-library</module>
-        <module>flink</module>
+        <module>flink-library</module>
     </modules>
 
     <profiles>
