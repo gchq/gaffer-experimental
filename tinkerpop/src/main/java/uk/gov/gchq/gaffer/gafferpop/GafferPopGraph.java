@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Crown Copyright
+ * Copyright 2016-2017 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
         features = new GafferPopGraphFeatures();
         opOptions = new HashMap<>();
         if (configuration().containsKey(OP_OPTIONS)) {
-            for (String option : configuration().getStringArray(OP_OPTIONS)) {
+            for (final String option : configuration().getStringArray(OP_OPTIONS)) {
                 final String[] parts = option.split(":");
                 opOptions.put(parts[0], parts[1]);
             }
@@ -138,14 +138,14 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
 
     private static Graph createGraph(final Configuration configuration) {
         final Path storeProps = Paths.get(configuration.getString(STORE_PROPERTIES));
-        final Schema.Builder builder = new Schema.Builder();
-        for (String schemaPath : configuration.getStringArray(SCHEMAS)) {
-            builder.merge(Schema.fromJson(Paths.get(schemaPath)));
+        final Schema.Builder schemaBuilder = new Schema.Builder();
+        for (final String schemaPath : configuration.getStringArray(SCHEMAS)) {
+            schemaBuilder.merge(Schema.fromJson(Paths.get(schemaPath)));
         }
 
         return new Graph.Builder()
                 .storeProperties(storeProps)
-                .addSchema(builder.build())
+                .addSchema(schemaBuilder.build())
                 .build();
     }
 
@@ -220,7 +220,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
             getOperation = new GetEntitiesBySeed.Builder()
                     .seeds(entitySeeds)
                     .build();
-            for (EntitySeed entitySeed : entitySeeds) {
+            for (final EntitySeed entitySeed : entitySeeds) {
                 idVertices.add(new GafferPopVertex(ID_LABEL, entitySeed.getVertex(), this));
             }
         }
@@ -462,7 +462,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
     }
 
     private <T> T execute(final OperationChain<T> opChain) {
-        for (Operation operation : opChain.getOperations()) {
+        for (final Operation operation : opChain.getOperations()) {
             operation.setOptions(opOptions);
         }
 
@@ -489,7 +489,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
                     .build();
 
             if (null == view || view.getEntityGroups().contains(ID_LABEL)) {
-                for (ElementSeed elementSeed : seeds) {
+                for (final ElementSeed elementSeed : seeds) {
                     if (elementSeed instanceof EntitySeed) {
                         idVertices.add(new GafferPopVertex(ID_LABEL, ((EntitySeed) elementSeed).getVertex(), this));
                     }
@@ -565,7 +565,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
                 }
             } else {
                 final View.Builder viewBuilder = new View.Builder();
-                for (String label : labels) {
+                for (final String label : labels) {
                     viewBuilder.entity(label);
                 }
                 view = viewBuilder.build();
@@ -587,7 +587,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
             } else {
                 final View.Builder viewBuilder = new View.Builder();
                 final Schema schema = ((Schema) variables().get(GafferPopGraphVariables.SCHEMA).get());
-                for (String label : labels) {
+                for (final String label : labels) {
                     if (schema.isEntity(label)) {
                         viewBuilder.entity(label);
                     } else if (schema.isEdge(label)) {
@@ -606,7 +606,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
         List<ElementSeed> seeds = null;
         if (null != ids) {
             seeds = new LinkedList<>();
-            for (Object id : ids) {
+            for (final Object id : ids) {
                 if (id instanceof Vertex) {
                     seeds.add(new EntitySeed(((Vertex) id).id()));
                 } else if (id instanceof GafferPopEdge) {
@@ -628,7 +628,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
         List<EntitySeed> seeds = null;
         if (null != vertexIds) {
             seeds = new LinkedList<>();
-            for (Object vertexId : vertexIds) {
+            for (final Object vertexId : vertexIds) {
                 if (vertexId instanceof Vertex) {
                     seeds.add(new EntitySeed(((Vertex) vertexId).id()));
                 } else {
@@ -644,7 +644,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
         List<EdgeSeed> seeds = null;
         if (null != edgeIds) {
             seeds = new LinkedList<>();
-            for (Object edgeIdObj : edgeIds) {
+            for (final Object edgeIdObj : edgeIds) {
                 final EdgeId edgeId;
                 if (edgeIdObj instanceof GafferPopEdge) {
                     edgeId = ((GafferPopEdge) edgeIdObj).id();

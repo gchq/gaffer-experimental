@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Crown Copyright
+ * Copyright 2016-2017 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public class GafferPopVertexGenerator extends OneToOneElementGenerator<GafferPop
 
         final Entity entity = ((Entity) element);
         final GafferPopVertex vertex = new GafferPopVertex(entity.getGroup(), entity.getVertex(), graph);
-        for (Entry<String, Object> entry : entity.getProperties().entrySet()) {
+        for (final Entry<String, Object> entry : entity.getProperties().entrySet()) {
             if (null != entry.getValue()) {
                 vertex.property(Cardinality.list, entry.getKey(), entry.getValue());
             }

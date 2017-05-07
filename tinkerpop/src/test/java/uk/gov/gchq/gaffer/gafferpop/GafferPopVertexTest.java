@@ -18,13 +18,6 @@
  */
 package uk.gov.gchq.gaffer.gafferpop;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-
 import com.google.common.collect.Lists;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -39,6 +32,13 @@ import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterator;
 import uk.gov.gchq.gaffer.data.elementdefinition.view.View;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 public class GafferPopVertexTest {
     @Test
