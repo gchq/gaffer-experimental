@@ -18,19 +18,19 @@
  */
 package uk.gov.gchq.gaffer.gafferpop.generator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
 import com.google.common.collect.Lists;
+import org.junit.Test;
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
 import uk.gov.gchq.gaffer.commonutil.TestPropertyNames;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.gafferpop.GafferPopEdge;
 import uk.gov.gchq.gaffer.gafferpop.GafferPopGraph;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class GafferPopEdgeGeneratorTest {
     @Test
@@ -48,7 +48,7 @@ public class GafferPopEdgeGeneratorTest {
         final GafferPopEdgeGenerator generator = new GafferPopEdgeGenerator(graph, true);
 
         // When
-        final GafferPopEdge gafferPopEdge = generator.getObject(edge);
+        final GafferPopEdge gafferPopEdge = generator._apply(edge);
 
         // Then
         assertEquals(TestGroups.EDGE, gafferPopEdge.label());
@@ -75,7 +75,7 @@ public class GafferPopEdgeGeneratorTest {
         final GafferPopEdgeGenerator generator = new GafferPopEdgeGenerator(graph, false);
 
         // When
-        final GafferPopEdge gafferPopEdge = generator.getObject(edge);
+        final GafferPopEdge gafferPopEdge = generator._apply(edge);
 
         // Then
         assertEquals(TestGroups.EDGE, gafferPopEdge.label());
@@ -86,30 +86,4 @@ public class GafferPopEdgeGeneratorTest {
         assertSame(graph, gafferPopEdge.graph());
         assertFalse(gafferPopEdge.isReadOnly());
     }
-
-    @Test
-    public void shouldConvertGafferPopEdgeToGafferEdge() {
-        // Given
-        final GafferPopGraph graph = mock(GafferPopGraph.class);
-
-        final String source = "source";
-        final String dest = "dest";
-        final String propValue = "property value";
-        final GafferPopEdge gafferPopEdge = new GafferPopEdge(TestGroups.EDGE, source, dest, graph);
-        gafferPopEdge.property(TestPropertyNames.STRING, propValue);
-
-        final GafferPopEdgeGenerator generator = new GafferPopEdgeGenerator(graph);
-
-        // When
-        final Edge edge = generator.getElement(gafferPopEdge);
-
-        // Then
-        assertEquals(TestGroups.EDGE, edge.getGroup());
-        assertEquals(source, edge.getSource());
-        assertEquals(dest, edge.getDestination());
-        assertTrue(edge.isDirected());
-        assertEquals(1, edge.getProperties().size());
-        assertEquals(propValue, edge.getProperty(TestPropertyNames.STRING));
-    }
-
 }

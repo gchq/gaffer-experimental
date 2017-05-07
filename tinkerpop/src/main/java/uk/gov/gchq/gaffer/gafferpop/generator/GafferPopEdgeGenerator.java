@@ -16,17 +16,15 @@
 package uk.gov.gchq.gaffer.gafferpop.generator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.tinkerpop.gremlin.structure.Property;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.data.element.Entity;
-import uk.gov.gchq.gaffer.data.generator.OneToOneElementGenerator;
+import uk.gov.gchq.gaffer.data.generator.OneToOneObjectGenerator;
 import uk.gov.gchq.gaffer.gafferpop.GafferPopEdge;
 import uk.gov.gchq.gaffer.gafferpop.GafferPopGraph;
-import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class GafferPopEdgeGenerator extends OneToOneElementGenerator<GafferPopEdge> {
+public class GafferPopEdgeGenerator implements OneToOneObjectGenerator<GafferPopEdge> {
     private final GafferPopGraph graph;
     private final boolean gafferPopReadOnly;
 
@@ -39,23 +37,9 @@ public class GafferPopEdgeGenerator extends OneToOneElementGenerator<GafferPopEd
         this.gafferPopReadOnly = gafferPopReadOnly;
     }
 
-    @Override
-    public Edge getElement(final GafferPopEdge gafferPopEdge) {
-        final Edge edge = new Edge(gafferPopEdge.label(), gafferPopEdge.id().getSource(),
-                gafferPopEdge.id().getDest(), true);
-        final Iterator<Property<Object>> propItr = gafferPopEdge.properties();
-        while (propItr.hasNext()) {
-            final Property<Object> prop = propItr.next();
-            if (null != prop.key()) {
-                edge.putProperty(prop.key(), prop.value());
-            }
-        }
-        return edge;
-    }
-
     @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "If an element is not an Entity it must be an Edge")
     @Override
-    public GafferPopEdge getObject(final Element element) {
+    public GafferPopEdge _apply(final Element element) {
         if (element instanceof Entity) {
             throw new IllegalArgumentException("An Entity cannot be converted into a GafferPopEdge");
         }

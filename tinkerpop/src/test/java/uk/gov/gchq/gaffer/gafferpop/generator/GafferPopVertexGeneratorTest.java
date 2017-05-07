@@ -19,7 +19,6 @@
 package uk.gov.gchq.gaffer.gafferpop.generator;
 
 import com.google.common.collect.Lists;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality;
 import org.junit.Test;
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
 import uk.gov.gchq.gaffer.commonutil.TestPropertyNames;
@@ -48,7 +47,7 @@ public class GafferPopVertexGeneratorTest {
         final GafferPopVertexGenerator generator = new GafferPopVertexGenerator(graph, true);
 
         // When
-        final GafferPopVertex gafferPopVertex = generator.getObject(entity);
+        final GafferPopVertex gafferPopVertex = generator._apply(entity);
 
         // Then
         assertEquals(TestGroups.ENTITY, gafferPopVertex.label());
@@ -73,7 +72,7 @@ public class GafferPopVertexGeneratorTest {
         final GafferPopVertexGenerator generator = new GafferPopVertexGenerator(graph, false);
 
         // When
-        final GafferPopVertex gafferPopVertex = generator.getObject(entity);
+        final GafferPopVertex gafferPopVertex = generator._apply(entity);
 
         // Then
         assertEquals(TestGroups.ENTITY, gafferPopVertex.label());
@@ -83,27 +82,4 @@ public class GafferPopVertexGeneratorTest {
         assertSame(graph, gafferPopVertex.graph());
         assertFalse(gafferPopVertex.isReadOnly());
     }
-
-    @Test
-    public void shouldConvertGafferPopVertexToGafferEntity() {
-        // Given
-        final GafferPopGraph graph = mock(GafferPopGraph.class);
-
-        final String vertex = "vertex";
-        final String propValue = "property value";
-        final GafferPopVertex gafferPopVertex = new GafferPopVertex(TestGroups.ENTITY, vertex, graph);
-        gafferPopVertex.property(Cardinality.list, TestPropertyNames.STRING, propValue);
-
-        final GafferPopVertexGenerator generator = new GafferPopVertexGenerator(graph);
-
-        // When
-        final Entity entity = generator.getElement(gafferPopVertex);
-
-        // Then
-        assertEquals(TestGroups.ENTITY, entity.getGroup());
-        assertEquals(vertex, entity.getVertex());
-        assertEquals(1, entity.getProperties().size());
-        assertEquals(propValue, entity.getProperty(TestPropertyNames.STRING));
-    }
-
 }

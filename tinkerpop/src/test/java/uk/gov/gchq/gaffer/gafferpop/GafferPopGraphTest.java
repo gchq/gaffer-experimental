@@ -321,8 +321,8 @@ public class GafferPopGraphTest {
 
     private Graph getGafferGraph() {
         return new Graph.Builder()
-                .storeProperties(StreamUtil.openStream(this.getClass(), "/gaffer/store.properties", true))
-                .addSchemas(StreamUtil.openStreams(this.getClass(), "/gaffer/schema", true))
+                .storeProperties(StreamUtil.openStream(this.getClass(), "/gaffer/store.properties"))
+                .addSchemas(StreamUtil.openStreams(this.getClass(), "/gaffer/schema"))
                 .build();
     }
 

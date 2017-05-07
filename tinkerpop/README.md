@@ -39,7 +39,7 @@ To get going with the tinkerpop-modern dataset backed by a MockAccumuloStore you
 
 ```bash
     # Build the code
-    mvn clean install -Pquick -Pgafferpop
+    mvn clean install -Pquick
 
     gremlinConsolePath=[gremlin-console-path]
 

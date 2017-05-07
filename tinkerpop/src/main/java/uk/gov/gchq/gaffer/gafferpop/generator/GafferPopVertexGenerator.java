@@ -16,19 +16,16 @@
 package uk.gov.gchq.gaffer.gafferpop.generator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.tinkerpop.gremlin.structure.Property;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.data.element.Entity;
-import uk.gov.gchq.gaffer.data.generator.OneToOneElementGenerator;
+import uk.gov.gchq.gaffer.data.generator.OneToOneObjectGenerator;
 import uk.gov.gchq.gaffer.gafferpop.GafferPopGraph;
 import uk.gov.gchq.gaffer.gafferpop.GafferPopVertex;
-import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class GafferPopVertexGenerator extends OneToOneElementGenerator<GafferPopVertex> {
+public class GafferPopVertexGenerator implements OneToOneObjectGenerator<GafferPopVertex> {
     private final GafferPopGraph graph;
     private final boolean gafferPopReadOnly;
 
@@ -41,29 +38,9 @@ public class GafferPopVertexGenerator extends OneToOneElementGenerator<GafferPop
         this.gafferPopReadOnly = gafferPopReadOnly;
     }
 
-    @Override
-    public Entity getElement(final GafferPopVertex vertex) {
-        final Entity entity = new Entity(vertex.label(), vertex.id());
-        final Iterator<VertexProperty<Object>> vertPropItr = vertex.properties();
-        while (vertPropItr.hasNext()) {
-            final VertexProperty<Object> vertProp = vertPropItr.next();
-            if (null != vertProp.key()) {
-                entity.putProperty(vertProp.key(), vertProp.value());
-            }
-            final Iterator<Property<Object>> propItr = vertProp.properties();
-            while (propItr.hasNext()) {
-                final Property<Object> prop = propItr.next();
-                if (null != prop.key()) {
-                    entity.putProperty(prop.key(), prop.value());
-                }
-            }
-        }
-        return entity;
-    }
-
     @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "If an element is not an Edge it must be an Entity")
     @Override
-    public GafferPopVertex getObject(final Element element) {
+    public GafferPopVertex _apply(final Element element) {
         if (element instanceof Edge) {
             throw new IllegalArgumentException("An Edge cannot be converted into a GafferPopVertex");
         }
