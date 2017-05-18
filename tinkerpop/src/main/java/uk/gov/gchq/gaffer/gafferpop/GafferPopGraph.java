@@ -621,27 +621,18 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
     private View createView(final String[] labels) {
         View view = null;
         if (null != labels && 0 < labels.length) {
-            if (1 == labels.length && labels[0].startsWith("View{")) {
-                // Allows a view to be passed in as a label
-                try {
-                    view = View.fromJson(labels[0].substring(4).getBytes(CommonConstants.UTF_8));
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
+            final View.Builder viewBuilder = new View.Builder();
+            final Schema schema = ((Schema) variables().get(GafferPopGraphVariables.SCHEMA).get());
+            for (final String label : labels) {
+                if (schema.isEntity(label)) {
+                    viewBuilder.entity(label);
+                } else if (schema.isEdge(label)) {
+                    viewBuilder.edge(label);
+                } else if (!ID_LABEL.equals(label)) {
+                    throw new IllegalArgumentException("Label/Group was found in the schema: " + label);
                 }
-            } else {
-                final View.Builder viewBuilder = new View.Builder();
-                final Schema schema = ((Schema) variables().get(GafferPopGraphVariables.SCHEMA).get());
-                for (final String label : labels) {
-                    if (schema.isEntity(label)) {
-                        viewBuilder.entity(label);
-                    } else if (schema.isEdge(label)) {
-                        viewBuilder.edge(label);
-                    } else if (!ID_LABEL.equals(label)) {
-                        throw new IllegalArgumentException("Label/Group was found in the schema: " + label);
-                    }
-                }
-                view = viewBuilder.build();
             }
+            view = viewBuilder.build();
         }
         return view;
     }

@@ -206,7 +206,7 @@ public class GafferPopGraphTest {
         graph.addVertex(T.label, SOFTWARE_NAME_GROUP, T.id, VERTEX_1);
         graph.addVertex(T.label, PERSON_GROUP, T.id, VERTEX_2);
 
-        final Iterator<GafferPopVertex> vertices = graph.vertices(Arrays.asList(VERTEX_1, VERTEX_2), view.toString());
+        final Iterator<GafferPopVertex> vertices = graph.verticesWithView(Arrays.asList(VERTEX_1, VERTEX_2), view);
 
         // Then
         final GafferPopVertex vertex = vertices.next();

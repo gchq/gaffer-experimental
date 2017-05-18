@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class EdgeIdTest {
+
     @Test
     public void shouldConstructEdgeId() {
         // Given
