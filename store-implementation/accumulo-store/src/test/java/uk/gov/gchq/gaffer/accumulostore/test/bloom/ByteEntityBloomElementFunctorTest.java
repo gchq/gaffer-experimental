@@ -24,8 +24,8 @@ import uk.gov.gchq.gaffer.accumulostore.key.AccumuloElementConverter;
 import uk.gov.gchq.gaffer.accumulostore.key.core.impl.CoreKeyBloomFunctor;
 import uk.gov.gchq.gaffer.accumulostore.key.core.impl.byteEntity.ByteEntityAccumuloElementConverter;
 import uk.gov.gchq.gaffer.accumulostore.key.exception.AccumuloElementConversionException;
-import uk.gov.gchq.gaffer.accumulostore.utils.Pair;
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
+import uk.gov.gchq.gaffer.commonutil.pair.Pair;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Entity;
 import uk.gov.gchq.gaffer.serialisation.implementation.JavaSerialiser;
@@ -57,7 +57,7 @@ public class ByteEntityBloomElementFunctorTest {
     }
 
     @Test
-    public void shouldTransformRangeEntity() throws AccumuloElementConversionException {
+    public void shouldTransformRangeEntity() {
         // Create Range formed from one entity and shouldRetieveElementsInRangeBetweenSeeds
         final Entity entity1 = new Entity(TestGroups.ENTITY);
         entity1.setVertex(1);
@@ -75,7 +75,7 @@ public class ByteEntityBloomElementFunctorTest {
     }
 
     @Test
-    public void shouldTransformKeyEntity() throws AccumuloElementConversionException {
+    public void shouldTransformKeyEntity() {
         // Create Key formed from entity and shouldRetieveElementsInRangeBetweenSeeds
         final Entity entity1 = new Entity(TestGroups.ENTITY);
         entity1.setVertex(1);
@@ -85,12 +85,12 @@ public class ByteEntityBloomElementFunctorTest {
     }
 
     @Test
-    public void shouldTransformRangeEdge() throws AccumuloElementConversionException {
+    public void shouldTransformRangeEdge() {
         // Create Range formed from one edge and shouldRetieveElementsInRangeBetweenSeeds
         final Edge edge1 = new Edge(TestGroups.EDGE);
         edge1.setSource(1);
         edge1.setDestination(2);
-        final Pair<Key> keys = elementConverter.getKeysFromEdge(edge1);
+        final Pair<Key, Key> keys = elementConverter.getKeysFromEdge(edge1);
         final Range range1 = new Range(keys.getFirst().getRow(), true, keys.getFirst().getRow(), true);
         final org.apache.hadoop.util.bloom.Key expectedBloomKey1 = new org.apache.hadoop.util.bloom.Key(elementFunctor.getVertexFromRangeKey(keys.getFirst().getRowData().getBackingArray()));
         assertEquals(expectedBloomKey1, elementFunctor.transform(range1));
@@ -105,12 +105,12 @@ public class ByteEntityBloomElementFunctorTest {
     }
 
     @Test
-    public void shouldTransformKeyEdge() throws AccumuloElementConversionException {
+    public void shouldTransformKeyEdge() {
         // Create Key formed from edge and shouldRetieveElementsInRangeBetweenSeeds
         final Edge edge1 = new Edge(TestGroups.EDGE);
         edge1.setSource(1);
         edge1.setDestination(2);
-        final Pair<Key> keys = elementConverter.getKeysFromEdge(edge1);
+        final Pair<Key, Key> keys = elementConverter.getKeysFromEdge(edge1);
         final Range range1 = new Range(keys.getFirst().getRow(), true, keys.getFirst().getRow(), true);
         final org.apache.hadoop.util.bloom.Key expectedBloomKey1 = new org.apache.hadoop.util.bloom.Key(elementFunctor.getVertexFromRangeKey(keys.getFirst().getRowData().getBackingArray()));
         assertEquals(expectedBloomKey1, elementFunctor.transform(range1));
@@ -120,7 +120,7 @@ public class ByteEntityBloomElementFunctorTest {
     }
 
     @Test
-    public void shouldTransformRangeFromEntityToEntityAndSomeEdges() throws AccumuloElementConversionException {
+    public void shouldTransformRangeFromEntityToEntityAndSomeEdges() {
         // Create entity
         final Entity entity = new Entity(TestGroups.ENTITY);
         entity.setVertex(1);
@@ -168,7 +168,7 @@ public class ByteEntityBloomElementFunctorTest {
             final Edge edge1 = new Edge(TestGroups.EDGE);
             edge1.setSource("3");
             edge1.setDestination("4");
-            final Pair<Key> keys = elementConverter.getKeysFromEdge(edge1);
+            final Pair<Key, Key> keys = elementConverter.getKeysFromEdge(edge1);
             final Range range1 = new Range(null, true, keys.getFirst().getRow(), true);
             assertNull(elementFunctor.transform(range1));
 

@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.data.element.id;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 public interface EdgeId extends ElementId {
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "class")
@@ -35,6 +35,7 @@ public interface EdgeId extends ElementId {
 
     void setDirected(final boolean directed);
 
+    @Override
     default boolean isEqual(final ElementId that) {
         return that instanceof EdgeId && isEqual((EdgeId) that);
     }

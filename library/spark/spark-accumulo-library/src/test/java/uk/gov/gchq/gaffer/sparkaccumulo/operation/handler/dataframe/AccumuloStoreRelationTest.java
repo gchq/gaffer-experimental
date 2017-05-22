@@ -25,12 +25,12 @@ import org.apache.spark.sql.sources.GreaterThan;
 import org.junit.Test;
 import uk.gov.gchq.gaffer.accumulostore.AccumuloProperties;
 import uk.gov.gchq.gaffer.accumulostore.SingleUseMockAccumuloStore;
+import uk.gov.gchq.gaffer.commonutil.stream.Streams;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.data.element.Entity;
 import uk.gov.gchq.gaffer.data.elementdefinition.view.View;
 import uk.gov.gchq.gaffer.data.elementdefinition.view.ViewElementDefinition;
-import uk.gov.gchq.gaffer.function.filter.IsMoreThan;
 import uk.gov.gchq.gaffer.operation.OperationException;
 import uk.gov.gchq.gaffer.operation.impl.add.AddElements;
 import uk.gov.gchq.gaffer.spark.operation.dataframe.ConvertElementToRow;
@@ -39,6 +39,7 @@ import uk.gov.gchq.gaffer.store.Store;
 import uk.gov.gchq.gaffer.store.StoreException;
 import uk.gov.gchq.gaffer.store.schema.Schema;
 import uk.gov.gchq.gaffer.user.User;
+import uk.gov.gchq.koryphe.impl.predicate.IsMoreThan;
 import uk.gov.gchq.koryphe.tuple.predicate.TupleAdaptedPredicate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +49,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
 
@@ -79,7 +79,7 @@ public class AccumuloStoreRelationTest {
     @Test
     public void testBuildScanRestrictViewByProperty() throws OperationException, StoreException {
         final List<TupleAdaptedPredicate<String, ?>> filters = new ArrayList<>();
-        filters.add(new TupleAdaptedPredicate<>(new IsMoreThan(5, false), "property1"));
+        filters.add(new TupleAdaptedPredicate<>(new IsMoreThan(5, false), new String[]{"property1"}));
         final View view = new View.Builder()
                 .edge(GetDataFrameOfElementsHandlerTest.EDGE_GROUP, new ViewElementDefinition.Builder()
                         .postAggregationFilterFunctions(filters)
@@ -88,7 +88,7 @@ public class AccumuloStoreRelationTest {
 
         final Predicate<Element> returnElement = (Element element) ->
                 element.getGroup().equals(GetDataFrameOfElementsHandlerTest.EDGE_GROUP)
-                        && ((Integer) element.getProperty("property1")) > 5;
+                        && (Integer) element.getProperty("property1") > 5;
         testBuildScanWithView("testBuildScanRestrictViewByProperty", view, returnElement);
     }
 
@@ -121,7 +121,7 @@ public class AccumuloStoreRelationTest {
         final ConvertElementToRow elementConverter = new ConvertElementToRow(schemaConverter.getUsedProperties(),
                 schemaConverter.getPropertyNeedsConversion(), schemaConverter.getConverterByProperty());
         final Set<Row> expectedRows = new HashSet<>();
-        StreamSupport.stream(getElements().spliterator(), false)
+        Streams.toStream(getElements())
                 .filter(returnElement)
                 .map(elementConverter::apply)
                 .forEach(expectedRows::add);
@@ -169,7 +169,7 @@ public class AccumuloStoreRelationTest {
         final ConvertElementToRow elementConverter = new ConvertElementToRow(new LinkedHashSet<>(Arrays.asList(requiredColumns)),
                 schemaConverter.getPropertyNeedsConversion(), schemaConverter.getConverterByProperty());
         final Set<Row> expectedRows = new HashSet<>();
-        StreamSupport.stream(getElements().spliterator(), false)
+        Streams.toStream(getElements())
                 .filter(returnElement)
                 .map(elementConverter::apply)
                 .forEach(expectedRows::add);
@@ -223,7 +223,7 @@ public class AccumuloStoreRelationTest {
         final ConvertElementToRow elementConverter = new ConvertElementToRow(new LinkedHashSet<>(Arrays.asList(requiredColumns)),
                 schemaConverter.getPropertyNeedsConversion(), schemaConverter.getConverterByProperty());
         final Set<Row> expectedRows = new HashSet<>();
-        StreamSupport.stream(getElements().spliterator(), false)
+        Streams.toStream(getElements())
                 .filter(returnElement)
                 .map(elementConverter::apply)
                 .forEach(expectedRows::add);

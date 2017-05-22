@@ -27,7 +27,6 @@ import uk.gov.gchq.gaffer.jobtracker.JobDetail;
 import uk.gov.gchq.gaffer.jsonserialisation.JSONSerialiser;
 import uk.gov.gchq.gaffer.operation.OperationChain.Builder;
 import uk.gov.gchq.gaffer.operation.impl.CountGroups;
-import uk.gov.gchq.gaffer.operation.impl.Deduplicate;
 import uk.gov.gchq.gaffer.operation.impl.DiscardOutput;
 import uk.gov.gchq.gaffer.operation.impl.Limit;
 import uk.gov.gchq.gaffer.operation.impl.OperationImpl;
@@ -39,6 +38,11 @@ import uk.gov.gchq.gaffer.operation.impl.get.GetAdjacentIds;
 import uk.gov.gchq.gaffer.operation.impl.get.GetAllElements;
 import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
 import uk.gov.gchq.gaffer.operation.impl.job.GetJobDetails;
+import uk.gov.gchq.gaffer.operation.impl.output.ToSet;
+import uk.gov.gchq.gaffer.operation.io.Input;
+import uk.gov.gchq.gaffer.operation.io.MultiInput;
+import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -46,6 +50,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class OperationChainTest {
     private static final JSONSerialiser serialiser = new JSONSerialiser();
@@ -88,7 +93,7 @@ public class OperationChainTest {
         final GetJobDetails getJobDetails = mock(GetJobDetails.class);
         final GenerateObjects<EntityId> generateEntitySeeds = mock(GenerateObjects.class);
         final Limit<Element> limit = mock(Limit.class);
-        final Deduplicate<Element> deduplicate = mock(Deduplicate.class);
+        final ToSet<Element> deduplicate = mock(ToSet.class);
         final CountGroups countGroups = mock(CountGroups.class);
         final ExportToSet<GroupCounts> exportToSet = mock(ExportToSet.class);
         final ExportToGafferResultCache<CloseableIterable<? extends Element>> exportToGafferCache = mock(ExportToGafferResultCache.class);
@@ -133,29 +138,6 @@ public class OperationChainTest {
                         getJobDetails
                 },
                 opChain.getOperationArray());
-    }
-
-    @Test
-    public void shouldReturnReadableStringForToString() {
-        // Given
-        final AddElements addElements = new AddElements();
-        final GetAdjacentIds getAdj1 = new GetAdjacentIds();
-        final GetAdjacentIds getAdj2 = new GetAdjacentIds();
-        final GetElements getRelElements = new GetElements();
-        final OperationChain<CloseableIterable<? extends Element>> opChain = new Builder()
-                .first(addElements)
-                .then(getAdj1)
-                .then(getAdj2)
-                .then(getRelElements)
-                .build();
-
-        // When
-        final String toString = opChain.toString();
-
-        // Then
-        final String expectedToString =
-                "OperationChain[AddElements->GetAdjacentIds->GetAdjacentIds->GetElements]";
-        assertEquals(expectedToString, toString);
     }
 
     @Test
@@ -208,5 +190,28 @@ public class OperationChainTest {
 
         // When / Then
         assertSame(typeRef, opChain.getOutputTypeReference());
+    }
+
+    @Test
+    public void shouldCloseAllOperationInputs() throws IOException {
+        // Given
+        final Operation[] operations = {
+                mock(Operation.class),
+                mock(Input.class),
+                mock(Input.class),
+                mock(MultiInput.class),
+                mock(Input.class)
+        };
+
+        // When
+        final OperationChain opChain = new OperationChain(Arrays.asList(operations));
+
+        // When
+        opChain.close();
+
+        // Then
+        for (final Operation operation : operations) {
+            verify(operation).close();
+        }
     }
 }

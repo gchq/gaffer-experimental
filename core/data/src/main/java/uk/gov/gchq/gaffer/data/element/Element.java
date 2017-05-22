@@ -18,8 +18,9 @@ package uk.gov.gchq.gaffer.data.element;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import uk.gov.gchq.gaffer.data.element.id.ElementId;
 import java.util.Map.Entry;
 
@@ -58,8 +59,10 @@ public abstract class Element implements ElementId {
     }
 
     public void copyProperties(final Properties properties) {
-        for (final Entry<String, Object> entry : properties.entrySet()) {
-            putProperty(entry.getKey(), entry.getValue());
+        if (null != properties) {
+            for (final Entry<String, Object> entry : properties.entrySet()) {
+                putProperty(entry.getKey(), entry.getValue());
+            }
         }
     }
 
@@ -144,8 +147,10 @@ public abstract class Element implements ElementId {
 
     @Override
     public String toString() {
-        return ", group='" + group
-                + "\', properties=" + properties;
+        return new ToStringBuilder(this)
+                .append("group", group)
+                .append("properties", properties)
+                .build();
     }
 }
 

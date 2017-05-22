@@ -37,7 +37,6 @@ import uk.gov.gchq.gaffer.operation.Operation;
 import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.operation.OperationException;
 import uk.gov.gchq.gaffer.operation.impl.CountGroups;
-import uk.gov.gchq.gaffer.operation.impl.Deduplicate;
 import uk.gov.gchq.gaffer.operation.impl.Validate;
 import uk.gov.gchq.gaffer.operation.impl.add.AddElements;
 import uk.gov.gchq.gaffer.operation.impl.export.resultcache.ExportToGafferResultCache;
@@ -49,16 +48,17 @@ import uk.gov.gchq.gaffer.operation.impl.generate.GenerateObjects;
 import uk.gov.gchq.gaffer.operation.impl.get.GetAdjacentIds;
 import uk.gov.gchq.gaffer.operation.impl.get.GetAllElements;
 import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
+import uk.gov.gchq.gaffer.operation.impl.output.ToSet;
 import uk.gov.gchq.gaffer.serialisation.Serialisation;
 import uk.gov.gchq.gaffer.serialisation.implementation.StringSerialiser;
 import uk.gov.gchq.gaffer.store.operation.handler.CountGroupsHandler;
-import uk.gov.gchq.gaffer.store.operation.handler.DeduplicateHandler;
 import uk.gov.gchq.gaffer.store.operation.handler.OperationHandler;
 import uk.gov.gchq.gaffer.store.operation.handler.OutputOperationHandler;
 import uk.gov.gchq.gaffer.store.operation.handler.export.set.ExportToSetHandler;
 import uk.gov.gchq.gaffer.store.operation.handler.export.set.GetSetExportHandler;
 import uk.gov.gchq.gaffer.store.operation.handler.generate.GenerateElementsHandler;
 import uk.gov.gchq.gaffer.store.operation.handler.generate.GenerateObjectsHandler;
+import uk.gov.gchq.gaffer.store.operation.handler.output.ToSetHandler;
 import uk.gov.gchq.gaffer.store.operationdeclaration.OperationDeclaration;
 import uk.gov.gchq.gaffer.store.operationdeclaration.OperationDeclarations;
 import uk.gov.gchq.gaffer.store.schema.Schema;
@@ -85,9 +85,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static uk.gov.gchq.gaffer.store.StoreTrait.INGEST_AGGREGATION;
 import static uk.gov.gchq.gaffer.store.StoreTrait.ORDERED;
 import static uk.gov.gchq.gaffer.store.StoreTrait.PRE_AGGREGATION_FILTERING;
-import static uk.gov.gchq.gaffer.store.StoreTrait.STORE_AGGREGATION;
 import static uk.gov.gchq.gaffer.store.StoreTrait.TRANSFORMATION;
 
 public class StoreTest {
@@ -164,6 +164,7 @@ public class StoreTest {
                 .build();
         final StoreProperties properties = mock(StoreProperties.class);
         final StoreImpl store = new StoreImpl();
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
 
         // When
         try {
@@ -187,6 +188,7 @@ public class StoreTest {
                         .build())
                 .build();
         given(properties.getOperationDeclarations()).willReturn(opDeclarations);
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
 
         // When
         store.initialise(schema, properties);
@@ -201,7 +203,7 @@ public class StoreTest {
         assertTrue(store.getOperationHandlerExposed(GenerateObjects.class) instanceof GenerateObjectsHandler);
 
         assertTrue(store.getOperationHandlerExposed(CountGroups.class) instanceof CountGroupsHandler);
-        assertTrue(store.getOperationHandlerExposed(Deduplicate.class) instanceof DeduplicateHandler);
+        assertTrue(store.getOperationHandlerExposed(ToSet.class) instanceof ToSetHandler);
 
         assertTrue(store.getOperationHandlerExposed(ExportToSet.class) instanceof ExportToSetHandler);
         assertTrue(store.getOperationHandlerExposed(GetSetExport.class) instanceof GetSetExportHandler);
@@ -217,6 +219,7 @@ public class StoreTest {
         // Given
         final Schema schema = createSchemaMock();
         final StoreProperties properties = mock(StoreProperties.class);
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
         final AddElements addElements = new AddElements();
         final StoreImpl store = new StoreImpl();
         store.initialise(schema, properties);
@@ -239,6 +242,7 @@ public class StoreTest {
         final ViewValidator viewValidator = mock(ViewValidator.class);
         final StoreImpl store = new StoreImpl(viewValidator);
 
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
         op.setView(view);
         given(schema.validate()).willReturn(new ValidationResult());
         ValidationResult validationResult = new ValidationResult();
@@ -263,6 +267,7 @@ public class StoreTest {
         final StoreProperties properties = mock(StoreProperties.class);
         final Operation operation = mock(Operation.class);
         final StoreImpl store = new StoreImpl();
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
 
         store.initialise(schema, properties);
 
@@ -283,6 +288,7 @@ public class StoreTest {
         final Store store = new StoreImpl();
         given(lazyElement.getGroup()).willReturn(TestGroups.ENTITY);
         given(lazyElement.getElement()).willReturn(entity);
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
 
         store.initialise(schema, properties);
 
@@ -303,6 +309,7 @@ public class StoreTest {
         final StoreProperties properties = mock(StoreProperties.class);
         final StoreImpl store = new StoreImpl();
         final CloseableIterable getElementsResult = mock(CloseableIterable.class);
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
 
         final AddElements addElements1 = new AddElements();
         final GetElements getElements = new GetElements();
@@ -330,9 +337,9 @@ public class StoreTest {
         // Given
         final Schema schema = createSchemaMock();
         final StoreProperties properties = mock(StoreProperties.class);
-
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
         final StoreImpl store = new StoreImpl();
-        final int expectedNumberOfOperations = 22;
+        final int expectedNumberOfOperations = 33;
         store.initialise(schema, properties);
 
         // When
@@ -350,6 +357,7 @@ public class StoreTest {
         final Schema schema = createSchemaMock();
         final StoreProperties properties = mock(StoreProperties.class);
         final StoreImpl store = new StoreImpl();
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
         store.initialise(schema, properties);
 
         // WHen
@@ -368,6 +376,7 @@ public class StoreTest {
         // Given
         final Schema schema = createSchemaMock();
         final StoreProperties properties = mock(StoreProperties.class);
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
         final StoreImpl store = new StoreImpl();
         store.initialise(schema, properties);
 
@@ -383,7 +392,7 @@ public class StoreTest {
         // Given
         final Schema schema = createSchemaMock();
         final StoreProperties properties = mock(StoreProperties.class);
-
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
         final StoreImpl store = new StoreImpl();
         store.initialise(schema, properties);
 
@@ -403,7 +412,8 @@ public class StoreTest {
                 .then(new ExportToGafferResultCache())
                 .build();
         final StoreProperties properties = mock(StoreProperties.class);
-        given(properties.getJobTrackerClass()).willReturn("jobTrackerClass");
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
+        given(properties.getJobTrackerEnabled()).willReturn(true);
         final Store store = new StoreImpl();
         final Schema schema = new Schema();
         store.initialise(schema, properties);
@@ -429,7 +439,8 @@ public class StoreTest {
         final Operation operation = mock(Operation.class);
         final OperationChain<?> opChain = new OperationChain<>(operation);
         final StoreProperties properties = mock(StoreProperties.class);
-        given(properties.getJobTrackerClass()).willReturn("jobTrackerClass");
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
+        given(properties.getJobTrackerEnabled()).willReturn(true);
         final Store store = new StoreImpl();
         final Schema schema = new Schema();
         store.initialise(schema, properties);
@@ -453,7 +464,8 @@ public class StoreTest {
     public void shouldGetJobTracker() throws OperationException, ExecutionException, InterruptedException, StoreException {
         // Given
         final StoreProperties properties = mock(StoreProperties.class);
-        given(properties.getJobTrackerClass()).willReturn("jobTrackerClass");
+        given(properties.getJobExecutorThreadCount()).willReturn(1);
+        given(properties.getJobTrackerEnabled()).willReturn(true);
         final Store store = new StoreImpl();
         final Schema schema = new Schema();
         store.initialise(schema, properties);
@@ -472,7 +484,7 @@ public class StoreTest {
     }
 
     private class StoreImpl extends Store {
-        private final Set<StoreTrait> TRAITS = new HashSet<>(Arrays.asList(STORE_AGGREGATION, PRE_AGGREGATION_FILTERING, TRANSFORMATION, ORDERED));
+        private final Set<StoreTrait> TRAITS = new HashSet<>(Arrays.asList(INGEST_AGGREGATION, PRE_AGGREGATION_FILTERING, TRANSFORMATION, ORDERED));
         private final ArrayList<Operation> doUnhandledOperationCalls = new ArrayList<>();
         private int createOperationHandlersCallCount;
         private boolean validationRequired;
@@ -559,7 +571,7 @@ public class StoreTest {
 
         @Override
         protected JobTracker createJobTracker(final StoreProperties properties) {
-            if ("jobTrackerClass".equals(properties.getJobTrackerClass())) {
+            if (properties.getJobTrackerEnabled()) {
                 return jobTracker;
             }
 

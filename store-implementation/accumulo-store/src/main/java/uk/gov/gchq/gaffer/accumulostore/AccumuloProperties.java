@@ -68,7 +68,7 @@ public class AccumuloProperties extends StoreProperties {
     }
 
     public static AccumuloProperties loadStoreProperties(final InputStream storePropertiesStream) {
-        return ((AccumuloProperties) StoreProperties.loadStoreProperties(storePropertiesStream));
+        return (AccumuloProperties) StoreProperties.loadStoreProperties(storePropertiesStream);
     }
 
     @Override
