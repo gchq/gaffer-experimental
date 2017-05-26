@@ -15,54 +15,43 @@
  */
 package uk.gov.gchq.gaffer.flink.operation;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.operation.Operation;
 import uk.gov.gchq.gaffer.operation.Options;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
 
-public class AddElementsFromKafka implements
-        Operation,
-        Options {
-    private String topic;
+public class AddElementsFromFile implements Operation, Options {
+
     /**
-     * The id of the consumer group
+     * The fully qualified path of the file from which Flink should consume
      */
-    private String groupId;
+    private String filename;
     /**
-     * Comma separated list of Kafka brokers
+     * Any properties to be passed to the Flink Job
      */
-    private String[] bootstrapServers;
+    private Properties properties;
 
     private Function<Iterable<? extends String>, Iterable<? extends Element>> elementGenerator;
     private Map<String, String> options;
 
-    public String getTopic() {
-        return topic;
+    public String getFilename() {
+        return filename;
     }
 
-    public void setTopic(final String topic) {
-        this.topic = topic;
+    public void setFilename(final String filename) {
+        this.filename = filename;
     }
 
-    public String getGroupId() {
-        return groupId;
+    public Properties getProperties() {
+        return this.properties;
     }
 
-    public void setGroupId(final String groupId) {
-        this.groupId = groupId;
-    }
-
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP")
-    public String[] getBootstrapServers() {
-        return bootstrapServers;
-    }
-
-    public void setBootstrapServers(final String... bootstrapServers) {
-        this.bootstrapServers = bootstrapServers;
+    public void setProperties(final Properties properties) {
+        this.properties = properties;
     }
 
     public <T extends Function<Iterable<? extends String>, Iterable<? extends Element>> & Serializable> T getElementGenerator() {
@@ -83,10 +72,10 @@ public class AddElementsFromKafka implements
         this.options = options;
     }
 
-    public static class Builder extends BaseBuilder<AddElementsFromKafka, Builder>
-            implements Options.Builder<AddElementsFromKafka, Builder> {
+    public static class Builder extends BaseBuilder<AddElementsFromFile, Builder>
+            implements Options.Builder<AddElementsFromFile, Builder> {
         public Builder() {
-            super(new AddElementsFromKafka());
+            super(new AddElementsFromFile());
         }
 
         public <T extends Function<Iterable<? extends String>, Iterable<? extends Element>> & Serializable> Builder generator(final T generator) {
@@ -94,18 +83,8 @@ public class AddElementsFromKafka implements
             return _self();
         }
 
-        public Builder topic(final String topic) {
-            _getOp().setTopic(topic);
-            return _self();
-        }
-
-        public Builder groupId(final String groupId) {
-            _getOp().setGroupId(groupId);
-            return _self();
-        }
-
-        public Builder bootstrapServers(final String... bootstrapServers) {
-            _getOp().setBootstrapServers(bootstrapServers);
+        public Builder filename(final String filename) {
+            _getOp().setFilename(filename);
             return _self();
         }
 

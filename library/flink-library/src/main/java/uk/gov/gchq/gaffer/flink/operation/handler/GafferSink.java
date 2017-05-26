@@ -16,6 +16,8 @@
 package uk.gov.gchq.gaffer.flink.operation.handler;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "There are null checks that will initialise the fields")
-public class GafferSink implements SinkFunction<Iterable<? extends Element>> {
+public class GafferSink extends RichSinkFunction<Iterable<? extends Element>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GafferSink.class);
 
     private static final long serialVersionUID = 1569145256866410621L;
@@ -48,6 +50,12 @@ public class GafferSink implements SinkFunction<Iterable<? extends Element>> {
     public GafferSink(final Store store) {
         schema = store.getSchema().toCompactJson();
         storeProperties = store.getProperties();
+    }
+
+    @Override
+    public void open(Configuration parameters) throws Exception {
+        super.open(parameters);
+        store.createStore(storeProperties, Schema.fromJson(schema));
     }
 
     @Override
@@ -107,20 +115,6 @@ public class GafferSink implements SinkFunction<Iterable<? extends Element>> {
 
                     restart = true;
 
-                    // TODO: remove these logs
-                    LOGGER.info("Finished adding batch of elements");
-                    final CloseableIterable<? extends Element> results = store.execute(
-                            new GetAllElements.Builder()
-                                    .view(new View.Builder()
-                                            .entities(store.getSchema().getEntityGroups())
-                                            .edges(store.getSchema().getEdgeGroups())
-                                            .build())
-                                    .build(), new User());
-                    LOGGER.info("All elements in graph:");
-                    for (final Element result : results) {
-                        LOGGER.info("Element = " + result);
-                    }
-                    LOGGER.info("");
                 } catch (OperationException e) {
                     throw new RuntimeException(e);
                 }

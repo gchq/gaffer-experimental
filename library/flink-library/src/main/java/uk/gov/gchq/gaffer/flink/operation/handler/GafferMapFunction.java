@@ -18,6 +18,8 @@ package uk.gov.gchq.gaffer.flink.operation.handler;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.flink.api.common.functions.MapFunction;
 import uk.gov.gchq.gaffer.data.element.Element;
+import uk.gov.gchq.gaffer.data.generator.ElementGenerator;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.function.Function;
@@ -25,15 +27,21 @@ import java.util.function.Function;
 public class GafferMapFunction implements MapFunction<String, Iterable<? extends Element>> {
     private static final long serialVersionUID = -2338397824952911347L;
 
+    private Class<? extends Function> generatorClassName;
+
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "The constructor forces this to be serializable")
-    private Function<Iterable<? extends String>, Iterable<? extends Element>> elementGenerator;
+    private transient Function<Iterable<? extends String>, Iterable<? extends Element>> elementGenerator;
 
     public <T extends Function<Iterable<? extends String>, Iterable<? extends Element>> & Serializable> GafferMapFunction(final T elementGenerator) {
+        this.generatorClassName = elementGenerator.getClass();
         this.elementGenerator = elementGenerator;
     }
 
     @Override
     public Iterable<? extends Element> map(final String csv) throws Exception {
+        if (null == elementGenerator) {
+            elementGenerator = generatorClassName.newInstance();
+        }
         return elementGenerator.apply(Collections.singleton(csv));
     }
 
