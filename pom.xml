@@ -30,6 +30,7 @@
 
     <modules>
         <module>tinkerpop</module>
+        <module>graffer-ql</module>
     </modules>
 
     <properties>
