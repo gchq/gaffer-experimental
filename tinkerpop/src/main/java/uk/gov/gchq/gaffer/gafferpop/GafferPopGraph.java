@@ -24,6 +24,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.apache.tinkerpop.gremlin.structure.util.GraphFactory;
+
 import uk.gov.gchq.gaffer.commonutil.CommonConstants;
 import uk.gov.gchq.gaffer.commonutil.iterable.ChainedIterable;
 import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterable;
@@ -56,6 +57,7 @@ import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
 import uk.gov.gchq.gaffer.operation.io.Output;
 import uk.gov.gchq.gaffer.store.schema.Schema;
 import uk.gov.gchq.gaffer.user.User;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -76,6 +78,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * query for adjacent vertices and to provide a {@link View} to filter out results.
  */
 public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Graph {
+    public static final String GRAPH_ID = "gaffer.graphId";
+
     /**
      * Configuration key for a path to Gaffer store properties.
      *
@@ -138,6 +142,11 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
     }
 
     private static Graph createGraph(final Configuration configuration) {
+        final String graphId = configuration.getString(GRAPH_ID);
+        if (null == graphId) {
+            throw new IllegalArgumentException(GRAPH_ID + " property is required");
+        }
+
         final Path storeProps = Paths.get(configuration.getString(STORE_PROPERTIES));
         final Schema.Builder schemaBuilder = new Schema.Builder();
         for (final String schemaPath : configuration.getStringArray(SCHEMAS)) {
@@ -145,6 +154,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
         }
 
         return new Graph.Builder()
+                .graphId(graphId)
                 .storeProperties(storeProps)
                 .addSchema(schemaBuilder.build())
                 .build();
@@ -703,7 +713,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
         } else if (Direction.IN == direction) {
             inOutType = IncludeIncomingOutgoingType.INCOMING;
         } else {
-            inOutType = IncludeIncomingOutgoingType.BOTH;
+            inOutType = IncludeIncomingOutgoingType.EITHER;
         }
 
         return inOutType;

@@ -27,10 +27,12 @@ import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
+
 import uk.gov.gchq.gaffer.commonutil.StreamUtil;
 import uk.gov.gchq.gaffer.data.elementdefinition.view.View;
 import uk.gov.gchq.gaffer.graph.Graph;
 import uk.gov.gchq.gaffer.user.User;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -321,6 +323,7 @@ public class GafferPopGraphTest {
 
     private Graph getGafferGraph() {
         return new Graph.Builder()
+                .graphId("graph1")
                 .storeProperties(StreamUtil.openStream(this.getClass(), "/gaffer/store.properties"))
                 .addSchemas(StreamUtil.openStreams(this.getClass(), "/gaffer/schema"))
                 .build();

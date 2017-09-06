@@ -15,10 +15,12 @@
  */
 package uk.gov.gchq.gaffer.gafferpop.groovyplugin;
 
+import com.google.common.collect.Sets;
 import org.apache.tinkerpop.gremlin.groovy.plugin.AbstractGremlinPlugin;
 import org.apache.tinkerpop.gremlin.groovy.plugin.IllegalEnvironmentException;
 import org.apache.tinkerpop.gremlin.groovy.plugin.PluginAcceptor;
 import org.apache.tinkerpop.gremlin.groovy.plugin.PluginInitializationException;
+
 import uk.gov.gchq.gaffer.data.element.IdentifierType;
 import uk.gov.gchq.gaffer.data.element.function.ElementFilter;
 import uk.gov.gchq.gaffer.data.element.function.ElementTransformer;
@@ -27,22 +29,20 @@ import uk.gov.gchq.gaffer.data.elementdefinition.view.ViewElementDefinition;
 import uk.gov.gchq.gaffer.gafferpop.GafferPopGraph;
 import uk.gov.gchq.koryphe.impl.function.Concat;
 import uk.gov.gchq.koryphe.impl.predicate.Exists;
-import java.util.HashSet;
+
 import java.util.Set;
 
 public final class GafferPopGremlinPlugin extends AbstractGremlinPlugin {
-    private static final Set<String> IMPORTS = new HashSet<String>() {
-        {
-            add(getPackage(GafferPopGraph.class));
-            add(getPackage(View.class));
-            add(getPackage(ViewElementDefinition.class));
-            add(getPackage(ElementFilter.class));
-            add(getPackage(ElementTransformer.class));
-            add(getPackage(IdentifierType.class));
-            add(getPackage(Exists.class));
-            add(getPackage(Concat.class));
-        }
-    };
+    private static final Set<String> IMPORTS = Sets.newHashSet(
+            getPackage(GafferPopGraph.class),
+            getPackage(View.class),
+            getPackage(ViewElementDefinition.class),
+            getPackage(ElementFilter.class),
+            getPackage(ElementTransformer.class),
+            getPackage(IdentifierType.class),
+            getPackage(Exists.class),
+            getPackage(Concat.class)
+    );
 
     private static String getPackage(final Class<?> clazz) {
         return IMPORT_SPACE + clazz.getPackage().getName() + DOT_STAR;
@@ -60,6 +60,5 @@ public final class GafferPopGremlinPlugin extends AbstractGremlinPlugin {
 
     @Override
     public void afterPluginTo(final PluginAcceptor pluginAcceptor) throws IllegalEnvironmentException, PluginInitializationException {
-
     }
 }
