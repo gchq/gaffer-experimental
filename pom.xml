@@ -21,21 +21,20 @@
     <parent>
         <groupId>uk.gov.gchq.gaffer</groupId>
         <artifactId>gaffer2</artifactId>
-        <version>0.7.8</version>
+        <version>1.5.2</version>
     </parent>
 
     <artifactId>gaffer-experimental</artifactId>
-    <version>0.7.9-SNAPSHOT</version>
+    <version>1.5.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>tinkerpop</module>
         <module>graffer-ql</module>
-        <module>federated-rest</module>
     </modules>
 
     <properties>
-        <gaffer.version>0.7.8</gaffer.version>
+        <gaffer.version>1.5.2</gaffer.version>
         <scm.url>
             https://github.com/gchq/gaffer-experimental
         </scm.url>

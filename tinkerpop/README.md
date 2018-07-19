@@ -33,18 +33,17 @@ You must provide a configuration file containing a path to a Gaffer store.proper
     gaffer.storeproperties=conf/gaffer/store.properties
     gaffer.schemas=conf/gaffer/schema/dataSchema.json,conf/gaffer/schema/dataTypes.json
 
-To use the gremlin console download 'apache-gremlin-console-3.2.0-incubating-bin.zip'
+To use the gremlin console download 'apache-tinkerpop-gremlin-console-3.3.3.zip'
 
 To get going with the tinkerpop-modern dataset backed by a MockAccumuloStore you can do the following:
 
 ```bash
     # Build the code
-    mvn clean install -Pquick
+    mvn clean install -Pquick -pl :tinkerpop -am
 
     gremlinConsolePath=[gremlin-console-path]
 
     # Create the necessary directories in the gremlin console folder
-    mkdir $gremlinConsolePath/conf/gafferpop
     mkdir -p $gremlinConsolePath/ext/gafferpop/plugin
 
     # Copy the required files into the gremlin console folder
@@ -56,7 +55,7 @@ To get going with the tinkerpop-modern dataset backed by a MockAccumuloStore you
     ./bin/gremlin.sh
 
     # Activate the GafferPop plugin
-    :plugin use uk.gov.gchq.gaffer.gafferpop.GafferPopGraph
+    :plugin use gafferpop
 ```
 
 
@@ -64,7 +63,7 @@ load the tinkerpop modern data set:
 
     graph = GraphFactory.open('conf/gafferpop/gafferpop-tinkerpop-modern.properties')
     graph.io(graphml()).readGraph('data/tinkerpop-modern.xml')
-    g = graph.traversal(standard())
+    g = graph.traversal()
 
 do some queries:
 

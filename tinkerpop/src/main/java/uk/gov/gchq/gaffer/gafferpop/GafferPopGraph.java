@@ -42,7 +42,6 @@ import uk.gov.gchq.gaffer.operation.Operation;
 import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.operation.OperationChain.Builder;
 import uk.gov.gchq.gaffer.operation.OperationException;
-import uk.gov.gchq.gaffer.operation.Options;
 import uk.gov.gchq.gaffer.operation.SeedMatching;
 import uk.gov.gchq.gaffer.operation.data.EdgeSeed;
 import uk.gov.gchq.gaffer.operation.data.ElementSeed;
@@ -490,9 +489,7 @@ public class GafferPopGraph implements org.apache.tinkerpop.gremlin.structure.Gr
 
     private <T> T execute(final OperationChain<T> opChain) {
         for (final Operation operation : opChain.getOperations()) {
-            if (operation instanceof Options) {
-                ((Options) operation).setOptions(opOptions);
-            }
+            operation.setOptions(opOptions);
         }
 
         try {
