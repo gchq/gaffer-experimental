@@ -31,7 +31,6 @@
     <modules>
         <module>tinkerpop</module>
         <module>graffer-ql</module>
-        <module>federated-rest</module>
     </modules>
 
     <properties>
