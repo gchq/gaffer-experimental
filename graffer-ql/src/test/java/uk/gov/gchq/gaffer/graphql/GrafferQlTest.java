@@ -20,6 +20,7 @@ import graphql.GraphQL;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
+
 import uk.gov.gchq.gaffer.commonutil.StreamUtil;
 import uk.gov.gchq.gaffer.graph.Graph;
 import uk.gov.gchq.gaffer.operation.OperationChain;
@@ -27,7 +28,7 @@ import uk.gov.gchq.gaffer.operation.impl.add.AddElements;
 import uk.gov.gchq.gaffer.operation.impl.generate.GenerateElements;
 import uk.gov.gchq.gaffer.traffic.DemoData;
 import uk.gov.gchq.gaffer.traffic.ElementGroup;
-import uk.gov.gchq.gaffer.traffic.generator.RoadTrafficElementGenerator;
+import uk.gov.gchq.gaffer.traffic.generator.RoadTrafficStringElementGenerator;
 import uk.gov.gchq.gaffer.user.User;
 
 import static org.junit.Assert.fail;
@@ -56,7 +57,7 @@ public class GrafferQlTest {
         final OperationChain<Void> populateChain = new OperationChain.Builder()
                 .first(new GenerateElements.Builder<String>()
                         .input(IOUtils.readLines(StreamUtil.openStream(DemoData.class, "roadTrafficSampleData.csv")))
-                        .generator(new RoadTrafficElementGenerator())
+                        .generator(new RoadTrafficStringElementGenerator())
                         .build())
                 .then(new AddElements.Builder()
                         .skipInvalidElements(false)
