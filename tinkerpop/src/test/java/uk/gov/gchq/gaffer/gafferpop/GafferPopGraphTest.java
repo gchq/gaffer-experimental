@@ -1,20 +1,17 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Copyright 2017-2020 Crown Copyright
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package uk.gov.gchq.gaffer.gafferpop;
 
@@ -59,12 +56,14 @@ public class GafferPopGraphTest {
     public static final String AUTH_1 = "auth1";
     public static final String AUTH_2 = "auth2";
 
-    private static final Configuration TEST_CONFIGURATION = new BaseConfiguration() {{
-        this.setProperty(GafferPopGraph.GRAPH, GafferPopGraph.class.getName());
-        this.setProperty(GafferPopGraph.OP_OPTIONS, new String[]{"key1:value1", "key2:value2"});
-        this.setProperty(GafferPopGraph.USER_ID, USER_ID);
-        this.setProperty(GafferPopGraph.DATA_AUTHS, new String[]{AUTH_1, AUTH_2});
-    }};
+    private static final Configuration TEST_CONFIGURATION = new BaseConfiguration() {
+        {
+            this.setProperty(GafferPopGraph.GRAPH, GafferPopGraph.class.getName());
+            this.setProperty(GafferPopGraph.OP_OPTIONS, new String[] {"key1:value1", "key2:value2" });
+            this.setProperty(GafferPopGraph.USER_ID, USER_ID);
+            this.setProperty(GafferPopGraph.DATA_AUTHS, new String[]{AUTH_1, AUTH_2});
+        }
+    };
 
     @Test
     public void shouldConstructGafferPopGraph() {
