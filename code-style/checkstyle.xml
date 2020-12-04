@@ -101,7 +101,9 @@
         <module name="SimplifyBooleanReturn"/>
 
         <module name="FinalClass"/>
-        <module name="HideUtilityClassConstructor"/>
+        <module name="HideUtilityClassConstructor">
+            <property name="id" value="hideUtilityClassConstructor"/>
+        </module>
         <module name="InterfaceIsType"/>
 
         <module name="ArrayTypeStyle"/>
