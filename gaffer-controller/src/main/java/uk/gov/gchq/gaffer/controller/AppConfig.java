@@ -71,7 +71,7 @@ public class AppConfig {
         };
     }
 
-    @Bean("sharedInformerFactory") // Was copied and pasted from the internet - probably can remove name
+    @Bean
     public SharedInformerFactory sharedInformerFactory() {
         return new InformerFactory();
     }
