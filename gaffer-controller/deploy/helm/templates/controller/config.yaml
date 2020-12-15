@@ -18,7 +18,7 @@ worker.service.account={{ .Values.worker.serviceAccount.name }}
 {{- range $property, $value := .Values.controller.applicationProperties }}
 {{ $property }}={{ $value }}
 {{- end }}
-{{- end -}}
+{{- end }}
 
 apiVersion: v1
 kind: ConfigMap
