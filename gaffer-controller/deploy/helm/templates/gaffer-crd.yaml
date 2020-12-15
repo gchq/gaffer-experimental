@@ -1,0 +1,62 @@
+# Copyright 2020 Crown Copyright
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: gaffers.gchq.gov.uk
+  labels:
+    {{- include "gaffer-controller.labels" . | nindent 4 }}
+spec:
+  group: gchq.gov.uk
+  names:
+    kind: Gaffer
+    listKind: GafferList
+    plural: gaffers
+    singular: gaffer
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            description: The Values of the Gaffer Helm chart that you wish to overwrite.
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+          status:
+            description: Status defines the observed state of Gaffer
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+            properties:
+              problems:
+                type: array
+                items:
+                  type: string
+                description: Issues encountered in deployments
+              restApiStatus:
+                type: string
+                description: The Current Status of the Gaffer REST API
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+    additionalPrinterColumns:
+      - name: REST API Status
+        jsonPath: .status.restApiStatus
+        type: string
+      - name: Age
+        jsonPath: .metadata.creationTimestamp
+        type: date
