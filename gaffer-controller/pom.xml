@@ -13,7 +13,7 @@
   <artifactId>gaffer-controller</artifactId>
 
   <properties>
-    <kubernetes.version>10.0.0</kubernetes.version>
+    <kubernetes.version>11.0.0</kubernetes.version>
     <slf4j.api.version>1.7.25</slf4j.api.version>
     <apache.commons.text.version>1.9</apache.commons.text.version>
     <!-- Testing versions -->
