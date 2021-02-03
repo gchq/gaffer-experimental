@@ -20,11 +20,20 @@ mvn clean install
 ```bash
 docker build -t gchq/gaffer-controller:latest
 kind load docker-image gchq/gaffer-controller:latest
-kubectl create namespace gaffer-workers
-helm install gaffer-controller ./deploy/helm -n gaffer-workers
+helm install gaffer-controller ./deploy/helm
 ```
 
 ## Deploy a Gaffer Graph using the controller
 ```bash
 kubectl apply example/add-gaffer.yaml
+```
+
+## Single deployment vs Multiple deployment
+You can either deploy the controller as a single entity which watches Gaffer instances across the whole cluster, 
+or as a per-namespace deployment which only controls instances for that specific namespace. Whatever you choose will
+be dependent on your needs and rules for the cluster your working with.
+
+the default scope setting is namespace (multiple deployments) but you can change it:
+```bash
+helm install gaffer-controller ./deploy/helm --set controller.applicationProperties."controller\.scope"=CLUSTER
 ```

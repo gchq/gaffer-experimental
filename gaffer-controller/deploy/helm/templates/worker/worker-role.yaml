@@ -13,7 +13,11 @@
 # limitations under the License.
 
 apiVersion: rbac.authorization.k8s.io/v1
+{{ if eq (index .Values.controller.applicationProperties "controller.scope") "NAMESPACE" }}
+kind: Role
+{{ else }}
 kind: ClusterRole
+{{- end }}
 metadata:
   name: {{ template "gaffer-controller.fullname" . }}-worker
   labels:
@@ -79,7 +83,11 @@ rules:
 
 --- 
 apiVersion: rbac.authorization.k8s.io/v1
+{{ if eq (index .Values.controller.applicationProperties "controller.scope") "NAMESPACE" }}
+kind: RoleBinding
+{{ else }}
 kind: ClusterRoleBinding
+{{- end }}
 metadata:
   name: {{ template "gaffer-controller.fullname" . }}-worker
   labels:
@@ -89,6 +97,10 @@ subjects:
     name: {{ .Values.worker.serviceAccount.name }}
     namespace: {{ .Release.Namespace }}
 roleRef:
+{{ if eq (index .Values.controller.applicationProperties "controller.scope") "NAMESPACE" }}
+  kind: Role
+{{ else }}
   kind: ClusterRole
+{{- end }}
   name: {{ template "gaffer-controller.fullname" . }}-worker
   apiGroup: rbac.authorization.k8s.io

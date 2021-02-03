@@ -13,12 +13,13 @@
 # limitations under the License.
 
 controller:
-  applicationProperties: {}
+  applicationProperties:
+    controller.scope: NAMESPACE
   serviceAccount:
     create: true
     name: gaffer-controller
   image:
-    repository: gchq/gaffer-controller
+    repository: d47853/gaffer-controller
     tag: latest
     imagePullPolicy: IfNotPresent
 worker:
