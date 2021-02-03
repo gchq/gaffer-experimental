@@ -16,6 +16,9 @@
 
 package uk.gov.gchq.gaffer.controller.informer;
 
+import io.kubernetes.client.common.KubernetesListObject;
+import io.kubernetes.client.common.KubernetesObject;
+import io.kubernetes.client.informer.SharedIndexInformer;
 import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.openapi.models.V1Deployment;
 import io.kubernetes.client.openapi.models.V1DeploymentList;
@@ -24,39 +27,58 @@ import io.kubernetes.client.openapi.models.V1PodList;
 import io.kubernetes.client.spring.extended.controller.annotation.GroupVersionResource;
 import io.kubernetes.client.spring.extended.controller.annotation.KubernetesInformer;
 import io.kubernetes.client.spring.extended.controller.annotation.KubernetesInformers;
+import io.kubernetes.client.util.generic.GenericKubernetesApi;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
+import uk.gov.gchq.gaffer.controller.DeploymentScope;
 import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
 
+import static uk.gov.gchq.gaffer.controller.util.Constants.CONTROLLER_SCOPE;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE_DEFAULT;
+
 @KubernetesInformers({
         @KubernetesInformer(
-                apiTypeClass = Gaffer.class,
-                apiListTypeClass = GafferList.class,
-                groupVersionResource =
-                @GroupVersionResource(
-                        apiGroup = "gchq.gov.uk",
-                        resourcePlural = "gaffers"
-                )
+            apiTypeClass = Gaffer.class,
+            apiListTypeClass = GafferList.class,
+            groupVersionResource =
+            @GroupVersionResource(
+                apiGroup = "gchq.gov.uk",
+                resourcePlural = "gaffers"
+            )
         ),
         @KubernetesInformer(
-                apiTypeClass = V1Pod.class,
-                apiListTypeClass = V1PodList.class,
-                groupVersionResource =
-                @GroupVersionResource(
-                        resourcePlural = "pods"
-                )
+            apiTypeClass = V1Pod.class,
+            apiListTypeClass = V1PodList.class,
+            groupVersionResource =
+            @GroupVersionResource(
+                resourcePlural = "pods"
+            )
         ),
         @KubernetesInformer(
-                apiTypeClass = V1Deployment.class,
-                apiListTypeClass = V1DeploymentList.class,
-                groupVersionResource =
-                @GroupVersionResource(
-                        apiGroup = "apps",
-                        resourcePlural = "deployments"
-                )
+            apiTypeClass = V1Deployment.class,
+            apiListTypeClass = V1DeploymentList.class,
+            groupVersionResource =
+            @GroupVersionResource(
+                apiGroup = "apps",
+                resourcePlural = "deployments"
+            )
         )
 
 })
 public class InformerFactory extends SharedInformerFactory {
+    private final String namespace;
 
+    @Autowired
+    public InformerFactory(final Environment env) {
+        this.namespace = DeploymentScope.NAMESPACE.name().equals(env.getProperty(CONTROLLER_SCOPE)) ?
+            env.getProperty(WORKER_NAMESPACE, WORKER_NAMESPACE_DEFAULT) : "";
+    }
+
+    @Override
+    public synchronized <ApiType extends KubernetesObject, ApiListType extends KubernetesListObject> SharedIndexInformer<ApiType> sharedIndexInformerFor(final GenericKubernetesApi<ApiType, ApiListType> genericKubernetesApi, final Class<ApiType> apiTypeClass, final long resyncPeriodInMillis, final String namespace) {
+        return super.sharedIndexInformerFor(genericKubernetesApi, apiTypeClass, resyncPeriodInMillis, this.namespace);
+    }
 }

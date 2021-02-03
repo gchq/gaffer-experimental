@@ -20,13 +20,13 @@ package uk.gov.gchq.gaffer.controller;
 import io.kubernetes.client.extended.controller.Controller;
 import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.spring.extended.controller.factory.KubernetesControllerFactory;
 import io.kubernetes.client.util.ClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
@@ -42,7 +42,6 @@ import java.io.IOException;
  * Configuration for the application including which beans to inject. Extend this class to provide different values.
  */
 @Configuration
-@ComponentScan("io.kubernetes.client.spring.extended.controller") // Activates the Kubernetes processors
 public class AppConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppConfig.class);
@@ -71,9 +70,21 @@ public class AppConfig {
         };
     }
 
+    @Bean(name = "gaffer-deployment-handler")
+    public KubernetesControllerFactory gafferDeploymentFactory(
+        final SharedInformerFactory sharedInformerFactory, final DeploymentHandler reconciler) {
+        return new KubernetesControllerFactory(sharedInformerFactory, reconciler);
+    }
+
+    @Bean(name = "gaffer-state-handler")
+    public KubernetesControllerFactory stateFactory(
+        final SharedInformerFactory sharedInformerFactory, final StateHandler reconciler) {
+        return new KubernetesControllerFactory(sharedInformerFactory, reconciler);
+    }
+
     @Bean
-    public SharedInformerFactory sharedInformerFactory() {
-        return new InformerFactory();
+    public SharedInformerFactory sharedInformerFactory(final Environment environment) {
+        return new InformerFactory(environment);
     }
 
     @Bean

@@ -27,7 +27,7 @@ import io.kubernetes.client.openapi.models.V1SecretVolumeSource;
 import io.kubernetes.client.openapi.models.V1Volume;
 import io.kubernetes.client.openapi.models.V1VolumeMount;
 import io.kubernetes.client.util.Yaml;
-import org.apache.commons.collections.list.UnmodifiableList;
+import org.apache.commons.collections4.list.UnmodifiableList;
 import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.core.env.Environment;
 
@@ -57,7 +57,7 @@ import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUN
  */
 public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     // Values.yaml constants
-    private static final List TABLE_PERMISSIONS = UnmodifiableList.decorate(
+    private static final List<String> TABLE_PERMISSIONS = new UnmodifiableList<>(
             Lists.newArrayList("READ", "WRITE", "BULK_IMPORT", "ALTER_TABLE"));
     private static final String GRAPH = "graph";
     private static final String CONFIG = "config";

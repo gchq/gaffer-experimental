@@ -360,13 +360,13 @@ public class DeploymentHandler implements Reconciler {
         LOGGER.debug("Removing any workers working on this gaffer deployment");
         this.coreV1Api.deleteCollectionNamespacedPodAsync(workerNamespace, null, null, null,
                 null, 0, workerLabelSelector, null, null,
-                null, null, null, null, (SimpleApiCallback<V1Status>) (result, err) -> {
+                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, err) -> {
             if (err == null) {
                 try {
                     LOGGER.debug("All worker pods have been removed. Removing any attached secrets");
                     coreV1Api.deleteCollectionNamespacedSecret(workerNamespace, null, null,
                             null, null, 0, workerLabelSelector, null,
-                            null, null, null, null, null);
+                            null, null, null, null, null, null);
                 } catch (final ApiException e) {
                     LOGGER.error("Failed to remove worker secrets", e);
                 }
@@ -377,7 +377,7 @@ public class DeploymentHandler implements Reconciler {
         LOGGER.debug("Removing HDFS PVCs");
         this.coreV1Api.deleteCollectionNamespacedPersistentVolumeClaimAsync(gafferNamespace, null, null,
                 null, null, 0, hdfsLabelSelector, null, null,
-                null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
+                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
                     if (e != null) {
                         LOGGER.error("Failed to remove HDFS PVCs", e);
                     }
@@ -385,7 +385,7 @@ public class DeploymentHandler implements Reconciler {
         LOGGER.debug("Removing Zookeeper PVCs");
         this.coreV1Api.deleteCollectionNamespacedPersistentVolumeClaimAsync(gafferNamespace, null, null,
                 null, null, 0, zookeeperLabelSelector, null, null,
-                null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
+                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
                     if (e != null) {
                         LOGGER.error("Failed to remove Zookeeper PVCs", e);
                     }
@@ -393,7 +393,7 @@ public class DeploymentHandler implements Reconciler {
         LOGGER.debug("Removing any stranded pods");
         this.coreV1Api.deleteCollectionNamespacedPodAsync(gafferNamespace, null, null, null,
                 null, 0, gafferLabelSelector, null, null,
-                null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
+                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
                     if (e != null) {
                         LOGGER.error("Failed to remove stranded pods", e);
                     }

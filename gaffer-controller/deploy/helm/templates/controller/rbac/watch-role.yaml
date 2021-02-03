@@ -69,7 +69,7 @@ subjects:
     name: {{ .Values.controller.serviceAccount.name }}
     namespace: {{ .Release.Namespace }}
 roleRef:
-  {{ if eq (index .Values.controller.applicationProperties "controller.scope") "NAMSPACE" }}
+  {{ if eq (index .Values.controller.applicationProperties "controller.scope") "NAMESPACE" }}
   kind: Role
   {{ else }}
   kind: ClusterRole

@@ -39,6 +39,7 @@ public final class Constants {
     public static final String WORKER_SERVICE_ACCOUNT_NAME = "worker.service.account";
     public static final String WORKER_RESTART_POLICY = "worker.restart.policy";
     public static final String GENERATED_PASSWORD_LENGTH = "worker.password.length";
+    public static final String CONTROLLER_SCOPE = "controller.scope";
 
     // Configuration defaults
     public static final String WORKER_NAMESPACE_DEFAULT = "gaffer-workers";

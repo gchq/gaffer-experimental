@@ -8,9 +8,14 @@ ARG BASE_IMAGE_TAG=stretch-20201117-slim
 FROM ${BUILDER_IMAGE_NAME}:${BUILDER_IMAGE_TAG} as builder
 WORKDIR /workspace
 
-RUN git clone https://github.com/gchq/gaffer-experimental.git
-RUN cd gaffer-experimental && \
-    mvn clean install -Pquick -pl :gaffer-controller -am
+COPY ./target ./gaffer-experimental/target
+
+RUN if [ ! -f ./gaffer-experimental/target/gaffer-controller-1.13.0-exec.jar ]; then \
+        rm -rf ./gaffer-experimental && \
+        git clone https://github.com/gchq/gaffer-experimental.git && \
+        cd gaffer-experimental && \
+        mvn clean install -Pquick -pl :gaffer-controller -am; \
+    fi
 
 FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 ARG USER=spring
@@ -24,5 +29,5 @@ RUN mkdir -p /usr/share/man/man1 && \
 
 USER ${USER}
 WORKDIR /spring
-COPY --from=builder /workspace/gaffer-experimental/target/gaffer-controller-1.13.0.jar ./gaffer-controller.jar
+COPY --from=builder /workspace/gaffer-experimental/target/gaffer-controller-1.13.0-exec.jar ./gaffer-controller.jar
 ENTRYPOINT [ "java", "-jar", "./gaffer-controller.jar"]
