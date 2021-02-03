@@ -7,10 +7,10 @@ ARG BASE_IMAGE_TAG=stretch-20201117-slim
 
 FROM ${BUILDER_IMAGE_NAME}:${BUILDER_IMAGE_TAG} as builder
 WORKDIR /workspace
-COPY ./src ./src
-COPY ./pom.xml .
 
-RUN mvn clean install
+RUN git clone https://github.com/gchq/gaffer-experimental.git
+RUN cd gaffer-experimental && \
+    mvn clean install -Pquick -pl :gaffer-controller -am
 
 FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 ARG USER=spring
@@ -24,5 +24,5 @@ RUN mkdir -p /usr/share/man/man1 && \
 
 USER ${USER}
 WORKDIR /spring
-COPY --from=builder /workspace/target/gaffer-controller-1.0-SNAPSHOT.jar ./gaffer-controller.jar
+COPY --from=builder /workspace/gaffer-experimental/target/gaffer-controller-1.13.0.jar ./gaffer-controller.jar
 ENTRYPOINT [ "java", "-jar", "./gaffer-controller.jar"]

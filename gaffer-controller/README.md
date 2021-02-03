@@ -21,7 +21,7 @@ mvn clean install
 docker build -t gchq/gaffer-controller:latest
 kind load docker-image gchq/gaffer-controller:latest
 kubectl create namespace gaffer-workers
-helm install gaffer-controller ./deploy/helm/gaffer-controller -n gaffer-workers
+helm install gaffer-controller ./deploy/helm -n gaffer-workers
 ```
 
 ## Deploy a Gaffer Graph using the controller
