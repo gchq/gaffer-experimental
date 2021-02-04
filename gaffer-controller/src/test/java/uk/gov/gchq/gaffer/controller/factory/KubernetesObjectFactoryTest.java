@@ -16,11 +16,8 @@
 
 package uk.gov.gchq.gaffer.controller.factory;
 
-import com.google.common.collect.Lists;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
-import io.kubernetes.client.openapi.models.V1Secret;
-import io.kubernetes.client.util.Yaml;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
 
@@ -31,8 +28,6 @@ import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,76 +42,6 @@ import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUN
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME_DEFAULT;
 
 public class KubernetesObjectFactoryTest {
-
-    @Test
-    public void shouldMergeValuesInWithGeneratedPasswordsOnInitialDeployment() {
-        // Given
-        Environment env = mock(Environment.class);
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
-
-        // When
-        GafferSpec spec = new GafferSpec();
-        spec.put("key", "value");
-
-        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob"));
-
-
-        V1Secret secret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
-
-        // Then
-        // Using GafferSpec to take advantage of the nesting methods
-        GafferSpec values = Yaml.loadAs(secret.getStringData().get("values.yaml"), GafferSpec.class);
-        assertEquals("value", values.get("key"));
-        assertTrue(values.containsKey("accumulo"));
-    }
-
-    @Test
-    public void shouldNotMergeValuesInWithGeneratedPasswordsWhenNotAnInitialDeployment() {
-        // Given
-        Environment env = mock(Environment.class);
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
-
-        // When
-        GafferSpec spec = new GafferSpec();
-        spec.put("key", "value");
-
-        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob"));
-
-
-        V1Secret secret = kubernetesObjectFactory.createValuesSecret(gaffer, false);
-
-        // Then
-        // Using GafferSpec to take advantage of the nesting methods
-        GafferSpec values = Yaml.loadAs(secret.getStringData().get("values.yaml"), GafferSpec.class);
-        assertEquals("value", values.get("key"));
-        assertFalse(values.containsKey("accumulo"));
-    }
-
-    @Test
-    public void shouldSetTheTablePermissionsIfTheGraphIdIsChanged() {
-        // Given
-        Environment env = mock(Environment.class);
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
-
-        // When
-        GafferSpec spec = new GafferSpec();
-        spec.put("key", "value");
-        spec.putNestedObject("myGraphId", "graph", "config", "graphId");
-
-        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob"));
-
-
-        V1Secret secret = kubernetesObjectFactory.createValuesSecret(gaffer, false);
-
-        // Then
-        // Using GafferSpec to take advantage of the nesting methods
-        GafferSpec values = Yaml.loadAs(secret.getStringData().get("values.yaml"), GafferSpec.class);
-        assertEquals(Lists.newArrayList("READ", "WRITE", "BULK_IMPORT", "ALTER_TABLE"), values.getNestedObject(
-                "accumulo", "config", "userManagement", "users", "gaffer", "permissions", "table", "myGraphId"));
-    }
 
     @Test
     public void shouldUseEnvironmentToDetermineHelmRepo() {
