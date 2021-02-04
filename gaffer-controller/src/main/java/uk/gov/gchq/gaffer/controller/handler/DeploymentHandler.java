@@ -54,10 +54,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static uk.gov.gchq.gaffer.controller.HelmCommand.UNINSTALL;
+import static uk.gov.gchq.gaffer.controller.util.Constants.GAAS_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GOAL_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.PLURAL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
@@ -237,6 +239,7 @@ public class DeploymentHandler implements Reconciler {
      * This handler will do nothing if:
      * <ul>
      *     <li>The pod is outside the worker's namespace</li>
+     *     <li>The pod doesn't have the worker labels</li>
      *     <li>The pod is in a phase other than Completed or Failed</li>
      *     <li>The pod has a deletion timestamp, indicating the pod has already been deleted</li>
      * </ul>
@@ -246,17 +249,23 @@ public class DeploymentHandler implements Reconciler {
      */
     @UpdateWatchEventFilter(apiTypeClass = V1Pod.class)
     public boolean onPodUpdate(final V1Pod unused, final V1Pod newPod) {
-        String podNamespace = newPod.getMetadata() == null ? null : newPod.getMetadata().getNamespace();
-        if (!workerNamespace.equals(podNamespace) || newPod.getMetadata().getDeletionTimestamp() != null) {
+        V1ObjectMeta metadata = newPod.getMetadata();
+        if (metadata == null) {
+            throw new RuntimeException("Pods should have metadata");
+        }
+        String instance = metadata.getLabels() == null ? null : metadata.getLabels().get(K8S_INSTANCE_LABEL);
+        String podNamespace = metadata.getNamespace();
+        if (!workerNamespace.equals(podNamespace) || !GAAS_LABEL_VALUE.equals(instance) || metadata.getDeletionTimestamp() != null) {
             return false; // Don't care about pods in other namespaces or if the pod has already been processed
-        } else if (newPod.getMetadata().getName() == null) {
+        } else if (metadata.getName() == null) {
             throw new RuntimeException("All pods should be named");
         }
+
 
         String phase = newPod.getStatus() == null ? null : newPod.getStatus().getPhase();
         try {
             if (SUCCEEDED.equals(phase)) {
-                Map<String, String> labels = newPod.getMetadata().getLabels();
+                Map<String, String> labels = metadata.getLabels();
                 if (labels != null &&
                         UNINSTALL.getCommand().equals(labels.get(Constants.GOAL_LABEL))) {
                     cleanUpGafferDeploymentAfterTearDown(labels.get(GAFFER_NAME_LABEL), labels.get(GAFFER_NAMESPACE_LABEL));
@@ -264,7 +273,7 @@ public class DeploymentHandler implements Reconciler {
                     tearDownWorker(newPod);
                 }
             } else if (FAILED.equals(phase)) {
-                Map<String, String> labels = newPod.getMetadata().getLabels();
+                Map<String, String> labels = metadata.getLabels();
                 boolean appendToStatus = !UNINSTALL.getCommand().equals(labels.get(GOAL_LABEL));
                 recordLogsAndTearDown(newPod, appendToStatus);
             } else {

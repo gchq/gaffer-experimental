@@ -56,6 +56,8 @@ public final class Constants {
 
     // Common labels and names
     public static final String GAFFER_WORKER_CONTAINER_NAME = "gaffer-worker";
+    public static final String GAAS_LABEL_VALUE = "gaffer-as-a-service";
+    public static final String WORKER_LABEL_VALUE = "worker";
     public static final String GAFFER_NAME_LABEL = "gaffer.name";
     public static final String GAFFER_NAMESPACE_LABEL = "gaffer.namespace";
     public static final String GOAL_LABEL = "goal";

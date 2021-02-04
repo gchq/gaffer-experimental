@@ -49,10 +49,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.gchq.gaffer.controller.util.Constants.GAAS_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GENERATED_PASSWORD_LENGTH;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GENERATED_PASSWORD_LENGTH_DEFAULT;
+import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
 
 class DeploymentHandlerTest {
 
@@ -238,12 +240,13 @@ class DeploymentHandlerTest {
                         .phase("Succeeded")
                 )
                 .metadata(
-                        new V1ObjectMeta()
-                                .name("my-uninstall-worker")
-                                .namespace("gaffer-workers")
-                                .putLabelsItem("goal", "uninstall") // <---- This will be checked
-                                .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
-                                .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
+                    new V1ObjectMeta()
+                        .name("my-uninstall-worker")
+                        .namespace("gaffer-workers")
+                        .putLabelsItem("goal", "uninstall") // <---- This will be checked
+                        .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
+                        .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
+                        .putLabelsItem(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
                 );
 
         handler.onPodUpdate(null, uninstallWorker);
@@ -290,12 +293,13 @@ class DeploymentHandlerTest {
                         )
                 )
                 .metadata(
-                        new V1ObjectMeta()
-                                .name("my-install-worker")
-                                .namespace("gaffer-workers")
-                                .putLabelsItem("goal", "install")
-                                .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
-                                .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
+                    new V1ObjectMeta()
+                        .name("my-install-worker")
+                        .namespace("gaffer-workers")
+                        .putLabelsItem("goal", "install")
+                        .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
+                        .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
+                        .putLabelsItem(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
                 );
 
         // Mimicking successful pod deletion call
@@ -359,6 +363,7 @@ class DeploymentHandlerTest {
                                 .putLabelsItem("goal", "install")
                                 .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
                                 .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
+                                .putLabelsItem(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
                 );
 
         // Mimicking successful pod deletion call
@@ -429,12 +434,13 @@ class DeploymentHandlerTest {
                         )
                 )
                 .metadata(
-                        new V1ObjectMeta()
-                                .name("my-install-worker")
-                                .namespace("gaffer-workers")
-                                .putLabelsItem("goal", "install")
-                                .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
-                                .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
+                    new V1ObjectMeta()
+                        .name("my-install-worker")
+                        .namespace("gaffer-workers")
+                        .putLabelsItem("goal", "install")
+                        .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
+                        .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
+                        .putLabelsItem(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
                 );
 
         when(client.buildCall(eq("/api/v1/namespaces/gaffer-workers/pods/my-install-worker/log"), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(),

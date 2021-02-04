@@ -37,16 +37,20 @@ import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 
 import java.util.List;
 
+import static uk.gov.gchq.gaffer.controller.util.Constants.GAAS_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_WORKER_CONTAINER_NAME;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GENERATED_PASSWORD_LENGTH;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GENERATED_PASSWORD_LENGTH_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GOAL_LABEL;
+import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_COMPONENT_LABEL;
+import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO_DEFAULT;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
@@ -151,6 +155,8 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                 .addToLabels(GAFFER_NAME_LABEL, gaffer.getMetadata().getName())
                 .addToLabels(GAFFER_NAMESPACE_LABEL, gaffer.getMetadata().getNamespace())
                 .addToLabels(GOAL_LABEL, helmCommand.getCommand())
+                .addToLabels(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
+                .addToLabels(K8S_COMPONENT_LABEL, WORKER_LABEL_VALUE)
                 .and()
                 .withNewSpec()
                 .withNewServiceAccount(serviceAccountName)
@@ -168,8 +174,6 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
         if (secretName != null) {
             attachSecret(helmPod, secretName);
         }
-
-
 
         return helmPod;
     }
