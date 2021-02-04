@@ -14,7 +14,7 @@
 
 controller:
   applicationProperties:
-    controller.scope: NAMESPACE
+    controller.scope.cluster: false
   serviceAccount:
     create: true
     name: gaffer-controller

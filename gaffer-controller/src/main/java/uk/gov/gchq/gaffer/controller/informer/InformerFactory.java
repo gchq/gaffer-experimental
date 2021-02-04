@@ -31,11 +31,10 @@ import io.kubernetes.client.util.generic.GenericKubernetesApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
-import uk.gov.gchq.gaffer.controller.DeploymentScope;
 import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
 
-import static uk.gov.gchq.gaffer.controller.util.Constants.CONTROLLER_SCOPE;
+import static uk.gov.gchq.gaffer.controller.util.Constants.CONTROLLER_CLUSTER_SCOPE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE_DEFAULT;
 
@@ -73,7 +72,7 @@ public class InformerFactory extends SharedInformerFactory {
 
     @Autowired
     public InformerFactory(final Environment env) {
-        this.namespace = DeploymentScope.NAMESPACE.name().equals(env.getProperty(CONTROLLER_SCOPE)) ?
+        this.namespace = !env.getProperty(CONTROLLER_CLUSTER_SCOPE, Boolean.class, false) ?
             env.getProperty(WORKER_NAMESPACE, WORKER_NAMESPACE_DEFAULT) : "";
     }
 

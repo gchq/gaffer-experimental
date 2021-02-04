@@ -35,5 +35,5 @@ be dependent on your needs and rules for the cluster your working with.
 
 the default scope setting is namespace (multiple deployments) but you can change it:
 ```bash
-helm install gaffer-controller ./deploy/helm --set controller.applicationProperties."controller\.scope"=CLUSTER
+helm install gaffer-controller ./deploy/helm --set controller.applicationProperties."controller\.scope.\.cluster"=true
 ```
