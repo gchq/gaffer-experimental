@@ -26,3 +26,5 @@ worker:
   serviceAccount:
     create: true
     name: gaffer-workers
+crd:
+  create: true
