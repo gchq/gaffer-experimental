@@ -21,7 +21,7 @@ controller:
   image:
     repository: d47853/gaffer-controller
     tag: latest
-    imagePullPolicy: IfNotPresent
+    imagePullPolicy: Always
 worker:
   serviceAccount:
     create: true
