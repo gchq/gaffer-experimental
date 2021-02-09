@@ -63,13 +63,12 @@ import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.PLURAL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE_DEFAULT;
 
 /**
  * Responds to changes in Gaffer objects and manages Gaffer Helm deployments
  */
 @KubernetesReconciler(
-        value = "gaffer-deployment-handler", // Controller with this name magically gets created
+        value = "gaffer-deployment-handler", // Controller with this name magically gets created - todo remove
         watches =
                 @KubernetesReconcilerWatches({
                         @KubernetesReconcilerWatch(
@@ -93,7 +92,7 @@ public class DeploymentHandler implements Reconciler {
     private final IKubernetesObjectFactory kubernetesObjectFactory;
 
     public DeploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory, final ApiClient apiClient) {
-        this.workerNamespace = environment.getProperty(WORKER_NAMESPACE, WORKER_NAMESPACE_DEFAULT);
+        this.workerNamespace = environment.getProperty(WORKER_NAMESPACE);
         this.kubernetesObjectFactory = kubernetesObjectFactory;
         this.coreV1Api = new CoreV1Api(apiClient);
         this.customObjectsApi = new CustomObjectsApi(apiClient);
@@ -283,8 +282,6 @@ public class DeploymentHandler implements Reconciler {
             LOGGER.error("Failed to remove worker pods", e);
             return false;
         }
-
-
 
         return true;
     }

@@ -15,6 +15,7 @@
 controller:
   applicationProperties:
     controller.scope.cluster: false
+    worker.helm.image: d47853/gaffer-worker:latest
   serviceAccount:
     create: true
     name: gaffer-controller

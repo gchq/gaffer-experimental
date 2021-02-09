@@ -18,6 +18,7 @@ package uk.gov.gchq.gaffer.controller.factory;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
 
@@ -28,33 +29,31 @@ import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GENERATED_PASSWORD_LENGTH;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO_DEFAULT;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME_DEFAULT;
 
 public class KubernetesObjectFactoryTest {
+
+    private Environment env;
+
+    @BeforeEach
+    public void beforeEach() {
+        env = mock(Environment.class);
+        when(env.getProperty(WORKER_HELM_IMAGE)).thenReturn("helm:latest");
+        when(env.getProperty(WORKER_NAMESPACE)).thenReturn("default");
+        when(env.getProperty(WORKER_RESTART_POLICY)).thenReturn("OnFailure");
+        when(env.getProperty(WORKER_SERVICE_ACCOUNT_NAME)).thenReturn("alice");
+        when(env.getProperty(WORKER_HELM_REPO)).thenReturn("file:///gaffer");
+    }
 
     @Test
     public void shouldUseEnvironmentToDetermineHelmRepo() {
         // Given
-        Environment env = mock(Environment.class);
-        // These just prevent null pointers
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        when(env.getProperty(any(String.class), any(String.class))).then(invocationOnMock -> invocationOnMock.getArgument(1));
-        // The thing we're actually testing
-        when(env.getProperty(WORKER_HELM_REPO, WORKER_HELM_REPO_DEFAULT)).thenReturn("file:///gaffer");
-
-
-
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
         // When
@@ -75,14 +74,6 @@ public class KubernetesObjectFactoryTest {
     @Test
     public void shouldUseEnvironmentToDetermineImage() {
         // Given
-        Environment env = mock(Environment.class);
-        // These just prevent null pointers
-        when(env.getProperty(any(String.class), any(String.class))).then(invocationOnMock -> invocationOnMock.getArgument(1));
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        // The thing we're actually testing
-        when(env.getProperty(WORKER_HELM_IMAGE, WORKER_HELM_IMAGE_DEFAULT)).thenReturn("helm:latest");
-
-
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
         // When
@@ -102,12 +93,7 @@ public class KubernetesObjectFactoryTest {
     @Test
     public void shouldUseEnvironmentToDetermineRestartPolicy() {
         // Given
-        Environment env = mock(Environment.class);
-        // These just prevent null pointers
-        when(env.getProperty(any(String.class), any(String.class))).then(invocationOnMock -> invocationOnMock.getArgument(1));
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        // The thing we're actually testing
-        when(env.getProperty(WORKER_RESTART_POLICY, WORKER_RESTART_POLICY_DEFAULT)).thenReturn("OnFailure");
+        when(env.getProperty(WORKER_RESTART_POLICY)).thenReturn("OnFailure");
 
 
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
@@ -129,14 +115,6 @@ public class KubernetesObjectFactoryTest {
     @Test
     public void shouldUseEnvironmentToDetermineServiceAccountName() {
         // Given
-        Environment env = mock(Environment.class);
-        // These just prevent null pointers
-        when(env.getProperty(any(String.class), any(String.class))).then(invocationOnMock -> invocationOnMock.getArgument(1));
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        // The thing we're actually testing
-        when(env.getProperty(WORKER_SERVICE_ACCOUNT_NAME, WORKER_SERVICE_ACCOUNT_NAME_DEFAULT)).thenReturn("alice");
-
-
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
         // When
@@ -156,12 +134,6 @@ public class KubernetesObjectFactoryTest {
     @Test
     public void shouldRunTheHelmDeploymentInTheSameNamespaceThatTheGafferGraphHas() {
         // Given
-        Environment env = mock(Environment.class);
-        // These just prevent null pointers
-        when(env.getProperty(any(String.class), any(String.class))).then(invocationOnMock -> invocationOnMock.getArgument(1));
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        // The thing we're actually testing
-
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
         // When

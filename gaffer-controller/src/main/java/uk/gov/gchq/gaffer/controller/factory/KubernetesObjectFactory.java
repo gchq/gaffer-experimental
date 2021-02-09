@@ -43,14 +43,10 @@ import static uk.gov.gchq.gaffer.controller.util.Constants.GOAL_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_COMPONENT_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME_DEFAULT;
 
 /**
  * Factory class used to create Kubernetes objects
@@ -80,10 +76,10 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private final String helmRepo;
 
     public KubernetesObjectFactory(final Environment env) {
-        helmImage = env.getProperty(WORKER_HELM_IMAGE, WORKER_HELM_IMAGE_DEFAULT);
-        serviceAccountName = env.getProperty(WORKER_SERVICE_ACCOUNT_NAME, WORKER_SERVICE_ACCOUNT_NAME_DEFAULT);
-        restartPolicy = env.getProperty(WORKER_RESTART_POLICY, WORKER_RESTART_POLICY_DEFAULT);
-        helmRepo = env.getProperty(WORKER_HELM_REPO, WORKER_HELM_REPO_DEFAULT);
+        helmImage = env.getProperty(WORKER_HELM_IMAGE);
+        serviceAccountName = env.getProperty(WORKER_SERVICE_ACCOUNT_NAME);
+        restartPolicy = env.getProperty(WORKER_RESTART_POLICY);
+        helmRepo = env.getProperty(WORKER_HELM_REPO);
     }
 
     @Override

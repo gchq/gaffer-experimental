@@ -36,7 +36,6 @@ import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
 
 import static uk.gov.gchq.gaffer.controller.util.Constants.CONTROLLER_CLUSTER_SCOPE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE_DEFAULT;
 
 @KubernetesInformers({
         @KubernetesInformer(
@@ -73,7 +72,7 @@ public class InformerFactory extends SharedInformerFactory {
     @Autowired
     public InformerFactory(final Environment env) {
         this.namespace = !env.getProperty(CONTROLLER_CLUSTER_SCOPE, Boolean.class, false) ?
-            env.getProperty(WORKER_NAMESPACE, WORKER_NAMESPACE_DEFAULT) : "";
+            env.getProperty(WORKER_NAMESPACE) : "";
     }
 
     @Override

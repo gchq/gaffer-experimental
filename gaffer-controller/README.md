@@ -2,7 +2,8 @@ Gaffer Controller
 =======================
 
 The Gaffer Controller watches for changes in Gaffer resources and deploys them
-using the Gaffer Helm chart.
+using the Gaffer Helm chart. It uses two docker images, one for the controller and one for a worker which carries
+out helm commands.
 
 ## Deployment Prerequisites
 * A kubernetes cluster
@@ -18,8 +19,12 @@ mvn clean install
 ## How to run on a local Kind image
 
 ```bash
-docker build -t gchq/gaffer-controller:latest
+docker build -t gchq/gaffer-controller:latest .
+docker build -t gchq/gaffer-worker:latest ./worker
+
 kind load docker-image gchq/gaffer-controller:latest
+kind load docker-image gchq/gaffer-worker:latest
+
 helm install gaffer-controller ./deploy/helm
 ```
 

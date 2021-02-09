@@ -38,16 +38,7 @@ public final class Constants {
     public static final String WORKER_HELM_REPO = "worker.helm.repo";
     public static final String WORKER_SERVICE_ACCOUNT_NAME = "worker.service.account";
     public static final String WORKER_RESTART_POLICY = "worker.restart.policy";
-    public static final String GENERATED_PASSWORD_LENGTH = "worker.password.length";
     public static final String CONTROLLER_CLUSTER_SCOPE = "controller.scope.cluster";
-
-    // Configuration defaults
-    public static final String WORKER_NAMESPACE_DEFAULT = "gaffer-workers";
-    public static final String WORKER_HELM_IMAGE_DEFAULT = "dtzar/helm-kubectl:latest";
-    public static final String WORKER_HELM_REPO_DEFAULT = "https://gchq.github.io/gaffer-docker";
-    public static final String WORKER_SERVICE_ACCOUNT_NAME_DEFAULT = "gaffer-workers";
-    public static final String WORKER_RESTART_POLICY_DEFAULT = "Never";
-    public static final Integer GENERATED_PASSWORD_LENGTH_DEFAULT = 10;
 
     // CRD
     public static final String GROUP = "gchq.gov.uk";

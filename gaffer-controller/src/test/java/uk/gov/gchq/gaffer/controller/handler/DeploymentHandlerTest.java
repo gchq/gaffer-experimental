@@ -29,6 +29,7 @@ import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1SecretVolumeSource;
 import io.kubernetes.client.openapi.models.V1Status;
 import io.kubernetes.client.openapi.models.V1Volume;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
 
@@ -52,20 +53,31 @@ import static org.mockito.Mockito.when;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAAS_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAME_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GENERATED_PASSWORD_LENGTH;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GENERATED_PASSWORD_LENGTH_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
 class DeploymentHandlerTest {
+
+    private Environment environment;
+
+    @BeforeEach
+    public void beforeEach() {
+        environment = mock(Environment.class);
+        // default values
+        when(environment.getProperty(WORKER_NAMESPACE)).thenReturn("gaffer-workers");
+        when(environment.getProperty(WORKER_HELM_IMAGE)).thenReturn("tzar/helm-kubectl:latest");
+        when(environment.getProperty(WORKER_RESTART_POLICY)).thenReturn("Never");
+        when(environment.getProperty(WORKER_SERVICE_ACCOUNT_NAME)).thenReturn("gaffer-workers");
+        when(environment.getProperty(WORKER_HELM_REPO)).thenReturn("https://gchq.github.io/gaffer-workers");
+    }
 
     @Test
     public void shouldCreateHelmDeploymentOnAdd() throws ApiException {
         // Given
-        Environment environment = mock(Environment.class);
-        when(environment.getProperty(anyString(), anyString())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(1)); // return defaults
-        when(environment.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, GENERATED_PASSWORD_LENGTH_DEFAULT)).thenReturn(GENERATED_PASSWORD_LENGTH_DEFAULT);
-
-
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
 
@@ -109,10 +121,6 @@ class DeploymentHandlerTest {
     @Test
     public void shouldUpgradeHelmDeploymentOnSpecUpdate() throws ApiException {
         // Given
-        Environment environment = mock(Environment.class);
-
-        when(environment.getProperty(anyString(), anyString())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(1)); // return defaults
-        when(environment.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, GENERATED_PASSWORD_LENGTH_DEFAULT)).thenReturn(GENERATED_PASSWORD_LENGTH_DEFAULT);
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
 
@@ -157,10 +165,6 @@ class DeploymentHandlerTest {
     @Test
     public void shouldNotUpgradeHelmDeploymentIfGenerationIsUnchanged() throws ApiException {
         // Given
-        Environment environment = mock(Environment.class);
-
-        when(environment.getProperty(anyString(), anyString())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(1)); // return defaults
-        when(environment.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, GENERATED_PASSWORD_LENGTH_DEFAULT)).thenReturn(GENERATED_PASSWORD_LENGTH_DEFAULT);
         ApiClient client = mock(ApiClient.class);
 
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(environment);
@@ -190,10 +194,6 @@ class DeploymentHandlerTest {
     @Test
     public void shouldUninstallTheHelmDeploymentOnDelete() throws ApiException {
         // Given
-        Environment environment = mock(Environment.class);
-
-        when(environment.getProperty(anyString(), anyString())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(1)); // return defaults
-        when(environment.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, GENERATED_PASSWORD_LENGTH_DEFAULT)).thenReturn(GENERATED_PASSWORD_LENGTH_DEFAULT);
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
 
@@ -224,11 +224,7 @@ class DeploymentHandlerTest {
     @Test
     public void shouldClearUpRemainingResourcesLeftAfterSuccessfulUninstall() throws ApiException {
         // Given
-        Environment environment = mock(Environment.class);
-
-        when(environment.getProperty(anyString(), anyString())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(1)); // return defaults
-        when(environment.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, GENERATED_PASSWORD_LENGTH_DEFAULT)).thenReturn(GENERATED_PASSWORD_LENGTH_DEFAULT);
-        ApiClient client = mock(ApiClient.class);
+       ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
 
         DeploymentHandler handler = new DeploymentHandler(environment, mock(KubernetesObjectFactory.class), client);
@@ -270,10 +266,6 @@ class DeploymentHandlerTest {
     @Test
     public void shouldClearUpWorkersAfterTheyAreCompleted() throws ApiException {
         // Given
-        Environment environment = mock(Environment.class);
-
-        when(environment.getProperty(anyString(), anyString())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(1)); // return defaults
-        when(environment.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, GENERATED_PASSWORD_LENGTH_DEFAULT)).thenReturn(GENERATED_PASSWORD_LENGTH_DEFAULT);
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
 
@@ -334,10 +326,6 @@ class DeploymentHandlerTest {
     @Test
     public void shouldAttemptToClearUpWorkersIfTheyFail() throws ApiException {
         // Given
-        Environment environment = mock(Environment.class);
-
-        when(environment.getProperty(anyString(), anyString())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(1)); // return defaults
-        when(environment.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, GENERATED_PASSWORD_LENGTH_DEFAULT)).thenReturn(GENERATED_PASSWORD_LENGTH_DEFAULT);
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
 
@@ -411,10 +399,6 @@ class DeploymentHandlerTest {
     @Test
     public void shouldAppendLogsToGafferStatusIfTheyFail() throws ApiException {
         // Given
-        Environment environment = mock(Environment.class);
-
-        when(environment.getProperty(anyString(), anyString())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(1)); // return defaults
-        when(environment.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, GENERATED_PASSWORD_LENGTH_DEFAULT)).thenReturn(GENERATED_PASSWORD_LENGTH_DEFAULT);
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
 
