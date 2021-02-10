@@ -96,7 +96,6 @@ public class GraphController {
 
 
 
-
 //		String rawJsonCustomResourceObj = "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
 //				"\"kind\":\"Gaffer\",\"metadata\": {\"name\": \"my-gaffer\", \"namespace\": \"gaffer-graphs\"}" +
 //				"\"spec\": { \"graph\": { \"config\":{\"graphId\": \" "+ graph.getGraphId()+ "\", \"description\": \" "+ graph.getDescription() +"\"} } }}";
