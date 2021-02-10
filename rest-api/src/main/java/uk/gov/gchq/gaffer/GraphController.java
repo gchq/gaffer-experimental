@@ -1,4 +1,4 @@
-package com.example.springboottest;
+package uk.gov.gchq.gaffer;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -13,12 +13,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.fabric8.kubernetes.api.model.Quantity;
-import io.fabric8.kubernetes.api.model.batch.Job;
-import io.fabric8.kubernetes.api.model.batch.JobBuilder;
-import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
-import io.fabric8.openshift.client.DefaultOpenShiftClient;
-import io.fabric8.openshift.client.OpenShiftClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
@@ -46,18 +40,16 @@ public class GraphController {
 	@Autowired
 	private JwtUserDetailsService userDetailsService;
 
-	private static final String template = "Hello, %s!";
-	private final AtomicLong counter = new AtomicLong();
 
 	private JwtResponse jwtResponse;
 
 	@GetMapping("/graphs")
 	public List<Graph> graph(@RequestParam(value = "name", defaultValue = "gaffer") String name) {
-		OpenShiftClient osClient = new DefaultOpenShiftClient();
-
-		int randomNumber = ThreadLocalRandom.current().nextInt();
-
-		String jobName = "job-" + randomNumber;
+//		OpenShiftClient osClient = new DefaultOpenShiftClient();
+//
+//		int randomNumber = ThreadLocalRandom.current().nextInt();
+//
+//		String jobName = "job-" + randomNumber;
 
 //		Job aJob = new JobBuilder()
 //				.withNewMetadata().withName(jobName).addToLabels("job-name", jobName).endMetadata()
@@ -101,6 +93,7 @@ public class GraphController {
 //			// Write changes to the YAML file
 //			mapper.writer().writeValue(file, root);
 //		}
+
 
 
 
@@ -156,8 +149,8 @@ public class GraphController {
 
 	@DeleteMapping("/graphs/{graphId}")
 	public String deleteGraph(@PathVariable String graphId){
-		OpenShiftClient osClient = new DefaultOpenShiftClient();
-		Boolean deleted = osClient.customResourceDefinitions().withName(graphId).delete();
-		return "Record Deleted " + deleted;
+//		OpenShiftClient osClient = new DefaultOpenShiftClient();
+//		Boolean deleted = osClient.customResourceDefinitions().withName(graphId).delete();
+		return "Record Deleted";
 	}
 }

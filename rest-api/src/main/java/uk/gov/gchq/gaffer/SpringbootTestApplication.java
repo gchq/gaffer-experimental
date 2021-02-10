@@ -1,4 +1,4 @@
-package com.example.springboottest;
+package uk.gov.gchq.gaffer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
