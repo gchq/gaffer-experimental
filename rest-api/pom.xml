@@ -8,13 +8,13 @@
 		<version>2.4.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>SpringbootTest</artifactId>
+	<groupId>uk.gov.gchq.gaffer</groupId>
+	<artifactId>gaffer-rest-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>springboottest</name>
-	<description>Demo project for Spring Boot</description>
+	<name>gafferrestapi</name>
+	<description>Gaffer rest API</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>8</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -84,20 +84,20 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<groupId>org.eclipse.jkube</groupId>
-				<artifactId>openshift-maven-plugin</artifactId>
-				<version>1.1.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>resource</goal>
-							<goal>build</goal>
-							<goal>apply</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>org.eclipse.jkube</groupId>-->
+<!--				<artifactId>openshift-maven-plugin</artifactId>-->
+<!--				<version>1.1.0</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<goals>-->
+<!--							<goal>resource</goal>-->
+<!--							<goal>build</goal>-->
+<!--							<goal>apply</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
 
