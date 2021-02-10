@@ -68,7 +68,6 @@ import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
  * Responds to changes in Gaffer objects and manages Gaffer Helm deployments
  */
 @KubernetesReconciler(
-        value = "gaffer-deployment-handler", // Controller with this name magically gets created - todo remove
         watches =
                 @KubernetesReconcilerWatches({
                         @KubernetesReconcilerWatch(
