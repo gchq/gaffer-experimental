@@ -1,4 +1,4 @@
-package com.example.springboottest;
+package uk.gov.gchq.gaffer;
 
 import java.io.IOException;
 import java.io.Serializable;

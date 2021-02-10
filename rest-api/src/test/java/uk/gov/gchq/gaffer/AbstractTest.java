@@ -1,6 +1,6 @@
-package com.example.SpringbootTest;
+package uk.gov.gchq.gaffer;
 
-import com.example.springboottest.GraphController;
+import uk.gov.gchq.gaffer.GraphController;
 
 import org.junit.Ignore;
 import org.junit.runner.RunWith;

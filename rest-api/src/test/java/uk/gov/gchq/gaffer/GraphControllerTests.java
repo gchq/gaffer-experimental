@@ -1,9 +1,9 @@
-package com.example.SpringbootTest;
+package uk.gov.gchq.gaffer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.example.springboottest.Graph;
+import uk.gov.gchq.gaffer.Graph;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Ignore;

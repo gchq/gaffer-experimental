@@ -1,4 +1,4 @@
-package com.example.springboottest;
+package uk.gov.gchq.gaffer;
 
 public class Graph {
 

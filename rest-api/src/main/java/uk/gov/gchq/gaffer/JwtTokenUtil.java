@@ -1,5 +1,4 @@
-package com.example.springboottest;
-
+package uk.gov.gchq.gaffer;
 
 import java.io.Serializable;
 import java.util.Date;
