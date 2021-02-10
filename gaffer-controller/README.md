@@ -13,12 +13,14 @@ out helm commands.
 
 ## Build and run tests:
 ```bash
-mvn clean install
+# From the base of the project
+mvn clean install -pl :gaffer-controller
 ```
 
 ## How to run on a local Kind image
 
 ```bash
+cd gaffer-controller
 docker build -t gchq/gaffer-controller:latest .
 docker build -t gchq/gaffer-worker:latest ./worker
 

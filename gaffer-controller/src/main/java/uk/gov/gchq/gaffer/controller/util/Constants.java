@@ -34,7 +34,8 @@ public final class Constants {
 
     // Configuration
     public static final String WORKER_NAMESPACE = "worker.namespace";
-    public static final String WORKER_HELM_IMAGE = "worker.helm.image";
+    public static final String WORKER_IMAGE = "worker.image";
+    public static final String WORKER_IMAGE_PULL_POLICY = "worker.imagePullPolicy";
     public static final String WORKER_HELM_REPO = "worker.helm.repo";
     public static final String WORKER_SERVICE_ACCOUNT_NAME = "worker.service.account";
     public static final String WORKER_RESTART_POLICY = "worker.restart.policy";

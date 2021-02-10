@@ -42,8 +42,9 @@ import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_WORKER_CONTAIN
 import static uk.gov.gchq.gaffer.controller.util.Constants.GOAL_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_COMPONENT_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE_PULL_POLICY;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
@@ -66,7 +67,6 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private static final String CLEANUP_ON_FAIL = "--cleanup-on-fail";
 
     // Container Constants
-    private static final String IMAGE_PULL_POLICY = "IfNotPresent";
     private static final String VALUES_VOLUME_MOUNT_NAME = "values";
     private static final String VALUES_MOUNT_LOCATION = "/values";
 
@@ -74,12 +74,14 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private final String serviceAccountName;
     private final String restartPolicy;
     private final String helmRepo;
+    private final String workerPullPolicy;
 
     public KubernetesObjectFactory(final Environment env) {
-        helmImage = env.getProperty(WORKER_HELM_IMAGE);
+        helmImage = env.getProperty(WORKER_IMAGE);
         serviceAccountName = env.getProperty(WORKER_SERVICE_ACCOUNT_NAME);
         restartPolicy = env.getProperty(WORKER_RESTART_POLICY);
         helmRepo = env.getProperty(WORKER_HELM_REPO);
+        workerPullPolicy = env.getProperty(WORKER_IMAGE_PULL_POLICY);
     }
 
     @Override
@@ -115,7 +117,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                 .withContainers(new V1Container()
                         .name(GAFFER_WORKER_CONTAINER_NAME)
                         .image(helmImage)
-                        .imagePullPolicy(IMAGE_PULL_POLICY)
+                        .imagePullPolicy(workerPullPolicy)
                         .command(Lists.newArrayList(HELM))
                         .args(createHelmArgs(gaffer, helmCommand))
                 )

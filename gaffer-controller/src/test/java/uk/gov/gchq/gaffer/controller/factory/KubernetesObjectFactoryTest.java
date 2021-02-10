@@ -31,8 +31,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE_PULL_POLICY;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
@@ -44,7 +45,8 @@ public class KubernetesObjectFactoryTest {
     @BeforeEach
     public void beforeEach() {
         env = mock(Environment.class);
-        when(env.getProperty(WORKER_HELM_IMAGE)).thenReturn("helm:latest");
+        when(env.getProperty(WORKER_IMAGE)).thenReturn("helm:latest");
+        when(env.getProperty(WORKER_IMAGE_PULL_POLICY)).thenReturn("Always");
         when(env.getProperty(WORKER_NAMESPACE)).thenReturn("default");
         when(env.getProperty(WORKER_RESTART_POLICY)).thenReturn("OnFailure");
         when(env.getProperty(WORKER_SERVICE_ACCOUNT_NAME)).thenReturn("alice");

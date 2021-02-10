@@ -54,8 +54,9 @@ import static uk.gov.gchq.gaffer.controller.util.Constants.GAAS_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE_PULL_POLICY;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
@@ -69,7 +70,8 @@ class DeploymentHandlerTest {
         environment = mock(Environment.class);
         // default values
         when(environment.getProperty(WORKER_NAMESPACE)).thenReturn("gaffer-workers");
-        when(environment.getProperty(WORKER_HELM_IMAGE)).thenReturn("tzar/helm-kubectl:latest");
+        when(environment.getProperty(WORKER_IMAGE)).thenReturn("tzar/helm-kubectl:latest");
+        when(environment.getProperty(WORKER_IMAGE_PULL_POLICY)).thenReturn("IfNotPresent");
         when(environment.getProperty(WORKER_RESTART_POLICY)).thenReturn("Never");
         when(environment.getProperty(WORKER_SERVICE_ACCOUNT_NAME)).thenReturn("gaffer-workers");
         when(environment.getProperty(WORKER_HELM_REPO)).thenReturn("https://gchq.github.io/gaffer-workers");
