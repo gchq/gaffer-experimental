@@ -26,3 +26,5 @@ target/
 __pycache__
 *.pem
 *.DS_Store
+.vscode/*
+.project

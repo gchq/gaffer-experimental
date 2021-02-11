@@ -1,6 +1,5 @@
 package uk.gov.gchq.gaffer;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +34,8 @@ public class GraphController {
   @Autowired
   private JwtUserDetailsService userDetailsService;
 
-  @Autowired
+
   private JwtResponse jwtResponse;
-
-
-
   @GetMapping("/graphs")
   public List<Graph> graph(final @RequestParam(value = "name", defaultValue = "gaffer") String name) {
     ArrayList<Graph> graphList = new ArrayList<>();
