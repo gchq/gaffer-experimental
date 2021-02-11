@@ -18,6 +18,7 @@ package uk.gov.gchq.gaffer;
 import java.io.Serializable;
 
 public class JwtRequest implements Serializable {
+    private static final long serialVersionUID = -7858869558953243875L;
 
     private String username;
     private String password;
