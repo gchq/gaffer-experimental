@@ -34,19 +34,12 @@ public final class Constants {
 
     // Configuration
     public static final String WORKER_NAMESPACE = "worker.namespace";
-    public static final String WORKER_HELM_IMAGE = "worker.helm.image";
+    public static final String WORKER_IMAGE = "worker.image";
+    public static final String WORKER_IMAGE_PULL_POLICY = "worker.imagePullPolicy";
     public static final String WORKER_HELM_REPO = "worker.helm.repo";
     public static final String WORKER_SERVICE_ACCOUNT_NAME = "worker.service.account";
     public static final String WORKER_RESTART_POLICY = "worker.restart.policy";
-    public static final String GENERATED_PASSWORD_LENGTH = "worker.password.length";
-
-    // Configuration defaults
-    public static final String WORKER_NAMESPACE_DEFAULT = "gaffer-workers";
-    public static final String WORKER_HELM_IMAGE_DEFAULT = "dtzar/helm-kubectl:latest";
-    public static final String WORKER_HELM_REPO_DEFAULT = "https://gchq.github.io/gaffer-docker";
-    public static final String WORKER_SERVICE_ACCOUNT_NAME_DEFAULT = "gaffer-workers";
-    public static final String WORKER_RESTART_POLICY_DEFAULT = "Never";
-    public static final Integer GENERATED_PASSWORD_LENGTH_DEFAULT = 10;
+    public static final String CONTROLLER_CLUSTER_SCOPE = "controller.scope.cluster";
 
     // CRD
     public static final String GROUP = "gchq.gov.uk";
@@ -55,6 +48,8 @@ public final class Constants {
 
     // Common labels and names
     public static final String GAFFER_WORKER_CONTAINER_NAME = "gaffer-worker";
+    public static final String GAAS_LABEL_VALUE = "gaffer-as-a-service";
+    public static final String WORKER_LABEL_VALUE = "worker";
     public static final String GAFFER_NAME_LABEL = "gaffer.name";
     public static final String GAFFER_NAMESPACE_LABEL = "gaffer.namespace";
     public static final String GOAL_LABEL = "goal";

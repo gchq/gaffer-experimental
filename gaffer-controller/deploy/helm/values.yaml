@@ -13,15 +13,20 @@
 # limitations under the License.
 
 controller:
-  applicationProperties: {}
+  applicationProperties:
+    controller.scope.cluster: false
+    worker.image: gchq/gaffer-worker:latest
+    worker.imagePullPolicy: Always
   serviceAccount:
     create: true
     name: gaffer-controller
   image:
     repository: gchq/gaffer-controller
     tag: latest
-    imagePullPolicy: IfNotPresent
+    imagePullPolicy: Always
 worker:
   serviceAccount:
     create: true
     name: gaffer-workers
+crd:
+  create: true

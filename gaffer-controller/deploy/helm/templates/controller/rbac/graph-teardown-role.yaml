@@ -13,7 +13,11 @@
 # limitations under the License.
 
 apiVersion: rbac.authorization.k8s.io/v1
+{{ if (index .Values.controller.applicationProperties "controller.scope.cluster") }}
 kind: ClusterRole
+{{ else }}
+kind: Role
+{{- end }}
 metadata:
   name: {{ template "gaffer-controller.fullname" . }}-graph-teardown
   labels:
@@ -29,3 +33,27 @@ rules:
   - secrets
   verbs: 
   - deletecollection
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+{{ if (index .Values.controller.applicationProperties "controller.scope.cluster") }}
+kind: ClusterRoleBinding
+{{ else }}
+kind: RoleBinding
+{{- end }}
+metadata:
+  name: {{ template "gaffer-controller.fullname" . }}-graph-teardown
+  labels:
+    {{ include "gaffer-controller.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.controller.serviceAccount.name }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  {{ if (index .Values.controller.applicationProperties "controller.scope.cluster") }}
+  kind: ClusterRole
+  {{ else }}
+  kind: Role
+  {{- end }}
+  name: {{ template "gaffer-controller.fullname" . }}-graph-teardown
+  apiGroup: rbac.authorization.k8s.io

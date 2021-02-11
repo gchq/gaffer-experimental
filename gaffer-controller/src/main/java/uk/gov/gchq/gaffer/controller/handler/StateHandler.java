@@ -55,7 +55,6 @@ import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
  * Monitors Gaffer deployments and updates the status of Gaffer objects.
  */
 @KubernetesReconciler(
-        value = "gaffer-state-handler", // Controller with this name magically gets created
         watches =
         @KubernetesReconcilerWatches({
                 @KubernetesReconcilerWatch(

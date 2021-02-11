@@ -16,11 +16,9 @@
 
 package uk.gov.gchq.gaffer.controller.factory;
 
-import com.google.common.collect.Lists;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
-import io.kubernetes.client.openapi.models.V1Secret;
-import io.kubernetes.client.util.Yaml;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
 
@@ -31,105 +29,33 @@ import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GENERATED_PASSWORD_LENGTH;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO_DEFAULT;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE_PULL_POLICY;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME_DEFAULT;
 
 public class KubernetesObjectFactoryTest {
 
-    @Test
-    public void shouldMergeValuesInWithGeneratedPasswordsOnInitialDeployment() {
-        // Given
-        Environment env = mock(Environment.class);
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
+    private Environment env;
 
-        // When
-        GafferSpec spec = new GafferSpec();
-        spec.put("key", "value");
-
-        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob"));
-
-
-        V1Secret secret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
-
-        // Then
-        // Using GafferSpec to take advantage of the nesting methods
-        GafferSpec values = Yaml.loadAs(secret.getStringData().get("values.yaml"), GafferSpec.class);
-        assertEquals("value", values.get("key"));
-        assertTrue(values.containsKey("accumulo"));
-    }
-
-    @Test
-    public void shouldNotMergeValuesInWithGeneratedPasswordsWhenNotAnInitialDeployment() {
-        // Given
-        Environment env = mock(Environment.class);
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
-
-        // When
-        GafferSpec spec = new GafferSpec();
-        spec.put("key", "value");
-
-        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob"));
-
-
-        V1Secret secret = kubernetesObjectFactory.createValuesSecret(gaffer, false);
-
-        // Then
-        // Using GafferSpec to take advantage of the nesting methods
-        GafferSpec values = Yaml.loadAs(secret.getStringData().get("values.yaml"), GafferSpec.class);
-        assertEquals("value", values.get("key"));
-        assertFalse(values.containsKey("accumulo"));
-    }
-
-    @Test
-    public void shouldSetTheTablePermissionsIfTheGraphIdIsChanged() {
-        // Given
-        Environment env = mock(Environment.class);
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
-
-        // When
-        GafferSpec spec = new GafferSpec();
-        spec.put("key", "value");
-        spec.putNestedObject("myGraphId", "graph", "config", "graphId");
-
-        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob"));
-
-
-        V1Secret secret = kubernetesObjectFactory.createValuesSecret(gaffer, false);
-
-        // Then
-        // Using GafferSpec to take advantage of the nesting methods
-        GafferSpec values = Yaml.loadAs(secret.getStringData().get("values.yaml"), GafferSpec.class);
-        assertEquals(Lists.newArrayList("READ", "WRITE", "BULK_IMPORT", "ALTER_TABLE"), values.getNestedObject(
-                "accumulo", "config", "userManagement", "users", "gaffer", "permissions", "table", "myGraphId"));
+    @BeforeEach
+    public void beforeEach() {
+        env = mock(Environment.class);
+        when(env.getProperty(WORKER_IMAGE)).thenReturn("helm:latest");
+        when(env.getProperty(WORKER_IMAGE_PULL_POLICY)).thenReturn("Always");
+        when(env.getProperty(WORKER_NAMESPACE)).thenReturn("default");
+        when(env.getProperty(WORKER_RESTART_POLICY)).thenReturn("OnFailure");
+        when(env.getProperty(WORKER_SERVICE_ACCOUNT_NAME)).thenReturn("alice");
+        when(env.getProperty(WORKER_HELM_REPO)).thenReturn("file:///gaffer");
     }
 
     @Test
     public void shouldUseEnvironmentToDetermineHelmRepo() {
         // Given
-        Environment env = mock(Environment.class);
-        // These just prevent null pointers
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        when(env.getProperty(any(String.class), any(String.class))).then(invocationOnMock -> invocationOnMock.getArgument(1));
-        // The thing we're actually testing
-        when(env.getProperty(WORKER_HELM_REPO, WORKER_HELM_REPO_DEFAULT)).thenReturn("file:///gaffer");
-
-
-
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
         // When
@@ -150,14 +76,6 @@ public class KubernetesObjectFactoryTest {
     @Test
     public void shouldUseEnvironmentToDetermineImage() {
         // Given
-        Environment env = mock(Environment.class);
-        // These just prevent null pointers
-        when(env.getProperty(any(String.class), any(String.class))).then(invocationOnMock -> invocationOnMock.getArgument(1));
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        // The thing we're actually testing
-        when(env.getProperty(WORKER_HELM_IMAGE, WORKER_HELM_IMAGE_DEFAULT)).thenReturn("helm:latest");
-
-
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
         // When
@@ -177,12 +95,7 @@ public class KubernetesObjectFactoryTest {
     @Test
     public void shouldUseEnvironmentToDetermineRestartPolicy() {
         // Given
-        Environment env = mock(Environment.class);
-        // These just prevent null pointers
-        when(env.getProperty(any(String.class), any(String.class))).then(invocationOnMock -> invocationOnMock.getArgument(1));
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        // The thing we're actually testing
-        when(env.getProperty(WORKER_RESTART_POLICY, WORKER_RESTART_POLICY_DEFAULT)).thenReturn("OnFailure");
+        when(env.getProperty(WORKER_RESTART_POLICY)).thenReturn("OnFailure");
 
 
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
@@ -204,14 +117,6 @@ public class KubernetesObjectFactoryTest {
     @Test
     public void shouldUseEnvironmentToDetermineServiceAccountName() {
         // Given
-        Environment env = mock(Environment.class);
-        // These just prevent null pointers
-        when(env.getProperty(any(String.class), any(String.class))).then(invocationOnMock -> invocationOnMock.getArgument(1));
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        // The thing we're actually testing
-        when(env.getProperty(WORKER_SERVICE_ACCOUNT_NAME, WORKER_SERVICE_ACCOUNT_NAME_DEFAULT)).thenReturn("alice");
-
-
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
         // When
@@ -231,12 +136,6 @@ public class KubernetesObjectFactoryTest {
     @Test
     public void shouldRunTheHelmDeploymentInTheSameNamespaceThatTheGafferGraphHas() {
         // Given
-        Environment env = mock(Environment.class);
-        // These just prevent null pointers
-        when(env.getProperty(any(String.class), any(String.class))).then(invocationOnMock -> invocationOnMock.getArgument(1));
-        when(env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, 10)).thenReturn(10);
-        // The thing we're actually testing
-
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
         // When

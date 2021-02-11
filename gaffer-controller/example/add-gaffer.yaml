@@ -2,7 +2,6 @@ apiVersion: gchq.gov.uk/v1
 kind: Gaffer
 metadata:
   name: "my-gaffer"
-  namespace: "gaffer-graphs"
 
 spec:
   graph:

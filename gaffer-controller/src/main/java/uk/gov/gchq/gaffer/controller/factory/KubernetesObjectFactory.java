@@ -27,8 +27,6 @@ import io.kubernetes.client.openapi.models.V1SecretVolumeSource;
 import io.kubernetes.client.openapi.models.V1Volume;
 import io.kubernetes.client.openapi.models.V1VolumeMount;
 import io.kubernetes.client.util.Yaml;
-import org.apache.commons.collections.list.UnmodifiableList;
-import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.core.env.Environment;
 
 import uk.gov.gchq.gaffer.controller.HelmCommand;
@@ -37,42 +35,26 @@ import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 
 import java.util.List;
 
+import static uk.gov.gchq.gaffer.controller.util.Constants.GAAS_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_WORKER_CONTAINER_NAME;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GENERATED_PASSWORD_LENGTH;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GENERATED_PASSWORD_LENGTH_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GOAL_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_IMAGE_DEFAULT;
+import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_COMPONENT_LABEL;
+import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO_DEFAULT;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE_PULL_POLICY;
+import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY_DEFAULT;
 import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME_DEFAULT;
 
 /**
  * Factory class used to create Kubernetes objects
  */
 public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     // Values.yaml constants
-    private static final List TABLE_PERMISSIONS = UnmodifiableList.decorate(
-            Lists.newArrayList("READ", "WRITE", "BULK_IMPORT", "ALTER_TABLE"));
-    private static final String GRAPH = "graph";
-    private static final String CONFIG = "config";
-    private static final String GRAPH_ID = "graphId";
-    private static final String ACCUMULO = "accumulo";
-    private static final String USER_MANAGEMENT = "userManagement";
     private static final String GAFFER = "gaffer";
-    private static final String PERMISSIONS = "permissions";
-    private static final String TABLE = "table";
-    private static final String ACCUMULO_SITE = "accumuloSite";
-    private static final String INSTANCE_SECRET = "instance.secret";
-    private static final String ROOT_PASSWORD = "rootPassword";
-    private static final String USERS = "users";
-    private static final String PASSWORD = "password";
-    private static final String TRACER = "tracer";
 
     // Command Constants
     private static final String HELM = "helm";
@@ -85,7 +67,6 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private static final String CLEANUP_ON_FAIL = "--cleanup-on-fail";
 
     // Container Constants
-    private static final String IMAGE_PULL_POLICY = "IfNotPresent";
     private static final String VALUES_VOLUME_MOUNT_NAME = "values";
     private static final String VALUES_MOUNT_LOCATION = "/values";
 
@@ -93,44 +74,20 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private final String serviceAccountName;
     private final String restartPolicy;
     private final String helmRepo;
-    private final int passwordLength;
+    private final String workerPullPolicy;
 
     public KubernetesObjectFactory(final Environment env) {
-        helmImage = env.getProperty(WORKER_HELM_IMAGE, WORKER_HELM_IMAGE_DEFAULT);
-        serviceAccountName = env.getProperty(WORKER_SERVICE_ACCOUNT_NAME, WORKER_SERVICE_ACCOUNT_NAME_DEFAULT);
-        restartPolicy = env.getProperty(WORKER_RESTART_POLICY, WORKER_RESTART_POLICY_DEFAULT);
-        helmRepo = env.getProperty(WORKER_HELM_REPO, WORKER_HELM_REPO_DEFAULT);
-        passwordLength = env.getProperty(GENERATED_PASSWORD_LENGTH, Integer.class, GENERATED_PASSWORD_LENGTH_DEFAULT);
-    }
-
-    private String generatePassword(final int length) {
-        char[][] range = {{'a', 'z'}, {'A', 'Z'}, {'0', '9'}};
-        return new RandomStringGenerator.Builder()
-                .withinRange(range)
-                .build()
-                .generate(length);
+        helmImage = env.getProperty(WORKER_IMAGE);
+        serviceAccountName = env.getProperty(WORKER_SERVICE_ACCOUNT_NAME);
+        restartPolicy = env.getProperty(WORKER_RESTART_POLICY);
+        helmRepo = env.getProperty(WORKER_HELM_REPO);
+        workerPullPolicy = env.getProperty(WORKER_IMAGE_PULL_POLICY);
     }
 
     @Override
     public V1Secret createValuesSecret(final Gaffer gaffer, final boolean initialDeployment) {
         GafferSpec spec = gaffer.getSpec();
-
         GafferSpec helmValues = spec != null ? spec : new GafferSpec();
-
-        Object graphId = spec == null ? null : spec.getNestedObject(GRAPH, CONFIG, GRAPH_ID);
-
-        if (graphId != null && graphId instanceof String) {
-            helmValues.putNestedObject(TABLE_PERMISSIONS,
-                    ACCUMULO, CONFIG, USER_MANAGEMENT, USERS, GAFFER, PERMISSIONS, TABLE, (String) graphId);
-        }
-
-        if (initialDeployment) {
-            helmValues.putNestedObject(generatePassword(passwordLength), ACCUMULO, CONFIG, ACCUMULO_SITE, INSTANCE_SECRET);
-            helmValues.putNestedObject(generatePassword(passwordLength), ACCUMULO, CONFIG, USER_MANAGEMENT, ROOT_PASSWORD);
-            helmValues.putNestedObject(generatePassword(passwordLength), ACCUMULO, CONFIG, USER_MANAGEMENT, USERS, GAFFER, PASSWORD);
-            helmValues.putNestedObject(generatePassword(passwordLength), ACCUMULO, CONFIG, USER_MANAGEMENT, USERS, TRACER, PASSWORD);
-        }
-
         return createSecretFromValues(helmValues, gaffer);
     }
 
@@ -151,6 +108,8 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                 .addToLabels(GAFFER_NAME_LABEL, gaffer.getMetadata().getName())
                 .addToLabels(GAFFER_NAMESPACE_LABEL, gaffer.getMetadata().getNamespace())
                 .addToLabels(GOAL_LABEL, helmCommand.getCommand())
+                .addToLabels(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
+                .addToLabels(K8S_COMPONENT_LABEL, WORKER_LABEL_VALUE)
                 .and()
                 .withNewSpec()
                 .withNewServiceAccount(serviceAccountName)
@@ -158,7 +117,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                 .withContainers(new V1Container()
                         .name(GAFFER_WORKER_CONTAINER_NAME)
                         .image(helmImage)
-                        .imagePullPolicy(IMAGE_PULL_POLICY)
+                        .imagePullPolicy(workerPullPolicy)
                         .command(Lists.newArrayList(HELM))
                         .args(createHelmArgs(gaffer, helmCommand))
                 )
@@ -168,8 +127,6 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
         if (secretName != null) {
             attachSecret(helmPod, secretName);
         }
-
-
 
         return helmPod;
     }
