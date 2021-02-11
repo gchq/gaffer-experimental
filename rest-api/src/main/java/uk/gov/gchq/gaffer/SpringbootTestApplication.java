@@ -20,9 +20,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-public class SpringbootTestApplication {
-
-     public static void main(final String[] args) {
+public final class SpringbootTestApplication {
+    private SpringbootTestApplication() { }
+    public static void main(final String[] args) {
         SpringApplication.run(SpringbootTestApplication.class, args);
     }
 
