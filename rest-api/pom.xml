@@ -17,7 +17,7 @@
 		<java.version>8</java.version>
 		<kubernetes.version>11.0.0</kubernetes.version>
 <!--		&lt;!&ndash; Testing versions &ndash;&gt;-->
-<!--		<junit.version>5.7.0</junit.version>-->
+		<junit.version>5.7.0</junit.version>
 		<!-- Maven versions -->
 		<compiler.plugin.version>2.3.2</compiler.plugin.version>
 		<surefire.version>3.0.0-M5</surefire.version>
@@ -32,6 +32,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -59,12 +65,17 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
-
 		<dependency>
-			<groupId>org.codehaus.mojo</groupId>
-			<artifactId>findbugs-maven-plugin</artifactId>
-			<version>3.0.1</version>
-			<type>maven-plugin</type>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
 		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>javax.xml.bind</groupId>-->

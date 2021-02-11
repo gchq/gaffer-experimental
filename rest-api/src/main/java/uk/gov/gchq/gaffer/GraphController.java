@@ -48,7 +48,6 @@ public class GraphController {
   @Autowired
   private JwtUserDetailsService userDetailsService;
 
-  @Autowired
   private JwtResponse jwtResponse;
 
   @GetMapping("/graphs")
@@ -76,7 +75,7 @@ public class GraphController {
 
     final String token = jwtTokenUtil.generateToken(userDetails);
     jwtResponse = new JwtResponse((token));
-    return ResponseEntity.ok(token);
+    return ResponseEntity.ok(jwtResponse);
   }
 
   private void authenticate(final String username, final String password) throws Exception {
