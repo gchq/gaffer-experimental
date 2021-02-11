@@ -33,33 +33,6 @@ public class GraphController {
 
     @GetMapping("/graphs")
     public List<Graph> graph(@RequestParam(value = "name", defaultValue = "gaffer") String name) {
-//		OpenShiftClient osClient = new DefaultOpenShiftClient();
-//
-//		int randomNumber = ThreadLocalRandom.current().nextInt();
-//
-//		String jobName = "job-" + randomNumber;
-
-//		Job aJob = new JobBuilder()
-//				.withNewMetadata().withName(jobName).addToLabels("job-name", jobName).endMetadata()
-//				.withNewSpec()
-//				.withNewTemplate()
-//				.withNewMetadata().addToLabels("job-name", jobName).endMetadata()
-//				.withNewSpec()
-//				.withRestartPolicy("Never")
-//				.addNewContainer().withName(jobName).withImage("registry.access.redhat.com/rhel7/rhel:latest")
-//				.withCommand("/bin/bash", "-c", "for i in {1..5}; do echo hi stuff; sleep 5; done")
-//				.withNewResources()
-//				.addToRequests("cpu", new Quantity("100m"))
-//				.addToRequests("memory", new Quantity("128Mi"))
-//				.addToLimits("cpu", new Quantity("100m"))
-//				.addToLimits("memory", new Quantity("128Mi"))
-//				.endResources()
-//				.endContainer()
-//				.endSpec()
-//				.endTemplate()
-//				.endSpec().build();
-//
-//		osClient.batch().jobs().create(aJob);
         ArrayList<Graph> graphList = new ArrayList<>();
         graphList.add(new Graph("OurGraph", "YES"));
         return graphList;
