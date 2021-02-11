@@ -48,10 +48,11 @@ public class GraphController {
   @Autowired
   private JwtUserDetailsService userDetailsService;
 
-
+  @Autowired
   private JwtResponse jwtResponse;
+
   @GetMapping("/graphs")
-  public List<Graph> graph(final @RequestParam(value = "name", defaultValue = "gaffer") String name) {
+  public List<Graph> graph(@RequestParam(value = "name", defaultValue = "gaffer") final String name) {
     ArrayList<Graph> graphList = new ArrayList<>();
     graphList.add(new Graph("OurGraph", "YES"));
     return graphList;
@@ -59,14 +60,14 @@ public class GraphController {
 
 
   @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<?> graph(final @RequestBody Graph graph) throws IOException {
+  public ResponseEntity<?> graph(@RequestBody final Graph graph) throws IOException {
 
     return new ResponseEntity(HttpStatus.CREATED);
   }
 
 
   @PostMapping("/auth")
-  public ResponseEntity<?> createAuthenticationToken(final @RequestBody JwtRequest authenticationRequest) throws Exception {
+  public ResponseEntity<?> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
 
     authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -90,7 +91,7 @@ public class GraphController {
 
 
   @DeleteMapping("/graphs/{graphId}")
-  public String deleteGraph(final @PathVariable String graphId) {
+  public String deleteGraph(@PathVariable final String graphId) {
 //OpenShiftClient osClient = new DefaultOpenShiftClient();
 //Boolean deleted = osClient.customResourceDefinitions().withName(graphId).delete();
     return "Record Deleted";
