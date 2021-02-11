@@ -32,8 +32,6 @@ import java.util.function.Function;
 @Component
 public class JwtTokenUtil implements Serializable {
 
-    private static final long serialVersionUID = -2550185165626007488L;
-
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
     @Value("${jwt.secret}")
@@ -54,7 +52,7 @@ public class JwtTokenUtil implements Serializable {
         return claimsResolver.apply(claims);
     }
 
-    //for retrieveing any information from token we will need the secret key
+    //for retrieving any information from token we will need the secret key
     private Claims getAllClaimsFromToken(final String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
