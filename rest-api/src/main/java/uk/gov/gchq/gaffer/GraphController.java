@@ -1,22 +1,11 @@
 package uk.gov.gchq.gaffer;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicLong;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import io.kubernetes.client.openapi.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,27 +13,26 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
 public class GraphController {
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
-	@Autowired
-	private JwtUserDetailsService userDetailsService;
+    @Autowired
+    private JwtUserDetailsService userDetailsService;
 
 
-	private JwtResponse jwtResponse;
+    private JwtResponse jwtResponse;
 
-	@GetMapping("/graphs")
-	public List<Graph> graph(@RequestParam(value = "name", defaultValue = "gaffer") String name) {
+    @GetMapping("/graphs")
+    public List<Graph> graph(@RequestParam(value = "name", defaultValue = "gaffer") String name) {
 //		OpenShiftClient osClient = new DefaultOpenShiftClient();
 //
 //		int randomNumber = ThreadLocalRandom.current().nextInt();
@@ -72,13 +60,13 @@ public class GraphController {
 //				.endSpec().build();
 //
 //		osClient.batch().jobs().create(aJob);
-		ArrayList<Graph> graphList = new ArrayList<>();
-		graphList.add(new Graph("OurGraph", "YES"));
-		return graphList;
-	}
+        ArrayList<Graph> graphList = new ArrayList<>();
+        graphList.add(new Graph("OurGraph", "YES"));
+        return graphList;
+    }
 
-	@PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> graph(@RequestBody Graph graph) throws IOException {
+    @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> graph(@RequestBody Graph graph) throws IOException {
 
 //		try (InputStream resourceAsStream = GraphController.class.getResourceAsStream("/add-gaffer.yaml")) {
 //			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -95,6 +83,23 @@ public class GraphController {
 //		}
 
 
+//		V1CronTab crontab = new V1CronTab();
+//		CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
+//		customObjectsApi.createNamespacedCustomObject(
+//				"com.example.stable",
+//				"v1",
+//				namespace,
+//				"crontabs",
+//				crontab,
+//				"true"
+//		);
+//
+//// alternatively use generic kubernetes api, the generic api is aimed to address the drawbacks
+//// from the CustomObjectsApi.
+//		GenericKubernetesApi<V1CronTab, V1CronTabList> crontabClient =
+//				new GenericKubernetesApi<>(V1CronTab.class, V1CronTabList.class, "com.example.stable", "v1", "crontabs", apiClient)
+//						.create(crontab)
+//						.throwsApiException();
 
 //		String rawJsonCustomResourceObj = "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
 //				"\"kind\":\"Gaffer\",\"metadata\": {\"name\": \"my-gaffer\", \"namespace\": \"gaffer-graphs\"}" +
@@ -112,44 +117,44 @@ public class GraphController {
 //				.withScope("Namespaced")
 //				.withVersion("v1")
 //				.build();
-		// Load from Yaml
-	//	 osClient.customResource(context).create("gaffer-graphs", rawJsonCustomResourceObj);
-		//Map<String, Object> dummyObject = osClient.customResource(context)
-		//		.load(GraphController.class.getResourceAsStream("/add-gaffer.yaml"));
-		// Create Custom Resource
-		//Map<String, Object> aDefault = osClient.customResource(context).create("default", dummyObject);
+        // Load from Yaml
+        //	 osClient.customResource(context).create("gaffer-graphs", rawJsonCustomResourceObj);
+        //Map<String, Object> dummyObject = osClient.customResource(context)
+        //		.load(GraphController.class.getResourceAsStream("/add-gaffer.yaml"));
+        // Create Custom Resource
+        //Map<String, Object> aDefault = osClient.customResource(context).create("default", dummyObject);
 
 
-		return new ResponseEntity(HttpStatus.CREATED);
-	}
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
 
-	@PostMapping("/auth")
-	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+    @PostMapping("/auth")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
 
-		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
-		final UserDetails userDetails = userDetailsService
-				.loadUserByUsername(authenticationRequest.getUsername());
+        final UserDetails userDetails = userDetailsService
+                .loadUserByUsername(authenticationRequest.getUsername());
 
-		final String token = jwtTokenUtil.generateToken(userDetails);
-		jwtResponse = new JwtResponse((token));
-		return ResponseEntity.ok(token);
-	}
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        jwtResponse = new JwtResponse((token));
+        return ResponseEntity.ok(token);
+    }
 
-	private void authenticate(String username, String password) throws Exception {
-		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-		} catch (DisabledException e) {
-			throw new Exception("USER_DISABLED", e);
-		} catch (BadCredentialsException e) {
-			throw new Exception("INVALID_CREDENTIALS", e);
-		}
-	}
+    private void authenticate(String username, String password) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
+    }
 
-	@DeleteMapping("/graphs/{graphId}")
-	public String deleteGraph(@PathVariable String graphId){
+    @DeleteMapping("/graphs/{graphId}")
+    public String deleteGraph(@PathVariable String graphId) {
 //		OpenShiftClient osClient = new DefaultOpenShiftClient();
 //		Boolean deleted = osClient.customResourceDefinitions().withName(graphId).delete();
-		return "Record Deleted";
-	}
+        return "Record Deleted";
+    }
 }
