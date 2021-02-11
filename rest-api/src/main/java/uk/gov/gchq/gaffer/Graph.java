@@ -9,13 +9,13 @@ public class Graph {
     public Graph() {
     }
 
-    public Graph(String graphId, String description) {
+    public Graph(final String graphId, final String description) {
         this.graphId = graphId;
         this.description = description;
     }
 
 
-    public void setGraphId(String graphId) {
+    public void setGraphId(final String graphId) {
         this.graphId = graphId;
     }
 
@@ -27,7 +27,7 @@ public class Graph {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
