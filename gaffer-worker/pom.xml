@@ -59,11 +59,6 @@
       <artifactId>client-java-extended</artifactId>
       <version>11.0.0</version>
     </dependency>
-    <dependency>
-      <groupId>io.kubernetes</groupId>
-      <artifactId>client-java-spring-integration</artifactId>
-      <version>11.0.0</version>
-    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

@@ -9,8 +9,10 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
+import io.kubernetes.client.common.KubernetesObject;
 import io.kubernetes.client.openapi.*;
 import io.kubernetes.client.openapi.apis.*;
+import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.jose4j.json.internal.json_simple.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -39,6 +41,9 @@ public class GraphController {
 	@Autowired
 	private JwtUserDetailsService userDetailsService;
 
+	@Autowired
+	private ApiClient apiClient;
+
 
 	private JwtResponse jwtResponse;
 
@@ -51,14 +56,16 @@ public class GraphController {
 
 	@PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> graph(@RequestBody Graph graph) throws IOException {
-
-		ApiClient apiClient = new ApiClient();
 		CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
+		V1ObjectMeta objectMeta = new V1ObjectMeta();
+		objectMeta.setName(graph.getGraphId());
 		JSONObject graphSetup = new JSONObject();
-		graphSetup.put("graphID", "ourGraph");
-		graphSetup.put("description", "something");
+		graphSetup.put("kind", "Gaffer");
+		graphSetup.put("metadata",objectMeta);
+		graphSetup.put("apiVersion","gchq.gov.uk/v1");
+
 		try {
-			Object result = customObject.createNamespacedCustomObject("gchq.gov.uk/v1", "Gaffer", "gaffer-graphs", "gaffers", graphSetup, null, null, null);
+			Object result = customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", graphSetup, null, null, null);
 			System.out.println(result);
 		} catch (ApiException e) {
 			System.err.println("Exception when calling CustomObjectsApi#createNamespacedCustomObject");

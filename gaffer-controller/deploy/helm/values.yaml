@@ -15,13 +15,13 @@
 controller:
   applicationProperties:
     controller.scope.cluster: false
-    worker.image: gchq/gaffer-worker:latest
+    worker.image: d47853/gaffer-worker:latest
     worker.imagePullPolicy: Always
   serviceAccount:
     create: true
     name: gaffer-controller
   image:
-    repository: gchq/gaffer-controller
+    repository: d47853/gaffer-controller
     tag: latest
     imagePullPolicy: Always
 worker:
