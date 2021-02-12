@@ -73,7 +73,7 @@ public class GraphController {
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> graph(@RequestBody final Graph graph) throws IOException {
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
-        String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"my-gaffer\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"MyGraph\",\"description\":\"My Graph deployed by the Controller\"}}}}";
+        String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
 
         try {
