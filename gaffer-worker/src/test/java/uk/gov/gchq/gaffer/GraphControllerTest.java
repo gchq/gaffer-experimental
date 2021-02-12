@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-
+@Ignore
 @SpringBootTest
 public class GraphControllerTest {
 
@@ -53,7 +54,7 @@ public class GraphControllerTest {
         return objectMapper.readValue(json, clazz);
     }
 
-    @Test
+    @Ignore
     public void testAddGraph() throws Exception {
         this.mvc = webAppContextSetup(webApplicationContext).build();
         Graph graph = new Graph("graph id 1", "desc tes");

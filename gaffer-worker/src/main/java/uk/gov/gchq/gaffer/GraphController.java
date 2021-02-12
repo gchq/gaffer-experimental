@@ -15,11 +15,11 @@
  */
 package uk.gov.gchq.gaffer;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
-import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.jose4j.json.internal.json_simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,15 +73,11 @@ public class GraphController {
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> graph(@RequestBody final Graph graph) throws IOException {
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
-        V1ObjectMeta objectMeta = new V1ObjectMeta();
-        objectMeta.setName(graph.getGraphId());
-        JSONObject graphSetup = new JSONObject();
-        graphSetup.put("kind", "Gaffer");
-        graphSetup.put("metadata", objectMeta);
-        graphSetup.put("apiVersion", "gchq.gov.uk/v1");
+        String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"my-gaffer\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"MyGraph\",\"description\":\"My Graph deployed by the Controller\"}}}}";
+        JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
 
         try {
-            Object result = customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", graphSetup, null, null, null);
+            Object result = customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling CustomObjectsApi#createNamespacedCustomObject");
