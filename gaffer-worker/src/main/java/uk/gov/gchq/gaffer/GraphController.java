@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package uk.gov.gchq.gaffer;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.kubernetes.client.openapi.ApiClient;
@@ -36,12 +37,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.gchq.gaffer.Exception.*;
 import uk.gov.gchq.gaffer.auth.JwtRequest;
 import uk.gov.gchq.gaffer.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 @Component
 @CrossOrigin
 @RestController
@@ -54,29 +57,37 @@ public class GraphController {
     private JwtUserDetailsService userDetailsService;
     @Autowired
     private ApiClient apiClient;
+
     @GetMapping("/graphs")
     public List<Graph> graph(@RequestParam(value = "name", defaultValue = "gaffer") final String name) {
         ArrayList<Graph> graphList = new ArrayList<>();
         graphList.add(new Graph("OurGraph", "YES"));
         return graphList;
     }
+
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> graph(@RequestBody final Graph graph) throws IOException {
+        if (graph.getGraphId() == null) {
+            ExceptionResponse exceptionResponse = new ExceptionResponse("Validation error", "graph id should not be null");
+            return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
+        }
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
         String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
         try {
             Object result = customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
-            return new ResponseEntity(HttpStatus.CREATED);
         } catch (ApiException e) {
             System.err.println("Exception when calling CustomObjectsApi#createNamespacedCustomObject");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
             e.printStackTrace();
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            // return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return new ResponseEntity(HttpStatus.CREATED);
+
     }
+
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
         try {
@@ -92,6 +103,7 @@ public class GraphController {
         final String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(token);
     }
+
     @DeleteMapping("/graphs/{graphId}")
     public String deleteGraph(@PathVariable final String graphId) {
         return "Record Deleted";

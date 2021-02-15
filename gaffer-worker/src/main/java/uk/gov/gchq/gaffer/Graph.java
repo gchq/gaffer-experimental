@@ -17,6 +17,7 @@ package uk.gov.gchq.gaffer;
 
 public class Graph {
 
+
     private String graphId;
     private String description;
 
@@ -25,8 +26,11 @@ public class Graph {
     }
 
     public Graph(final String graphId, final String description) {
-        this.graphId = graphId;
+        if (graphId != null && !graphId.contains(" ")) {
+            this.graphId = graphId;
+        }
         this.description = description;
+
     }
 
 
@@ -46,8 +50,4 @@ public class Graph {
         this.description = description;
     }
 
-    @Override
-    public String toString() {
-        return "{\"graphId\":\"graphId\",\"description\":\"description\"}";
-    }
 }

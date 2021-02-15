@@ -25,13 +25,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
 @SpringBootTest
 public class GraphControllerTest {
     protected MockMvc mvc;
@@ -93,17 +92,25 @@ public class GraphControllerTest {
         final int status = mvcResult.getResponse().getStatus();
         assertEquals(201, status);
     }
+
+
+    // message
+    // details
+
     @Test
-    public void getGraphsList() throws Exception {
-        String uri = "/graphs";
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
-                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
-        int status = mvcResult.getResponse().getStatus();
-        assertEquals(200, status);
-        String content = mvcResult.getResponse().getContentAsString();
-        Graph[] graphtlist = mapFromJson(content, Graph[].class);
-        assertTrue(graphtlist.length > 0);
-        assertEquals("OurGraph", graphtlist[0].getGraphId());
-        assertEquals("YES", graphtlist[0].getDescription());
+    public void testAddGraphNotNullShouldReturn400() throws Exception {
+        // Given - I have a auth token
+        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
+        final MvcResult token = mvc.perform(post("/auth")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(authRequest)).andReturn();
+        final String graphRequest = "{\"description\":\"password\"}";
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(graphRequest)).andReturn();
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals(400, status);
+        assertEquals("{\"message\":\"Validation error\",\"details\":\"graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
     }
 }
