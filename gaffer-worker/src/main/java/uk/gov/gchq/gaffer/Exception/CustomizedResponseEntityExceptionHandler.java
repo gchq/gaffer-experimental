@@ -20,22 +20,5 @@ public class CustomizedResponseEntityExceptionHandler  extends ResponseEntityExc
 
         return new ResponseEntity(exceptionResponse, HttpStatus.valueOf(ex.getStatusCode()));
     }
-//
-//    @Override
-//    protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-//
-//        ExceptionResponse exceptionResponse = new ExceptionResponse("Validation error", ex.getBindingResult().toString());
-//
-//        return  new ResponseEntity<>(exceptionResponse, headers, HttpStatus.BAD_REQUEST);
-//    }
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            final MethodArgumentNotValidException ex, final HttpHeaders headers,
-            final HttpStatus status, final WebRequest request) {
-
-        ExceptionResponse exceptionResponse = new ExceptionResponse("Validation error  3", ex.getBindingResult().toString());
-
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 }
