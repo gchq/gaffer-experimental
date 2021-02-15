@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package uk.gov.gchq.gaffer;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.kubernetes.client.openapi.ApiClient;
@@ -43,75 +42,56 @@ import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-
 @Component
 @CrossOrigin
 @RestController
 public class GraphController {
-
     @Autowired
     private AuthenticationManager authenticationManager;
-
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
     @Autowired
     private JwtUserDetailsService userDetailsService;
-
     @Autowired
     private ApiClient apiClient;
-
-
     @GetMapping("/graphs")
     public List<Graph> graph(@RequestParam(value = "name", defaultValue = "gaffer") final String name) {
         ArrayList<Graph> graphList = new ArrayList<>();
         graphList.add(new Graph("OurGraph", "YES"));
         return graphList;
     }
-
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> graph(@RequestBody final Graph graph) throws IOException {
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
         String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
-
         try {
             Object result = customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
-            System.out.println(result);
+            return new ResponseEntity(HttpStatus.CREATED);
         } catch (ApiException e) {
             System.err.println("Exception when calling CustomObjectsApi#createNamespacedCustomObject");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
             e.printStackTrace();
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity(HttpStatus.CREATED);
-
     }
-
     @PostMapping("/auth")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-
+    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+        } catch (DisabledException e) {
+            // TODO: Test this scenario if it is needed
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(401).body("Invalid Credentials");
+        }
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
-
         final String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(token);
     }
-
-    private void authenticate(final String username, final String password) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
-        }
-    }
-
     @DeleteMapping("/graphs/{graphId}")
     public String deleteGraph(@PathVariable final String graphId) {
         return "Record Deleted";
