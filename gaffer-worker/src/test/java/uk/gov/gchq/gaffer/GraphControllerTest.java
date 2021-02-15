@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package uk.gov.gchq.gaffer;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -83,7 +84,7 @@ public class GraphControllerTest {
         final MvcResult token = mvc.perform(post("/auth")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(authRequest)).andReturn();
-        final Graph graph = new Graph("graphid2", "aDescription");
+        final Graph graph = new Graph("graphid3", "aDescription");
         final String inputJson = mapToJson(graph);
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -111,6 +112,28 @@ public class GraphControllerTest {
                 .content(graphRequest)).andReturn();
         final int status = mvcResult.getResponse().getStatus();
         assertEquals(400, status);
-        assertEquals("{\"message\":\"Validation error\",\"details\":\"graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"message\":\"Validation error\",\"details\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
+        // Given - I have a auth token
+        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
+        final MvcResult token = mvc.perform(post("/auth")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(authRequest)).andReturn();
+        final String graphRequest = "{\"graphId\":\"newgraphid\",\"description\":\"password\"}";
+        final MvcResult newMvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(graphRequest)).andReturn();
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(graphRequest)).andReturn();
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals("{\"message\":\"gaffers.gchq.gov.uk \\\"newgraphid\\\" already exists\",\"details\":\"AlreadyExists\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals(409, status);
     }
 }

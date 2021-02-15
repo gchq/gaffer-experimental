@@ -5,6 +5,7 @@ public class ExceptionResponse {
     private  String details;
 
     public ExceptionResponse(final String message, final String details) {
+        super();
         this.message = message;
         this.details = details;
     }

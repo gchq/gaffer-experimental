@@ -15,9 +15,14 @@
  */
 package uk.gov.gchq.gaffer;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 public class Graph {
 
-
+    @NotBlank
+    @NotNull
     private String graphId;
     private String description;
 
@@ -26,9 +31,7 @@ public class Graph {
     }
 
     public Graph(final String graphId, final String description) {
-        if (graphId != null && !graphId.contains(" ")) {
-            this.graphId = graphId;
-        }
+        this.graphId = graphId;
         this.description = description;
 
     }

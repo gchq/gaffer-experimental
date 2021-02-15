@@ -15,6 +15,7 @@
  */
 package uk.gov.gchq.gaffer;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.kubernetes.client.openapi.ApiClient;
@@ -41,7 +42,7 @@ import uk.gov.gchq.gaffer.Exception.*;
 import uk.gov.gchq.gaffer.auth.JwtRequest;
 import uk.gov.gchq.gaffer.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
-import java.io.IOException;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,23 +67,19 @@ public class GraphController {
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> graph(@RequestBody final Graph graph) throws IOException {
-        if (graph.getGraphId() == null) {
-            ExceptionResponse exceptionResponse = new ExceptionResponse("Validation error", "graph id should not be null");
-            return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> graph(@Valid @RequestBody final Graph graph) throws Exception {
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
+        if (graph.getGraphId() == null) {
+            throw new GafferWorkerApiException("Validation error", "Graph id should not be null", 400);
+        }
         String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
         try {
             Object result = customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
         } catch (ApiException e) {
-            System.err.println("Exception when calling CustomObjectsApi#createNamespacedCustomObject");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-            // return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            JsonObject resultJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
+            JsonElement code = resultJsonObject.get("code");
+            throw  new GafferWorkerApiException(resultJsonObject.get("message").getAsString(), resultJsonObject.get("reason").getAsString(), code.getAsInt());
         }
         return new ResponseEntity(HttpStatus.CREATED);
 
@@ -106,6 +103,10 @@ public class GraphController {
 
     @DeleteMapping("/graphs/{graphId}")
     public String deleteGraph(@PathVariable final String graphId) {
+
+
+
+
         return "Record Deleted";
     }
 }
