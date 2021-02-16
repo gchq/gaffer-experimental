@@ -15,6 +15,8 @@
  */
 package uk.gov.gchq.gaffer;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -36,7 +38,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.Exception.GafferWorkerApiException;
 import uk.gov.gchq.gaffer.auth.JwtRequest;
@@ -44,6 +45,7 @@ import uk.gov.gchq.gaffer.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Component
@@ -60,20 +62,26 @@ public class GraphController {
     private ApiClient apiClient;
 
     @GetMapping(path = "/graphs", produces = "application/json")
-    public List<Graph> graph() throws ApiException {
+    public ResponseEntity<List<Graph>> graph() throws ApiException {
         CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
         String group = "gchq.gov.uk"; // String | the custom resource's group
         String version = "v1"; // String | the custom resource's version
         String namespace = "kai-helm-3"; // String | The custom resource's namespace
         String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
         String name = "getgraphgraph"; // String | the custom object's name
-        try {
-            Object result = apiInstance.listNamespacedCustomObject(group, version, namespace, plural, null, null, null, null, null, null, null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
+        final Object response = apiInstance.listNamespacedCustomObject(group, version, namespace, plural, null, null, null, null, null, null, null, null);
+        JsonObject jsonObject = new JsonParser().parse(new Gson().toJson(response)).getAsJsonObject();
+        JsonArray items = jsonObject.get("items").getAsJsonArray();
+        final List<Graph> list = new ArrayList();
+        Iterator<JsonElement> iterator = items.iterator();
+        while (iterator.hasNext()) {
+            JsonElement key = iterator.next();
+            final JsonElement graph = key.getAsJsonObject().get("spec").getAsJsonObject().get("graph").getAsJsonObject().get("config");
+            String graphId = graph.getAsJsonObject().get("graphId").toString();
+            String graphDescription = graph.getAsJsonObject().get("description").toString();
+            list.add(new Graph(graphId, graphDescription));
         }
-        return null;
-
+        return new ResponseEntity(list, HttpStatus.OK);
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")

@@ -134,21 +134,17 @@ public class GraphControllerTest {
 
     @Test
     public void getGraphEndpointReturnsGraph() throws Exception {
-        //when we get graphs
-        //existing graphs should be returned
-
         final String graphRequest = "{\"graphId\":\"getgraphgraph\",\"description\":\"something\"}";
-        MvcResult authorization = mvc.perform(post("/graphs")
+        MvcResult addGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        Thread.sleep(5000);
-        final MvcResult newMvcResult = mvc.perform(get("/graphs")
+        assertEquals(201, addGraphResponse.getResponse().getStatus());
+        final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
-
-        assertEquals("[{\"graphId\":\"getGraphGraph\",\"description\":\"something\"}]",newMvcResult.getResponse().getContentAsString());
-        assertEquals(200, newMvcResult.getResponse().getStatus());
+        assertEquals("[{\"graphId\":\"\\\"getgraphgraph\\\"\",\"description\":\"\\\"something\\\"\"}]", getGraphsResponse.getResponse().getContentAsString());
+        assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 }
