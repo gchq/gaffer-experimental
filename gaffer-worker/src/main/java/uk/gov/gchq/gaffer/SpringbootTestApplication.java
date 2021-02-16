@@ -18,9 +18,6 @@ package uk.gov.gchq.gaffer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
-import uk.gov.gchq.gaffer.Exception.CustomizedResponseEntityExceptionHandler;
-
 
 @SpringBootApplication
 public class SpringbootTestApplication {

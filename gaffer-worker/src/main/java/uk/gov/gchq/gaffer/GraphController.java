@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.gchq.gaffer.Exception.*;
+import uk.gov.gchq.gaffer.Exception.GafferWorkerApiException;
 import uk.gov.gchq.gaffer.auth.JwtRequest;
 import uk.gov.gchq.gaffer.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
@@ -72,7 +72,7 @@ public class GraphController {
         String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
         try {
-            Object result = customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
+            customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
         } catch (ApiException e) {
             JsonObject resultJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
             JsonElement code = resultJsonObject.get("code");
