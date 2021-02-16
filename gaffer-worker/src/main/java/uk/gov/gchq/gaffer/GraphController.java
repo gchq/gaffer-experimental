@@ -69,9 +69,6 @@ public class GraphController {
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> graph(@Valid @RequestBody final Graph graph) throws Exception {
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
-        if (graph.getGraphId() == null) {
-            throw new GafferWorkerApiException("Validation error", "Graph id should not be null", 400);
-        }
         String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
         try {
@@ -79,7 +76,7 @@ public class GraphController {
         } catch (ApiException e) {
             JsonObject resultJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
             JsonElement code = resultJsonObject.get("code");
-            throw  new GafferWorkerApiException(resultJsonObject.get("message").getAsString(), resultJsonObject.get("reason").getAsString(), code.getAsInt());
+            throw new GafferWorkerApiException(resultJsonObject.get("message").getAsString(), resultJsonObject.get("reason").getAsString(), code.getAsInt());
         }
         return new ResponseEntity(HttpStatus.CREATED);
 
@@ -103,8 +100,6 @@ public class GraphController {
 
     @DeleteMapping("/graphs/{graphId}")
     public String deleteGraph(@PathVariable final String graphId) {
-
-
 
 
         return "Record Deleted";

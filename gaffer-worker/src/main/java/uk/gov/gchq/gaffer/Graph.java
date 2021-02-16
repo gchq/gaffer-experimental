@@ -15,14 +15,16 @@
  */
 package uk.gov.gchq.gaffer;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+
+import javax.annotation.RegEx;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class Graph {
 
-    @NotBlank
-    @NotNull
+
+    @NotNull(message = "Graph id should not be null")
+    @Pattern(regexp = "([0-9|a-z|_|])*", message = "Graph can contain only digits,lowercase letters or _ ")
     private String graphId;
     private String description;
 

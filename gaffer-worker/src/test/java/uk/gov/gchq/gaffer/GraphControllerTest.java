@@ -111,8 +111,8 @@ public class GraphControllerTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
         final int status = mvcResult.getResponse().getStatus();
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
-        assertEquals("{\"message\":\"Validation error\",\"details\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
