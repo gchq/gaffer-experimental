@@ -30,6 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest
@@ -37,19 +38,31 @@ public class GraphControllerTest {
     protected MockMvc mvc;
     @Autowired
     WebApplicationContext webApplicationContext;
+
     protected String mapToJson(final Object obj) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(obj);
     }
+
     protected <T> T mapFromJson(final String json, final Class<T> clazz)
             throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(json, clazz);
     }
+
+    private MvcResult token;
+
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
+
         this.mvc = webAppContextSetup(webApplicationContext).build();
+        // Given - I have a auth token
+        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
+        token = mvc.perform(post("/auth")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(authRequest)).andReturn();
     }
+
     @Test
     public void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
         final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
@@ -59,6 +72,7 @@ public class GraphControllerTest {
         assertEquals(200, result.getResponse().getStatus());
         assertEquals(179, result.getResponse().getContentAsString().length());
     }
+
     @Test
     public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
         final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
@@ -68,6 +82,7 @@ public class GraphControllerTest {
         assertEquals(401, result.getResponse().getStatus());
         assertEquals("Invalid Credentials", result.getResponse().getContentAsString());
     }
+
     /*
      * TODO:
      * - Happy path add graph
@@ -79,11 +94,6 @@ public class GraphControllerTest {
      * */
     @Test
     public void testAddGraph() throws Exception {
-        // Given - I have a auth token
-        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
-        final MvcResult token = mvc.perform(post("/auth")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(authRequest)).andReturn();
         final Graph graph = new Graph("graphid3", "aDescription");
         final String inputJson = mapToJson(graph);
         final MvcResult mvcResult = mvc.perform(post("/graphs")
@@ -94,17 +104,8 @@ public class GraphControllerTest {
         assertEquals(201, status);
     }
 
-
-    // message
-    // details
-
     @Test
     public void testAddGraphNotNullShouldReturn400() throws Exception {
-        // Given - I have a auth token
-        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
-        final MvcResult token = mvc.perform(post("/auth")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(authRequest)).andReturn();
         final String graphRequest = "{\"description\":\"password\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -117,17 +118,11 @@ public class GraphControllerTest {
 
     @Test
     public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
-        // Given - I have a auth token
-        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
-        final MvcResult token = mvc.perform(post("/auth")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(authRequest)).andReturn();
         final String graphRequest = "{\"graphId\":\"newgraphid\",\"description\":\"password\"}";
         final MvcResult newMvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -135,5 +130,25 @@ public class GraphControllerTest {
         final int status = mvcResult.getResponse().getStatus();
         assertEquals("{\"message\":\"gaffers.gchq.gov.uk \\\"newgraphid\\\" already exists\",\"details\":\"AlreadyExists\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(409, status);
+    }
+
+    @Test
+    public void getGraphEndpointReturnsGraph() throws Exception {
+        //when we get graphs
+        //existing graphs should be returned
+
+        final String graphRequest = "{\"graphId\":\"getgraphgraph\",\"description\":\"something\"}";
+        MvcResult authorization = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(graphRequest)).andReturn();
+        Thread.sleep(5000);
+        final MvcResult newMvcResult = mvc.perform(get("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+
+        assertEquals("[{\"graphId\":\"getGraphGraph\",\"description\":\"something\"}]",newMvcResult.getResponse().getContentAsString());
+        assertEquals(200, newMvcResult.getResponse().getStatus());
     }
 }
