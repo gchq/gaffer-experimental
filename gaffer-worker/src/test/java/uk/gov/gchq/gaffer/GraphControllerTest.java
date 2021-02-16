@@ -38,57 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest
-public class GraphControllerTest {
-    protected MockMvc mvc;
-    @Autowired
-    WebApplicationContext webApplicationContext;
-
-    @Autowired
-    private ApiClient apiClient;
-
-    protected String mapToJson(final Object obj) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(obj);
-    }
-
-    protected <T> T mapFromJson(final String json, final Class<T> clazz)
-            throws JsonParseException, JsonMappingException, IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(json, clazz);
-    }
-
-    private MvcResult token;
-
-    private static final String TEST_GRAPH_ID = "testgraphid";
-    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
-
-
-    @BeforeEach
-    public void setUp() throws Exception {
-
-        this.mvc = webAppContextSetup(webApplicationContext).build();
-        // Given - I have a auth token
-        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
-        token = mvc.perform(post("/auth")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(authRequest)).andReturn();
-    }
-
-    @AfterEach
-    void tearDown() {
-        CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        String group = "gchq.gov.uk"; // String | the custom resource's group
-        String version = "v1"; // String | the custom resource's version
-        String namespace = "kai-helm-3"; // String | The custom resource's namespace
-        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        String name = TEST_GRAPH_ID; // String | the custom object's name
-
-        try{
-            apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
-        }catch(Exception e){
-
-        }
-    }
+public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
