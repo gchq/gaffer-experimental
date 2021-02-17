@@ -25,8 +25,8 @@ public class Graph {
     @NotNull(message = "Graph id should not be null")
     @Pattern(regexp = "([0-9|a-z|_|])*", message = "Graph can contain only digits,lowercase letters or _ ")
     private String graphId;
+    @NotBlank(message = "Description should not be empty")
     private String description;
-
 
     public Graph() {
     }

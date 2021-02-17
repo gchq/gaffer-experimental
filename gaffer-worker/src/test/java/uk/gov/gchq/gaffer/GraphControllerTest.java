@@ -60,15 +60,6 @@ public class GraphControllerTest extends AbstractTest {
         assertEquals("Invalid Credentials", result.getResponse().getContentAsString());
     }
 
-    /*
-     * TODO:
-     * - Happy path add graph
-     * - Add graph with spaces in name
-     * - Add graph with special characters
-     * - Duplicate graph names added
-     * - Capital letters / casing
-     * - With/without description
-     * */
     @Test
     public void testAddGraph() throws Exception {
         final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
@@ -160,6 +151,18 @@ public class GraphControllerTest extends AbstractTest {
                 .content(graphRequest)).andReturn();
         final int status = mvcResult.getResponse().getStatus();
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
+        assertEquals(400, status);
+    }
+
+    @Test
+    public void testDescriptionEmptyShouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\"}";
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(graphRequest)).andReturn();
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 }

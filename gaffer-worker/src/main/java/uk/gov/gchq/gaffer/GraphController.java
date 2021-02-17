@@ -119,7 +119,6 @@ public class GraphController {
     @DeleteMapping("/graphs/{graphId}")
     public String deleteGraph(@PathVariable final String graphId) {
 
-
         return "Record Deleted";
     }
 }
