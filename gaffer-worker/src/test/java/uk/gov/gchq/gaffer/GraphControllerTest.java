@@ -127,4 +127,39 @@ public class GraphControllerTest extends AbstractTest {
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 
+    @Test
+    public void testGraphIdWithSpacesShouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(graphRequest)).andReturn();
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
+        assertEquals(400, status);
+    }
+
+    @Test
+    public void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(graphRequest)).andReturn();
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
+        assertEquals(400, status);
+    }
+
+    @Test
+    public void testGraphIdWitCapitalLettersShouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(graphRequest)).andReturn();
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
+        assertEquals(400, status);
+    }
 }
