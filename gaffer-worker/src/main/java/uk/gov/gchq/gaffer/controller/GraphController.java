@@ -35,6 +35,7 @@ import uk.gov.gchq.gaffer.auth.JwtRequest;
 import uk.gov.gchq.gaffer.model.Graph;
 import uk.gov.gchq.gaffer.services.AuthService;
 import uk.gov.gchq.gaffer.services.CreateGraphService;
+import uk.gov.gchq.gaffer.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.services.GetGafferService;
 import javax.validation.Valid;
 import java.util.List;
@@ -50,6 +51,8 @@ public class GraphController {
     private CreateGraphService createGraphService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private DeleteGraphService deleteGraphService;
     @Autowired
     private ApiClient apiClient;
 
@@ -85,18 +88,14 @@ public class GraphController {
 
     @DeleteMapping("/graphs/{graphId}")
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId) {
-        CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        String group = "gchq.gov.uk"; // String | the custom resource's group
-        String version = "v1"; // String | the custom resource's version
-        String namespace = "kai-helm-3"; // String | The custom resource's namespace
-        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-
         try {
-            apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, graphId, null, null, null, null, null);
+            deleteGraphService.deleteGraph(graphId);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (ApiException e) {
             return new ResponseEntity(HttpStatus.valueOf(e.getCode()));
         }
 
     }
+
+
 }
