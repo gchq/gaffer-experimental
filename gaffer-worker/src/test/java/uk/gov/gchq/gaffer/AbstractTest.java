@@ -51,6 +51,7 @@ public abstract class AbstractTest {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(obj);
     }
+
     protected <T> T mapFromJson(final String json, final Class<T> clazz)
             throws JsonParseException, JsonMappingException, IOException {
 
@@ -78,9 +79,9 @@ public abstract class AbstractTest {
         String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
         String name = TEST_GRAPH_ID; // String | the custom object's name
 
-        try{
+        try {
             apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
-        }catch(Exception e){
+        } catch (Exception e) {
 
         }
     }
