@@ -53,7 +53,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testAddGraph() throws Exception {
+    public void testAddGraphReturns201OnSuccess() throws Exception {
         final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
         final String inputJson = mapToJson(graph);
         final MvcResult mvcResult = mvc.perform(post("/graphs")
@@ -179,7 +179,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testDeleteShouldReturn() throws Exception {
+    public void testDeleteShouldReturn404WhenGraphNotExisting() throws Exception {
         //when delete graph
         final MvcResult mvcResult2 = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
