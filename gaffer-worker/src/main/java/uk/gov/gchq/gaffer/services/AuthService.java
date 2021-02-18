@@ -1,14 +1,3 @@
-package uk.gov.gchq.gaffer.services;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-import uk.gov.gchq.gaffer.auth.JwtRequest;
-import uk.gov.gchq.gaffer.auth.JwtTokenUtil;
-import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
-
 /*
  * Copyright 2021 Crown Copyright
  *
@@ -24,6 +13,16 @@ import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package uk.gov.gchq.gaffer.services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import uk.gov.gchq.gaffer.auth.JwtRequest;
+import uk.gov.gchq.gaffer.auth.JwtTokenUtil;
+import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
 
 @Component
 public class AuthService {

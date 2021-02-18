@@ -15,7 +15,6 @@
  */
 package uk.gov.gchq.gaffer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -29,7 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 public class GraphControllerTest extends AbstractTest {
-
 
 
     @Test
@@ -167,14 +165,14 @@ public class GraphControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
-        assertEquals(201,mvcResult.getResponse().getStatus());
+        assertEquals(201, mvcResult.getResponse().getStatus());
         //when delete graph
         final MvcResult mvcResult2 = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
         //then have no graphs / 200 return
-        assertEquals(204,mvcResult2.getResponse().getStatus());
+        assertEquals(204, mvcResult2.getResponse().getStatus());
 
     }
 
@@ -186,7 +184,7 @@ public class GraphControllerTest extends AbstractTest {
                 .header("Authorization", token))
                 .andReturn();
         //then have no graphs / 200 return
-        assertEquals(404,mvcResult2.getResponse().getStatus());
+        assertEquals(404, mvcResult2.getResponse().getStatus());
 
     }
 }

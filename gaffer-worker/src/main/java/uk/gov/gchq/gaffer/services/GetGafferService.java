@@ -1,5 +1,3 @@
-package uk.gov.gchq.gaffer.services;
-
 /*
  * Copyright 2021 Crown Copyright
  *
@@ -15,6 +13,7 @@ package uk.gov.gchq.gaffer.services;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package uk.gov.gchq.gaffer.services;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
