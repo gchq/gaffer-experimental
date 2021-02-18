@@ -15,6 +15,7 @@
  */
 package uk.gov.gchq.gaffer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.model.Graph;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -154,5 +156,37 @@ public class GraphControllerTest extends AbstractTest {
         final int status = mvcResult.getResponse().getStatus();
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
+    }
+
+    @Test
+    public void testDeleteShouldReturn200AndRemoveCRD() throws Exception {
+        //given we have a graph
+        final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
+        final String inputJson = mapToJson(graph);
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(inputJson)).andReturn();
+        assertEquals(201,mvcResult.getResponse().getStatus());
+        //when delete graph
+        final MvcResult mvcResult2 = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+        //then have no graphs / 200 return
+        assertEquals(204,mvcResult2.getResponse().getStatus());
+
+    }
+
+    @Test
+    public void testDeleteShouldReturn() throws Exception {
+        //when delete graph
+        final MvcResult mvcResult2 = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+        //then have no graphs / 200 return
+        assertEquals(404,mvcResult2.getResponse().getStatus());
+
     }
 }

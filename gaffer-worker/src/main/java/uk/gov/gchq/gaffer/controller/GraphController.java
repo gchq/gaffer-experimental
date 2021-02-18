@@ -17,6 +17,7 @@ package uk.gov.gchq.gaffer.controller;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,8 +84,19 @@ public class GraphController {
 
 
     @DeleteMapping("/graphs/{graphId}")
-    public String deleteGraph(@PathVariable final String graphId) {
+    public ResponseEntity<?> deleteGraph(@PathVariable final String graphId) {
+        CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
+        String group = "gchq.gov.uk"; // String | the custom resource's group
+        String version = "v1"; // String | the custom resource's version
+        String namespace = "kai-helm-3"; // String | The custom resource's namespace
+        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
 
-        return "Record Deleted";
+        try {
+            apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, graphId, null, null, null, null, null);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (ApiException e) {
+            return new ResponseEntity(HttpStatus.valueOf(e.getCode()));
+        }
+
     }
 }
