@@ -31,11 +31,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 @Component
 public class GetGafferService {
-
-
     @Autowired
     private ApiClient apiClient;
 
@@ -47,32 +44,22 @@ public class GetGafferService {
         String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
         String name = "getgraphgraph"; // String | the custom object's name
         final Object response = apiInstance.listNamespacedCustomObject(group, version, namespace, plural, null, null, null, null, null, null, null, null);
-        JsonObject jsonObject = new JsonParser().parse(new Gson().toJson(response)).getAsJsonObject();
+        return convertJsonToGraphs(response);
+    }
+
+    public List<Graph> convertJsonToGraphs(final Object response) {
+        final Gson gson = new Gson();
+        JsonObject jsonObject = new JsonParser().parse(gson.toJson(response)).getAsJsonObject();
         JsonArray items = jsonObject.get("items").getAsJsonArray();
         final List<Graph> list = new ArrayList();
         Iterator<JsonElement> iterator = items.iterator();
         while (iterator.hasNext()) {
             JsonElement key = iterator.next();
             final JsonElement graph = key.getAsJsonObject().get("spec").getAsJsonObject().get("graph").getAsJsonObject().get("config");
-            String graphId = graph.getAsJsonObject().get("graphId").toString();
-            String graphDescription = graph.getAsJsonObject().get("description").toString();
+            final String graphId = gson.fromJson(graph.getAsJsonObject().get("graphId"), String.class);
+            final String graphDescription = gson.fromJson(graph.getAsJsonObject().get("description"), String.class);
             list.add(new Graph(graphId, graphDescription));
         }
         return list;
     }
-
-    public void createGraph(final Graph graph) throws GafferWorkerApiException {
-        CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
-        String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
-        JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
-        try {
-            customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
-        } catch (ApiException e) {
-            JsonObject resultJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
-            JsonElement code = resultJsonObject.get("code");
-            throw new GafferWorkerApiException(resultJsonObject.get("message").getAsString(), resultJsonObject.get("reason").getAsString(), code.getAsInt());
-        }
-    }
-
 }
-
