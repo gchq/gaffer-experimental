@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer;
 
+
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.assertj.core.api.Assertions.assertThat;
+
 
 @SpringBootTest
-public class SmokeTest {
-
-    @Autowired
-    private GraphController controller;
+class GafferWorkerTests {
 
     @Test
-    public void contextLoads() throws Exception {
-        assertThat(controller).isNotNull();
+    void contextLoads() {
     }
+
 }

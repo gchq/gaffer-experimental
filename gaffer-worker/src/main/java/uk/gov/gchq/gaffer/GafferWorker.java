@@ -16,16 +16,15 @@
 
 package uk.gov.gchq.gaffer;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+@SpringBootApplication
+public class GafferWorker {
 
-
-@SpringBootTest
-class SpringbootTestApplicationTests {
-
-    @Test
-    void contextLoads() {
+    public static void main(final String[] args) {
+        SpringApplication.run(GafferWorker.class, args);
     }
 
 }
+
