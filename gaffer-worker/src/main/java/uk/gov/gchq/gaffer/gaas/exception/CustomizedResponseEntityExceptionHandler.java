@@ -31,8 +31,8 @@ import java.util.List;
 @ControllerAdvice
 public class CustomizedResponseEntityExceptionHandler  extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(GaasRestApiException.class)
-    public final ResponseEntity<Object> handleAllException(final GaasRestApiException ex, final WebRequest request) throws Exception {
+    @ExceptionHandler(GaaSRestApiException.class)
+    public final ResponseEntity<Object> handleAllException(final GaaSRestApiException ex, final WebRequest request) throws Exception {
         ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), ex.getBody());
 
         return new ResponseEntity(exceptionResponse, HttpStatus.valueOf(ex.getStatusCode()));

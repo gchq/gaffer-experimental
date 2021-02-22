@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas;
+package uk.gov.gchq.gaffer.gaas.exception;
 
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-
-@SpringBootTest
-class SpringbootTestApplicationTests {
-
-    @Test
-    void contextLoads() {
+public class GaaSRestApiException extends Exception {
+    private String body;
+    private int statusCode;
+    public GaaSRestApiException(final String message, final String body, final int statusCode) {
+        super(message);
+        this.body = body;
+        this.statusCode = statusCode;
     }
 
+    public String getBody() {
+        return body;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
 }

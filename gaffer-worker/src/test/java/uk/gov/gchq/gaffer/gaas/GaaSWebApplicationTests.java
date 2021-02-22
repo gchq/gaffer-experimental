@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.gov.gchq.gaffer.gaas;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
-public class SpringbootTestApplication {
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-    public static void main(final String[] args) {
-        SpringApplication.run(SpringbootTestApplication.class, args);
+
+@SpringBootTest
+class GaaSWebApplicationTests {
+
+    @Test
+    void contextLoads() {
     }
 
 }
-

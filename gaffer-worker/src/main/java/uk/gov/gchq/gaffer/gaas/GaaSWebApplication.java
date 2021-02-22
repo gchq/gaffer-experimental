@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas.exception;
 
-public class GaasRestApiException extends Exception {
-    private String body;
-    private int statusCode;
-    public GaasRestApiException(final String message, final String body, final int statusCode) {
-        super(message);
-        this.body = body;
-        this.statusCode = statusCode;
+package uk.gov.gchq.gaffer.gaas;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class GaaSWebApplication {
+
+    public static void main(final String[] args) {
+        SpringApplication.run(GaaSWebApplication.class, args);
     }
 
-    public String getBody() {
-        return body;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
 }
+

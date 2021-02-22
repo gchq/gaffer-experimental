@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
-import uk.gov.gchq.gaffer.gaas.exception.GaasRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -94,7 +94,7 @@ public class GraphController {
         } catch (ApiException e) {
             JsonObject resultJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
             JsonElement code = resultJsonObject.get("code");
-            throw new GaasRestApiException(resultJsonObject.get("message").getAsString(), resultJsonObject.get("reason").getAsString(), code.getAsInt());
+            throw new GaaSRestApiException(resultJsonObject.get("message").getAsString(), resultJsonObject.get("reason").getAsString(), code.getAsInt());
         }
         return new ResponseEntity(HttpStatus.CREATED);
 
