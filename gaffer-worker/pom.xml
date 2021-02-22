@@ -13,10 +13,7 @@
   <artifactId>gaffer-worker</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>gaffer-worker</name>
-  <description>Demo project for Spring Boot</description>
-  <properties>
-    <java.version>1.8</java.version>
-  </properties>
+  <description>Gaffer as a Service REST API</description>
 
   <dependencyManagement>
     <dependencies>
