@@ -62,7 +62,7 @@ public class GraphController {
     private ApiClient apiClient;
 
     @GetMapping(path = "/graphs", produces = "application/json")
-    public ResponseEntity<List<Graph>> graph() throws ApiException {
+    public ResponseEntity<List<Graph>> getGraph() throws ApiException {
         CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
         String group = "gchq.gov.uk"; // String | the custom resource's group
         String version = "v1"; // String | the custom resource's version
@@ -85,7 +85,7 @@ public class GraphController {
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> graph(@Valid @RequestBody final Graph graph) throws Exception {
+    public ResponseEntity<?> addGraph(@Valid @RequestBody final Graph graph) throws Exception {
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
         String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
