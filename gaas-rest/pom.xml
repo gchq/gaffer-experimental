@@ -10,9 +10,9 @@
     <version>1.13.0</version>
   </parent>
 
-  <artifactId>gaffer-worker</artifactId>
+  <artifactId>gaas-rest</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>gaffer-worker</name>
+  <name>gaas-rest</name>
   <description>Gaffer as a Service REST API</description>
 
   <dependencyManagement>
