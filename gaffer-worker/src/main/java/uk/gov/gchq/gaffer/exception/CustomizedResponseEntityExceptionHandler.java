@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.Exception;
+package uk.gov.gchq.gaffer.exception;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

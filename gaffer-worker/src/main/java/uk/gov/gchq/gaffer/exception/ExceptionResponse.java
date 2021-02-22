@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.Exception;
+package uk.gov.gchq.gaffer.exception;
 
-public class GafferWorkerApiException extends Exception {
-    private String body;
-    private int statusCode;
-    public GafferWorkerApiException(final String message, final String body, final int statusCode) {
-        super(message);
-        this.body = body;
-        this.statusCode = statusCode;
+public class ExceptionResponse {
+    private  String message;
+    private  String details;
+
+    public ExceptionResponse(final String message, final String details) {
+        super();
+        this.message = message;
+        this.details = details;
     }
 
-    public String getBody() {
-        return body;
+    public String getMessage() {
+        return message;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public String getDetails() {
+        return details;
     }
 }
