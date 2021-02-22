@@ -30,6 +30,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>uk.gov.gchq.gaffer</groupId>
+      <artifactId>graph</artifactId>
+      <version>${gaffer.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
@@ -109,7 +114,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <mainClass>uk.gov.gchq.gaffer.SpringbootTestApplication</mainClass>
+          <mainClass>uk.gov.gchq.gaffer.gaas.GaaSWebApplication</mainClass>
           <layout>ZIP</layout>
           <executable>true</executable>
           <classifier>exec</classifier>
