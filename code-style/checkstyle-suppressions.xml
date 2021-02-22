@@ -26,5 +26,5 @@
   <suppress files="[\\/]src[\\/]test[\\/].*" id="methodLengthMax"/>
   <suppress files="[\\/]src[\\/]test[\\/].*" id="parameterNumber"/>
   <suppress files="GafferController.java" id="hideUtilityClassConstructor"/>
-  <suppress files="SpringbootTestApplication.java" id="hideUtilityClassConstructor"/>
+  <suppress files="GaaSWebApplication.java" id="hideUtilityClassConstructor"/>
 </suppressions>
