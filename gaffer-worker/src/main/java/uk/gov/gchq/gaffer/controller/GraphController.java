@@ -20,8 +20,6 @@ import io.kubernetes.client.openapi.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -70,20 +68,11 @@ public class GraphController {
 
     }
 
-
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-        try {
-            final String token = authService.getToken(authenticationRequest);
-            return ResponseEntity.ok(token);
-        } catch (DisabledException e) {
-            // TODO: Test this scenario if it is needed
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(401).body("Invalid Credentials");
-        }
+        final String token = authService.getToken(authenticationRequest);
+        return ResponseEntity.ok(token);
     }
-
 
     @DeleteMapping("/graphs/{graphId}")
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId) {

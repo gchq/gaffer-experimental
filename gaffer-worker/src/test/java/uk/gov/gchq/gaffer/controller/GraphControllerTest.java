@@ -221,19 +221,18 @@ public class GraphControllerTest extends AbstractTest {
         assertEquals(409, status);
     }
 
-//    @Test
-//    public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
-//        final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
-//
-//        doThrow(new BadCredentialsException("Invalid Credentials")).when(authService).getToken(any(JwtRequest.class));
-//        final MvcResult result = mvc.perform(post("/auth")
-//                .contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(authRequest)).andReturn();
-//
-//        verify(authService, times(2)).getToken(any(JwtRequest.class));
-//        //assertEquals(401, result.getResponse().getStatus());
-//        assertEquals("Invalid Credentials", result.getResponse().getContentAsString());
-//    }
+    @Test
+    public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
+        final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
+        doThrow(new GafferWorkerApiException("Invalid Credentials", "Username is incorrect", 401))
+                .when(authService).getToken(any(JwtRequest.class));
 
+        final MvcResult result = mvc.perform(post("/auth")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(authRequest)).andReturn();
 
+        verify(authService, times(2)).getToken(any(JwtRequest.class));
+        assertEquals(401, result.getResponse().getStatus());
+        assertEquals("{\"message\":\"Invalid Credentials\",\"details\":\"Username is incorrect\"}", result.getResponse().getContentAsString());
+    }
 }
