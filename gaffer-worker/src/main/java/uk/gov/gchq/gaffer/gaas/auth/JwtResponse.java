@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer;
+package uk.gov.gchq.gaffer.gaas.auth;
 
+import java.io.Serializable;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+public class JwtResponse implements Serializable {
 
+    private static final long serialVersionUID = -8091879091924046844L;
+    private final String jwttoken;
 
-@SpringBootTest
-class SpringbootTestApplicationTests {
-
-    @Test
-    void contextLoads() {
+    public JwtResponse(final String jwttoken) {
+        this.jwttoken = jwttoken;
     }
 
+    public String getToken() {
+        return this.jwttoken;
+    }
 }

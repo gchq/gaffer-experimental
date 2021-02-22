@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer;
+package uk.gov.gchq.gaffer.gaas;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -39,10 +39,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.gchq.gaffer.auth.JwtRequest;
-import uk.gov.gchq.gaffer.auth.JwtTokenUtil;
-import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
-import uk.gov.gchq.gaffer.exception.GafferWorkerApiException;
+import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
+import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
+import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
+import uk.gov.gchq.gaffer.gaas.exception.GafferWorkerApiException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Iterator;

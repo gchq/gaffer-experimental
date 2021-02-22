@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer;
+package uk.gov.gchq.gaffer.gaas;
 
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.util.ClientBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@Configuration
-public class AppConfig {
-    @Bean
-    public ApiClient apiClient() throws IOException {
-      return ClientBuilder.defaultClient();
+@SpringBootTest
+public class SmokeTest {
+
+    @Autowired
+    private GraphController controller;
+
+    @Test
+    public void contextLoads() throws Exception {
+        assertThat(controller).isNotNull();
     }
 }

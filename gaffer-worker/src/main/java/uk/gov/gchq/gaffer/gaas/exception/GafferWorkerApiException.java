@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer;
+package uk.gov.gchq.gaffer.gaas.exception;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import static org.assertj.core.api.Assertions.assertThat;
+public class GafferWorkerApiException extends Exception {
+    private String body;
+    private int statusCode;
+    public GafferWorkerApiException(final String message, final String body, final int statusCode) {
+        super(message);
+        this.body = body;
+        this.statusCode = statusCode;
+    }
 
-@SpringBootTest
-public class SmokeTest {
+    public String getBody() {
+        return body;
+    }
 
-    @Autowired
-    private GraphController controller;
-
-    @Test
-    public void contextLoads() throws Exception {
-        assertThat(controller).isNotNull();
+    public int getStatusCode() {
+        return statusCode;
     }
 }

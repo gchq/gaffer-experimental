@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.auth;
+package uk.gov.gchq.gaffer.gaas.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

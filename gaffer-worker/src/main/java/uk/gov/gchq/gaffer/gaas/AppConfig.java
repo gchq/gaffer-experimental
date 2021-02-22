@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.exception;
+package uk.gov.gchq.gaffer.gaas;
 
-public class GafferWorkerApiException extends Exception {
-    private String body;
-    private int statusCode;
-    public GafferWorkerApiException(final String message, final String body, final int statusCode) {
-        super(message);
-        this.body = body;
-        this.statusCode = statusCode;
-    }
+import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.util.ClientBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import java.io.IOException;
 
-    public String getBody() {
-        return body;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
+@Configuration
+public class AppConfig {
+    @Bean
+    public ApiClient apiClient() throws IOException {
+      return ClientBuilder.defaultClient();
     }
 }

@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package uk.gov.gchq.gaffer.gaas.exception;
 
-package uk.gov.gchq.gaffer.auth;
+public class ExceptionResponse {
+    private  String message;
+    private  String details;
 
-import java.io.Serializable;
-
-public class JwtResponse implements Serializable {
-
-    private static final long serialVersionUID = -8091879091924046844L;
-    private final String jwttoken;
-
-    public JwtResponse(final String jwttoken) {
-        this.jwttoken = jwttoken;
+    public ExceptionResponse(final String message, final String details) {
+        super();
+        this.message = message;
+        this.details = details;
     }
 
-    public String getToken() {
-        return this.jwttoken;
+    public String getMessage() {
+        return message;
+    }
+
+    public String getDetails() {
+        return details;
     }
 }

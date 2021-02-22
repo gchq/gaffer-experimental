@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.exception;
 
-public class ExceptionResponse {
-    private  String message;
-    private  String details;
+package uk.gov.gchq.gaffer.gaas;
 
-    public ExceptionResponse(final String message, final String details) {
-        super();
-        this.message = message;
-        this.details = details;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringbootTestApplication {
+
+    public static void main(final String[] args) {
+        SpringApplication.run(SpringbootTestApplication.class, args);
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public String getDetails() {
-        return details;
-    }
 }
+
