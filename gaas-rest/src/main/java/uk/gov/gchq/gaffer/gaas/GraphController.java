@@ -24,6 +24,7 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,7 +44,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.graph.Graph;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,6 +62,8 @@ public class GraphController {
     private JwtUserDetailsService userDetailsService;
     @Autowired
     private ApiClient apiClient;
+    @Value("${namespace}")
+    private String namespace;
 
 
     @GetMapping(path = "/graphs", produces = "application/json")
@@ -68,9 +71,7 @@ public class GraphController {
         CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
         String group = "gchq.gov.uk"; // String | the custom resource's group
         String version = "v1"; // String | the custom resource's version
-        String namespace = "kai-helm-3"; // String | The custom resource's namespace
         String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        String name = "getgraphgraph"; // String | the custom object's name
         final Object response = apiInstance.listNamespacedCustomObject(group, version, namespace, plural, null, null, null, null, null, null, null, null);
         JsonObject jsonObject = new JsonParser().parse(new Gson().toJson(response)).getAsJsonObject();
         JsonArray items = jsonObject.get("items").getAsJsonArray();
@@ -88,9 +89,10 @@ public class GraphController {
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> addGraph(@Valid @RequestBody final Graph graph) throws Exception {
-        Graph graph = new Graph.Builder().graphId("TEST").description("test").build();
+        GraphConfig graphConfig = new GraphConfig.Builder().graphId("TEST").description("test").build();
+        System.out.println(graphConfig.toString());
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
-        String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graphConfig + "\"}}}}";
+        String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
         try {
             customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
