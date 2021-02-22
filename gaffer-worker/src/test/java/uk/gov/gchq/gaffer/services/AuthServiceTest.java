@@ -19,10 +19,18 @@ package uk.gov.gchq.gaffer.services;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import uk.gov.gchq.gaffer.Exception.GafferWorkerApiException;
 import uk.gov.gchq.gaffer.auth.JwtRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class AuthServiceTest {
@@ -30,11 +38,14 @@ public class AuthServiceTest {
     @Autowired
     AuthService authService;
 
+    @MockBean
+    AuthenticationManager authenticationManager;
+
     @Test
     public void getToken_shouldThrowBadCredentials_whenUserHasNullUsernameAndPassword() {
         final JwtRequest user = new JwtRequest();
 
-        assertThrows(BadCredentialsException.class, () -> authService.getToken(user));
+        assertThrows(UsernameNotFoundException.class, () -> authService.getToken(user));
     }
 
     @Test
@@ -42,7 +53,7 @@ public class AuthServiceTest {
         final JwtRequest user = new JwtRequest();
         user.setPassword("p@$$word");
 
-        assertThrows(BadCredentialsException.class, () -> authService.getToken(user));
+        assertThrows(UsernameNotFoundException.class, () -> authService.getToken(user));
     }
 
     @Test
@@ -50,7 +61,7 @@ public class AuthServiceTest {
         final JwtRequest user = new JwtRequest();
         user.setUsername("username");
 
-        assertThrows(BadCredentialsException.class, () -> authService.getToken(user));
+        assertThrows(UsernameNotFoundException.class, () -> authService.getToken(user));
     }
 
     @Test
@@ -59,7 +70,7 @@ public class AuthServiceTest {
         user.setUsername("invalid_username");
         user.setPassword("paaaassword");
 
-        assertThrows(BadCredentialsException.class, () -> authService.getToken(user));
+        assertThrows(UsernameNotFoundException.class, () -> authService.getToken(user));
     }
 
     @Test
@@ -68,11 +79,11 @@ public class AuthServiceTest {
         user.setUsername("invalid_user");
         user.setPassword("Pa$$_w0rd");
 
-        assertThrows(BadCredentialsException.class, () -> authService.getToken(user));
+        assertThrows(UsernameNotFoundException.class, () -> authService.getToken(user));
     }
 
     @Test
-    public void getToken_shouldReturnToken_whenUsernameIsValid() {
+    public void getToken_shouldReturnToken_whenUsernameIsValid() throws GafferWorkerApiException {
         final JwtRequest user = new JwtRequest();
         user.setUsername("javainuse");
         user.setPassword("password");
@@ -80,5 +91,31 @@ public class AuthServiceTest {
         final String token = authService.getToken(user);
 
         assertEquals(179, token.length());
+    }
+
+    @Test
+    public void getToken_whenAuthManagerThrowsBadCredential_throwGafferWorkerExceptionWithBadCredMessage() {
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenThrow(new BadCredentialsException("Bad credentials"));
+        final JwtRequest user = new JwtRequest();
+        user.setUsername("javainuse");
+        user.setPassword("password");
+
+        final GafferWorkerApiException exception = assertThrows(GafferWorkerApiException.class, () -> authService.getToken(user));
+
+        assertEquals("Bad credentials", exception.getBody());
+        assertEquals("BadCredentialsException", exception.getMessage());
+    }
+
+    @Test
+    public void getToken_whenAuthManagerThrowsAccountExpired_throwGafferWorkerExceptionWithAccountExpiredMessage() {
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenThrow(new AccountExpiredException("This account has expired"));
+        final JwtRequest user = new JwtRequest();
+        user.setUsername("javainuse");
+        user.setPassword("password");
+
+        final GafferWorkerApiException exception = assertThrows(GafferWorkerApiException.class, () -> authService.getToken(user));
+
+        assertEquals("This account has expired", exception.getBody());
+        assertEquals("AccountExpiredException", exception.getMessage());
     }
 }
