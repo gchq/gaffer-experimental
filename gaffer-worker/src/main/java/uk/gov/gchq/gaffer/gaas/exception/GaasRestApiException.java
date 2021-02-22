@@ -15,10 +15,10 @@
  */
 package uk.gov.gchq.gaffer.gaas.exception;
 
-public class GafferWorkerApiException extends Exception {
+public class GaasRestApiException extends Exception {
     private String body;
     private int statusCode;
-    public GafferWorkerApiException(final String message, final String body, final int statusCode) {
+    public GaasRestApiException(final String message, final String body, final int statusCode) {
         super(message);
         this.body = body;
         this.statusCode = statusCode;
