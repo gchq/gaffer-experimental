@@ -18,8 +18,10 @@ package uk.gov.gchq.gaffer.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import uk.gov.gchq.gaffer.Exception.GafferWorkerApiException;
 import uk.gov.gchq.gaffer.auth.JwtRequest;
 import uk.gov.gchq.gaffer.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
@@ -34,11 +36,15 @@ public class AuthService {
     @Autowired
     private JwtUserDetailsService userDetailsService;
 
-    public String getToken(final JwtRequest authenticationRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+    public String getToken(final JwtRequest authenticationRequest) throws GafferWorkerApiException {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+        } catch (AuthenticationException e) {
+            throw new GafferWorkerApiException(e.getClass().getSimpleName(), e.getMessage());
+        }
+
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
         return jwtTokenUtil.generateToken(userDetails);
     }
-
 }

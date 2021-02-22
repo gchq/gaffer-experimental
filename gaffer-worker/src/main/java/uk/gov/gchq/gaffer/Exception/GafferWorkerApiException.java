@@ -18,10 +18,17 @@ package uk.gov.gchq.gaffer.Exception;
 public class GafferWorkerApiException extends Exception {
     private String body;
     private int statusCode;
+
     public GafferWorkerApiException(final String message, final String body, final int statusCode) {
         super(message);
         this.body = body;
         this.statusCode = statusCode;
+    }
+
+    public GafferWorkerApiException(final String message, final String body) {
+        super(message);
+        this.body = body;
+        this.statusCode = 0;
     }
 
     public String getBody() {
