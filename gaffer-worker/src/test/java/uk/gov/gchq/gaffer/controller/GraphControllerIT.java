@@ -13,21 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer;
+package uk.gov.gchq.gaffer.controller;
 
+import io.kubernetes.client.openapi.ApiClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.web.servlet.MvcResult;
+import uk.gov.gchq.gaffer.AbstractTest;
+import uk.gov.gchq.gaffer.auth.JwtTokenUtil;
+import uk.gov.gchq.gaffer.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.model.Graph;
+import uk.gov.gchq.gaffer.services.AuthService;
+import uk.gov.gchq.gaffer.services.CreateGraphService;
+import uk.gov.gchq.gaffer.services.DeleteGraphService;
+import uk.gov.gchq.gaffer.services.GetGafferService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest
-public class GraphControllerTest extends AbstractTest {
+@SpringBootTest(classes = {AuthenticationManager.class, JwtUserDetailsService.class, JwtTokenUtil.class, GraphController.class, CreateGraphService.class, AuthService.class, GetGafferService.class, DeleteGraphService.class, ApiClient.class})
+public class GraphControllerIT extends AbstractTest {
 
 
     @Test
