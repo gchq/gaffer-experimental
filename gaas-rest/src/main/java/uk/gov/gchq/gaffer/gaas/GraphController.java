@@ -43,6 +43,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.graph.Graph;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,6 +61,7 @@ public class GraphController {
     private JwtUserDetailsService userDetailsService;
     @Autowired
     private ApiClient apiClient;
+
 
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<Graph>> getGraph() throws ApiException {
@@ -86,8 +88,9 @@ public class GraphController {
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> addGraph(@Valid @RequestBody final Graph graph) throws Exception {
+        Graph graph = new Graph.Builder().graphId("TEST").description("test").build();
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
-        String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
+        String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graphConfig + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
         try {
             customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
