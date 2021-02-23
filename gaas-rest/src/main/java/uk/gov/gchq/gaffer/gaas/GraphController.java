@@ -44,7 +44,6 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.graph.GraphConfig;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -89,8 +88,6 @@ public class GraphController {
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> addGraph(@Valid @RequestBody final Graph graph) throws Exception {
-        GraphConfig graphConfig = new GraphConfig.Builder().graphId("TEST").description("test").build();
-        System.out.println(graphConfig.toString());
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
         String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
