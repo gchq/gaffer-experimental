@@ -23,11 +23,11 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.Exception.GafferWorkerApiException;
 import uk.gov.gchq.gaffer.model.Graph;
 
-@Component
+@Service
 public class CreateGraphService {
 
     @Autowired
