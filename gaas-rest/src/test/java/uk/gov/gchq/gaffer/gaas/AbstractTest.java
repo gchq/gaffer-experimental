@@ -24,6 +24,7 @@ import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -46,6 +47,9 @@ public abstract class AbstractTest {
 
     protected static final String TEST_GRAPH_ID = "testgraphid";
     protected static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
+
+    @Value("${namespace}")
+    private String namespace;
 
     protected String mapToJson(final Object obj) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -75,7 +79,6 @@ public abstract class AbstractTest {
         CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
         String group = "gchq.gov.uk"; // String | the custom resource's group
         String version = "v1"; // String | the custom resource's version
-        String namespace = "kai-helm-3"; // String | The custom resource's namespace
         String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
         String name = TEST_GRAPH_ID; // String | the custom object's name
 

@@ -92,7 +92,7 @@ public class GraphController {
         String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
         try {
-            customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
+            customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", namespace, "gaffers", jsonObject, null, null, null);
         } catch (ApiException e) {
             JsonObject resultJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
             JsonElement code = resultJsonObject.get("code");
