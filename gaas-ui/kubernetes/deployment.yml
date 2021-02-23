@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kai-ui-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: kai-ui
+        image: macenturalxl1/kai-env-exp-1:latest
+        ports:
+        - containerPort: 8081
+          protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kai-ui-service
+spec:
+  ports:
+  - port: 8081
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: web
+  type: LoadBalancer
