@@ -15,6 +15,7 @@
  */
 package uk.gov.gchq.gaffer.gaas;
 
+package uk.gov.gchq.gaffer.gaas;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -44,7 +45,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CRDObject;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -89,7 +90,8 @@ public class GraphController {
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> addGraph(@Valid @RequestBody final Graph graph) throws Exception {
-        String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
+        GraphConfig graphConfig = new GraphConfig.Builder().graphId(graph.getGraphId()).description(graph.getDescription()).build();
+        String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":"+ graphConfig  + "\"}}}}";
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
         CRDObject crdObject = new CRDObject(jsonObject);
         try {
