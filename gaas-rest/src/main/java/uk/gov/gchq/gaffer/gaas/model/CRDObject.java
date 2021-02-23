@@ -1,5 +1,12 @@
 package uk.gov.gchq.gaffer.gaas.model;
 
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.apis.CustomObjectsApi;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import io.kubernetes.client.openapi.ApiClient;
+
+
 public class CRDObject {
     private String group;
     private String version;
@@ -8,6 +15,20 @@ public class CRDObject {
     private String pretty;
     private String dryRun;
     private String fieldManager;
+    @Value("${namespace}")
+    private String namespace;
+
+    private CustomObjectsApi customObject;
+    @Autowired
+    private ApiClient apiClient;
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
 
     public String getPlural() {
         return plural;
@@ -65,7 +86,7 @@ public class CRDObject {
         this.plural = plural;
     }
 
-    public CRDObject(String group, String version, String plural, Object body, String pretty, String dryRun,
+    public CRDObject(String group, String version, String namespace, String plural, Object body, String pretty, String dryRun,
             String fieldManager) {
         this.setGroup(group);
         this.setVersion(version);
@@ -74,6 +95,7 @@ public class CRDObject {
         this.setPretty(pretty);
         this.setDryRun(dryRun);
         this.setfieldManager(fieldManager);
+        this.setNamespace(namespace);
     }
     public CRDObject(Object body) {
         this.setGroup("gchq.gov.uk");
@@ -85,5 +107,10 @@ public class CRDObject {
         this.setfieldManager(null);
     }
 
+    public void createCRD() throws ApiException {
+        customObject = new CustomObjectsApi(apiClient);
+        customObject.createNamespacedCustomObject(group, version, namespace, plural, body, pretty, dryRun, fieldManager);
+
+    }
 
 }
