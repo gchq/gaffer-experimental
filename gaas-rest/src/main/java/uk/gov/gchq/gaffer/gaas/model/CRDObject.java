@@ -1,11 +1,26 @@
+/*
+ * Copyright 2021 Crown Copyright
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.gov.gchq.gaffer.gaas.model;
 
+import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import io.kubernetes.client.openapi.ApiClient;
-
 
 public class CRDObject {
     private String group;
@@ -87,7 +102,7 @@ public class CRDObject {
     }
 
     public CRDObject(String group, String version, String namespace, String plural, Object body, String pretty, String dryRun,
-            String fieldManager) {
+                     String fieldManager) {
         this.setGroup(group);
         this.setVersion(version);
         this.setPlural(plural);
@@ -97,6 +112,7 @@ public class CRDObject {
         this.setfieldManager(fieldManager);
         this.setNamespace(namespace);
     }
+
     public CRDObject(Object body) {
         this.setGroup("gchq.gov.uk");
         this.setVersion("v1");
@@ -112,5 +128,4 @@ public class CRDObject {
         customObject.createNamespacedCustomObject(group, version, namespace, plural, body, pretty, dryRun, fieldManager);
 
     }
-
 }

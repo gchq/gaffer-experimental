@@ -18,10 +18,17 @@ package uk.gov.gchq.gaffer.gaas.exception;
 public class GaaSRestApiException extends Exception {
     private String body;
     private int statusCode;
+
     public GaaSRestApiException(final String message, final String body, final int statusCode) {
         super(message);
         this.body = body;
         this.statusCode = statusCode;
+    }
+
+    public GaaSRestApiException(final String message, final String body) {
+        super(message);
+        this.body = body;
+        this.statusCode = 0;
     }
 
     public String getBody() {
