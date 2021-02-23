@@ -41,7 +41,7 @@ public class CRDObject {
         return namespace;
     }
 
-    public void setNamespace(String namespace) {
+    public void setNamespace(final String namespace) {
         this.namespace = namespace;
     }
 
@@ -53,7 +53,7 @@ public class CRDObject {
         return fieldManager;
     }
 
-    public void setfieldManager(String fieldManager) {
+    public void setfieldManager(final String fieldManager) {
         this.fieldManager = fieldManager;
     }
 
@@ -61,7 +61,7 @@ public class CRDObject {
         return dryRun;
     }
 
-    public void setDryRun(String dryRun) {
+    public void setDryRun(final String dryRun) {
         this.dryRun = dryRun;
     }
 
@@ -69,7 +69,7 @@ public class CRDObject {
         return pretty;
     }
 
-    public void setPretty(String pretty) {
+    public void setPretty(final String pretty) {
         this.pretty = pretty;
     }
 
@@ -77,7 +77,7 @@ public class CRDObject {
         return body;
     }
 
-    public void setBody(Object body) {
+    public void setBody(final Object body) {
         this.body = body;
     }
 
@@ -85,7 +85,7 @@ public class CRDObject {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         this.version = version;
     }
 
@@ -93,27 +93,27 @@ public class CRDObject {
         return group;
     }
 
-    public void setGroup(String group) {
+    public void setGroup(final String group) {
         this.group = group;
     }
 
-    public void setPlural(String plural) {
+    public void setPlural(final String plural) {
         this.plural = plural;
     }
 
-    public CRDObject(String group, String version, String namespace, String plural, Object body, String pretty, String dryRun,
-                     String fieldManager) {
+    public CRDObject(final String group, final String version, final String namespace, final String plural, final Object body, final String dryRun,
+    final String fieldManager) {
         this.setGroup(group);
         this.setVersion(version);
         this.setPlural(plural);
         this.setBody(body);
-        this.setPretty(pretty);
+        this.setPretty(null);
         this.setDryRun(dryRun);
         this.setfieldManager(fieldManager);
         this.setNamespace(namespace);
     }
 
-    public CRDObject(Object body) {
+    public CRDObject(final Object body) {
         this.setGroup("gchq.gov.uk");
         this.setVersion("v1");
         this.setPlural("gaffers");
