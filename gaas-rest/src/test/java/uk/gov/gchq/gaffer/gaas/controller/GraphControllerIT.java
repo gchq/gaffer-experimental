@@ -13,19 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas;
+package uk.gov.gchq.gaffer.gaas.controller;
 
+import io.kubernetes.client.openapi.ApiClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.web.servlet.MvcResult;
+import uk.gov.gchq.gaffer.gaas.AbstractTest;
+import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
+import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
+import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.gaas.services.AuthService;
+import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
+import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest
-public class GraphControllerTest extends AbstractTest {
+@SpringBootTest(classes = {AuthenticationManager.class, JwtUserDetailsService.class, JwtTokenUtil.class, GraphController.class, CreateGraphService.class, AuthService.class, GetGafferService.class, DeleteGraphService.class, ApiClient.class})
+public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
@@ -48,7 +59,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testAddGraph() throws Exception {
+    public void testAddGraphReturns201OnSuccess() throws Exception {
         final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
         final String inputJson = mapToJson(graph);
         final MvcResult mvcResult = mvc.perform(post("/graphs")
@@ -151,5 +162,37 @@ public class GraphControllerTest extends AbstractTest {
         final int status = mvcResult.getResponse().getStatus();
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
+    }
+
+    @Test
+    public void testDeleteShouldReturn200AndRemoveCRD() throws Exception {
+        //given we have a graph
+        final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
+        final String inputJson = mapToJson(graph);
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(inputJson)).andReturn();
+        assertEquals(201, mvcResult.getResponse().getStatus());
+        //when delete graph
+        final MvcResult mvcResult2 = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+        //then have no graphs / 200 return
+        assertEquals(204, mvcResult2.getResponse().getStatus());
+
+    }
+
+    @Test
+    public void testDeleteShouldReturn404WhenGraphNotExisting() throws Exception {
+        //when delete graph
+        final MvcResult mvcResult2 = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+        //then have no graphs / 200 return
+        assertEquals(404, mvcResult2.getResponse().getStatus());
+
     }
 }

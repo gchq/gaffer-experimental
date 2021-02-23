@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Crown Copyright
+ * Copyright 2021 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas;
+package uk.gov.gchq.gaffer.gaas.services;
 
-import org.junit.jupiter.api.Test;
+import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.gaas.model.Graph;
+import java.util.List;
 
-@SpringBootTest
-public class SmokeTest {
+@Service
+public class GetGafferService {
 
     @Autowired
-    private GraphController controller;
+    private ApiClient apiClient;
 
-    @Test
-    public void contextLoads() throws Exception {
-        assertThat(controller).isNotNull();
+    @Autowired
+    private CustomObjectsApiService customObjectsApiService;
+
+    public List<Graph> getGraphs() throws ApiException {
+        return customObjectsApiService.getAllGraphs();
     }
+
+
 }
