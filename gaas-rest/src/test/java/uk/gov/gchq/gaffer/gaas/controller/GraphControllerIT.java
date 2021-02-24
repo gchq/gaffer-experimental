@@ -39,17 +39,6 @@ public class GraphControllerIT extends AbstractTest {
         assertEquals(200, result.getResponse().getStatus());
         assertEquals(179, result.getResponse().getContentAsString().length());
     }
-
-    @Test
-    public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
-        final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
-        final MvcResult result = mvc.perform(post("/auth")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(authRequest)).andReturn();
-        assertEquals(401, result.getResponse().getStatus());
-        assertEquals("Invalid Credentials", result.getResponse().getContentAsString());
-    }
-
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
         final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
