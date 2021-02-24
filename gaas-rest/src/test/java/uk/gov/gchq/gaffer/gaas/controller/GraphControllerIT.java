@@ -39,6 +39,7 @@ public class GraphControllerIT extends AbstractTest {
         assertEquals(200, result.getResponse().getStatus());
         assertEquals(179, result.getResponse().getContentAsString().length());
     }
+
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
         final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
@@ -66,17 +67,18 @@ public class GraphControllerIT extends AbstractTest {
     @Test
     public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
         final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
-        final MvcResult newMvcResult = mvc.perform(post("/graphs")
+        mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
+
         assertEquals("{\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"details\":\"AlreadyExists\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(409, status);
+        assertEquals(409, mvcResult.getResponse().getStatus());
     }
 
     @Test
@@ -92,9 +94,10 @@ public class GraphControllerIT extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
+        assertEquals(200, getGraphsResponse.getResponse().getStatus());
         assertTrue(getGraphsResponse.getResponse().getContentAsString().contains("testgraphid"));
         //assertEquals("[{\"graphId\":\"\\\"testgraphid\\\"\",\"description\":\"\\\"Test Graph Description\\\"\"}]", getGraphsResponse.getResponse().getContentAsString());
-        assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 
     @Test
@@ -155,14 +158,15 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
         assertEquals(201, mvcResult.getResponse().getStatus());
+
         //when delete graph
         final MvcResult mvcResult2 = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
         //then have no graphs / 200 return
         assertEquals(204, mvcResult2.getResponse().getStatus());
-
     }
 
     @Test

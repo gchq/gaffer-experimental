@@ -25,6 +25,7 @@ import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.model.CRDClient;
 import uk.gov.gchq.gaffer.gaas.model.Graph;
 
 @Service
@@ -33,18 +34,20 @@ public class CreateGraphService {
     @Autowired
     private ApiClient apiClient;
 
+    @Autowired
+    private CRDClient crdClient;
+
     public void createGraph(final Graph graph) throws GaaSRestApiException {
         CustomObjectsApi customObject = new CustomObjectsApi(apiClient);
         String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
-        //String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":" + graph.getGraphId() + ",\"description\":" + graph.getDescription() + "}}}}";
-        JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
+        // String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"},\"spec\":{\"graph\":{\"config\":{\"graphId\":" + graph.getGraphId() + ",\"description\":" + graph.getDescription() + "}}}}";
+        final JsonObject jsonRequestBody = new JsonParser().parse(jsonString).getAsJsonObject();
         try {
-            customObject.createNamespacedCustomObject("gchq.gov.uk", "v1", "kai-helm-3", "gaffers", jsonObject, null, null, null);
+            crdClient.createCRDObject(jsonRequestBody);
         } catch (ApiException e) {
             JsonObject resultJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
             JsonElement code = resultJsonObject.get("code");
             throw new GaaSRestApiException(resultJsonObject.get("message").getAsString(), resultJsonObject.get("reason").getAsString(), code.getAsInt());
         }
     }
-
 }
