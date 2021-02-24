@@ -15,27 +15,19 @@
  */
 package uk.gov.gchq.gaffer.gaas.controller;
 
-import io.kubernetes.client.openapi.ApiClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
-import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
-import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.model.Graph;
-import uk.gov.gchq.gaffer.gaas.services.AuthService;
-import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
-import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
-import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest(classes = {AuthenticationManager.class, JwtUserDetailsService.class, JwtTokenUtil.class, GraphController.class, CreateGraphService.class, AuthService.class, GetGafferService.class, DeleteGraphService.class, ApiClient.class})
+@SpringBootTest
 public class GraphControllerIT extends AbstractTest {
 
     @Test
