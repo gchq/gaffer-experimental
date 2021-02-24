@@ -30,8 +30,4 @@ public class CrdExceptionHandler {
         final CrdErrorResponseBody response = gson.fromJson(asJsonObject, CrdErrorResponseBody.class);
         throw new GaaSRestApiException(response.getMessage(), response.getReason(), e.getCode(), e);
     }
-
-    protected CrdExceptionHandler() {
-        throw new UnsupportedOperationException();
-    }
 }
