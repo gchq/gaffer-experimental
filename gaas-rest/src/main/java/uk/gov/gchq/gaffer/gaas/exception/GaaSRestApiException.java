@@ -19,32 +19,11 @@ public class GaaSRestApiException extends Exception {
     private String reason;
     private int code;
     private String message;
-    private String details;
 
     public GaaSRestApiException(final String message, final String reason, final int code) {
         super(message);
         this.reason = reason;
         this.code = code;
-        this.message = message;
-        this.details = null;
-    }
-
-    public GaaSRestApiException(final String message, final String reason, final String details, final int code) {
-        super(message);
-        this.reason = reason;
-        this.code = code;
-        this.message = message;
-        this.details = details;
-    }
-
-    public GaaSRestApiException(final String message, final String reason) {
-        super(message);
-        this.reason = reason;
-        this.code = 0;
-    }
-
-    public String getMessage() {
-        return this.message;
     }
 
     public String getBody() {
@@ -53,5 +32,10 @@ public class GaaSRestApiException extends Exception {
 
     public int getStatusCode() {
         return code;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
     }
 }

@@ -38,8 +38,8 @@ public class CrdExceptionHandlerTest {
             CrdExceptionHandler.handle(new ApiException("Conflict", 409, responseHeaders, responseBody));
         });
 
-        assertEquals("", actual.getBody());
-        assertEquals("", actual.getMessage());
-        assertEquals("", actual.getStatusCode());
+        assertEquals("AlreadyExists", actual.getBody());
+        assertEquals("gaffers.gchq.gov.uk \"testgraphid\" already exists", actual.getMessage());
+        assertEquals(409, actual.getStatusCode());
     }
 }
