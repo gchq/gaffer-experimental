@@ -156,7 +156,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.0.0-M5</version>
                 <configuration>
-                    <skipTests>true</skipTests>
+                    <skipTests>false</skipTests>
                     <rerunFailingTestsCount>3</rerunFailingTestsCount>
                     <includes>
                         <include>**/*IT.java</include>
