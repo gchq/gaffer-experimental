@@ -16,26 +16,42 @@
 package uk.gov.gchq.gaffer.gaas.exception;
 
 public class GaaSRestApiException extends Exception {
-    private String body;
-    private int statusCode;
+    private String reason;
+    private int code;
+    private String message;
+    private String details;
 
-    public GaaSRestApiException(final String message, final String body, final int statusCode) {
+    public GaaSRestApiException(final String message, final String reason, final int code) {
         super(message);
-        this.body = body;
-        this.statusCode = statusCode;
+        this.reason = reason;
+        this.code = code;
+        this.message = message;
+        this.details = null;
     }
 
-    public GaaSRestApiException(final String message, final String body) {
+    public GaaSRestApiException(final String message, final String reason, final String details, final int code) {
         super(message);
-        this.body = body;
-        this.statusCode = 0;
+        this.reason = reason;
+        this.code = code;
+        this.message = message;
+        this.details = details;
+    }
+
+    public GaaSRestApiException(final String message, final String reason) {
+        super(message);
+        this.reason = reason;
+        this.code = 0;
+    }
+
+    public String getMessage() {
+        return this.message;
     }
 
     public String getBody() {
-        return body;
+        return reason;
     }
 
     public int getStatusCode() {
-        return statusCode;
+        return code;
     }
 }

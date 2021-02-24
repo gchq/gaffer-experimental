@@ -30,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
+import uk.gov.gchq.gaffer.gaas.model.CRDClient;
 import java.io.IOException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -43,6 +44,10 @@ public abstract class AbstractTest {
 
     @Autowired
     private ApiClient apiClient;
+
+    @Autowired
+    private CRDClient crdClient;
+
     protected MvcResult token;
 
     protected static final String TEST_GRAPH_ID = "testgraphid";

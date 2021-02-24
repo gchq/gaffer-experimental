@@ -15,27 +15,19 @@
  */
 package uk.gov.gchq.gaffer.gaas.controller;
 
-import io.kubernetes.client.openapi.ApiClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
-import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
-import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.model.Graph;
-import uk.gov.gchq.gaffer.gaas.services.AuthService;
-import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
-import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
-import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest(classes = {AuthenticationManager.class, JwtUserDetailsService.class, JwtTokenUtil.class, GraphController.class, CreateGraphService.class, AuthService.class, GetGafferService.class, DeleteGraphService.class, ApiClient.class})
+@SpringBootTest
 public class GraphControllerIT extends AbstractTest {
 
     @Test
@@ -51,9 +43,11 @@ public class GraphControllerIT extends AbstractTest {
     @Test
     public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
         final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
+
         final MvcResult result = mvc.perform(post("/auth")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(authRequest)).andReturn();
+
         assertEquals(401, result.getResponse().getStatus());
         assertEquals("Invalid Credentials", result.getResponse().getContentAsString());
     }
@@ -85,17 +79,18 @@ public class GraphControllerIT extends AbstractTest {
     @Test
     public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
         final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
-        final MvcResult newMvcResult = mvc.perform(post("/graphs")
+        mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
+
         assertEquals("{\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"details\":\"AlreadyExists\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(409, status);
+        assertEquals(409, mvcResult.getResponse().getStatus());
     }
 
     @Test
@@ -111,9 +106,10 @@ public class GraphControllerIT extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
+        assertEquals(200, getGraphsResponse.getResponse().getStatus());
         assertTrue(getGraphsResponse.getResponse().getContentAsString().contains("testgraphid"));
         //assertEquals("[{\"graphId\":\"\\\"testgraphid\\\"\",\"description\":\"\\\"Test Graph Description\\\"\"}]", getGraphsResponse.getResponse().getContentAsString());
-        assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 
     @Test
@@ -174,14 +170,15 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
         assertEquals(201, mvcResult.getResponse().getStatus());
+
         //when delete graph
         final MvcResult mvcResult2 = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
         //then have no graphs / 200 return
         assertEquals(204, mvcResult2.getResponse().getStatus());
-
     }
 
     @Test

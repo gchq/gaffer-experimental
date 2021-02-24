@@ -19,12 +19,19 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.util.ClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import uk.gov.gchq.gaffer.gaas.model.CRDClient;
 import java.io.IOException;
 
 @Configuration
 public class AppConfig {
+
     @Bean
     public ApiClient apiClient() throws IOException {
       return ClientBuilder.defaultClient();
+    }
+
+    @Bean
+    public CRDClient crdClient() {
+        return new CRDClient();
     }
 }
