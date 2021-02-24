@@ -112,7 +112,7 @@
     </dependencies>
     <profiles>
         <profile>
-            <id>build-test</id>
+            <id>test</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
