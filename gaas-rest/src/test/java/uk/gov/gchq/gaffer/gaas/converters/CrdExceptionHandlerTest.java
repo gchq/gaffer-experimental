@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CrdExceptionHandlerTest {
 
@@ -41,5 +42,6 @@ public class CrdExceptionHandlerTest {
         assertEquals("AlreadyExists", actual.getBody());
         assertEquals("gaffers.gchq.gov.uk \"testgraphid\" already exists", actual.getMessage());
         assertEquals(409, actual.getStatusCode());
+        assertTrue(actual.getCause() instanceof ApiException);
     }
 }

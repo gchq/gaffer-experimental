@@ -20,13 +20,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.kubernetes.client.openapi.ApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.model.CrdErrorResponseBody;
 
 public class CrdExceptionHandler {
 
     public static void handle(final ApiException e) throws GaaSRestApiException {
         final Gson gson = new Gson();
-        final String responseBody = e.getResponseBody();
-        final JsonObject asJsonObject = new JsonParser().parse(responseBody).getAsJsonObject();
-        throw gson.fromJson(asJsonObject, GaaSRestApiException.class);
+        final JsonObject asJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
+        final CrdErrorResponseBody response = gson.fromJson(asJsonObject, CrdErrorResponseBody.class);
+        throw new GaaSRestApiException(response.getMessage(), response.getReason(), e.getCode(), e);
     }
 }

@@ -13,31 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package uk.gov.gchq.gaffer.gaas.model;
 
-package uk.gov.gchq.gaffer.gaas.exception;
+public class CrdErrorResponseBody {
 
-public class GaaSRestApiException extends Exception {
-
+    private String message;
     private String reason;
-    private int code;
 
-    public GaaSRestApiException(final String message, final String reason, final int code) {
-        super(message);
-        this.reason = reason;
-        this.code = code;
+    public String getMessage() {
+        return message;
     }
 
-    public GaaSRestApiException(final String message, final String reason, final int code, final Throwable cause) {
-        super(message, cause);
-        this.reason = reason;
-        this.code = code;
-    }
-
-    public String getBody() {
+    public String getReason() {
         return reason;
     }
 
-    public int getStatusCode() {
-        return code;
-    }
 }
