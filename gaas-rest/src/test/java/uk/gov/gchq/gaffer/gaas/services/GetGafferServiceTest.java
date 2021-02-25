@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.services;
 
 import com.google.gson.Gson;
-import io.kubernetes.client.openapi.ApiException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

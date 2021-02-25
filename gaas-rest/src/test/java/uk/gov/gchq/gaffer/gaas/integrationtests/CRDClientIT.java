@@ -24,7 +24,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDClient;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.hamcrest.beans.HasProperty;
 
 @SpringBootTest
 public class CRDClientIT {
@@ -52,6 +57,11 @@ public class CRDClientIT {
 
         assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
     }
+    @Test
+    public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
+        assertTrue(crdClient.getAllCRD().toString().contains("items=[]"));
+    }
+
 
     @AfterEach
     void tearDown() {
