@@ -27,6 +27,7 @@ import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
+import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +62,7 @@ public class CustomObjectsApiService {
             final JsonElement graph = key.getAsJsonObject().get("spec").getAsJsonObject().get("graph").getAsJsonObject().get("config");
             final String graphId = gson.fromJson(graph.getAsJsonObject().get("graphId"), String.class);
             final String graphDescription = gson.fromJson(graph.getAsJsonObject().get("description"), String.class);
-            list.add(new GraphConfig.Builder().graphId(graphId).description(graphDescription).build());
+            list.add(new GraphConfig.Builder().graphId(graphId).description(graphDescription).library(new FileGraphLibrary()).build());
         }
         return list;
     }
