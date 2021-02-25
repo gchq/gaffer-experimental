@@ -18,7 +18,6 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +46,6 @@ public class CRDClientIT {
     }
 
     // TODO: Buid correct request for create graph
-    @Disabled
     @Test
     public void createCRD_whenGraphIdHasSpecialChars_throwsApiException() {
         final String requestBody = "{\"graphId\":\"sp3ci@l_char$\",\"description\":\"Some description\"}";

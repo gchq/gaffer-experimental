@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -47,11 +47,11 @@ class GetGafferServiceTest extends AbstractTest {
 
         final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
         Gson g = new Gson();
-        Graph graph = g.fromJson(graphRequest, Graph.class);
-        List<Graph> graphList = new ArrayList<>();
+        GraphConfig graph = g.fromJson(graphRequest, GraphConfig.class);
+        List<GraphConfig> graphList = new ArrayList<>();
         graphList.add(graph);
         when(customObjectsApiService.getAllGraphs()).thenReturn(graphList);
-        List<Graph> graphs = getGafferService.getGraphs();
+        List<GraphConfig> graphs = getGafferService.getGraphs();
 
         assertEquals(TEST_GRAPH_ID, graphs.get(0).getGraphId());
         assertEquals(TEST_GRAPH_DESCRIPTION, graphs.get(0).getDescription());

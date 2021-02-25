@@ -26,7 +26,7 @@ import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +37,7 @@ public class CustomObjectsApiService {
     @Autowired
     private ApiClient apiClient;
 
-    public List<Graph>  getAllGraphs() throws ApiException {
+    public List<GraphConfig>  getAllGraphs() throws ApiException {
         CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
         String group = "gchq.gov.uk"; // String | the custom resource's group
         String version = "v1"; // String | the custom resource's version
@@ -50,18 +50,18 @@ public class CustomObjectsApiService {
         return convertJsonToGraphs(response);
     }
 
-    public List<Graph> convertJsonToGraphs(final Object response) {
+    public List<GraphConfig> convertJsonToGraphs(final Object response) {
         final Gson gson = new Gson();
         JsonObject jsonObject = new JsonParser().parse(gson.toJson(response)).getAsJsonObject();
         JsonArray items = jsonObject.get("items").getAsJsonArray();
-        final List<Graph> list = new ArrayList();
+        final List<GraphConfig> list = new ArrayList();
         Iterator<JsonElement> iterator = items.iterator();
         while (iterator.hasNext()) {
             JsonElement key = iterator.next();
             final JsonElement graph = key.getAsJsonObject().get("spec").getAsJsonObject().get("graph").getAsJsonObject().get("config");
             final String graphId = gson.fromJson(graph.getAsJsonObject().get("graphId"), String.class);
             final String graphDescription = gson.fromJson(graph.getAsJsonObject().get("description"), String.class);
-            list.add(new Graph(graphId, graphDescription));
+            list.add(new GraphConfig.Builder().graphId(graphId).description(graphDescription).build());
         }
         return list;
     }

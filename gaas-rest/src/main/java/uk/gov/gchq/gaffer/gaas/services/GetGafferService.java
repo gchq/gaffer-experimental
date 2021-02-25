@@ -19,7 +19,7 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
 import java.util.List;
 
 @Service
@@ -31,7 +31,7 @@ public class GetGafferService {
     @Autowired
     private CustomObjectsApiService customObjectsApiService;
 
-    public List<Graph> getGraphs() throws ApiException {
+    public List<GraphConfig> getGraphs() throws ApiException {
         return customObjectsApiService.getAllGraphs();
     }
 
