@@ -30,6 +30,7 @@ import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
 import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -62,15 +63,15 @@ public class GraphControllerTest extends AbstractTest {
     public void getGraphEndpointReturnsGraph() throws Exception {
         final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
         Gson g = new Gson();
-        Graph graph = g.fromJson(graphRequest, Graph.class);
-        ArrayList<Graph> graphList = new ArrayList<>();
+        GraphConfig graph = g.fromJson(graphRequest, GraphConfig.class);
+        ArrayList<GraphConfig> graphList = new ArrayList<>();
         graphList.add(graph);
         when(getGafferService.getGraphs()).thenReturn(graphList);
         final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
-        assertEquals("[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\"}]", getGraphsResponse.getResponse().getContentAsString());
+        assertEquals("[{\"description\":\"Test Graph Description\",\"graphId\":\"testgraphid\",\"hooks\":[],\"library\":null,\"view\":null}]", getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 

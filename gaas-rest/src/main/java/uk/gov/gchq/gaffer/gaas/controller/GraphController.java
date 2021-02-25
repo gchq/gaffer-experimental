@@ -35,6 +35,7 @@ import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -67,8 +68,8 @@ public class GraphController {
     }
 
     @GetMapping(path = "/graphs", produces = "application/json")
-    public ResponseEntity<List<Graph>> graph() throws ApiException {
-        final List<Graph> list = gafferService.getGraphs();
+    public ResponseEntity<List<GraphConfig>> graph() throws GaaSRestApiException {
+        final List<GraphConfig> list = gafferService.getGraphs();
         return new ResponseEntity(list, HttpStatus.OK);
     }
 

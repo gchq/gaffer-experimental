@@ -99,7 +99,7 @@ public class GraphControllerIT extends AbstractTest {
 
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
         assertTrue(getGraphsResponse.getResponse().getContentAsString().contains("testgraphid"));
-        //assertEquals("[{\"graphId\":\"\\\"testgraphid\\\"\",\"description\":\"\\\"Test Graph Description\\\"\"}]", getGraphsResponse.getResponse().getContentAsString());
+        assertEquals("[{\"description\":\"Test Graph Description\",\"graphId\":\"testgraphid\",\"hooks\":[],\"library\":{\"class\":\"uk.gov.gchq.gaffer.store.library.FileGraphLibrary\",\"path\":\"graphLibrary\"},\"view\":null}]", getGraphsResponse.getResponse().getContentAsString());
     }
 
     @Test

@@ -15,6 +15,8 @@
  */
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
@@ -28,6 +30,7 @@ import uk.gov.gchq.gaffer.gaas.model.CRDClient;
 import uk.gov.gchq.gaffer.gaas.model.Graph;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -60,6 +63,21 @@ public class CRDClientIT {
 
         assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
     }
+    @Test
+    public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
+        assertTrue(crdClient.getAllCRD().toString().contains("items=[]"));
+    }
+    @Test
+    public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
+        final String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
+        "\"kind\":\"Gaffer\"," +
+        "\"metadata\":{\"name\":\"" + TEST_GRAPH_ID + "\"}," +
+        "\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}}}}";
+        final JsonObject jsonRequestBody = new JsonParser().parse(jsonString).getAsJsonObject();
+        crdClient.createCRD(jsonRequestBody);
+        assertTrue(crdClient.getAllCRD().toString().contains("testgraphid"));
+    }
+
 
     @Test
     void testCreateGraph() throws GaaSRestApiException {

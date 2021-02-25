@@ -21,12 +21,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.ApiException;
-import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.model.CRDClient;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
+import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,33 +36,27 @@ import java.util.List;
 public class CustomObjectsApiService {
 
     @Autowired
-    private ApiClient apiClient;
+    private CRDClient crdClient;
 
-    public List<Graph>  getAllGraphs() throws ApiException {
-        CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        String group = "gchq.gov.uk"; // String | the custom resource's group
-        String version = "v1"; // String | the custom resource's version
-        String namespace = "kai-helm-3"; // String | The custom resource's namespace
-        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        String name = "getgraphgraph"; // String | the custom object's name
+    public List<GraphConfig> getAllGraphs() throws GaaSRestApiException {
 
-        final Object response = apiInstance.listNamespacedCustomObject(group, version, namespace, plural, null, null, null, null, null, null, null, null);
+        final Object response = crdClient.getAllCRD();
 
         return convertJsonToGraphs(response);
     }
 
-    public List<Graph> convertJsonToGraphs(final Object response) {
+    public List<GraphConfig> convertJsonToGraphs(final Object response) {
         final Gson gson = new Gson();
         JsonObject jsonObject = new JsonParser().parse(gson.toJson(response)).getAsJsonObject();
         JsonArray items = jsonObject.get("items").getAsJsonArray();
-        final List<Graph> list = new ArrayList();
+        final List<GraphConfig> list = new ArrayList();
         Iterator<JsonElement> iterator = items.iterator();
         while (iterator.hasNext()) {
             JsonElement key = iterator.next();
             final JsonElement graph = key.getAsJsonObject().get("spec").getAsJsonObject().get("graph").getAsJsonObject().get("config");
             final String graphId = gson.fromJson(graph.getAsJsonObject().get("graphId"), String.class);
             final String graphDescription = gson.fromJson(graph.getAsJsonObject().get("description"), String.class);
-            list.add(new Graph(graphId, graphDescription));
+            list.add(new GraphConfig.Builder().graphId(graphId).description(graphDescription).library(new FileGraphLibrary()).build());
         }
         return list;
     }
