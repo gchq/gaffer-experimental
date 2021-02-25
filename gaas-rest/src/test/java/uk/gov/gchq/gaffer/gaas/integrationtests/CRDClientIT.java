@@ -15,23 +15,20 @@
  */
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import org.apache.tomcat.jni.Time;
+import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDClient;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class CRDClientIT {
@@ -52,28 +49,31 @@ public class CRDClientIT {
         assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(null));
     }
 
-    // TODO: Buid correct request for create graph
     @Test
-    public void createCRD_whenGraphIdHasSpecialChars_throwsApiException() {
-        final String requestBody = "{\"graphId\":\"sp3ci@l_char$\",\"description\":\"Some description\"}";
+    public void createCRD_whenCreateRequestBodyIsInvalid_throwsBadRequestApiException() {
+        final String requestBody = "{\"invalid\":\"request body\"}";
 
-        assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
+
+        assertEquals("BadRequest", exception.getBody());
+        final String expected = "the object provided is unrecognized (must be of type Gaffer): couldn't get version/kind; " +
+                "json parse error: json: cannot unmarshal string into Go value of type struct " +
+                "{ APIVersion string \"json:\\\"apiVersion,omitempty\\\"\"; Kind string \"json:\\\"kind,omitempty\\\"\" }";
+        assertTrue(exception.getMessage().contains(expected));
     }
-    @Test
-    public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
-        assertTrue(crdClient.getAllCRD().toString().contains("items=[]"));
-    }
+
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
         final String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
-        "\"kind\":\"Gaffer\"," +
-        "\"metadata\":{\"name\":\"" + TEST_GRAPH_ID + "\"}," +
-        "\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}}}}";
+                "\"kind\":\"Gaffer\"," +
+                "\"metadata\":{\"name\":\"" + TEST_GRAPH_ID + "\"}," +
+                "\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}}}}";
+
         final JsonObject jsonRequestBody = new JsonParser().parse(jsonString).getAsJsonObject();
         crdClient.createCRD(jsonRequestBody);
+
         assertTrue(crdClient.getAllCRD().toString().contains("testgraphid"));
     }
-
 
     @AfterEach
     void tearDown() {
