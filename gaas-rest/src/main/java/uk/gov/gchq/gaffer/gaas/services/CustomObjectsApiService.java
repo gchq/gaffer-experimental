@@ -39,17 +39,9 @@ import java.util.List;
 public class CustomObjectsApiService {
 
     @Autowired
-    private ApiClient apiClient;
-    @Autowired
     private CRDClient crdClient;
 
     public List<GraphConfig> getAllGraphs() throws GaaSRestApiException {
-        CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        String group = "gchq.gov.uk"; // String | the custom resource's group
-        String version = "v1"; // String | the custom resource's version
-        String namespace = "kai-helm-3"; // String | The custom resource's namespace
-        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        String name = "getgraphgraph"; // String | the custom object's name
 
         final Object response = crdClient.getAllCRD();
 

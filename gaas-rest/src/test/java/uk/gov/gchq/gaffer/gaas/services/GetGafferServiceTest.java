@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +40,9 @@ class GetGafferServiceTest extends AbstractTest {
     @Autowired
     private GetGafferService getGafferService;
 
-    @Autowired
-    private DeleteGraphService deleteGraphService;
 
     @Test
-    void testGetGraphs() throws ApiException {
+    void testGetGraphs() throws GaaSRestApiException {
 
         final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
         Gson g = new Gson();
