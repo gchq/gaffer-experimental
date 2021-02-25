@@ -21,6 +21,8 @@ import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import static uk.gov.gchq.gaffer.gaas.converters.CrdExceptionHandler.handle;
 
 public class CRDClient {
     private String group;
@@ -45,8 +47,12 @@ public class CRDClient {
         this.fieldManager = null;
     }
 
-    public void createCRDObject(final Object requestBody) throws ApiException {
+    public void createCRD(final Object requestBody) throws GaaSRestApiException {
         final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
-        customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, requestBody, this.pretty, this.dryRun, this.fieldManager);
+        try {
+            customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, requestBody, this.pretty, this.dryRun, this.fieldManager);
+        } catch (ApiException e) {
+            handle(e);
+        }
     }
 }

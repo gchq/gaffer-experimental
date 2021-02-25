@@ -26,8 +26,13 @@ public class CrdExceptionHandler {
 
     public static void handle(final ApiException e) throws GaaSRestApiException {
         final Gson gson = new Gson();
-        final JsonObject asJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
-        final CrdErrorResponseBody response = gson.fromJson(asJsonObject, CrdErrorResponseBody.class);
-        throw new GaaSRestApiException(response.getMessage(), response.getReason(), e.getCode(), e);
+        if (e.getResponseBody() != null) {
+            final JsonObject asJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
+            final CrdErrorResponseBody response = gson.fromJson(asJsonObject, CrdErrorResponseBody.class);
+            throw new GaaSRestApiException(response.getMessage(), response.getReason(), e.getCode(), e);
+
+        } else {
+            throw new GaaSRestApiException(e.getMessage(), e.getResponseBody(), e.getCode(), e);
+        }
     }
 }

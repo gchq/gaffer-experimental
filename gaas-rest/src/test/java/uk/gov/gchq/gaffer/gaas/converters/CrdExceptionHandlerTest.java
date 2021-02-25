@@ -19,24 +19,20 @@ package uk.gov.gchq.gaffer.gaas.converters;
 import io.kubernetes.client.openapi.ApiException;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.gchq.gaffer.gaas.utilities.TestUtilities.makeApiException_duplicateGraph;
+import static uk.gov.gchq.gaffer.gaas.utilities.TestUtilities.makeApiException_timeout;
 
 public class CrdExceptionHandlerTest {
 
     @Test
-    public void convertApiExceptionToGaasApiException() {
-        final Map<String, List<String>> responseHeaders = new TreeMap<>();
-        responseHeaders.put("content-type", Arrays.asList("application/json"));
-        final String responseBody = "{\"kind\":\"Status\",\"apiVersion\":\"v1\",\"metadata\":{},\"status\":\"Failure\",\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"reason\":\"AlreadyExists\",\"details\":{\"name\":\"testgraphid\",\"group\":\"gchq.gov.uk\",\"kind\":\"gaffers\"},\"code\":409}\n";
+    public void convertAlreadyExistsApiExceptionToGaasApiException() {
+        final ApiException apiException = makeApiException_duplicateGraph();
 
         final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> {
-            CrdExceptionHandler.handle(new ApiException("Conflict", 409, responseHeaders, responseBody));
+            CrdExceptionHandler.handle(apiException);
         });
 
         assertEquals("AlreadyExists", actual.getBody());
@@ -44,4 +40,19 @@ public class CrdExceptionHandlerTest {
         assertEquals(409, actual.getStatusCode());
         assertTrue(actual.getCause() instanceof ApiException);
     }
+
+    @Test
+    public void convertApiExceptionToGaasApiException() {
+        final ApiException apiException = makeApiException_timeout();
+
+        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> {
+            CrdExceptionHandler.handle(apiException);
+        });
+
+        assertEquals(null, actual.getBody());
+        assertEquals("java.net.SocketTimeoutException: connect timed out", actual.getMessage());
+        assertEquals(0, actual.getStatusCode());
+        assertTrue(actual.getCause() instanceof ApiException);
+    }
+
 }

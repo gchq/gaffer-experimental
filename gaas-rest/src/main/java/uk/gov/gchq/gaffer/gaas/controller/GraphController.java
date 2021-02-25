@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.Graph;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
@@ -53,25 +54,22 @@ public class GraphController {
     @Autowired
     private ApiClient apiClient;
 
+    @PostMapping("/auth")
+    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
+        final String token = authService.getToken(authenticationRequest);
+        return ResponseEntity.ok(token);
+    }
+
+    @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> graph(@Valid @RequestBody final Graph graph) throws GaaSRestApiException {
+        createGraphService.createGraph(graph);
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
 
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<Graph>> graph() throws ApiException {
         final List<Graph> list = gafferService.getGraphs();
         return new ResponseEntity(list, HttpStatus.OK);
-    }
-
-
-    @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> graph(@Valid @RequestBody final Graph graph) throws Exception {
-        createGraphService.createGraph(graph);
-        return new ResponseEntity(HttpStatus.CREATED);
-
-    }
-
-    @PostMapping("/auth")
-    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-        final String token = authService.getToken(authenticationRequest);
-        return ResponseEntity.ok(token);
     }
 
     @DeleteMapping("/graphs/{graphId}")
@@ -82,8 +80,5 @@ public class GraphController {
         } catch (ApiException e) {
             return new ResponseEntity(HttpStatus.valueOf(e.getCode()));
         }
-
     }
-
-
 }

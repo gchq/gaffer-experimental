@@ -35,7 +35,6 @@ import java.io.IOException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-
 @SpringBootTest
 public abstract class AbstractTest {
     protected MockMvc mvc;
