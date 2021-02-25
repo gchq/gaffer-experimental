@@ -18,6 +18,10 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.apache.tomcat.jni.Time;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +62,16 @@ public class CRDClientIT {
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
         assertTrue(crdClient.getAllCRD().toString().contains("items=[]"));
+    }
+    @Test
+    public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
+        final String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
+        "\"kind\":\"Gaffer\"," +
+        "\"metadata\":{\"name\":\"" + TEST_GRAPH_ID + "\"}," +
+        "\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}}}}";
+        final JsonObject jsonRequestBody = new JsonParser().parse(jsonString).getAsJsonObject();
+        crdClient.createCRD(jsonRequestBody);
+        assertTrue(crdClient.getAllCRD().toString().contains("testgraphid"));
     }
 
 
