@@ -41,7 +41,7 @@ class GetGafferServiceTest extends AbstractTest {
 
 
     @Test
-    void testGetGraphs() throws GaaSRestApiException {
+    void testGetGraphs_whenGraphRequestIsNotEmpty() throws GaaSRestApiException {
 
         final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
         Gson g = new Gson();
@@ -54,6 +54,16 @@ class GetGafferServiceTest extends AbstractTest {
         assertEquals(TEST_GRAPH_ID, graphs.get(0).getGraphId());
         assertEquals(TEST_GRAPH_DESCRIPTION, graphs.get(0).getDescription());
         assertArrayEquals(graphList.toArray(), graphs.toArray());
+
+    }
+    @Test
+    void testGetGraphs_whenGraphRequestIsEmpty() throws GaaSRestApiException {
+
+        List<GraphConfig> graphList = new ArrayList<>();
+        when(customObjectsApiService.getAllGraphs()).thenReturn(graphList);
+        List<GraphConfig> graphs = getGafferService.getGraphs();
+        assertEquals(0, graphs.size());
+        
 
     }
 }
