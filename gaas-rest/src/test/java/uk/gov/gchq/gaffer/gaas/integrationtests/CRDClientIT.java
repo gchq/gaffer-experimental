@@ -15,21 +15,19 @@
  */
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.apis.CustomObjectsApi;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDClient;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.hamcrest.beans.HasProperty;
 
 @SpringBootTest
 public class CRDClientIT {
