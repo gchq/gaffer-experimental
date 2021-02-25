@@ -34,6 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CRDClientIT {
 
     @Autowired
+    private CreateGraphService createGraphService;
+
+    @Autowired
     CRDClient crdClient;
     @Autowired
     private ApiClient apiClient;
@@ -73,6 +76,23 @@ public class CRDClientIT {
         crdClient.createCRD(jsonRequestBody);
 
         assertTrue(crdClient.getAllCRD().toString().contains("testgraphid"));
+    }
+
+
+    @Test
+    void testCreateGraph() throws GaaSRestApiException {
+        Graph graph = new Graph("mygraph", "new description");
+        createGraphService.createGraph(graph);
+
+    }
+
+    @Test
+    void testCreateGraphWhenGraphIdHasUppercase_ThrowsException() throws GaaSRestApiException {
+        Graph graph = new Graph("myGraph", "new description");
+
+        assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(graph));
+
+
     }
 
     @AfterEach
