@@ -15,14 +15,17 @@
  */
 package uk.gov.gchq.gaffer.gaas.services;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDClient;
+import uk.gov.gchq.gaffer.gaas.model.Gaffer;
+import uk.gov.gchq.gaffer.gaas.model.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.Graph;
+
+import java.util.HashMap;
 
 @Service
 public class CreateGraphService {
@@ -33,13 +36,20 @@ public class CreateGraphService {
     @Autowired
     private CRDClient crdClient;
 
-    public void createGraph(final Graph graph) throws GaaSRestApiException {
-        final String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
-                "\"kind\":\"Gaffer\"," +
-                "\"metadata\":{\"name\":\"" + graph.getGraphId() + "\"}," +
-                "\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + graph.getGraphId() + "\",\"description\":\"" + graph.getDescription() + "\"}}}}";
+    public void createGraph(final Graph graphInput) throws GaaSRestApiException {
+        GafferSpec spec = new GafferSpec();
+        HashMap<String, String> config = new HashMap<>();
+        config.put("graphId", graphInput.getGraphId());
+        config.put("description", graphInput.getDescription());
+        HashMap<HashMap, String> graph = new HashMap<>();
+        graph.put(config, "config");
+        boolean graph1 = spec.putNestedObject(graph, "graph");
+        V1ObjectMeta metadata = new V1ObjectMeta().name(graphInput.getGraphId());
+        Gaffer gaffer = new Gaffer().apiVersion("gchq.gov.uk/v1")
+                .kind("Gaffer")
+                .metaData(metadata)
+                .spec(spec);
 
-        final JsonObject jsonRequestBody = new JsonParser().parse(jsonString).getAsJsonObject();
-        crdClient.createCRD(jsonRequestBody);
+        crdClient.createCRD(gaffer);
     }
 }

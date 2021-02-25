@@ -25,10 +25,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDClient;
+import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class CRDClientIT {
+
+    @Autowired
+    private CreateGraphService createGraphService;
 
     @Autowired
     CRDClient crdClient;
@@ -53,6 +59,22 @@ public class CRDClientIT {
         final String requestBody = "{\"graphId\":\"sp3ci@l_char$\",\"description\":\"Some description\"}";
 
         assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
+    }
+
+    @Test
+    void testCreateGraph() throws GaaSRestApiException {
+        Graph graph = new Graph("mygraph", "new description");
+        createGraphService.createGraph(graph);
+
+    }
+
+    @Test
+    void testCreateGraphWhenGraphIdHasUppercase_ThrowsException() throws GaaSRestApiException {
+        Graph graph = new Graph("myGraph", "new description");
+
+        assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(graph));
+
+
     }
 
     @AfterEach
