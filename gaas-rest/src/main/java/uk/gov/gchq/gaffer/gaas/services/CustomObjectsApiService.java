@@ -26,6 +26,9 @@ import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.model.CRDClient;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
 import java.util.ArrayList;
@@ -37,8 +40,10 @@ public class CustomObjectsApiService {
 
     @Autowired
     private ApiClient apiClient;
+    @Autowired
+    private CRDClient crdClient;
 
-    public List<GraphConfig>  getAllGraphs() throws ApiException {
+    public List<GraphConfig> getAllGraphs() throws GaaSRestApiException {
         CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
         String group = "gchq.gov.uk"; // String | the custom resource's group
         String version = "v1"; // String | the custom resource's version
@@ -46,7 +51,7 @@ public class CustomObjectsApiService {
         String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
         String name = "getgraphgraph"; // String | the custom object's name
 
-        final Object response = apiInstance.listNamespacedCustomObject(group, version, namespace, plural, null, null, null, null, null, null, null, null);
+        final Object response = crdClient.getAllCRD();
 
         return convertJsonToGraphs(response);
     }

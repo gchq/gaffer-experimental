@@ -55,4 +55,14 @@ public class CRDClient {
             handle(e);
         }
     }
+    public Object getAllCRD() throws GaaSRestApiException {
+        final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
+        try {
+            return customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.plural ,null, null, null, null, null, null, null, null);
+        } catch (ApiException e) {
+            handle(e);
+        }
+        return null;
+
+    }
 }

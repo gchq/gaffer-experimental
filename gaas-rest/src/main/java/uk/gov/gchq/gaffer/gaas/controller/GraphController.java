@@ -68,7 +68,7 @@ public class GraphController {
     }
 
     @GetMapping(path = "/graphs", produces = "application/json")
-    public ResponseEntity<List<GraphConfig>> graph() throws ApiException {
+    public ResponseEntity<List<GraphConfig>> graph() throws GaaSRestApiException {
         final List<GraphConfig> list = gafferService.getGraphs();
         return new ResponseEntity(list, HttpStatus.OK);
     }
