@@ -22,7 +22,7 @@ import javax.validation.constraints.Pattern;
 /**
  * GaaS rest request body object to create gaffer in CRD
  */
-public class Graph {
+public class GaaSCreateRequestBody {
 
     @NotBlank(message = "Graph id should not be null")
     @NotNull(message = "Graph id should not be null")
@@ -31,10 +31,10 @@ public class Graph {
     @NotBlank(message = "Description should not be empty")
     private String description;
 
-    public Graph() {
+    public GaaSCreateRequestBody() {
     }
 
-    public Graph(final String graphId, final String description) {
+    public GaaSCreateRequestBody(final String graphId, final String description) {
         this.graphId = graphId;
         this.description = description;
     }

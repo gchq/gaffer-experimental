@@ -22,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -46,8 +46,8 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
-        final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
-        final String inputJson = mapToJson(graph);
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -144,46 +144,42 @@ public class GraphControllerIT extends AbstractTest {
     @Test
     public void testDescriptionEmptyShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\"}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
+
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
     @Test
     public void testDeleteShouldReturn200AndRemoveCRD() throws Exception {
-        //given we have a graph
-        final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
-        final String inputJson = mapToJson(graph);
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+        final MvcResult createGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
-        assertEquals(201, mvcResult.getResponse().getStatus());
+        assertEquals(201, createGraphResponse.getResponse().getStatus());
 
-        //when delete graph
-        final MvcResult mvcResult2 = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
+        final MvcResult getGraphsResponse = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
 
-        //then have no graphs / 200 return
-        assertEquals(204, mvcResult2.getResponse().getStatus());
+        assertEquals(204, getGraphsResponse.getResponse().getStatus());
     }
 
     @Test
     public void testDeleteShouldReturn404WhenGraphNotExisting() throws Exception {
-        //when delete graph
-        final MvcResult mvcResult2 = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
+        final MvcResult deleteGraphResponse = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
 
-        //then have no graphs / 200 return
-        assertEquals(404, mvcResult2.getResponse().getStatus());
+        assertEquals(404, deleteGraphResponse.getResponse().getStatus());
     }
 
     @AfterEach

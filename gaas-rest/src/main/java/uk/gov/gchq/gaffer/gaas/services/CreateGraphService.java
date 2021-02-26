@@ -21,8 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDClient;
-import uk.gov.gchq.gaffer.gaas.model.CreateGafferRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
 import uk.gov.gchq.gaffer.gaas.model.NewGraph;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
@@ -36,14 +36,14 @@ public class CreateGraphService {
     @Autowired
     private CRDClient crdClient;
 
-    public void createGraph(final Graph graphInput) throws GaaSRestApiException {
-        crdClient.createCRD(buildCreateCRDRequestBody(graphInput));
+    public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
+        crdClient.createCRD(buildCreateCRDRequestBody(gaaSCreateRequestBodyInput));
     }
 
-    private CreateGafferRequestBody buildCreateCRDRequestBody(final Graph graph) {
+    private CRDCreateRequestBody buildCreateCRDRequestBody(final GaaSCreateRequestBody graph) {
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
 
-        return new CreateGafferRequestBody()
+        return new CRDCreateRequestBody()
                 .apiVersion("gchq.gov.uk/v1")
                 .kind("Gaffer")
                 .metaData(metadata)

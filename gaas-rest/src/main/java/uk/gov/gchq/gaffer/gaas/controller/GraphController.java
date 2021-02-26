@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
@@ -61,8 +61,8 @@ public class GraphController {
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> graph(@Valid @RequestBody final Graph graph) throws GaaSRestApiException {
-        createGraphService.createGraph(graph);
+    public ResponseEntity<?> graph(@Valid @RequestBody final GaaSCreateRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
+        createGraphService.createGraph(gaaSCreateRequestBody);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
@@ -72,7 +72,7 @@ public class GraphController {
         return new ResponseEntity(list, HttpStatus.OK);
     }
 
-    @DeleteMapping("/graphs/{graphId}")
+    @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId) throws GaaSRestApiException {
         deleteGraphService.deleteGraph(graphId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);

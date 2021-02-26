@@ -21,14 +21,14 @@ import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CreateGafferRequestBodyTest {
+public class CRDCreateRequestBodyTest {
 
     private final Gson gson = new Gson();
 
     @Test
     public void shouldReflectCreateGafferJsonRequestBody() {
         final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
-        final CreateGafferRequestBody requestBody = new CreateGafferRequestBody()
+        final CRDCreateRequestBody requestBody = new CRDCreateRequestBody()
                 .apiVersion("gchq.gov.uk/v1")
                 .kind("Gaffer")
                 .metaData(metadata)
