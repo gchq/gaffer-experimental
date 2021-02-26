@@ -61,17 +61,17 @@ public class CreateGafferRequestBody implements KubernetesObject {
 
     @Override
     public V1ObjectMeta getMetadata() {
-        return null;
+        return metadata;
     }
 
     @Override
     public String getApiVersion() {
-        return null;
+        return apiVersion;
     }
 
     @Override
     public String getKind() {
-        return null;
+        return kind;
     }
 
     public GraphSpec getSpec() {

@@ -41,7 +41,7 @@ public class CreateGraphService {
     }
 
     private CreateGafferRequestBody buildCreateCRDRequestBody(final Graph graph) {
-        final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
+        final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
 
         return new CreateGafferRequestBody()
                 .apiVersion("gchq.gov.uk/v1")

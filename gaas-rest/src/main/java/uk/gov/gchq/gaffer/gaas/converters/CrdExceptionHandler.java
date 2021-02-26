@@ -24,15 +24,15 @@ import uk.gov.gchq.gaffer.gaas.model.CrdErrorResponseBody;
 
 public class CrdExceptionHandler {
 
-    public static void handle(final ApiException e) throws GaaSRestApiException {
+    public static GaaSRestApiException handle(final ApiException e) {
         final Gson gson = new Gson();
         if (e.getResponseBody() != null) {
             final JsonObject asJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
             final CrdErrorResponseBody response = gson.fromJson(asJsonObject, CrdErrorResponseBody.class);
-            throw new GaaSRestApiException(response.getMessage(), response.getReason(), e.getCode(), e);
+            return new GaaSRestApiException(response.getMessage(), response.getReason(), e.getCode(), e);
 
         } else {
-            throw new GaaSRestApiException(e.getMessage(), e.getResponseBody(), e.getCode(), e);
+            return new GaaSRestApiException(e.getMessage(), e.getResponseBody(), e.getCode(), e);
         }
     }
 }

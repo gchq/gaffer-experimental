@@ -53,7 +53,7 @@ public class CRDClient {
         try {
             customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, requestBody, this.pretty, this.dryRun, this.fieldManager);
         } catch (ApiException e) {
-            handle(e);
+            throw handle(e);
         }
     }
 
@@ -62,9 +62,7 @@ public class CRDClient {
         try {
             return customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, null, null, null, null, null, null, null, null);
         } catch (ApiException e) {
-            handle(e);
+            throw handle(e);
         }
-        return null;
-
     }
 }

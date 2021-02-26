@@ -77,11 +77,11 @@ public class CRDClientIT {
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
 
+        assertEquals(400, exception.getStatusCode());
         assertEquals("BadRequest", exception.getBody());
-        final String expected = "the object provided is unrecognized (must be of type Gaffer): couldn't get version/kind; " +
-                "json parse error: json: cannot unmarshal string into Go value of type struct " +
-                "{ APIVersion string \"json:\\\"apiVersion,omitempty\\\"\"; Kind string \"json:\\\"kind,omitempty\\\"\" }";
-        assertTrue(exception.getMessage().contains(expected));
+        final String expected = "Gaffer in version \"v1\" cannot be handled as a Gaffer: unmarshalerDecoder: " +
+                "Object 'Kind' is missing in '{}', error found in #2 byte of ...|{}|..., bigger context ...|{}|...";
+        assertEquals(expected, exception.getMessage());
     }
 
     @Test

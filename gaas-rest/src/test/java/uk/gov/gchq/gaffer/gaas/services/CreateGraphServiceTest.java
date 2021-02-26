@@ -24,7 +24,6 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDClient;
 import uk.gov.gchq.gaffer.gaas.model.CreateGafferRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.Graph;
-import uk.gov.gchq.gaffer.graph.GraphConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,8 +44,9 @@ public class CreateGraphServiceTest {
         final ArgumentCaptor<CreateGafferRequestBody> argumentCaptor = ArgumentCaptor.forClass(CreateGafferRequestBody.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
 
-        final GraphConfig actualConfig = argumentCaptor.<CreateGafferRequestBody>getValue().getSpec().getGraph().getConfig();
-        assertEquals("myGraph", actualConfig.getGraphId());
-        assertEquals("Another description", actualConfig.getDescription());
+        final CreateGafferRequestBody gafferRequestBody = argumentCaptor.<CreateGafferRequestBody>getValue();
+        assertEquals("myGraph", gafferRequestBody.getSpec().getGraph().getConfig().getGraphId());
+        assertEquals("Another description", gafferRequestBody.getSpec().getGraph().getConfig().getDescription());
+        assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
     }
 }
