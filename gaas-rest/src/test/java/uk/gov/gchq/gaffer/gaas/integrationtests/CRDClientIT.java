@@ -52,7 +52,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {
-        final CreateGafferRequestBody gafferRequest = makeCreateCRDRequestBody(new Graph("validgraph", "A description"));
+        final CreateGafferRequestBody gafferRequest = makeCreateCRDRequestBody(new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION));
 
         assertDoesNotThrow(() -> crdClient.createCRD(gafferRequest));
     }
