@@ -22,7 +22,7 @@ import io.kubernetes.client.openapi.ApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CrdErrorResponseBody;
 
-public class GaasRestExceptionFactory {
+public final class GaaSRestExceptionFactory {
 
     public static GaaSRestApiException from(final ApiException e) {
         final Gson gson = new Gson();
@@ -36,7 +36,7 @@ public class GaasRestExceptionFactory {
         }
     }
 
-    private GaasRestExceptionFactory() {
+    private GaaSRestExceptionFactory() {
         // prevents calls from subclass
         throw new UnsupportedOperationException();
     }

@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_duplicateGraph;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_timeout;
 
-public class GaasRestExceptionFactoryTest {
+public class GaaSRestExceptionFactoryTest {
 
     @Test
     public void convertAlreadyExistsApiExceptionToGaasApiException() {
         final ApiException apiException = makeApiException_duplicateGraph();
 
-        final GaaSRestApiException actual = GaasRestExceptionFactory.from(apiException);
+        final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
 
         assertEquals("AlreadyExists", actual.getBody());
         assertEquals("gaffers.gchq.gov.uk \"testgraphid\" already exists", actual.getMessage());
@@ -42,7 +42,7 @@ public class GaasRestExceptionFactoryTest {
     public void convertApiExceptionToGaasApiException() {
         final ApiException apiException = makeApiException_timeout();
 
-        final GaaSRestApiException actual = GaasRestExceptionFactory.from(apiException);
+        final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
 
         assertEquals(null, actual.getBody());
         assertEquals("java.net.SocketTimeoutException: connect timed out", actual.getMessage());

@@ -23,7 +23,7 @@ import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import static uk.gov.gchq.gaffer.gaas.converters.GaasRestExceptionFactory.from;
+import static uk.gov.gchq.gaffer.gaas.converters.GaaSRestExceptionFactory.from;
 
 public class CRDClient {
     private String group;
