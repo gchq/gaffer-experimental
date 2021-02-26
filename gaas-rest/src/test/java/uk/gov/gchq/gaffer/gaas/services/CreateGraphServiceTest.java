@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.services;
 
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import static org.junit.jupiter.api.Assertions.assertEquals;

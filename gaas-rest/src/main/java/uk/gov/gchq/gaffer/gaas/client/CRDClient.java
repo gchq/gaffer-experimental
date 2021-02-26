@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.model;
-
+package uk.gov.gchq.gaffer.gaas.client;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -34,26 +33,26 @@ import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import static uk.gov.gchq.gaffer.gaas.converters.GaaSRestExceptionFactory.from;
 
 public class CRDClient {
+
+    @Value("${group}")
     private String group;
+    @Value("${version}")
     private String version;
+    @Value("${namespace}")
+    private String namespace;
     private String plural;
     private Object body;
     private String pretty;
     private String dryRun;
     private String fieldManager;
-    @Value("${namespace}")
-    private String namespace;
 
     @Autowired
     private ApiClient apiClient;
 
     public CRDClient() {
-        this.group = "gchq.gov.uk";
-        this.version = "v1";
         this.plural = "gaffers";
         this.pretty = null;
         this.dryRun = null;
@@ -69,11 +68,11 @@ public class CRDClient {
         }
     }
 
-    public List<GraphConfig>  getAllCRD() throws GaaSRestApiException {
+    public List<GraphConfig> listAllCRDs() throws GaaSRestApiException {
         final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
-            Object customObject = customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, null, null, null, null, null, null, null, null);
-           return convertJsonToGraphs(customObject);
+            final Object customObject = customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, this.pretty, null, null, null, null, null, null, null);
+            return convertJsonToGraphs(customObject);
         } catch (ApiException e) {
             throw from(e);
         }
@@ -82,27 +81,33 @@ public class CRDClient {
     public void deleteCRD(final String crdName) throws GaaSRestApiException {
         final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
-            customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, plural, crdName, null, null, null, null, null);
+            customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, plural, crdName, null, null, null, this.dryRun, null);
         } catch (ApiException e) {
             throw from(e);
         }
     }
 
-    public List<GraphConfig> convertJsonToGraphs(final Object response) {
+    private List<GraphConfig> convertJsonToGraphs(final Object response) {
         final Gson gson = new Gson();
-        JsonObject jsonObject = new JsonParser().parse(gson.toJson(response)).getAsJsonObject();
-        JsonArray items = jsonObject.get("items").getAsJsonArray();
+        final JsonArray items = new JsonParser().parse(gson.toJson(response)).getAsJsonObject().get("items").getAsJsonArray();
+
         final List<GraphConfig> list = new ArrayList();
-        Iterator<JsonElement> iterator = items.iterator();
+        final Iterator<JsonElement> iterator = items.iterator();
         while (iterator.hasNext()) {
-            JsonElement key = iterator.next();
-            final JsonElement graph = key.getAsJsonObject().get("spec").getAsJsonObject().get("graph").getAsJsonObject().get("config");
-            final String graphId = gson.fromJson(graph.getAsJsonObject().get("graphId"), String.class);
-            final String graphDescription = gson.fromJson(graph.getAsJsonObject().get("description"), String.class);
-            list.add(new GraphConfig.Builder().graphId(graphId).description(graphDescription).library(new FileGraphLibrary()).build());
+            final JsonElement key = iterator.next();
+            final JsonObject graph = key.getAsJsonObject()
+                    .get("spec").getAsJsonObject()
+                    .get("graph").getAsJsonObject()
+                    .get("config").getAsJsonObject();
+
+            final String graphId = gson.fromJson(graph.get("graphId"), String.class);
+            final String graphDescription = gson.fromJson(graph.get("description"), String.class);
+
+            list.add(new GraphConfig.Builder()
+                    .graphId(graphId)
+                    .description(graphDescription)
+                    .library(new FileGraphLibrary()).build());
         }
         return list;
     }
-
-
 }

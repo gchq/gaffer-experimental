@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.controller;
 
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,6 @@ public class GraphControllerTest extends AbstractTest {
 
     @MockBean
     private DeleteGraphService deleteGraphService;
-
 
     @Test
     public void getGraphEndpointReturnsGraph() throws Exception {

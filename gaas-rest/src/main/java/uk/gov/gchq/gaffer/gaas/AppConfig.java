@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.util.ClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import uk.gov.gchq.gaffer.gaas.model.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import java.io.IOException;
 
 @Configuration

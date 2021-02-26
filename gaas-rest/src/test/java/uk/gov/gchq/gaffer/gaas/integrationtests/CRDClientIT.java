@@ -22,16 +22,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CRDClient;
 import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -43,16 +41,19 @@ public class CRDClientIT {
 
     @Autowired
     private CreateGraphService createGraphService;
-
     @Autowired
     CRDClient crdClient;
     @Autowired
     private ApiClient apiClient;
+
     @Value("${namespace}")
     private String namespace;
     @Value("${group}")
     private String group;
-    private static final String TEST_GRAPH_ID = "testgraphid";
+    @Value("${version}")
+    private String version;
+
+    private static final String TEST_GRAPH_ID = "test-graph-id";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
 
     @Test
@@ -119,13 +120,14 @@ public class CRDClientIT {
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
         crdClient.createCRD(makeCreateCRDRequestBody(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION)));
 
-        assertTrue(crdClient.getAllCRD().toString().contains("testgraphid"));
+        assertTrue(crdClient.listAllCRDs().toString().contains("test-graph-id"));
     }
 
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
-        List<GraphConfig> list = new ArrayList<>();
-        assertEquals(list, crdClient.getAllCRD());
+        final List<GraphConfig> list = new ArrayList<>();
+
+        assertEquals(list, crdClient.listAllCRDs());
     }
 
     @Test
@@ -148,14 +150,13 @@ public class CRDClientIT {
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        final String version = "v1";
         final String plural = "gaffers";
         final String name = TEST_GRAPH_ID;
 
         try {
             apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
         } catch (Exception e) {
-
+            // Do nothing
         }
     }
 }

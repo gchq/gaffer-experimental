@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas.controller;
+
+package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
@@ -48,24 +49,26 @@ public class GraphControllerIT extends AbstractTest {
     public void testAddGraphReturns201OnSuccess() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
         final String inputJson = mapToJson(gaaSCreateRequestBody);
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals(201, status);
+
+        assertEquals(201, mvcResult.getResponse().getStatus());
     }
 
     @Test
     public void testAddGraphNotNullShouldReturn400() throws Exception {
-        final String graphRequest = "{\"description\":\"password\"}";
+        final String jsonRequest = "{\"description\":\"password\"}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
-                .content(graphRequest)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
+                .content(jsonRequest)).andReturn();
+
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
     @Test
@@ -76,13 +79,13 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+        final MvcResult createGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        assertEquals("{\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"details\":\"AlreadyExists\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(409, mvcResult.getResponse().getStatus());
+        assertEquals("{\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"details\":\"AlreadyExists\"}", createGraphResponse.getResponse().getContentAsString());
+        assertEquals(409, createGraphResponse.getResponse().getStatus());
     }
 
     @Test
@@ -184,16 +187,16 @@ public class GraphControllerIT extends AbstractTest {
 
     @AfterEach
     void tearDown() {
-        CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        String group = "gchq.gov.uk"; // String | the custom resource's group
-        String version = "v1"; // String | the custom resource's version
-        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        String name = TEST_GRAPH_ID; // String | the custom object's name
+        final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
+        final String group = "gchq.gov.uk"; // String | the custom resource's group
+        final String version = "v1"; // String | the custom resource's version
+        final String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
+        final String name = TEST_GRAPH_ID; // String | the custom object's name
 
         try {
             apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
         } catch (Exception e) {
-
+            // Do nothing
         }
     }
 }
