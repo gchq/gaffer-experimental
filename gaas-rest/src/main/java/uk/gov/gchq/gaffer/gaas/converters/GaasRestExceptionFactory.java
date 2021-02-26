@@ -35,4 +35,9 @@ public class GaasRestExceptionFactory {
             return new GaaSRestApiException(e.getMessage(), e.getResponseBody(), e.getCode(), e);
         }
     }
+
+    private GaasRestExceptionFactory() {
+        // prevents calls from subclass
+        throw new UnsupportedOperationException();
+    }
 }
