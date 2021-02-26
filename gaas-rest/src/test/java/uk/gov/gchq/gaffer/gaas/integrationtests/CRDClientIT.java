@@ -91,6 +91,11 @@ public class CRDClientIT {
         assertTrue(crdClient.getAllCRD().toString().contains("testgraphid"));
     }
 
+    @Test
+    public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
+        assertTrue(crdClient.getAllCRD().toString().contains("items=[]"));
+    }
+
     // TODO: Ensure properly implements and all graphs are torn down after each test
     @AfterEach
     void tearDown() {
