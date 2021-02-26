@@ -58,19 +58,45 @@ public class CRDClientIT {
     }
 
     @Test
-    public void createCRD_whenNullRequestObject() {
-        assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(null));
+    public void createCRD_whenNullRequestObject_throwsMissingRequestBodyGaasException() {
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(null));
+
+        final String expected = "Missing the required parameter 'body' when calling createNamespacedCustomObject(Async)";
+        assertEquals(expected, exception.getMessage());
+        assertEquals(0, exception.getStatusCode());
+        assertEquals(null, exception.getBody());
     }
 
-    // TODO: Run this test and assert current outcome
     @Test
-    public void createCRD_whenGraphIdHasUppercase_throwsException() {
+    public void createCRD_whenGraphIdHasUppercase_throws422GaasException() {
         final CreateGafferRequestBody gafferRequest = makeCreateCRDRequestBody(new Graph("UPPERCASEgraph", "A description"));
 
-        assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
+
+        assertEquals(422, exception.getStatusCode());
+        assertEquals("Invalid", exception.getBody());
+        final String expected = "Gaffer.gchq.gov.uk \"UPPERCASEgraph\" is invalid: metadata.name: Invalid value: " +
+                "\"UPPERCASEgraph\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, " +
+                "'-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for " +
+                "validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')";
+        assertEquals(expected, exception.getMessage());
     }
 
-    // TODO: Run this test and assert current outcome
+    @Test
+    public void createCRD_whenGraphIdHasSpecialChars_throws422GaasException() {
+        final CreateGafferRequestBody gafferRequest = makeCreateCRDRequestBody(new Graph("sp£ci@l_char$", "A description"));
+
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
+
+        assertEquals(422, exception.getStatusCode());
+        assertEquals("Invalid", exception.getBody());
+        final String expected = "Gaffer.gchq.gov.uk \"sp£ci@l_char$\" is invalid: metadata.name: Invalid value: " +
+                "\"sp£ci@l_char$\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, " +
+                "'-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for " +
+                "validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')";
+        assertEquals(expected, exception.getMessage());
+    }
+
     @Test
     public void createCRD_whenCreateRequestBodyHasNullValues_throws_400GaasException() {
         final CreateGafferRequestBody requestBody = new CreateGafferRequestBody();
@@ -102,7 +128,7 @@ public class CRDClientIT {
 
         assertEquals(404, exception.getStatusCode());
         assertEquals("NotFound", exception.getBody());
-        assertEquals("gaffers.gchq.gov.uk \"nonexistingcrd\" not found", exception.getMessage());
+        assertEquals("gaffers.gchq.gov.uk \"non-existing-crd\" not found", exception.getMessage());
     }
 
     @Test
@@ -117,9 +143,9 @@ public class CRDClientIT {
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        String version = "v1"; // String | the custom resource's version
-        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        String name = TEST_GRAPH_ID; // String | the custom object's name
+        final String version = "v1";
+        final String plural = "gaffers";
+        final String name = TEST_GRAPH_ID;
 
         try {
             apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
