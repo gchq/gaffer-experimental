@@ -22,9 +22,9 @@ import io.kubernetes.client.openapi.ApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CrdErrorResponseBody;
 
-public class CrdExceptionHandler {
+public class GaasRestExceptionFactory {
 
-    public static GaaSRestApiException handle(final ApiException e) {
+    public static GaaSRestApiException from(final ApiException e) {
         final Gson gson = new Gson();
         if (e.getResponseBody() != null) {
             final JsonObject asJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();

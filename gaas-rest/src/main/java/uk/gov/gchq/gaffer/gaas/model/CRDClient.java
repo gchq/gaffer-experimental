@@ -23,7 +23,7 @@ import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import static uk.gov.gchq.gaffer.gaas.converters.CrdExceptionHandler.handle;
+import static uk.gov.gchq.gaffer.gaas.converters.GaasRestExceptionFactory.from;
 
 public class CRDClient {
     private String group;
@@ -53,7 +53,7 @@ public class CRDClient {
         try {
             customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, requestBody, this.pretty, this.dryRun, this.fieldManager);
         } catch (ApiException e) {
-            throw handle(e);
+            throw from(e);
         }
     }
 
@@ -62,7 +62,7 @@ public class CRDClient {
         try {
             return customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, null, null, null, null, null, null, null, null);
         } catch (ApiException e) {
-            throw handle(e);
+            throw from(e);
         }
     }
 
@@ -71,7 +71,7 @@ public class CRDClient {
         try {
             customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, plural, crdName, null, null, null, null, null);
         } catch (ApiException e) {
-            throw handle(e);
+            throw from(e);
         }
     }
 }

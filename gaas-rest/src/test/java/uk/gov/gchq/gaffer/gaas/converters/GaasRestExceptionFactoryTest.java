@@ -17,26 +17,20 @@
 package uk.gov.gchq.gaffer.gaas.converters;
 
 import io.kubernetes.client.openapi.ApiException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_duplicateGraph;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_timeout;
 
-public class CrdExceptionHandlerTest {
+public class GaasRestExceptionFactoryTest {
 
-    // TODO: return correct exception instead of throw
-    @Disabled
     @Test
     public void convertAlreadyExistsApiExceptionToGaasApiException() {
         final ApiException apiException = makeApiException_duplicateGraph();
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> {
-            CrdExceptionHandler.handle(apiException);
-        });
+        final GaaSRestApiException actual = GaasRestExceptionFactory.from(apiException);
 
         assertEquals("AlreadyExists", actual.getBody());
         assertEquals("gaffers.gchq.gov.uk \"testgraphid\" already exists", actual.getMessage());
@@ -44,15 +38,11 @@ public class CrdExceptionHandlerTest {
         assertTrue(actual.getCause() instanceof ApiException);
     }
 
-    // TODO: return correct exception
-    @Disabled
     @Test
     public void convertApiExceptionToGaasApiException() {
         final ApiException apiException = makeApiException_timeout();
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> {
-            CrdExceptionHandler.handle(apiException);
-        });
+        final GaaSRestApiException actual = GaasRestExceptionFactory.from(apiException);
 
         assertEquals(null, actual.getBody());
         assertEquals("java.net.SocketTimeoutException: connect timed out", actual.getMessage());
