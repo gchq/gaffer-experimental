@@ -27,6 +27,11 @@ import uk.gov.gchq.gaffer.gaas.model.CRDClient;
 import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -119,7 +124,8 @@ public class CRDClientIT {
 
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
-        assertTrue(crdClient.getAllCRD().toString().contains("items=[]"));
+        List<GraphConfig> list = new ArrayList<>();
+        assertEquals(list, crdClient.getAllCRD());
     }
 
     @Test

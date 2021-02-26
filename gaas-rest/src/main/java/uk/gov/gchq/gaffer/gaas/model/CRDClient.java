@@ -16,6 +16,12 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.kubernetes.client.common.KubernetesObject;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
@@ -23,6 +29,12 @@ import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
+import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import static uk.gov.gchq.gaffer.gaas.converters.GaaSRestExceptionFactory.from;
 
 public class CRDClient {
@@ -57,10 +69,11 @@ public class CRDClient {
         }
     }
 
-    public Object getAllCRD() throws GaaSRestApiException {
+    public List<GraphConfig>  getAllCRD() throws GaaSRestApiException {
         final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
-            return customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, null, null, null, null, null, null, null, null);
+            Object customObject = customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, null, null, null, null, null, null, null, null);
+           return convertJsonToGraphs(customObject);
         } catch (ApiException e) {
             throw from(e);
         }
@@ -74,4 +87,22 @@ public class CRDClient {
             throw from(e);
         }
     }
+
+    public List<GraphConfig> convertJsonToGraphs(final Object response) {
+        final Gson gson = new Gson();
+        JsonObject jsonObject = new JsonParser().parse(gson.toJson(response)).getAsJsonObject();
+        JsonArray items = jsonObject.get("items").getAsJsonArray();
+        final List<GraphConfig> list = new ArrayList();
+        Iterator<JsonElement> iterator = items.iterator();
+        while (iterator.hasNext()) {
+            JsonElement key = iterator.next();
+            final JsonElement graph = key.getAsJsonObject().get("spec").getAsJsonObject().get("graph").getAsJsonObject().get("config");
+            final String graphId = gson.fromJson(graph.getAsJsonObject().get("graphId"), String.class);
+            final String graphDescription = gson.fromJson(graph.getAsJsonObject().get("description"), String.class);
+            list.add(new GraphConfig.Builder().graphId(graphId).description(graphDescription).library(new FileGraphLibrary()).build());
+        }
+        return list;
+    }
+
+
 }

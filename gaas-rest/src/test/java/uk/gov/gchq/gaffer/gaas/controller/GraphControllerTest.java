@@ -67,7 +67,7 @@ public class GraphControllerTest extends AbstractTest {
                 .build();
         ArrayList<GraphConfig> graphList = new ArrayList<>();
         graphList.add(graph);
-        when(getGafferService.getGraphs()).thenReturn(graphList);
+        when(getGafferService.getAllGraphs()).thenReturn(graphList);
 
         final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
