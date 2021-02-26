@@ -19,6 +19,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+/**
+ * GaaS rest request body object to create gaffer in CRD
+ */
 public class Graph {
 
     @NotBlank(message = "Graph id should not be null")
