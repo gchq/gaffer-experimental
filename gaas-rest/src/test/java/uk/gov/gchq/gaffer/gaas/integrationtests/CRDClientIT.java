@@ -139,7 +139,6 @@ public class CRDClientIT {
         assertDoesNotThrow(() -> crdClient.deleteCRD(existingGraph));
     }
 
-    // TODO: Ensure properly implements and all graphs are torn down after each test
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
