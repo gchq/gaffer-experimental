@@ -39,7 +39,6 @@ class GetGafferServiceTest extends AbstractTest {
     @Autowired
     private GetGafferService getGafferService;
 
-
     @Test
     void testGetGraphs_whenGraphRequestIsNotEmpty() throws GaaSRestApiException {
 
@@ -56,6 +55,7 @@ class GetGafferServiceTest extends AbstractTest {
         assertArrayEquals(graphList.toArray(), graphs.toArray());
 
     }
+
     @Test
     void testGetGraphs_whenGraphRequestIsEmpty() throws GaaSRestApiException {
 
@@ -63,7 +63,5 @@ class GetGafferServiceTest extends AbstractTest {
         when(customObjectsApiService.getAllGraphs()).thenReturn(graphList);
         List<GraphConfig> graphs = getGafferService.getGraphs();
         assertEquals(0, graphs.size());
-        
-
     }
 }

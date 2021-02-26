@@ -15,19 +15,17 @@
  */
 package uk.gov.gchq.gaffer.gaas.services;
 
-import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDClient;
-import uk.gov.gchq.gaffer.gaas.model.Gaffer;
-import uk.gov.gchq.gaffer.gaas.model.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.model.CreateGafferRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.Graph;
-
-import java.util.HashMap;
-
+import uk.gov.gchq.gaffer.graph.GraphConfig;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -41,21 +39,14 @@ public class CreateGraphServiceTest {
     private CRDClient crdClient;
 
     @Test
-    public void createGraph_shouldCall() throws GaaSRestApiException {
+    public void createGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfig() throws GaaSRestApiException {
         createGraphService.createGraph(new Graph("myGraph", "Another description"));
-        GafferSpec spec = new GafferSpec();
-        HashMap<String, String> config = new HashMap<>();
-        config.put("graphId", "myGraph");
-        config.put("description", "Another description");
-        HashMap<HashMap, String> graph = new HashMap<>();
-        graph.put(config, "config");
-        boolean graph1 = spec.putNestedObject(graph, "graph");
-        V1ObjectMeta metadata = new V1ObjectMeta().name("myGraph");
-        Gaffer gaffer = new Gaffer().apiVersion("gchq.gov.uk/v1")
-                .kind("Gaffer")
-                .metaData(metadata)
-                .spec(spec);
 
-        verify(crdClient, times(1)).createCRD(gaffer);
+        final ArgumentCaptor<CreateGafferRequestBody> argumentCaptor = ArgumentCaptor.forClass(CreateGafferRequestBody.class);
+        verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
+
+        final GraphConfig actualConfig = argumentCaptor.<CreateGafferRequestBody>getValue().getSpec().getGraph().getConfig();
+        assertEquals("myGraph", actualConfig.getGraphId());
+        assertEquals("Another description", actualConfig.getDescription());
     }
 }

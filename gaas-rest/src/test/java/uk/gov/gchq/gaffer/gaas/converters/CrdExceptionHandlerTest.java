@@ -22,8 +22,8 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.gchq.gaffer.gaas.utilities.TestUtilities.makeApiException_duplicateGraph;
-import static uk.gov.gchq.gaffer.gaas.utilities.TestUtilities.makeApiException_timeout;
+import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_duplicateGraph;
+import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_timeout;
 
 public class CrdExceptionHandlerTest {
 

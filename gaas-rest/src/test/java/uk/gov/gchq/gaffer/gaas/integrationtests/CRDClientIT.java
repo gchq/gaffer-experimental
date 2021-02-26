@@ -15,8 +15,6 @@
  */
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
@@ -26,9 +24,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDClient;
+import uk.gov.gchq.gaffer.gaas.model.CreateGafferRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static uk.gov.gchq.gaffer.gaas.utilities.CreateGraphRequestTestFactory.makeCreateCRDRequestBody;
 
 @SpringBootTest
 public class CRDClientIT {
@@ -48,13 +51,29 @@ public class CRDClientIT {
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
 
     @Test
+    public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {
+        final CreateGafferRequestBody gafferRequest = makeCreateCRDRequestBody(new Graph("validgraph", "A description"));
+
+        assertDoesNotThrow(() -> crdClient.createCRD(gafferRequest));
+    }
+
+    @Test
     public void createCRD_whenNullRequestObject() {
         assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(null));
     }
 
+    // TODO: Run this test and assert current outcome
     @Test
-    public void createCRD_whenCreateRequestBodyIsInvalid_throwsBadRequestApiException() {
-        final String requestBody = "{\"invalid\":\"request body\"}";
+    public void createCRD_whenGraphIdHasUppercase_throwsException() {
+        final CreateGafferRequestBody gafferRequest = makeCreateCRDRequestBody(new Graph("UPPERCASEgraph", "A description"));
+
+        assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
+    }
+
+    // TODO: Run this test and assert current outcome
+    @Test
+    public void createCRD_whenCreateRequestBodyHasNullValues_throws___() {
+        final CreateGafferRequestBody requestBody = new CreateGafferRequestBody();
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
 
@@ -67,34 +86,12 @@ public class CRDClientIT {
 
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
-        final String jsonString = "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
-                "\"kind\":\"Gaffer\"," +
-                "\"metadata\":{\"name\":\"" + TEST_GRAPH_ID + "\"}," +
-                "\"spec\":{\"graph\":{\"config\":{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}}}}";
-
-        final JsonObject jsonRequestBody = new JsonParser().parse(jsonString).getAsJsonObject();
-        crdClient.createCRD(jsonRequestBody);
+        crdClient.createCRD(makeCreateCRDRequestBody(new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION)));
 
         assertTrue(crdClient.getAllCRD().toString().contains("testgraphid"));
     }
 
-
-    @Test
-    void testCreateGraph() throws GaaSRestApiException {
-        Graph graph = new Graph("mygraph", "new description");
-        createGraphService.createGraph(graph);
-
-    }
-
-    @Test
-    void testCreateGraphWhenGraphIdHasUppercase_ThrowsException() throws GaaSRestApiException {
-        Graph graph = new Graph("myGraph", "new description");
-
-        assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(graph));
-
-
-    }
-
+    // TODO: Ensure properly implements and all graphs are torn down after each test
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);

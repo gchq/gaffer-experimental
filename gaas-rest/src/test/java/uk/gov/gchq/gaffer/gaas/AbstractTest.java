@@ -20,8 +20,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.apis.CustomObjectsApi;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,12 +35,13 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @SpringBootTest
 public abstract class AbstractTest {
+
     protected MockMvc mvc;
     @Autowired
     WebApplicationContext webApplicationContext;
 
     @Autowired
-    private ApiClient apiClient;
+    protected ApiClient apiClient;
 
     @Autowired
     private CRDClient crdClient;
@@ -53,7 +52,7 @@ public abstract class AbstractTest {
     protected static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
 
     @Value("${namespace}")
-    private String namespace;
+    protected String namespace;
 
     protected String mapToJson(final Object obj) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -76,20 +75,5 @@ public abstract class AbstractTest {
         token = mvc.perform(post("/auth")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(authRequest)).andReturn();
-    }
-
-    @AfterEach
-    void tearDown() {
-        CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        String group = "gchq.gov.uk"; // String | the custom resource's group
-        String version = "v1"; // String | the custom resource's version
-        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        String name = TEST_GRAPH_ID; // String | the custom object's name
-
-        try {
-            apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
-        } catch (Exception e) {
-
-        }
     }
 }

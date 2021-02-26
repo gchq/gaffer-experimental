@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
+import io.kubernetes.client.common.KubernetesObject;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
@@ -47,7 +48,7 @@ public class CRDClient {
         this.fieldManager = null;
     }
 
-    public void createCRD(final Object requestBody) throws GaaSRestApiException {
+    public void createCRD(final KubernetesObject requestBody) throws GaaSRestApiException {
         final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
             customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, requestBody, this.pretty, this.dryRun, this.fieldManager);
@@ -55,10 +56,11 @@ public class CRDClient {
             handle(e);
         }
     }
+
     public Object getAllCRD() throws GaaSRestApiException {
         final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
-            return customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.plural ,null, null, null, null, null, null, null, null);
+            return customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, null, null, null, null, null, null, null, null);
         } catch (ApiException e) {
             handle(e);
         }

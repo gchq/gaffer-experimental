@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Crown Copyright
+ * Copyright 2020 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,46 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas.services;
+package uk.gov.gchq.gaffer.gaas.model;
 
-import io.kubernetes.client.openapi.ApiClient;
+import com.google.gson.Gson;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CRDClient;
-import uk.gov.gchq.gaffer.gaas.model.CreateGafferRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
-import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
-import uk.gov.gchq.gaffer.gaas.model.NewGraph;
+import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Service
-public class CreateGraphService {
+public class CreateGafferRequestBodyTest {
 
-    @Autowired
-    private ApiClient apiClient;
+    private final Gson gson = new Gson();
 
-    @Autowired
-    private CRDClient crdClient;
-
-    public void createGraph(final Graph graphInput) throws GaaSRestApiException {
-        crdClient.createCRD(buildCreateCRDRequestBody(graphInput));
-    }
-
-    private CreateGafferRequestBody buildCreateCRDRequestBody(final Graph graph) {
+    @Test
+    public void shouldReflectCreateGafferJsonRequestBody() {
         final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
-
-        return new CreateGafferRequestBody()
+        final CreateGafferRequestBody requestBody = new CreateGafferRequestBody()
                 .apiVersion("gchq.gov.uk/v1")
                 .kind("Gaffer")
                 .metaData(metadata)
                 .spec(new GraphSpec()
                         .graph(new NewGraph()
                                 .config(new GraphConfig.Builder()
-                                        .graphId(graph.getGraphId())
-                                        .description(graph.getDescription())
+                                        .graphId("MyGraph")
+                                        .description("My Graph deployed by the Controller")
                                         .library(null)
                                         .build())));
+
+        final String expected =
+                "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"my-gaffer\"}," +
+                        "\"spec\":{\"" +
+                        "graph\":{\"" +
+                        "config\":{\"graphId\":\"MyGraph\",\"library\":{},\"description\":\"My Graph deployed by the Controller\",\"hooks\":[]}}}}";
+
+        assertEquals(expected, gson.toJson(requestBody));
     }
 }

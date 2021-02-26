@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Crown Copyright
+ * Copyright 2020 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,34 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas.services;
+package uk.gov.gchq.gaffer.gaas.utilities;
 
-import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CRDClient;
 import uk.gov.gchq.gaffer.gaas.model.CreateGafferRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.Graph;
 import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
 import uk.gov.gchq.gaffer.gaas.model.NewGraph;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 
-@Service
-public class CreateGraphService {
+public final class CreateGraphRequestTestFactory {
 
-    @Autowired
-    private ApiClient apiClient;
-
-    @Autowired
-    private CRDClient crdClient;
-
-    public void createGraph(final Graph graphInput) throws GaaSRestApiException {
-        crdClient.createCRD(buildCreateCRDRequestBody(graphInput));
-    }
-
-    private CreateGafferRequestBody buildCreateCRDRequestBody(final Graph graph) {
+    public static CreateGafferRequestBody makeCreateCRDRequestBody(final Graph graph) {
         final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
 
         return new CreateGafferRequestBody()
@@ -54,5 +38,10 @@ public class CreateGraphService {
                                         .description(graph.getDescription())
                                         .library(null)
                                         .build())));
+    }
+
+    private CreateGraphRequestTestFactory() {
+        // prevents calls from subclass
+        throw new UnsupportedOperationException();
     }
 }

@@ -34,9 +34,7 @@ public class Graph {
     public Graph(final String graphId, final String description) {
         this.graphId = graphId;
         this.description = description;
-
     }
-
 
     public void setGraphId(final String graphId) {
         this.graphId = graphId;
@@ -53,5 +51,4 @@ public class Graph {
     public void setDescription(final String description) {
         this.description = description;
     }
-
 }

@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.gov.gchq.gaffer.gaas.model;
 
-public final class Constants {
+public class GraphSpec {
 
-    private Constants() {
-        // Prevents Instantiation
+    private NewGraph graph;
+
+    public GraphSpec graph(final NewGraph graph) {
+        this.graph = graph;
+        return this;
     }
 
-    // Serialised names
-    public static final String SERIALISED_NAME_API_VERSION = "apiVersion";
-    public static final String SERIALISED_NAME_KIND = "kind";
-    public static final String SERIALISED_NAME_METADATA = "metadata";
-    public static final String SERIALISED_NAME_SPEC = "spec";
-    public static final String SERIALISED_NAME_STATUS = "status";
-    public static final String SERIALISED_NAME_PROBLEMS = "problems";
-    public static final String SERIALISED_NAME_REST_API_STATUS = "restApiStatus";
+    public NewGraph getGraph() {
+        return graph;
+    }
 }

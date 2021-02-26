@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public final class TestUtilities {
+public final class ApiExceptionTestFactory {
 
     public static ApiException makeApiException_duplicateGraph() {
         final Map<String, List<String>> responseHeaders = new TreeMap<>();
@@ -35,7 +35,7 @@ public final class TestUtilities {
         return new ApiException("java.net.SocketTimeoutException: connect timed out", 0, null, null);
     }
 
-    private TestUtilities() {
+    private ApiExceptionTestFactory() {
         // prevents calls from subclass
         throw new UnsupportedOperationException();
     }

@@ -15,6 +15,8 @@
  */
 package uk.gov.gchq.gaffer.gaas.controller;
 
+import io.kubernetes.client.openapi.apis.CustomObjectsApi;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -183,5 +185,20 @@ public class GraphControllerIT extends AbstractTest {
 
         //then have no graphs / 200 return
         assertEquals(404, mvcResult2.getResponse().getStatus());
+    }
+
+    @AfterEach
+    void tearDown() {
+        CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
+        String group = "gchq.gov.uk"; // String | the custom resource's group
+        String version = "v1"; // String | the custom resource's version
+        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
+        String name = TEST_GRAPH_ID; // String | the custom object's name
+
+        try {
+            apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
+        } catch (Exception e) {
+
+        }
     }
 }
