@@ -65,4 +65,13 @@ public class CRDClient {
             throw handle(e);
         }
     }
+
+    public void deleteCRD(final String crdName) throws GaaSRestApiException {
+        final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
+        try {
+            customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, plural, crdName, null, null, null, null, null);
+        } catch (ApiException e) {
+            throw handle(e);
+        }
+    }
 }

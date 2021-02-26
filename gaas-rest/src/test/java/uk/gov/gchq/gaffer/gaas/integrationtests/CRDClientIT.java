@@ -72,7 +72,7 @@ public class CRDClientIT {
 
     // TODO: Run this test and assert current outcome
     @Test
-    public void createCRD_whenCreateRequestBodyHasNullValues_throws___() {
+    public void createCRD_whenCreateRequestBodyHasNullValues_throws_400GaasException() {
         final CreateGafferRequestBody requestBody = new CreateGafferRequestBody();
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
@@ -94,6 +94,23 @@ public class CRDClientIT {
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
         assertTrue(crdClient.getAllCRD().toString().contains("items=[]"));
+    }
+
+    @Test
+    public void deleteCRD_whenGraphDoesntExist_throws404GaasException() {
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.deleteCRD("non-existing-crd"));
+
+        assertEquals(404, exception.getStatusCode());
+        assertEquals("NotFound", exception.getBody());
+        assertEquals("gaffers.gchq.gov.uk \"nonexistingcrd\" not found", exception.getMessage());
+    }
+
+    @Test
+    public void deleteCRD_whenGraphDoesExist_doesNotThrowException() throws GaaSRestApiException {
+        final String existingGraph = "existing-graph";
+        crdClient.createCRD(makeCreateCRDRequestBody(new Graph(existingGraph, TEST_GRAPH_DESCRIPTION)));
+
+        assertDoesNotThrow(() -> crdClient.deleteCRD(existingGraph));
     }
 
     // TODO: Ensure properly implements and all graphs are torn down after each test
