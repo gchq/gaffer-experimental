@@ -16,7 +16,6 @@
 package uk.gov.gchq.gaffer.gaas.controller;
 
 import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,12 +73,8 @@ public class GraphController {
     }
 
     @DeleteMapping("/graphs/{graphId}")
-    public ResponseEntity<?> deleteGraph(@PathVariable final String graphId) {
-        try {
-            deleteGraphService.deleteGraph(graphId);
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        } catch (ApiException e) {
-            return new ResponseEntity(HttpStatus.valueOf(e.getCode()));
-        }
+    public ResponseEntity<?> deleteGraph(@PathVariable final String graphId) throws GaaSRestApiException {
+        deleteGraphService.deleteGraph(graphId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
