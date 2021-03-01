@@ -25,9 +25,9 @@ import javax.validation.constraints.Pattern;
  */
 public class GaaSCreateRequestBody {
 
-    @NotBlank(message = "Graph id should not be null")
     @NotNull(message = "Graph id should not be null")
-    @Pattern(regexp = "([0-9|a-z|_|-|])*", message = "Graph can contain only digits,lowercase letters or _ ")
+    @NotBlank(message = "Graph id should not be null")
+    @Pattern(regexp = "^[a-z0-9_-]*$", message = "Graph can contain only digits, lowercase letters or the special characters _ and -")
     private String graphId;
     @NotBlank(message = "Description should not be empty")
     private String description;
@@ -38,6 +38,16 @@ public class GaaSCreateRequestBody {
     public GaaSCreateRequestBody(final String graphId, final String description) {
         this.graphId = graphId;
         this.description = description;
+    }
+
+    public GaaSCreateRequestBody setGraphId(String graphId) {
+        this.graphId = graphId;
+        return this;
+    }
+
+    public GaaSCreateRequestBody setDescription(String description) {
+        this.description = description;
+        return this;
     }
 
     public String getGraphId() {

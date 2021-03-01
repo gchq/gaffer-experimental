@@ -114,7 +114,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
         final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 
@@ -127,7 +127,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
@@ -140,7 +140,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, mvcResult.getResponse().getStatus());
     }
 

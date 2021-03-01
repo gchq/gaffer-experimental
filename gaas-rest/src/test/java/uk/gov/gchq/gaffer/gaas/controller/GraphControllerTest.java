@@ -136,10 +136,37 @@ public class GraphControllerTest extends AbstractTest {
 
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 
+    @Test
+    public void testGraphIdWithDashShouldReturn201() throws Exception {
+        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(graphRequest)).andReturn();
+
+        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals(201, status);
+    }
+
+    @Test
+    public void testGraphIdWithUnderscoreShouldReturn201() throws Exception {
+        final String graphRequest = "{\"graphId\":\"graph_with_underscore\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(graphRequest)).andReturn();
+
+        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals(201, status);
+    }
 
     @Test
     public void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
@@ -150,7 +177,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(graphRequest)).andReturn();
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 
@@ -163,7 +190,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(graphRequest)).andReturn();
         final int status = mvcResult.getResponse().getStatus();
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 
