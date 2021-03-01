@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.services;
 
 import org.junit.jupiter.api.Test;
@@ -21,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CRDClient;
-import uk.gov.gchq.gaffer.gaas.model.CreateGafferRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,12 +40,12 @@ public class CreateGraphServiceTest {
 
     @Test
     public void createGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfig() throws GaaSRestApiException {
-        createGraphService.createGraph(new Graph("myGraph", "Another description"));
+        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description"));
 
-        final ArgumentCaptor<CreateGafferRequestBody> argumentCaptor = ArgumentCaptor.forClass(CreateGafferRequestBody.class);
+        final ArgumentCaptor<CRDCreateRequestBody> argumentCaptor = ArgumentCaptor.forClass(CRDCreateRequestBody.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
 
-        final CreateGafferRequestBody gafferRequestBody = argumentCaptor.<CreateGafferRequestBody>getValue();
+        final CRDCreateRequestBody gafferRequestBody = argumentCaptor.<CRDCreateRequestBody>getValue();
         assertEquals("myGraph", gafferRequestBody.getSpec().getGraph().getConfig().getGraphId());
         assertEquals("Another description", gafferRequestBody.getSpec().getGraph().getConfig().getDescription());
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());

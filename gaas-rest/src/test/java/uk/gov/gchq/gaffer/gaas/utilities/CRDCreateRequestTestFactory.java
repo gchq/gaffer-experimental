@@ -16,18 +16,18 @@
 package uk.gov.gchq.gaffer.gaas.utilities;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import uk.gov.gchq.gaffer.gaas.model.CreateGafferRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
 import uk.gov.gchq.gaffer.gaas.model.NewGraph;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 
-public final class CreateGraphRequestTestFactory {
+public final class CRDCreateRequestTestFactory {
 
-    public static CreateGafferRequestBody makeCreateCRDRequestBody(final Graph graph) {
+    public static CRDCreateRequestBody makeCreateCRDRequestBody(final GaaSCreateRequestBody graph) {
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
 
-        return new CreateGafferRequestBody()
+        return new CRDCreateRequestBody()
                 .apiVersion("gchq.gov.uk/v1")
                 .kind("Gaffer")
                 .metaData(metadata)
@@ -40,7 +40,7 @@ public final class CreateGraphRequestTestFactory {
                                         .build())));
     }
 
-    private CreateGraphRequestTestFactory() {
+    private CRDCreateRequestTestFactory() {
         // prevents calls from subclass
         throw new UnsupportedOperationException();
     }

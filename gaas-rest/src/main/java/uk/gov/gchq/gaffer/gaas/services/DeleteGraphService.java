@@ -16,23 +16,18 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.ApiException;
-import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 
 @Service
 public class DeleteGraphService {
-    @Autowired
-    private ApiClient apiClient;
 
-    public void deleteGraph(final String graphId) throws ApiException {
-        CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        String group = "gchq.gov.uk"; // String | the custom resource's group
-        String version = "v1"; // String | the custom resource's version
-        String namespace = "kai-helm-3"; // String | The custom resource's namespace
-        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, graphId, null, null, null, null, null);
+    @Autowired
+    private CRDClient crdClient;
+
+    public void deleteGraph(final String graphId) throws GaaSRestApiException {
+        crdClient.deleteCRD(graphId);
     }
 }

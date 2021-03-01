@@ -20,7 +20,10 @@ import com.google.gson.annotations.SerializedName;
 import io.kubernetes.client.common.KubernetesObject;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 
-public class CreateGafferRequestBody implements KubernetesObject {
+/**
+ * Gaas Rest Create Gaffer CRD Request Body
+ */
+public class CRDCreateRequestBody implements KubernetesObject {
 
     public static final String SERIALISED_NAME_API_VERSION = "apiVersion";
     public static final String SERIALISED_NAME_KIND = "kind";
@@ -39,22 +42,22 @@ public class CreateGafferRequestBody implements KubernetesObject {
     @SerializedName(SERIALISED_NAME_SPEC)
     private GraphSpec spec;
 
-    public CreateGafferRequestBody apiVersion(final String apiVersion) {
+    public CRDCreateRequestBody apiVersion(final String apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
-    public CreateGafferRequestBody kind(final String kind) {
+    public CRDCreateRequestBody kind(final String kind) {
         this.kind = kind;
         return this;
     }
 
-    public CreateGafferRequestBody metaData(final V1ObjectMeta metadata) {
+    public CRDCreateRequestBody metaData(final V1ObjectMeta metadata) {
         this.metadata = metadata;
         return this;
     }
 
-    public CreateGafferRequestBody spec(final GraphSpec spec) {
+    public CRDCreateRequestBody spec(final GraphSpec spec) {
         this.spec = spec;
         return this;
     }

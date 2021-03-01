@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.controller;
-
+package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,25 +31,21 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @SpringBootTest
 public class GraphControllerAuthIT {
 
-
   protected MockMvc mvc;
+
   @Autowired
   WebApplicationContext webApplicationContext;
 
-
   @Test
   public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
-
     this.mvc = webAppContextSetup(webApplicationContext).build();
     final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
-    final MvcResult result = mvc.perform(post("/auth")
+
+    final MvcResult tokenResponse = mvc.perform(post("/auth")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(authRequest)).andReturn();
 
-    assertEquals(401, result.getResponse().getStatus());
-    assertEquals("BadCredentialsException", result.getResolvedException().getMessage());
+    assertEquals(401, tokenResponse.getResponse().getStatus());
+    assertEquals("BadCredentialsException", tokenResponse.getResolvedException().getMessage());
   }
-
-
 }
-

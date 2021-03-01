@@ -22,58 +22,90 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CRDClient;
-import uk.gov.gchq.gaffer.gaas.model.CreateGafferRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
+import java.util.ArrayList;
+import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static uk.gov.gchq.gaffer.gaas.utilities.CreateGraphRequestTestFactory.makeCreateCRDRequestBody;
+import static uk.gov.gchq.gaffer.gaas.utilities.CRDCreateRequestTestFactory.makeCreateCRDRequestBody;
 
 @SpringBootTest
 public class CRDClientIT {
 
     @Autowired
     private CreateGraphService createGraphService;
-
     @Autowired
     CRDClient crdClient;
     @Autowired
     private ApiClient apiClient;
+
     @Value("${namespace}")
     private String namespace;
     @Value("${group}")
     private String group;
-    private static final String TEST_GRAPH_ID = "testgraphid";
+    @Value("${version}")
+    private String version;
+
+    private static final String TEST_GRAPH_ID = "test-graph-id";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
 
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {
-        final CreateGafferRequestBody gafferRequest = makeCreateCRDRequestBody(new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION));
+        final CRDCreateRequestBody gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION));
 
         assertDoesNotThrow(() -> crdClient.createCRD(gafferRequest));
     }
 
     @Test
-    public void createCRD_whenNullRequestObject() {
-        assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(null));
+    public void createCRD_whenNullRequestObject_throwsMissingRequestBodyGaasException() {
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(null));
+
+        final String expected = "Missing the required parameter 'body' when calling createNamespacedCustomObject(Async)";
+        assertEquals(expected, exception.getMessage());
+        assertEquals(0, exception.getStatusCode());
+        assertEquals(null, exception.getBody());
     }
 
-    // TODO: Run this test and assert current outcome
     @Test
-    public void createCRD_whenGraphIdHasUppercase_throwsException() {
-        final CreateGafferRequestBody gafferRequest = makeCreateCRDRequestBody(new Graph("UPPERCASEgraph", "A description"));
+    public void createCRD_whenGraphIdHasUppercase_throws422GaasException() {
+        final CRDCreateRequestBody gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody("UPPERCASEgraph", "A description"));
 
-        assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
+
+        assertEquals(422, exception.getStatusCode());
+        assertEquals("Invalid", exception.getBody());
+        final String expected = "Gaffer.gchq.gov.uk \"UPPERCASEgraph\" is invalid: metadata.name: Invalid value: " +
+                "\"UPPERCASEgraph\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, " +
+                "'-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for " +
+                "validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')";
+        assertEquals(expected, exception.getMessage());
     }
 
-    // TODO: Run this test and assert current outcome
     @Test
-    public void createCRD_whenCreateRequestBodyHasNullValues_throws___() {
-        final CreateGafferRequestBody requestBody = new CreateGafferRequestBody();
+    public void createCRD_whenGraphIdHasSpecialChars_throws422GaasException() {
+        final CRDCreateRequestBody gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody("sp£ci@l_char$", "A description"));
+
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
+
+        assertEquals(422, exception.getStatusCode());
+        assertEquals("Invalid", exception.getBody());
+        final String expected = "Gaffer.gchq.gov.uk \"sp£ci@l_char$\" is invalid: metadata.name: Invalid value: " +
+                "\"sp£ci@l_char$\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, " +
+                "'-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for " +
+                "validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')";
+        assertEquals(expected, exception.getMessage());
+    }
+
+    @Test
+    public void createCRD_whenCreateRequestBodyHasNullValues_throws_400GaasException() {
+        final CRDCreateRequestBody requestBody = new CRDCreateRequestBody();
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
 
@@ -86,28 +118,45 @@ public class CRDClientIT {
 
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
-        crdClient.createCRD(makeCreateCRDRequestBody(new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION)));
+        crdClient.createCRD(makeCreateCRDRequestBody(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION)));
 
-        assertTrue(crdClient.getAllCRD().toString().contains("testgraphid"));
+        assertTrue(crdClient.listAllCRDs().toString().contains("test-graph-id"));
     }
 
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
-        assertTrue(crdClient.getAllCRD().toString().contains("items=[]"));
+        final List<GraphConfig> list = new ArrayList<>();
+
+        assertEquals(list, crdClient.listAllCRDs());
     }
 
-    // TODO: Ensure properly implements and all graphs are torn down after each test
+    @Test
+    public void deleteCRD_whenGraphDoesntExist_throws404GaasException() {
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.deleteCRD("non-existing-crd"));
+
+        assertEquals(404, exception.getStatusCode());
+        assertEquals("NotFound", exception.getBody());
+        assertEquals("gaffers.gchq.gov.uk \"non-existing-crd\" not found", exception.getMessage());
+    }
+
+    @Test
+    public void deleteCRD_whenGraphDoesExist_doesNotThrowException() throws GaaSRestApiException {
+        final String existingGraph = "existing-graph";
+        crdClient.createCRD(makeCreateCRDRequestBody(new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION)));
+
+        assertDoesNotThrow(() -> crdClient.deleteCRD(existingGraph));
+    }
+
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        String version = "v1"; // String | the custom resource's version
-        String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        String name = TEST_GRAPH_ID; // String | the custom object's name
+        final String plural = "gaffers";
+        final String name = TEST_GRAPH_ID;
 
         try {
             apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
         } catch (Exception e) {
-
+            // Do nothing
         }
     }
 }

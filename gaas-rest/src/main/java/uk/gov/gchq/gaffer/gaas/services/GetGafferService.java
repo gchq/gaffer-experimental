@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.services;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import java.util.List;
@@ -24,13 +26,10 @@ import java.util.List;
 @Service
 public class GetGafferService {
 
-
     @Autowired
-    private CustomObjectsApiService customObjectsApiService;
+    private CRDClient crdClient;
 
-    public List<GraphConfig> getGraphs() throws GaaSRestApiException {
-        return customObjectsApiService.getAllGraphs();
+    public List<GraphConfig> getAllGraphs() throws GaaSRestApiException {
+        return crdClient.listAllCRDs();
     }
-
-
 }
