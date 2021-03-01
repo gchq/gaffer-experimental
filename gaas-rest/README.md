@@ -24,7 +24,7 @@ http://localhost:8080/swagger-ui/
 1. Ensure prerequisites are met 
 2. Login to the oc client using the `oc login` command via terminal 
 2. Add the available OpenShift namespace name to /application.properties for the value `namespace`
-3. Run `mvn install -pl :gaas-rest` 
+3. Run `mvn clean install -pl :gaas-rest -Popenshift-deploy`
 
 ## REST Endpoints
 
