@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.exception;
 
 public class ExceptionResponse {
-    private  String message;
-    private  String details;
+    private String message;
+    private String details;
 
     public ExceptionResponse(final String message, final String details) {
-        super();
         this.message = message;
         this.details = details;
     }
