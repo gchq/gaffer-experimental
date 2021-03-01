@@ -43,26 +43,18 @@ public class CRDClient {
     private String version;
     @Value("${namespace}")
     private String namespace;
-    private String plural;
-    private Object body;
-    private String pretty;
-    private String dryRun;
-    private String fieldManager;
+    private static final String PLURAL = "gaffers";
+    private static final String PRETTY = null;
+    private static final String DRY_RUN = null;
+    private static final String FIELD_MANAGER = null;
 
     @Autowired
     private ApiClient apiClient;
 
-    public CRDClient() {
-        this.plural = "gaffers";
-        this.pretty = null;
-        this.dryRun = null;
-        this.fieldManager = null;
-    }
-
     public void createCRD(final KubernetesObject requestBody) throws GaaSRestApiException {
         final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
-            customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, requestBody, this.pretty, this.dryRun, this.fieldManager);
+            customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, requestBody, this.PRETTY, this.DRY_RUN, this.FIELD_MANAGER);
         } catch (ApiException e) {
             throw from(e);
         }
@@ -71,7 +63,7 @@ public class CRDClient {
     public List<GraphConfig> listAllCRDs() throws GaaSRestApiException {
         final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
-            final Object customObject = customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.plural, this.pretty, null, null, null, null, null, null, null);
+            final Object customObject = customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, this.PRETTY, null, null, null, null, null, null, null);
             return convertJsonToGraphs(customObject);
         } catch (ApiException e) {
             throw from(e);
@@ -81,7 +73,7 @@ public class CRDClient {
     public void deleteCRD(final String crdName) throws GaaSRestApiException {
         final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
-            customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, plural, crdName, null, null, null, this.dryRun, null);
+            customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
         } catch (ApiException e) {
             throw from(e);
         }
