@@ -40,7 +40,7 @@ public class AuthService {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch (AuthenticationException e) {
-            throw new GaaSRestApiException(e.getClass().getSimpleName(), e.getMessage());
+            throw new GaaSRestApiException(e.getClass().getSimpleName(), e.getMessage(), 401);
         }
 
         final UserDetails userDetails = userDetailsService

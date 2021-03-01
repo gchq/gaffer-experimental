@@ -1,0 +1,57 @@
+GaaS REST
+=======================
+
+The Gaffer-as-a-Service REST API services requests to create, get and delete graphs.
+
+
+## Swagger UI
+
+Run the Spring Boot app locally and access the Swagger dashboard at 
+http://localhost:8080/swagger-ui/
+
+
+## OpenShift Deployment
+
+#### Deployment Prerequisites
+
+* OpenShift cluster
+* OpenShift namespace
+* Openshift CLI (oc client)
+
+
+#### Steps
+
+1. Ensure prerequisites are met 
+2. Login to the oc client using the `oc login` command via terminal 
+2. Add the available OpenShift namespace name to /application.properties for the value `namespace`
+3. Run `mvn install -pl :gaas-rest` 
+
+## REST Endpoints
+
+#### Create A Graph
+POST `/graph`
+
+Request Body:
+```json
+{
+  "graphId": "Example ID", 
+  "description": "Some description"
+}
+```
+
+#### Get All Graphs
+GET `/graph`
+
+#### Delete A Graph
+
+DELETE `/graph/{graphId}`
+
+
+## Authentication
+
+#### Dev Mode:
+When running the API in dev mode, use the 'dev' login details to access the graph endpoints.
+
+Username: javainuse
+
+Password: password

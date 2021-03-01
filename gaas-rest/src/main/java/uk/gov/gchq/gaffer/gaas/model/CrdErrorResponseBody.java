@@ -13,28 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package uk.gov.gchq.gaffer.gaas.model;
 
-package uk.gov.gchq.gaffer.gaas;
+public class CrdErrorResponseBody {
 
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.util.ClientBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import java.io.IOException;
+    private String message;
+    private String reason;
 
-
-@Configuration
-public class AppConfig {
-
-    @Bean
-    public ApiClient apiClient() throws IOException {
-        return ClientBuilder.defaultClient();
+    public String getMessage() {
+        return message;
     }
 
-    @Bean
-    public CRDClient crdClient() {
-        return new CRDClient();
+    public String getReason() {
+        return reason;
     }
 
 }

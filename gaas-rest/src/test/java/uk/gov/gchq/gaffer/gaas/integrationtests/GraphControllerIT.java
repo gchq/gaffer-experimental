@@ -13,89 +13,79 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas.controller;
 
-import io.kubernetes.client.openapi.ApiClient;
+package uk.gov.gchq.gaffer.gaas.integrationtests;
+
+import io.kubernetes.client.openapi.apis.CustomObjectsApi;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
-import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
-import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
-import uk.gov.gchq.gaffer.gaas.services.AuthService;
-import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
-import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
-import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest(classes = {AuthenticationManager.class, JwtUserDetailsService.class, JwtTokenUtil.class, GraphController.class, CreateGraphService.class, AuthService.class, GetGafferService.class, DeleteGraphService.class, ApiClient.class})
+@SpringBootTest
 public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
         final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
+
         final MvcResult result = mvc.perform(post("/auth")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(authRequest)).andReturn();
+
         assertEquals(200, result.getResponse().getStatus());
         assertEquals(179, result.getResponse().getContentAsString().length());
     }
 
     @Test
-    public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
-        final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
-        final MvcResult result = mvc.perform(post("/auth")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(authRequest)).andReturn();
-        assertEquals(401, result.getResponse().getStatus());
-        assertEquals("Invalid Credentials", result.getResponse().getContentAsString());
-    }
-
-    @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
-        final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
-        final String inputJson = mapToJson(graph);
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals(201, status);
+
+        assertEquals(201, mvcResult.getResponse().getStatus());
     }
 
     @Test
     public void testAddGraphNotNullShouldReturn400() throws Exception {
-        final String graphRequest = "{\"description\":\"password\"}";
+        final String jsonRequest = "{\"description\":\"password\"}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
-                .content(graphRequest)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
+                .content(jsonRequest)).andReturn();
+
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
     @Test
     public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
         final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
-        final MvcResult newMvcResult = mvc.perform(post("/graphs")
+        mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+
+        final MvcResult createGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"details\":\"AlreadyExists\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(409, status);
+
+        assertEquals("{\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"details\":\"AlreadyExists\"}", createGraphResponse.getResponse().getContentAsString());
+        assertEquals(409, createGraphResponse.getResponse().getStatus());
     }
 
     @Test
@@ -111,9 +101,9 @@ public class GraphControllerIT extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
-        assertTrue(getGraphsResponse.getResponse().getContentAsString().contains("testgraphid"));
-        //assertEquals("[{\"graphId\":\"\\\"testgraphid\\\"\",\"description\":\"\\\"Test Graph Description\\\"\"}]", getGraphsResponse.getResponse().getContentAsString());
+
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
+        assertTrue(getGraphsResponse.getResponse().getContentAsString().contains("testgraphid"));
     }
 
     @Test
@@ -131,68 +121,82 @@ public class GraphControllerIT extends AbstractTest {
     @Test
     public void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
+
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
     @Test
     public void testGraphIdWitCapitalLettersShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
+
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
     @Test
     public void testDescriptionEmptyShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\"}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
+
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
     @Test
     public void testDeleteShouldReturn200AndRemoveCRD() throws Exception {
-        //given we have a graph
-        final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
-        final String inputJson = mapToJson(graph);
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+        final MvcResult createGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
-        assertEquals(201, mvcResult.getResponse().getStatus());
-        //when delete graph
-        final MvcResult mvcResult2 = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
+        assertEquals(201, createGraphResponse.getResponse().getStatus());
+
+        final MvcResult getGraphsResponse = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
-        //then have no graphs / 200 return
-        assertEquals(204, mvcResult2.getResponse().getStatus());
 
+        assertEquals(204, getGraphsResponse.getResponse().getStatus());
     }
 
     @Test
     public void testDeleteShouldReturn404WhenGraphNotExisting() throws Exception {
-        //when delete graph
-        final MvcResult mvcResult2 = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
+        final MvcResult deleteGraphResponse = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
-        //then have no graphs / 200 return
-        assertEquals(404, mvcResult2.getResponse().getStatus());
 
+        assertEquals(404, deleteGraphResponse.getResponse().getStatus());
+    }
+
+    @AfterEach
+    void tearDown() {
+        final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
+        final String group = "gchq.gov.uk"; // String | the custom resource's group
+        final String version = "v1"; // String | the custom resource's version
+        final String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
+        final String name = TEST_GRAPH_ID; // String | the custom object's name
+
+        try {
+            apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
+        } catch (Exception e) {
+            // Do nothing
+        }
     }
 }

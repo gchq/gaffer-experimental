@@ -13,33 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.model;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-public class Graph {
+/**
+ * <b>GaaS: Create Gaffer Request Body</b>
+ */
+public class GaaSCreateRequestBody {
 
     @NotBlank(message = "Graph id should not be null")
     @NotNull(message = "Graph id should not be null")
-    @Pattern(regexp = "([0-9|a-z|_|])*", message = "Graph can contain only digits,lowercase letters or _ ")
+    @Pattern(regexp = "([0-9|a-z|_|-|])*", message = "Graph can contain only digits,lowercase letters or _ ")
     private String graphId;
     @NotBlank(message = "Description should not be empty")
     private String description;
 
-    public Graph() {
+    public GaaSCreateRequestBody() {
     }
 
-    public Graph(final String graphId, final String description) {
+    public GaaSCreateRequestBody(final String graphId, final String description) {
         this.graphId = graphId;
         this.description = description;
-
-    }
-
-
-    public void setGraphId(final String graphId) {
-        this.graphId = graphId;
     }
 
     public String getGraphId() {
@@ -49,9 +47,4 @@ public class Graph {
     public String getDescription() {
         return description;
     }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
 }

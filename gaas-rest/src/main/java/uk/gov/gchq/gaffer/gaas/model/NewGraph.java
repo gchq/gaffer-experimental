@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package uk.gov.gchq.gaffer.gaas.model;
 
-package uk.gov.gchq.gaffer.gaas;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
 
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.util.ClientBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import java.io.IOException;
+public class NewGraph {
 
+    private GraphConfig config;
 
-@Configuration
-public class AppConfig {
-
-    @Bean
-    public ApiClient apiClient() throws IOException {
-        return ClientBuilder.defaultClient();
+    public NewGraph config(final GraphConfig config) {
+        this.config = config;
+        return this;
     }
 
-    @Bean
-    public CRDClient crdClient() {
-        return new CRDClient();
+    public GraphConfig getConfig() {
+        return config;
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Crown Copyright
+ * Copyright 2020 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,35 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package uk.gov.gchq.gaffer.gaas.utilities;
 
-package uk.gov.gchq.gaffer.gaas.services;
-
-import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
 import uk.gov.gchq.gaffer.gaas.model.NewGraph;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 
-@Service
-public class CreateGraphService {
+public final class CRDCreateRequestTestFactory {
 
-    @Autowired
-    private ApiClient apiClient;
-
-    @Autowired
-    private CRDClient crdClient;
-
-    public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
-        crdClient.createCRD(buildCreateCRDRequestBody(gaaSCreateRequestBodyInput));
-    }
-
-    private CRDCreateRequestBody buildCreateCRDRequestBody(final GaaSCreateRequestBody graph) {
+    public static CRDCreateRequestBody makeCreateCRDRequestBody(final GaaSCreateRequestBody graph) {
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
 
         return new CRDCreateRequestBody()
@@ -55,5 +38,10 @@ public class CreateGraphService {
                                         .description(graph.getDescription())
                                         .library(null)
                                         .build())));
+    }
+
+    private CRDCreateRequestTestFactory() {
+        // prevents calls from subclass
+        throw new UnsupportedOperationException();
     }
 }

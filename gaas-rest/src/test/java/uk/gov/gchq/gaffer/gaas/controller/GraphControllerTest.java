@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.controller;
 
-import com.google.gson.Gson;
-import io.kubernetes.client.openapi.ApiException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,11 +24,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.Graph;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.graph.GraphConfig;
+import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
 import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,48 +58,53 @@ public class GraphControllerTest extends AbstractTest {
     @MockBean
     private DeleteGraphService deleteGraphService;
 
-
     @Test
     public void getGraphEndpointReturnsGraph() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
-        Gson g = new Gson();
-        Graph graph = g.fromJson(graphRequest, Graph.class);
-        ArrayList<Graph> graphList = new ArrayList<>();
+        final GraphConfig graph = new GraphConfig.Builder()
+                .graphId(TEST_GRAPH_ID)
+                .description(TEST_GRAPH_DESCRIPTION)
+                .library(new FileGraphLibrary())
+                .build();
+        ArrayList<GraphConfig> graphList = new ArrayList<>();
         graphList.add(graph);
-        when(getGafferService.getGraphs()).thenReturn(graphList);
+        when(getGafferService.getAllGraphs()).thenReturn(graphList);
+
         final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
-        assertEquals("[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\"}]", getGraphsResponse.getResponse().getContentAsString());
+
+        final String expected = "[{\"description\":\"Test Graph Description\",\"graphId\":\"testgraphid\",\"hooks\":[]," +
+                "\"library\":{\"class\":\"uk.gov.gchq.gaffer.store.library.FileGraphLibrary\",\"path\":\"graphLibrary\"},\"view\":null}]";
+        assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 
     @Test
     public void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
         final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
-
         when(authService.getToken(any(JwtRequest.class))).thenReturn("token received");
+
         final MvcResult result = mvc.perform(post("/auth")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(authRequest)).andReturn();
+
         assertEquals(200, result.getResponse().getStatus());
         assertEquals("token received", result.getResponse().getContentAsString());
     }
 
-
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
-        final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
-        final String inputJson = mapToJson(graph);
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
 
-        doNothing().when(createGraphService).createGraph(graph);
+        doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
-        verify(createGraphService, times(1)).createGraph(any(Graph.class));
+        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
 
         final int status = mvcResult.getResponse().getStatus();
         assertEquals(201, status);
@@ -107,12 +113,13 @@ public class GraphControllerTest extends AbstractTest {
     @Test
     public void testAddGraphNotNullShouldReturn400() throws Exception {
         final String graphRequest = "{\"description\":\"password\"}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        verify(createGraphService, times(0)).createGraph(any(Graph.class));
+        verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
@@ -121,12 +128,13 @@ public class GraphControllerTest extends AbstractTest {
     @Test
     public void testGraphIdWithSpacesShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        verify(createGraphService, times(0)).createGraph(any(Graph.class));
+        verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
@@ -140,7 +148,7 @@ public class GraphControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        verify(createGraphService, times(0)).createGraph(any(Graph.class));
+        verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
@@ -154,7 +162,7 @@ public class GraphControllerTest extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
         final int status = mvcResult.getResponse().getStatus();
-        verify(createGraphService, times(0)).createGraph(any(Graph.class));
+        verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits,lowercase letters or _ \"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
@@ -168,7 +176,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(graphRequest)).andReturn();
 
 
-        verify(createGraphService, times(0)).createGraph(any(Graph.class));
+        verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
         assertEquals("{\"message\":\"Validation failed\",\"details\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
@@ -191,35 +199,32 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void testDeleteShouldReturn404WhenGraphNotExisting() throws Exception {
+        doThrow(new GaaSRestApiException("Graph not found", "NotFound", 404)).when(deleteGraphService).deleteGraph("nonexistentgraphfortestingpurposes");
 
-        doThrow(new ApiException(404, "Graph not found")).when(deleteGraphService).deleteGraph("nonexistentgraphfortestingpurposes");
-        //when delete graph
         final MvcResult mvcResult2 = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
 
         verify(deleteGraphService, times(1)).deleteGraph("nonexistentgraphfortestingpurposes");
-        //then have no graphs / 200 return
         assertEquals(404, mvcResult2.getResponse().getStatus());
 
     }
 
     @Test
     public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
-        final Graph graph = new Graph(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
-        final String inputJson = mapToJson(graph);
-        doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(Graph.class));
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+        doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
 
-        verify(createGraphService, times(1)).createGraph(any(Graph.class));
-        final int status = mvcResult.getResponse().getStatus();
+        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
+        assertEquals(409, mvcResult.getResponse().getStatus());
         assertEquals("{\"message\":\"This graph\",\"details\":\"already exists\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(409, status);
     }
 
     @Test

@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.exception;
 
 public class GaaSRestApiException extends Exception {
-    private String body;
-    private int statusCode;
 
-    public GaaSRestApiException(final String message, final String body, final int statusCode) {
+    private String reason;
+    private int code;
+
+    public GaaSRestApiException(final String message, final String reason, final int code) {
         super(message);
-        this.body = body;
-        this.statusCode = statusCode;
+        this.reason = reason;
+        this.code = code;
     }
 
-    public GaaSRestApiException(final String message, final String body) {
-        super(message);
-        this.body = body;
-        this.statusCode = 0;
+    public GaaSRestApiException(final String message, final String reason, final int code, final Throwable cause) {
+        super(message, cause);
+        this.reason = reason;
+        this.code = code;
     }
 
     public String getBody() {
-        return body;
+        return reason;
     }
 
     public int getStatusCode() {
-        return statusCode;
+        return code;
     }
 }
