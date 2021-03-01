@@ -113,9 +113,9 @@
     </dependencies>
     <profiles>
         <profile>
-            <id>test</id>
+            <id>openshift-deploy</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <plugins>
