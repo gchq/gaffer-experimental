@@ -23,16 +23,18 @@ import org.springframework.context.annotation.Configuration;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import java.io.IOException;
 
+
 @Configuration
 public class AppConfig {
 
     @Bean
     public ApiClient apiClient() throws IOException {
-      return ClientBuilder.defaultClient();
+        return ClientBuilder.defaultClient();
     }
 
     @Bean
     public CRDClient crdClient() {
         return new CRDClient();
     }
+
 }
