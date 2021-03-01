@@ -40,16 +40,6 @@ public class GaaSCreateRequestBody {
         this.description = description;
     }
 
-    public GaaSCreateRequestBody setGraphId(String graphId) {
-        this.graphId = graphId;
-        return this;
-    }
-
-    public GaaSCreateRequestBody setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
     public String getGraphId() {
         return graphId;
     }
