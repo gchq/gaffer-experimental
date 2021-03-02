@@ -61,13 +61,13 @@ public class GraphController {
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> graph(@Valid @RequestBody final GaaSCreateRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
+    public ResponseEntity<?> addGraph(@Valid @RequestBody final GaaSCreateRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
         createGraphService.createGraph(gaaSCreateRequestBody);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/graphs", produces = "application/json")
-    public ResponseEntity<List<GraphConfig>> graph() throws GaaSRestApiException {
+    public ResponseEntity<List<GraphConfig>> getAllGraphs() throws GaaSRestApiException {
         final List<GraphConfig> list = gafferService.getAllGraphs();
         return new ResponseEntity(list, HttpStatus.OK);
     }
