@@ -156,6 +156,7 @@ public class CRDClientIT {
         assertTrue(allNameSpaces.contains(namespace));
 
     }
+    
 
     @AfterEach
     void tearDown() {
