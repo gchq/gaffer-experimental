@@ -17,6 +17,8 @@
 package uk.gov.gchq.gaffer.gaas;
 
 import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.util.ClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +30,16 @@ public class AppConfig {
     @Bean
     public ApiClient apiClient() throws IOException {
         return ClientBuilder.defaultClient();
+    }
+
+    @Bean
+    public CustomObjectsApi customObjectsApi() throws IOException {
+        return new CustomObjectsApi(apiClient());
+    }
+
+    @Bean
+    public CoreV1Api coreV1Api() throws IOException {
+        return new CoreV1Api(apiClient());
     }
 
 }

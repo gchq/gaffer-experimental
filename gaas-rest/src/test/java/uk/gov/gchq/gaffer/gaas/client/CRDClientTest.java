@@ -18,16 +18,13 @@ package uk.gov.gchq.gaffer.gaas.client;
 
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_timeout;
 
@@ -40,14 +37,14 @@ public class CRDClientTest {
     @Autowired
     private CRDClient crdClient;
 
-    // TODO: Test when CoreV1Api throws ApiException and handle as a GaaSException
-    @Disabled
     @Test
-    public void getAllNameSpaces_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsApiEx() throws ApiException {
+    public void getAllNameSpaces_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsApiEx() throws ApiException, GaaSRestApiException {
         final ApiException apiException = makeApiException_timeout();
-        when(coreV1Api.listNamespace(anyString(), anyBoolean(), anyString(), anyString(), anyString(), anyInt(), anyString(), anyString(), anyInt(), anyBoolean()))
+        when(coreV1Api.listNamespace("true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE))
                 .thenThrow(apiException);
 
-        assertThrows(GaaSRestApiException.class, () -> crdClient.getAllNameSpaces());
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.getAllNameSpaces());
+
+        assertEquals("java.net.SocketTimeoutException: connect timed out", exception.getMessage());
     }
 }

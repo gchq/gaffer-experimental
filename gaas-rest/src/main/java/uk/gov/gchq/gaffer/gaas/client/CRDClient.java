@@ -22,7 +22,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.kubernetes.client.common.KubernetesObject;
-import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
@@ -54,10 +53,12 @@ public class CRDClient {
     private static final String FIELD_MANAGER = null;
 
     @Autowired
-    private ApiClient apiClient;
+    private CustomObjectsApi customObjectsApi;
+
+    @Autowired
+    private CoreV1Api coreV1Api;
 
     public void createCRD(final KubernetesObject requestBody) throws GaaSRestApiException {
-        final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
             customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, requestBody, this.PRETTY, this.DRY_RUN, this.FIELD_MANAGER);
         } catch (ApiException e) {
@@ -66,7 +67,6 @@ public class CRDClient {
     }
 
     public List<GraphConfig> listAllCRDs() throws GaaSRestApiException {
-        final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
             final Object customObject = customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, this.PRETTY, null, null, null, null, null, null, null);
             return convertJsonToGraphs(customObject);
@@ -76,7 +76,6 @@ public class CRDClient {
     }
 
     public void deleteCRD(final String crdName) throws GaaSRestApiException {
-        final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
             customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
         } catch (ApiException e) {
@@ -85,7 +84,6 @@ public class CRDClient {
     }
 
     public List<String> getAllNameSpaces() throws GaaSRestApiException {
-        final CoreV1Api coreV1Api = new CoreV1Api(apiClient);
         try {
             final V1NamespaceList listNamespace =
                     coreV1Api.listNamespace(
