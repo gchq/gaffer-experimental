@@ -16,7 +16,6 @@
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -29,10 +28,8 @@ import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -151,10 +148,10 @@ public class CRDClientIT {
     }
 
     @Test
-    void testGetAllNamespaces() throws ApiException {
-        List<String> allNameSpaces = crdClient.getAllNameSpaces();
-        assertTrue(allNameSpaces.contains(namespace));
+    void testGetAllNamespacesReturnsSuccessResponseWithExistingNamespace() throws  GaaSRestApiException {
+        final List<String> allNameSpaces = crdClient.getAllNameSpaces();
 
+        assertTrue(allNameSpaces.contains(namespace));
     }
     
 

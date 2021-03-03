@@ -34,6 +34,7 @@ import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import javax.validation.Valid;
 import java.util.List;
@@ -53,6 +54,8 @@ public class GraphController {
     private DeleteGraphService deleteGraphService;
     @Autowired
     private ApiClient apiClient;
+    @Autowired
+    private GetNamespacesService getNamespacesService;
 
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
@@ -76,5 +79,11 @@ public class GraphController {
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId) throws GaaSRestApiException {
         deleteGraphService.deleteGraph(graphId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(path = "/namespaces", produces = "application/json")
+    public ResponseEntity<?> getNamespaces() throws GaaSRestApiException {
+        final List<String> namespaces = getNamespacesService.getNamespaces();
+        return new ResponseEntity(namespaces, HttpStatus.OK);
     }
 }

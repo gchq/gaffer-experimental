@@ -82,16 +82,20 @@ public class CRDClient {
         }
     }
 
-    public List<String> getAllNameSpaces() throws ApiException {
+    public List<String> getAllNameSpaces() throws GaaSRestApiException {
         final CoreV1Api coreV1Api = new CoreV1Api(apiClient);
-        final V1NamespaceList listNamespace =
-                coreV1Api.listNamespace(
-                        "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE);
-        final List<String> list =
-                listNamespace.getItems().stream()
-                        .map(v1Namespace -> v1Namespace.getMetadata().getName())
-                        .collect(Collectors.toList());
-        return list;
+        try {
+            final V1NamespaceList listNamespace =
+                    coreV1Api.listNamespace(
+                            "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE);
+            final List<String> list =
+                    listNamespace.getItems().stream()
+                            .map(v1Namespace -> v1Namespace.getMetadata().getName())
+                            .collect(Collectors.toList());
+            return list;
+        } catch (ApiException e) {
+            throw from(e);
+        }
     }
 
     private List<GraphConfig> convertJsonToGraphs(final Object response) {

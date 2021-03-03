@@ -15,21 +15,19 @@
  */
 package uk.gov.gchq.gaffer.gaas.services;
 
-import io.kubernetes.client.openapi.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import java.util.List;
 
-
+@Service
 public class GetNamespacesService {
 
-  @Autowired
-  private CRDClient crdClient;
+    @Autowired
+    private CRDClient crdClient;
 
-  public List<String> getNamespaces() throws ApiException {
-
-    List<String> allNameSpaces = crdClient.getAllNameSpaces();
-    return  allNameSpaces;
-  }
+    public List<String> getNamespaces() throws GaaSRestApiException {
+        return crdClient.getAllNameSpaces();
+    }
 }
