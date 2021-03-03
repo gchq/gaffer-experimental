@@ -185,6 +185,17 @@ public class GraphControllerIT extends AbstractTest {
         assertEquals(404, deleteGraphResponse.getResponse().getStatus());
     }
 
+    @Test
+    public void namespacesEndpointShouldReturn200AndArrayWithNamespacesWhenNamespacesPresent() throws Exception {
+        final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+
+        assertEquals(200, namespacesResponse.getResponse().getStatus());
+        assertTrue(namespacesResponse.getResponse().getContentAsString().contains(namespace));
+    }
+
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);

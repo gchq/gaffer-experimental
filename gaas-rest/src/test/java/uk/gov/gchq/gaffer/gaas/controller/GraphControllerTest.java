@@ -29,9 +29,11 @@ import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
 import java.util.ArrayList;
+import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -57,6 +59,9 @@ public class GraphControllerTest extends AbstractTest {
 
     @MockBean
     private DeleteGraphService deleteGraphService;
+
+    @MockBean
+    private GetNamespacesService getNamespacesService;
 
     @Test
     public void getGraphEndpointReturnsGraph() throws Exception {
@@ -267,5 +272,44 @@ public class GraphControllerTest extends AbstractTest {
         verify(authService, times(2)).getToken(any(JwtRequest.class));
         assertEquals(401, result.getResponse().getStatus());
         assertEquals("{\"message\":\"Invalid Credentials\",\"details\":\"Username is incorrect\"}", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void namespacesEndpointShouldReturnErrorMessageWhenNamespaceServiceException() throws Exception {
+        doThrow(new GaaSRestApiException("Cluster not found", "NotFound", 404)).when(getNamespacesService).getNamespaces();
+
+        final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+
+        assertEquals(404, namespacesResponse.getResponse().getStatus());
+        assertEquals("{\"message\":\"Cluster not found\",\"details\":\"NotFound\"}", namespacesResponse.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void namespacesEndpointShouldReturn200AndArrayWithNamespacesWhenNamespacesPresent() throws Exception {
+        when(getNamespacesService.getNamespaces()).thenReturn(Arrays.asList("dev-team-1", "dev-team-2", "test-team-5"));
+
+        final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+
+        assertEquals(200, namespacesResponse.getResponse().getStatus());
+        assertEquals("[\"dev-team-1\",\"dev-team-2\",\"test-team-5\"]", namespacesResponse.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void namespacesEndpointShouldReturn200AndEmptyArrayWhenNoNamespacesExist() throws Exception {
+        when(getNamespacesService.getNamespaces()).thenReturn(new ArrayList(0));
+
+        final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+
+        assertEquals(200, namespacesResponse.getResponse().getStatus());
+        assertEquals("[]", namespacesResponse.getResponse().getContentAsString());
     }
 }

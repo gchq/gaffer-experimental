@@ -22,19 +22,23 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.kubernetes.client.common.KubernetesObject;
-import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
+import io.kubernetes.client.openapi.models.V1NamespaceList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import static uk.gov.gchq.gaffer.gaas.converters.GaaSRestExceptionFactory.from;
 
+@Service
 public class CRDClient {
 
     @Value("${group}")
@@ -49,10 +53,12 @@ public class CRDClient {
     private static final String FIELD_MANAGER = null;
 
     @Autowired
-    private ApiClient apiClient;
+    private CustomObjectsApi customObjectsApi;
+
+    @Autowired
+    private CoreV1Api coreV1Api;
 
     public void createCRD(final KubernetesObject requestBody) throws GaaSRestApiException {
-        final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
             customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, requestBody, this.PRETTY, this.DRY_RUN, this.FIELD_MANAGER);
         } catch (ApiException e) {
@@ -61,7 +67,6 @@ public class CRDClient {
     }
 
     public List<GraphConfig> listAllCRDs() throws GaaSRestApiException {
-        final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
             final Object customObject = customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, this.PRETTY, null, null, null, null, null, null, null);
             return convertJsonToGraphs(customObject);
@@ -71,9 +76,23 @@ public class CRDClient {
     }
 
     public void deleteCRD(final String crdName) throws GaaSRestApiException {
-        final CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         try {
             customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
+        } catch (ApiException e) {
+            throw from(e);
+        }
+    }
+
+    public List<String> getAllNameSpaces() throws GaaSRestApiException {
+        try {
+            final V1NamespaceList listNamespace =
+                    coreV1Api.listNamespace(
+                            "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE);
+            final List<String> list =
+                    listNamespace.getItems().stream()
+                            .map(v1Namespace -> v1Namespace.getMetadata().getName())
+                            .collect(Collectors.toList());
+            return list;
         } catch (ApiException e) {
             throw from(e);
         }

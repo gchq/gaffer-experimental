@@ -147,6 +147,13 @@ public class CRDClientIT {
         assertDoesNotThrow(() -> crdClient.deleteCRD(existingGraph));
     }
 
+    @Test
+    void testGetAllNamespacesReturnsSuccessResponseWithExistingNamespace() throws GaaSRestApiException {
+        final List<String> allNameSpaces = crdClient.getAllNameSpaces();
+
+        assertTrue(allNameSpaces.contains(namespace));
+    }
+
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
