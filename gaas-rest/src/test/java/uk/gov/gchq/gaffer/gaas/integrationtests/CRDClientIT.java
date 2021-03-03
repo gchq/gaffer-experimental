@@ -148,12 +148,11 @@ public class CRDClientIT {
     }
 
     @Test
-    void testGetAllNamespacesReturnsSuccessResponseWithExistingNamespace() throws  GaaSRestApiException {
+    void testGetAllNamespacesReturnsSuccessResponseWithExistingNamespace() throws GaaSRestApiException {
         final List<String> allNameSpaces = crdClient.getAllNameSpaces();
 
         assertTrue(allNameSpaces.contains(namespace));
     }
-    
 
     @AfterEach
     void tearDown() {

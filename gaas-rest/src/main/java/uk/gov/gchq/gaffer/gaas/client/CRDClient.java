@@ -29,6 +29,7 @@ import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import static uk.gov.gchq.gaffer.gaas.converters.GaaSRestExceptionFactory.from;
 
+@Service
 public class CRDClient {
 
     @Value("${group}")
