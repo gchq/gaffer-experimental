@@ -23,6 +23,13 @@ import java.util.TreeMap;
 
 public final class ApiExceptionTestFactory {
 
+    public static ApiException makeApiException_custom(final String responseBody) {
+        final Map<String, List<String>> responseHeaders = new TreeMap<>();
+        responseHeaders.put("content-type", Arrays.asList("application/json"));
+
+        return new ApiException("UnknownError", 0, responseHeaders, responseBody);
+    }
+
     public static ApiException makeApiException_duplicateGraph() {
         final Map<String, List<String>> responseHeaders = new TreeMap<>();
         responseHeaders.put("content-type", Arrays.asList("application/json"));

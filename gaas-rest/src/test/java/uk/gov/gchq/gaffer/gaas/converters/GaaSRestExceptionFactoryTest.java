@@ -22,10 +22,23 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_custom;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_duplicateGraph;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_timeout;
 
 public class GaaSRestExceptionFactoryTest {
+
+    @Test
+    public void convertApiExceptionWhenResponseBodyIsNotJson() {
+        final ApiException apiException = makeApiException_custom("null");
+
+        final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
+
+        assertEquals("UnknownError", actual.getMessage());
+        assertEquals("null", actual.getBody());
+        assertEquals(0, actual.getStatusCode());
+        assertTrue(actual.getCause() instanceof ApiException);
+    }
 
     @Test
     public void convertAlreadyExistsApiExceptionToGaasApiException() {
@@ -33,8 +46,8 @@ public class GaaSRestExceptionFactoryTest {
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
 
-        assertEquals("AlreadyExists", actual.getBody());
-        assertEquals("gaffers.gchq.gov.uk \"testgraphid\" already exists", actual.getMessage());
+        assertEquals("AlreadyExists", actual.getMessage());
+        assertEquals("gaffers.gchq.gov.uk \"testgraphid\" already exists", actual.getBody());
         assertEquals(409, actual.getStatusCode());
         assertTrue(actual.getCause() instanceof ApiException);
     }
@@ -45,8 +58,8 @@ public class GaaSRestExceptionFactoryTest {
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
 
-        assertEquals(null, actual.getBody());
         assertEquals("java.net.SocketTimeoutException: connect timed out", actual.getMessage());
+        assertEquals(null, actual.getBody());
         assertEquals(0, actual.getStatusCode());
         assertTrue(actual.getCause() instanceof ApiException);
     }

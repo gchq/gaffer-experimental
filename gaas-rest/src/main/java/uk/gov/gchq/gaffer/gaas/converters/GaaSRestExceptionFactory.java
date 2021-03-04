@@ -26,14 +26,18 @@ public final class GaaSRestExceptionFactory {
 
     public static GaaSRestApiException from(final ApiException e) {
         final Gson gson = new Gson();
-        if (e.getResponseBody() != null) {
+        if (e.getResponseBody() != null && isValidJson(e.getResponseBody())) {
             final JsonObject asJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
             final CrdErrorResponseBody response = gson.fromJson(asJsonObject, CrdErrorResponseBody.class);
-            return new GaaSRestApiException(response.getMessage(), response.getReason(), e.getCode(), e);
+            return new GaaSRestApiException(response.getReason(), response.getMessage(), e.getCode(), e);
 
         } else {
             return new GaaSRestApiException(e.getMessage(), e.getResponseBody(), e.getCode(), e);
         }
+    }
+
+    private static boolean isValidJson(final String possibleJson) {
+        return new JsonParser().parse(possibleJson).isJsonObject();
     }
 
     private GaaSRestExceptionFactory() {
