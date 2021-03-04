@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.services;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
@@ -36,6 +37,12 @@ public class CreateGraphService {
 
     @Autowired
     private CRDClient crdClient;
+    @Value("${group}")
+    private String group;
+    @Value("${version}")
+    private String version;
+    @Value("${kind}")
+    private String kind;
 
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
         crdClient.createCRD(buildCreateCRDRequestBody(gaaSCreateRequestBodyInput));
@@ -45,8 +52,8 @@ public class CreateGraphService {
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
 
         return new CRDCreateRequestBody()
-                .apiVersion("gchq.gov.uk/v1")
-                .kind("Gaffer")
+                .apiVersion(group + "/" + version)
+                .kind(kind)
                 .metaData(metadata)
                 .spec(new GraphSpec()
                         .graph(new NewGraph()
