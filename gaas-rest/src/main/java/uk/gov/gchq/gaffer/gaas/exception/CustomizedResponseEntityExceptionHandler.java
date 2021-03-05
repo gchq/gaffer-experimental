@@ -16,8 +16,6 @@
 
 package uk.gov.gchq.gaffer.gaas.exception;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +30,6 @@ import java.util.List;
 
 @ControllerAdvice
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
-
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @ExceptionHandler(GaaSRestApiException.class)
     public final ResponseEntity<Object> handleAllException(final GaaSRestApiException ex, final WebRequest request) {
