@@ -21,19 +21,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import io.kubernetes.client.openapi.ApiException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CrdErrorResponseBody;
 
 public final class GaaSRestExceptionFactory {
 
-    private static final Log LOGGER = LogFactory.getLog(GaaSRestExceptionFactory.class);
-
     private static final String MESSAGE_PREFIX = "Kubernetes Cluster Error: ";
 
     public static GaaSRestApiException from(final ApiException e) {
-        LOGGER.error(e.toString() + " : Status Code: " + e.getCode());
 
         if (e.getCode() == 401 && isEmpty(e.getMessage())) {
             return new GaaSRestApiException(MESSAGE_PREFIX + "Invalid authentication credentials for Kubernetes cluster", e.getCode(), e);
