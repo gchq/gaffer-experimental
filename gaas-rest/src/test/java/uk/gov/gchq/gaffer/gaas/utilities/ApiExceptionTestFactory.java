@@ -23,11 +23,18 @@ import java.util.TreeMap;
 
 public final class ApiExceptionTestFactory {
 
-    public static ApiException makeApiException_custom(final String responseBody) {
+    public static ApiException makeApiException_custom(final String message, final int code, final String responseBody) {
         final Map<String, List<String>> responseHeaders = new TreeMap<>();
         responseHeaders.put("content-type", Arrays.asList("application/json"));
 
-        return new ApiException("UnknownError", 0, responseHeaders, responseBody);
+        return new ApiException(message, code, responseHeaders, responseBody);
+    }
+
+    public static ApiException makeApiException_loggedOutOfCluster() {
+        final Map<String, List<String>> responseHeaders = new TreeMap<>();
+        responseHeaders.put("content-type", Arrays.asList("application/json"));
+
+        return new ApiException(null, 401, responseHeaders, null);
     }
 
     public static ApiException makeApiException_duplicateGraph() {

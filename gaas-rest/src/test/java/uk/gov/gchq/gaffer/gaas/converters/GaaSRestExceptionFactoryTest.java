@@ -19,24 +19,34 @@ package uk.gov.gchq.gaffer.gaas.converters;
 import io.kubernetes.client.openapi.ApiException;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_custom;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_duplicateGraph;
+import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_loggedOutOfCluster;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_timeout;
 
 public class GaaSRestExceptionFactoryTest {
 
     @Test
     public void convertApiExceptionWhenResponseBodyIsNotJson() {
-        final ApiException apiException = makeApiException_custom("null");
+        final ApiException apiException = makeApiException_custom("ServerError", 500, "Not JSON");
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
 
-        assertEquals("UnknownError", actual.getMessage());
-        assertEquals("null", actual.getBody());
-        assertEquals(0, actual.getStatusCode());
+        assertEquals("Kubernetes Cluster Error: ServerError", actual.getMessage());
+        assertEquals(500, actual.getStatusCode());
+        assertTrue(actual.getCause() instanceof ApiException);
+    }
+
+    @Test
+    public void convertApiExceptionWhenApiNotLoggedInToCluster() {
+        final ApiException apiException = makeApiException_loggedOutOfCluster();
+
+        final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
+
+        assertEquals("Kubernetes Cluster Error: Invalid authentication credentials for Kubernetes cluster", actual.getMessage());
+        assertEquals(401, actual.getStatusCode());
         assertTrue(actual.getCause() instanceof ApiException);
     }
 
@@ -46,8 +56,7 @@ public class GaaSRestExceptionFactoryTest {
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
 
-        assertEquals("AlreadyExists", actual.getMessage());
-        assertEquals("gaffers.gchq.gov.uk \"testgraphid\" already exists", actual.getBody());
+        assertEquals("Kubernetes Cluster Error: (AlreadyExists) gaffers.gchq.gov.uk \"testgraphid\" already exists", actual.getMessage());
         assertEquals(409, actual.getStatusCode());
         assertTrue(actual.getCause() instanceof ApiException);
     }
@@ -58,10 +67,8 @@ public class GaaSRestExceptionFactoryTest {
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
 
-        assertEquals("java.net.SocketTimeoutException: connect timed out", actual.getMessage());
-        assertEquals(null, actual.getBody());
+        assertEquals("Kubernetes Cluster Error: java.net.SocketTimeoutException: connect timed out", actual.getMessage());
         assertEquals(0, actual.getStatusCode());
         assertTrue(actual.getCause() instanceof ApiException);
     }
-
 }

@@ -18,33 +18,70 @@ package uk.gov.gchq.gaffer.gaas.client;
 
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_loggedOutOfCluster;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_timeout;
 
 @SpringBootTest
 public class CRDClientTest {
 
-    @MockBean
-    private CoreV1Api coreV1Api;
-
     @Autowired
     private CRDClient crdClient;
 
+    @MockBean
+    private CoreV1Api coreV1Api;
+
+    @MockBean
+    private CustomObjectsApi customObjectsApi;
+
+    @Value("${group}")
+    private String group;
+    @Value("${version}")
+    private String version;
+    @Value("${namespace}")
+    private String namespace;
+    private final String plural = "gaffers";
+    private final String pretty = null;
+
     @Test
-    public void getAllNameSpaces_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsApiEx() throws ApiException, GaaSRestApiException {
+    public void getAllNameSpaces_ShouldThrowGaaSRestApiException_WhenCoreV1ApiThrowsApiEx() throws ApiException {
         final ApiException apiException = makeApiException_timeout();
         when(coreV1Api.listNamespace("true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE))
                 .thenThrow(apiException);
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.getAllNameSpaces());
 
-        assertEquals("java.net.SocketTimeoutException: connect timed out", exception.getMessage());
+        assertEquals("Kubernetes Cluster Error: java.net.SocketTimeoutException: connect timed out", exception.getMessage());
+    }
+
+    @Test
+    public void getGraphCRDs_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsTimeoutEx() throws ApiException {
+        final ApiException apiException = makeApiException_timeout();
+        when(customObjectsApi.listNamespacedCustomObject(group, this.version, this.namespace, this.plural, this.pretty, null, null, null, null, null, null, null))
+                .thenThrow(apiException);
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.listAllCRDs());
+
+        assertEquals("Kubernetes Cluster Error: java.net.SocketTimeoutException: connect timed out", exception.getMessage());
+    }
+
+    @Test
+    public void getGraphCRDs_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsApiEx() throws ApiException {
+        final ApiException apiException = makeApiException_loggedOutOfCluster();
+        when(customObjectsApi.listNamespacedCustomObject(group, this.version, this.namespace, this.plural, this.pretty, null, null, null, null, null, null, null))
+                .thenThrow(apiException);
+
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.listAllCRDs());
+
+        assertEquals("Kubernetes Cluster Error: Invalid authentication credentials for Kubernetes cluster", exception.getMessage());
+        assertEquals(401, exception.getStatusCode());
     }
 }

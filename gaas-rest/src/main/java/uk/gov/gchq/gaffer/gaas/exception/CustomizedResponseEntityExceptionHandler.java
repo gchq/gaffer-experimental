@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.exception;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +30,16 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import java.util.List;
 
-
 @ControllerAdvice
-public class CustomizedResponseEntityExceptionHandler  extends ResponseEntityExceptionHandler {
+public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+    protected final Log logger = LogFactory.getLog(getClass());
 
     @ExceptionHandler(GaaSRestApiException.class)
-    public final ResponseEntity<Object> handleAllException(final GaaSRestApiException ex, final WebRequest request) throws Exception {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), ex.getBody());
+    public final ResponseEntity<Object> handleAllException(final GaaSRestApiException ex, final WebRequest request) {
+        logger.error(ex.toString());
+
+        final ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), ex.getBody());
 
         return new ResponseEntity(exceptionResponse, HttpStatus.valueOf(ex.getStatusCode()));
     }
@@ -48,5 +54,4 @@ public class CustomizedResponseEntityExceptionHandler  extends ResponseEntityExc
         ExceptionResponse exceptionResponse = new ExceptionResponse("Validation failed", objectError);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
-
 }

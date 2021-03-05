@@ -13,31 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.converters;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import io.kubernetes.client.openapi.ApiException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CrdErrorResponseBody;
 
 public final class GaaSRestExceptionFactory {
 
+    private static final Log LOGGER = LogFactory.getLog(GaaSRestExceptionFactory.class);
+
+    private static final String MESSAGE_PREFIX = "Kubernetes Cluster Error: ";
+
     public static GaaSRestApiException from(final ApiException e) {
-        final Gson gson = new Gson();
+        LOGGER.error(e.toString() + " : Status Code: " + e.getCode());
+
+        if (e.getCode() == 401 && isEmpty(e.getMessage())) {
+            return new GaaSRestApiException(MESSAGE_PREFIX + "Invalid authentication credentials for Kubernetes cluster", e.getCode(), e);
+        }
+
         if (e.getResponseBody() != null && isValidJson(e.getResponseBody())) {
+            final Gson gson = new Gson();
             final JsonObject asJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
             final CrdErrorResponseBody response = gson.fromJson(asJsonObject, CrdErrorResponseBody.class);
-            return new GaaSRestApiException(response.getReason(), response.getMessage(), e.getCode(), e);
+            return new GaaSRestApiException(MESSAGE_PREFIX + "(" + response.getReason() + ") " + response.getMessage(), e.getCode(), e);
 
         } else {
-            return new GaaSRestApiException(e.getMessage(), e.getResponseBody(), e.getCode(), e);
+            final String message = MESSAGE_PREFIX + e.getMessage();
+            if (e.getResponseBody() != null) {
+                message.concat(" " + e.getResponseBody());
+            }
+            return new GaaSRestApiException(message, e.getCode(), e);
         }
     }
 
+    private static boolean isEmpty(final String string) {
+        return string == null || string.isEmpty();
+    }
+
     private static boolean isValidJson(final String possibleJson) {
-        return new JsonParser().parse(possibleJson).isJsonObject();
+        try {
+            return new JsonParser().parse(possibleJson).isJsonObject();
+        } catch (JsonSyntaxException e) {
+            return false;
+        }
     }
 
     private GaaSRestExceptionFactory() {
