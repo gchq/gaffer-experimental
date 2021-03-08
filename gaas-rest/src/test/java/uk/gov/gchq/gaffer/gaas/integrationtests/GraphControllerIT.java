@@ -19,7 +19,6 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
@@ -30,7 +29,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest
 public class GraphControllerIT extends AbstractTest {
 
     @Test
@@ -84,7 +82,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        assertEquals("{\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"details\":\"AlreadyExists\"}", createGraphResponse.getResponse().getContentAsString());
+        assertEquals("{\"message\":\"Kubernetes Cluster Error: (AlreadyExists) gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"details\":\"\"}", createGraphResponse.getResponse().getContentAsString());
         assertEquals(409, createGraphResponse.getResponse().getStatus());
     }
 
