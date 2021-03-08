@@ -18,9 +18,11 @@ package uk.gov.gchq.gaffer.gaas.model;
 import com.google.gson.Gson;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.junit.jupiter.api.Test;
+import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@UnitTest
 public class CRDCreateRequestBodyTest {
 
     private final Gson gson = new Gson();
