@@ -70,7 +70,7 @@ public class CRDClientIT {
         final String expected = "Missing the required parameter 'body' when calling createNamespacedCustomObject(Async)";
         assertEquals(expected, exception.getMessage());
         assertEquals(0, exception.getStatusCode());
-        assertEquals(null, exception.getBody());
+        assertEquals(null, exception.getTitle());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class CRDClientIT {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
 
         assertEquals(422, exception.getStatusCode());
-        assertEquals("Invalid", exception.getBody());
+        assertEquals("Invalid", exception.getTitle());
         final String expected = "Gaffer.gchq.gov.uk \"UPPERCASEgraph\" is invalid: metadata.name: Invalid value: " +
                 "\"UPPERCASEgraph\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, " +
                 "'-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for " +
@@ -95,7 +95,7 @@ public class CRDClientIT {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
 
         assertEquals(422, exception.getStatusCode());
-        assertEquals("Invalid", exception.getBody());
+        assertEquals("Invalid", exception.getTitle());
         final String expected = "Gaffer.gchq.gov.uk \"sp£ci@l_char$\" is invalid: metadata.name: Invalid value: " +
                 "\"sp£ci@l_char$\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, " +
                 "'-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for " +
@@ -110,7 +110,7 @@ public class CRDClientIT {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
 
         assertEquals(400, exception.getStatusCode());
-        assertEquals("BadRequest", exception.getBody());
+        assertEquals("BadRequest", exception.getTitle());
         final String expected = "Gaffer in version \"v1\" cannot be handled as a Gaffer: unmarshalerDecoder: " +
                 "Object 'Kind' is missing in '{}', error found in #2 byte of ...|{}|..., bigger context ...|{}|...";
         assertEquals(expected, exception.getMessage());
@@ -135,7 +135,7 @@ public class CRDClientIT {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.deleteCRD("non-existing-crd"));
 
         assertEquals(404, exception.getStatusCode());
-        assertEquals("NotFound", exception.getBody());
+        assertEquals("NotFound", exception.getTitle());
         assertEquals("gaffers.gchq.gov.uk \"non-existing-crd\" not found", exception.getMessage());
     }
 

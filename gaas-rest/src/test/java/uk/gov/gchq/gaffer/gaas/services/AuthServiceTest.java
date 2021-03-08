@@ -102,7 +102,7 @@ public class AuthServiceTest {
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> authService.getToken(user));
 
-        assertEquals("Bad credentials", exception.getBody());
+        assertEquals("Bad credentials", exception.getTitle());
         assertEquals("BadCredentialsException", exception.getMessage());
     }
 
@@ -115,7 +115,7 @@ public class AuthServiceTest {
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> authService.getToken(user));
 
-        assertEquals("This account has expired", exception.getBody());
+        assertEquals("This account has expired", exception.getTitle());
         assertEquals("AccountExpiredException", exception.getMessage());
     }
 }

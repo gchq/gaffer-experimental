@@ -33,7 +33,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler(GaaSRestApiException.class)
     public final ResponseEntity<Object> handleAllException(final GaaSRestApiException ex, final WebRequest request) {
-        final ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), ex.getBody());
+        final ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), ex.getTitle());
 
         return new ResponseEntity(exceptionResponse, HttpStatus.valueOf(ex.getStatusCode()));
     }

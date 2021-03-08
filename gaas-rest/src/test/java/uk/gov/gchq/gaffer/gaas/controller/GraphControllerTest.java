@@ -126,7 +126,7 @@ public class GraphControllerTest extends AbstractTest {
 
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 
@@ -141,7 +141,7 @@ public class GraphControllerTest extends AbstractTest {
 
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 
@@ -182,7 +182,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(graphRequest)).andReturn();
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 
@@ -195,7 +195,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(graphRequest)).andReturn();
         final int status = mvcResult.getResponse().getStatus();
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 
@@ -210,7 +210,7 @@ public class GraphControllerTest extends AbstractTest {
 
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 
@@ -256,7 +256,7 @@ public class GraphControllerTest extends AbstractTest {
 
         verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
         assertEquals(409, mvcResult.getResponse().getStatus());
-        assertEquals("{\"message\":\"This graph\",\"details\":\"already exists\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"This graph\",\"detail\":\"already exists\"}", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -271,7 +271,7 @@ public class GraphControllerTest extends AbstractTest {
 
         verify(authService, times(2)).getToken(any(JwtRequest.class));
         assertEquals(401, result.getResponse().getStatus());
-        assertEquals("{\"message\":\"Invalid Credentials\",\"details\":\"Username is incorrect\"}", result.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Invalid Credentials\",\"detail\":\"Username is incorrect\"}", result.getResponse().getContentAsString());
     }
 
     @Test
@@ -284,7 +284,7 @@ public class GraphControllerTest extends AbstractTest {
                 .andReturn();
 
         assertEquals(404, namespacesResponse.getResponse().getStatus());
-        assertEquals("{\"message\":\"Cluster not found\",\"details\":\"NotFound\"}", namespacesResponse.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Cluster not found\",\"detail\":\"NotFound\"}", namespacesResponse.getResponse().getContentAsString());
     }
 
     @Test
