@@ -84,7 +84,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        assertEquals("{\"title\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"detail\":\"AlreadyExists\"}", createGraphResponse.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Conflict\",\"detail\":\"Kubernetes Cluster Error: (AlreadyExists) gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\"}", createGraphResponse.getResponse().getContentAsString());
         assertEquals(409, createGraphResponse.getResponse().getStatus());
     }
 

@@ -46,6 +46,6 @@ public class GraphControllerAuthIT {
             .content(authRequest)).andReturn();
 
     assertEquals(401, tokenResponse.getResponse().getStatus());
-    assertEquals("BadCredentialsException", tokenResponse.getResolvedException().getMessage());
+    assertEquals("Bad credentials", tokenResponse.getResolvedException().getMessage());
   }
 }

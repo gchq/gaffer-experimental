@@ -21,7 +21,7 @@ public class GaaSRestApiException extends Exception {
     private String title;
     private int code;
 
-    public GaaSRestApiException(final String message, final String title, final int code) {
+    public GaaSRestApiException(final String title, final String message, final int code) {
         super(message);
         this.title = title;
         this.code = code;
