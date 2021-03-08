@@ -29,7 +29,7 @@ public class GaaSRestApiException extends Exception {
 
     public GaaSRestApiException(final String message, final int code, final Throwable cause) {
         super(message, cause);
-        this.title = "";
+        this.title = cause.getMessage();
         this.code = code;
     }
 

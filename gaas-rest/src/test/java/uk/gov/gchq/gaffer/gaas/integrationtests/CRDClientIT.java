@@ -28,6 +28,7 @@ import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
+import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
@@ -67,10 +68,10 @@ public class CRDClientIT {
     public void createCRD_whenNullRequestObject_throwsMissingRequestBodyGaasException() {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(null));
 
-        final String expected = "Missing the required parameter 'body' when calling createNamespacedCustomObject(Async)";
+        final String expected = "Kubernetes Cluster Error: Missing the required parameter 'body' when calling createNamespacedCustomObject(Async)";
         assertEquals(expected, exception.getMessage());
         assertEquals(0, exception.getStatusCode());
-        assertEquals(null, exception.getTitle());
+        assertEquals("Missing the required parameter 'body' when calling createNamespacedCustomObject(Async)", exception.getTitle());
     }
 
     @Test
@@ -80,11 +81,8 @@ public class CRDClientIT {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
 
         assertEquals(422, exception.getStatusCode());
-        assertEquals("Invalid", exception.getTitle());
-        final String expected = "Gaffer.gchq.gov.uk \"UPPERCASEgraph\" is invalid: metadata.name: Invalid value: " +
-                "\"UPPERCASEgraph\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, " +
-                "'-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for " +
-                "validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')";
+        assertEquals("Unprocessable Entity", exception.getTitle());
+        final String expected = "Kubernetes Cluster Error: (Invalid) Gaffer.gchq.gov.uk \"UPPERCASEgraph\" is invalid: metadata.name: Invalid value: \"UPPERCASEgraph\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')";
         assertEquals(expected, exception.getMessage());
     }
 
@@ -95,11 +93,8 @@ public class CRDClientIT {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
 
         assertEquals(422, exception.getStatusCode());
-        assertEquals("Invalid", exception.getTitle());
-        final String expected = "Gaffer.gchq.gov.uk \"sp£ci@l_char$\" is invalid: metadata.name: Invalid value: " +
-                "\"sp£ci@l_char$\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, " +
-                "'-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for " +
-                "validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')";
+        assertEquals("Unprocessable Entity", exception.getTitle());
+        final String expected = "Kubernetes Cluster Error: (Invalid) Gaffer.gchq.gov.uk \"sp£ci@l_char$\" is invalid: metadata.name: Invalid value: \"sp£ci@l_char$\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')";
         assertEquals(expected, exception.getMessage());
     }
 
@@ -110,9 +105,8 @@ public class CRDClientIT {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
 
         assertEquals(400, exception.getStatusCode());
-        assertEquals("BadRequest", exception.getTitle());
-        final String expected = "Gaffer in version \"v1\" cannot be handled as a Gaffer: unmarshalerDecoder: " +
-                "Object 'Kind' is missing in '{}', error found in #2 byte of ...|{}|..., bigger context ...|{}|...";
+        assertEquals("Bad Request", exception.getTitle());
+        final String expected = "Kubernetes Cluster Error: (BadRequest) Gaffer in version \"v1\" cannot be handled as a Gaffer: unmarshalerDecoder: Object 'Kind' is missing in '{}', error found in #2 byte of ...|{}|..., bigger context ...|{}|...";
         assertEquals(expected, exception.getMessage());
     }
 
@@ -135,8 +129,8 @@ public class CRDClientIT {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.deleteCRD("non-existing-crd"));
 
         assertEquals(404, exception.getStatusCode());
-        assertEquals("NotFound", exception.getTitle());
-        assertEquals("gaffers.gchq.gov.uk \"non-existing-crd\" not found", exception.getMessage());
+        assertEquals("Not Found", exception.getTitle());
+        assertEquals("Kubernetes Cluster Error: (NotFound) gaffers.gchq.gov.uk \"non-existing-crd\" not found", exception.getMessage());
     }
 
     @Test
