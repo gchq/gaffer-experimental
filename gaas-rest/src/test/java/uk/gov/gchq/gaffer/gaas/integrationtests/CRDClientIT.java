@@ -41,8 +41,10 @@ public class CRDClientIT {
 
     @Autowired
     private CreateGraphService createGraphService;
+
     @Autowired
-    CRDClient crdClient;
+    private CRDClient crdClient;
+
     @Autowired
     private ApiClient apiClient;
 
