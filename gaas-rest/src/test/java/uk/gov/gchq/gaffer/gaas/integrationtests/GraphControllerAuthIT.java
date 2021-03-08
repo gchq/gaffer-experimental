@@ -23,7 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -34,7 +33,7 @@ public class GraphControllerAuthIT {
   protected MockMvc mvc;
 
   @Autowired
-  WebApplicationContext webApplicationContext;
+  private WebApplicationContext webApplicationContext;
 
   @Test
   public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
