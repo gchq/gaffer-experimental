@@ -247,7 +247,7 @@ public class GraphControllerTest extends AbstractTest {
     public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
         final String inputJson = mapToJson(gaaSCreateRequestBody);
-        doThrow(new GaaSRestApiException("This graph","already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
+        doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

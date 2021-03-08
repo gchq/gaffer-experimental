@@ -28,7 +28,6 @@ import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
-import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;

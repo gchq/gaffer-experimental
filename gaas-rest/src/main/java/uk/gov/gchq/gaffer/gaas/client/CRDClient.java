@@ -43,95 +43,95 @@ import static uk.gov.gchq.gaffer.gaas.converters.GaaSRestExceptionFactory.from;
 @Service
 public class CRDClient {
 
-    @Value("${group}")
-    private String group;
-    @Value("${version}")
-    private String version;
-    @Value("${namespace}")
-    private String namespace;
-    private static final String PLURAL = "gaffers";
-    private static final String PRETTY = null;
-    private static final String DRY_RUN = null;
-    private static final String FIELD_MANAGER = null;
+  @Value("${group}")
+  private String group;
+  @Value("${version}")
+  private String version;
+  @Value("${namespace}")
+  private String namespace;
+  private static final String PLURAL = "gaffers";
+  private static final String PRETTY = null;
+  private static final String DRY_RUN = null;
+  private static final String FIELD_MANAGER = null;
 
-    @Autowired
-    private CustomObjectsApi customObjectsApi;
+  @Autowired
+  private CustomObjectsApi customObjectsApi;
 
-    @Autowired
-    private CoreV1Api coreV1Api;
+  @Autowired
+  private CoreV1Api coreV1Api;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
 
-    public void createCRD(final KubernetesObject requestBody) throws GaaSRestApiException {
-        try {
-            customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, requestBody, this.PRETTY, this.DRY_RUN, this.FIELD_MANAGER);
-        } catch (ApiException e) {
-            if (requestBody==null || requestBody.getMetadata() == null) {
-                LOGGER.error("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
-            } else {
-                LOGGER.error("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+  public void createCRD(final KubernetesObject requestBody) throws GaaSRestApiException {
+    try {
+      customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, requestBody, this.PRETTY, this.DRY_RUN, this.FIELD_MANAGER);
+    } catch (ApiException e) {
+      if (requestBody == null || requestBody.getMetadata() == null) {
+        LOGGER.error("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+      } else {
+        LOGGER.error("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
 
-            }
-            throw from(e);
-        }
+      }
+      throw from(e);
     }
+  }
 
-    public List<GraphConfig> listAllCRDs() throws GaaSRestApiException {
-        try {
-            final Object customObject = customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, this.PRETTY, null, null, null, null, null, null, null);
-            return convertJsonToGraphs(customObject);
-        } catch (ApiException e) {
-            LOGGER.error("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
-            throw from(e);
-        }
+  public List<GraphConfig> listAllCRDs() throws GaaSRestApiException {
+    try {
+      final Object customObject = customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, this.PRETTY, null, null, null, null, null, null, null);
+      return convertJsonToGraphs(customObject);
+    } catch (ApiException e) {
+      LOGGER.error("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+      throw from(e);
     }
+  }
 
-    public void deleteCRD(final String crdName) throws GaaSRestApiException {
-        try {
-            customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
-        } catch (ApiException e) {
-            LOGGER.error("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
-            throw from(e);
-        }
+  public void deleteCRD(final String crdName) throws GaaSRestApiException {
+    try {
+      customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
+    } catch (ApiException e) {
+      LOGGER.error("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+      throw from(e);
     }
+  }
 
-    public List<String> getAllNameSpaces() throws GaaSRestApiException {
-        try {
-            final V1NamespaceList listNamespace =
-                    coreV1Api.listNamespace(
-                            "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE);
-            final List<String> list =
-                    listNamespace.getItems().stream()
-                            .map(v1Namespace -> v1Namespace.getMetadata().getName())
-                            .collect(Collectors.toList());
-            return list;
-        } catch (ApiException e) {
-            LOGGER.error("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: " + e.getCode(), e);
-            throw from(e);
-        }
+  public List<String> getAllNameSpaces() throws GaaSRestApiException {
+    try {
+      final V1NamespaceList listNamespace =
+              coreV1Api.listNamespace(
+                      "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE);
+      final List<String> list =
+              listNamespace.getItems().stream()
+                      .map(v1Namespace -> v1Namespace.getMetadata().getName())
+                      .collect(Collectors.toList());
+      return list;
+    } catch (ApiException e) {
+      LOGGER.error("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: " + e.getCode(), e);
+      throw from(e);
     }
+  }
 
-    private List<GraphConfig> convertJsonToGraphs(final Object response) {
-        final Gson gson = new Gson();
-        final JsonArray items = new JsonParser().parse(gson.toJson(response)).getAsJsonObject().get("items").getAsJsonArray();
+  private List<GraphConfig> convertJsonToGraphs(final Object response) {
+    final Gson gson = new Gson();
+    final JsonArray items = new JsonParser().parse(gson.toJson(response)).getAsJsonObject().get("items").getAsJsonArray();
 
-        final List<GraphConfig> list = new ArrayList();
-        final Iterator<JsonElement> iterator = items.iterator();
-        while (iterator.hasNext()) {
-            final JsonElement key = iterator.next();
-            final JsonObject graph = key.getAsJsonObject()
-                    .get("spec").getAsJsonObject()
-                    .get("graph").getAsJsonObject()
-                    .get("config").getAsJsonObject();
+    final List<GraphConfig> list = new ArrayList();
+    final Iterator<JsonElement> iterator = items.iterator();
+    while (iterator.hasNext()) {
+      final JsonElement key = iterator.next();
+      final JsonObject graph = key.getAsJsonObject()
+              .get("spec").getAsJsonObject()
+              .get("graph").getAsJsonObject()
+              .get("config").getAsJsonObject();
 
-            final String graphId = gson.fromJson(graph.get("graphId"), String.class);
-            final String graphDescription = gson.fromJson(graph.get("description"), String.class);
+      final String graphId = gson.fromJson(graph.get("graphId"), String.class);
+      final String graphDescription = gson.fromJson(graph.get("description"), String.class);
 
-            list.add(new GraphConfig.Builder()
-                    .graphId(graphId)
-                    .description(graphDescription)
-                    .library(new FileGraphLibrary()).build());
-        }
-        return list;
+      list.add(new GraphConfig.Builder()
+              .graphId(graphId)
+              .description(graphDescription)
+              .library(new FileGraphLibrary()).build());
     }
+    return list;
+  }
 }
