@@ -66,7 +66,7 @@ public class CRDClient {
         try {
             customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, requestBody, this.PRETTY, this.DRY_RUN, this.FIELD_MANAGER);
         } catch (ApiException e) {
-            LOGGER.error("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+            LOGGER.debug("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
     }
@@ -76,7 +76,7 @@ public class CRDClient {
             final Object customObject = customObjectsApi.listNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, this.PRETTY, null, null, null, null, null, null, null);
             return convertJsonToGraphs(customObject);
         } catch (ApiException e) {
-            LOGGER.error("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+            LOGGER.debug("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
     }
@@ -85,25 +85,29 @@ public class CRDClient {
         try {
             customObjectsApi.deleteNamespacedCustomObject(group, version, namespace, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
         } catch (ApiException e) {
-            LOGGER.error("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+            LOGGER.debug("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
     }
 
     public List<String> getAllNameSpaces() throws GaaSRestApiException {
         try {
-            final V1NamespaceList listNamespace =
+            final V1NamespaceList v1NamespaceList =
                     coreV1Api.listNamespace(
                             "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE);
-            final List<String> list =
-                    listNamespace.getItems().stream()
-                            .map(v1Namespace -> v1Namespace.getMetadata().getName())
-                            .collect(Collectors.toList());
-            return list;
+            return namespacesAsList(v1NamespaceList);
         } catch (ApiException e) {
-            LOGGER.error("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: " + e.getCode(), e);
+            LOGGER.debug("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
+    }
+
+    private List<String> namespacesAsList(final V1NamespaceList v1NamespaceList) {
+        final List<String> list =
+                v1NamespaceList.getItems().stream()
+                        .map(v1Namespace -> v1Namespace.getMetadata().getName())
+                        .collect(Collectors.toList());
+        return list;
     }
 
     private List<GraphConfig> convertJsonToGraphs(final Object response) {
