@@ -19,7 +19,7 @@ export class RestClient {
             });
             return this.convert(response);
         } catch (e) {
-            throw new RestApiError(e.response.data.details, e.response.data.message);
+            throw new RestApiError(e.response.data.title, e.response.data.detail);
         }
     }
 
@@ -31,7 +31,7 @@ export class RestClient {
             });
             return this.convert(response);
         } catch (e) {
-            throw new RestApiError(e.response.data.details, e.response.data.message);
+            throw new RestApiError(e.response.data.title, e.response.data.detail);
         }
     }
 
@@ -43,7 +43,7 @@ export class RestClient {
             });
             return this.convert(response);
         } catch (e) {
-            throw new RestApiError(e.response.data.details, e.response.data.message);
+            throw new RestApiError(e.response.data.title, e.response.data.detail);
         }
     }
 

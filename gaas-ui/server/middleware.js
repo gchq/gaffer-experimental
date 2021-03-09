@@ -42,7 +42,7 @@ app.post('/graphs', (req, res) => {
     try {
         jwt.verify(req.get('Authorization'), jwtSecret, () => {
             if (req.body.graphId === 'fail') {
-                res.status(500).send({details: 'Server Error', message: 'Failed to delete graph'});
+                res.status(500).send({title: 'Server Error', detail: 'Failed to delete graph'});
             } else {
                 res.status(201).end();
             }

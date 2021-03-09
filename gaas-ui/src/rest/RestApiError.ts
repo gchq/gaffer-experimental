@@ -1,13 +1,13 @@
 export class RestApiError {
 
-    private details;
-    private message;
-    constructor(details: string, message: string) {
-        this.details = details;
-        this.message = message;
+    private detail;
+    private title;
+    constructor(title: string, detail: string) {
+        this.detail = detail;
+        this.title = title;
     }
 
     public toString(): string {
-        return this.details + ': ' + this.message;
+        return this.title + ': ' + this.detail;
     }
 }

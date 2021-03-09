@@ -62,13 +62,13 @@ describe('RestClient 4**/5** Error Responses', () => {
     beforeAll(() =>
         mock
             .onGet('/graphs')
-            .reply(400, { details: 'Validation Failed', message: 'Graph ID can not be null' })
+            .reply(400, { title: 'Validation Failed', detail: 'Graph ID can not be null' })
             .onGet('/graphs/unfindable-graph')
-            .reply(404, { details: 'Not Found', message: 'Could not find resource' })
+            .reply(404, { title: 'Not Found', detail: 'Could not find resource' })
             .onPost('/graphs', { request: 'not-found' })
-            .reply(500, { details: 'Server Error', message: 'Null pointer in back end API' })
+            .reply(500, { title: 'Server Error', detail: 'Null pointer in back end API' })
             .onDelete('/graphs/already-deleted')
-            .reply(504, { details: 'Server Error', message: 'Timeout' })
+            .reply(504, { title: 'Server Error', detail: 'Timeout' })
     );
     afterAll(() => mock.resetHandlers());
 
