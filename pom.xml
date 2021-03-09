@@ -33,6 +33,7 @@
         <module>graffer-ql</module>
         <module>operation-runner</module>
         <module>gaffer-controller</module>
+        <module>gaas-rest</module>
     </modules>
 
     <properties>
