@@ -17,19 +17,19 @@
 package uk.gov.gchq.gaffer.gaas.exception;
 
 public class ExceptionResponse {
-    private String message;
-    private String details;
+    private String title;
+    private String detail;
 
-    public ExceptionResponse(final String message, final String details) {
-        this.message = message;
-        this.details = details;
+    public ExceptionResponse(final String title, final String detail) {
+        this.title = title;
+        this.detail = detail;
     }
 
-    public String getMessage() {
-        return message;
+    public String getTitle() {
+        return title;
     }
 
-    public String getDetails() {
-        return details;
+    public String getDetail() {
+        return detail;
     }
 }

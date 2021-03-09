@@ -43,33 +43,38 @@ import static uk.gov.gchq.gaffer.gaas.converters.GaaSRestExceptionFactory.from;
 @Service
 public class CRDClient {
 
-    @Value("${group}")
-    private String group;
-    @Value("${version}")
-    private String version;
-    @Value("${namespace}")
-    private String namespace;
-    private static final String PLURAL = "gaffers";
-    private static final String PRETTY = null;
-    private static final String DRY_RUN = null;
-    private static final String FIELD_MANAGER = null;
+  @Value("${group}")
+  private String group;
+  @Value("${version}")
+  private String version;
+  @Value("${namespace}")
+  private String namespace;
+  private static final String PLURAL = "gaffers";
+  private static final String PRETTY = null;
+  private static final String DRY_RUN = null;
+  private static final String FIELD_MANAGER = null;
 
-    @Autowired
-    private CustomObjectsApi customObjectsApi;
+  @Autowired
+  private CustomObjectsApi customObjectsApi;
 
-    @Autowired
-    private CoreV1Api coreV1Api;
+  @Autowired
+  private CoreV1Api coreV1Api;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
 
-    public void createCRD(final KubernetesObject requestBody) throws GaaSRestApiException {
-        try {
-            customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, requestBody, this.PRETTY, this.DRY_RUN, this.FIELD_MANAGER);
-        } catch (ApiException e) {
-            LOGGER.debug("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
-            throw from(e);
-        }
+  public void createCRD(final KubernetesObject requestBody) throws GaaSRestApiException {
+    try {
+      customObjectsApi.createNamespacedCustomObject(this.group, this.version, this.namespace, this.PLURAL, requestBody, this.PRETTY, this.DRY_RUN, this.FIELD_MANAGER);
+    } catch (ApiException e) {
+      if (requestBody == null || requestBody.getMetadata() == null) {
+        LOGGER.debug("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+      } else {
+        LOGGER.debug("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+
+      }
+      throw from(e);
     }
+  }
 
     public List<GraphConfig> listAllCRDs() throws GaaSRestApiException {
         try {
@@ -110,27 +115,27 @@ public class CRDClient {
         return list;
     }
 
-    private List<GraphConfig> convertJsonToGraphs(final Object response) {
-        final Gson gson = new Gson();
-        final JsonArray items = new JsonParser().parse(gson.toJson(response)).getAsJsonObject().get("items").getAsJsonArray();
+  private List<GraphConfig> convertJsonToGraphs(final Object response) {
+    final Gson gson = new Gson();
+    final JsonArray items = new JsonParser().parse(gson.toJson(response)).getAsJsonObject().get("items").getAsJsonArray();
 
-        final List<GraphConfig> list = new ArrayList();
-        final Iterator<JsonElement> iterator = items.iterator();
-        while (iterator.hasNext()) {
-            final JsonElement key = iterator.next();
-            final JsonObject graph = key.getAsJsonObject()
-                    .get("spec").getAsJsonObject()
-                    .get("graph").getAsJsonObject()
-                    .get("config").getAsJsonObject();
+    final List<GraphConfig> list = new ArrayList();
+    final Iterator<JsonElement> iterator = items.iterator();
+    while (iterator.hasNext()) {
+      final JsonElement key = iterator.next();
+      final JsonObject graph = key.getAsJsonObject()
+              .get("spec").getAsJsonObject()
+              .get("graph").getAsJsonObject()
+              .get("config").getAsJsonObject();
 
-            final String graphId = gson.fromJson(graph.get("graphId"), String.class);
-            final String graphDescription = gson.fromJson(graph.get("description"), String.class);
+      final String graphId = gson.fromJson(graph.get("graphId"), String.class);
+      final String graphDescription = gson.fromJson(graph.get("description"), String.class);
 
-            list.add(new GraphConfig.Builder()
-                    .graphId(graphId)
-                    .description(graphDescription)
-                    .library(new FileGraphLibrary()).build());
-        }
-        return list;
+      list.add(new GraphConfig.Builder()
+              .graphId(graphId)
+              .description(graphDescription)
+              .library(new FileGraphLibrary()).build());
     }
+    return list;
+  }
 }
