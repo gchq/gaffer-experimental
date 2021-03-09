@@ -145,7 +145,7 @@ public class AuthServiceTest {
             return false;
         }
         @Override
-        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+        public void setAuthenticated(final boolean isAuthenticated) throws IllegalArgumentException {
         }
         @Override
         public String getName() {
