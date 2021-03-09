@@ -18,7 +18,6 @@ package uk.gov.gchq.gaffer.gaas;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.kubernetes.client.openapi.ApiClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,9 +37,6 @@ public abstract class AbstractTest {
 
     @Autowired
     WebApplicationContext webApplicationContext;
-
-    @Autowired
-    protected ApiClient apiClient;
 
     @Autowired
     private CRDClient crdClient;

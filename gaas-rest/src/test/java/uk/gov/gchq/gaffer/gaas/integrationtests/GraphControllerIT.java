@@ -16,9 +16,12 @@
 
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
+import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
@@ -29,7 +32,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+@SpringBootTest
 public class GraphControllerIT extends AbstractTest {
+
+    @Autowired
+    private ApiClient apiClient;
 
     @Test
     public void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
