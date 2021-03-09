@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.controller;
 
+import io.kubernetes.client.openapi.ApiClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -47,6 +48,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 public class GraphControllerTest extends AbstractTest {
+
+    @MockBean
+    private ApiClient apiClient;
 
     @MockBean
     private GetGafferService getGafferService;
