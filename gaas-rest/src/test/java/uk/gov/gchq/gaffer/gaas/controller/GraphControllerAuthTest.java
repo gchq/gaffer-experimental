@@ -14,27 +14,31 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.integrationtests;
+package uk.gov.gchq.gaffer.gaas.controller;
 
+import io.kubernetes.client.openapi.ApiClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest
-public class GraphControllerAuthIT {
+public class GraphControllerAuthTest {
 
   protected MockMvc mvc;
 
+  @MockBean
+  private ApiClient apiClient;
+
   @Autowired
-  WebApplicationContext webApplicationContext;
+  private WebApplicationContext webApplicationContext;
 
   @Test
   public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
@@ -46,6 +50,6 @@ public class GraphControllerAuthIT {
             .content(authRequest)).andReturn();
 
     assertEquals(401, tokenResponse.getResponse().getStatus());
-    assertEquals("BadCredentialsException", tokenResponse.getResolvedException().getMessage());
+    assertEquals("Bad credentials", tokenResponse.getResolvedException().getMessage());
   }
 }

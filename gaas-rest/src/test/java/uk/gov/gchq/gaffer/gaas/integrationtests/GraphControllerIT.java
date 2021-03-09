@@ -16,9 +16,11 @@
 
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
+import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
@@ -32,6 +34,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 public class GraphControllerIT extends AbstractTest {
+
+    @Autowired
+    private ApiClient apiClient;
 
     @Test
     public void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
@@ -67,7 +72,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(jsonRequest)).andReturn();
 
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
@@ -84,7 +89,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        assertEquals("{\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"details\":\"AlreadyExists\"}", createGraphResponse.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Conflict\",\"detail\":\"Kubernetes Cluster Error: (AlreadyExists) gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\"}", createGraphResponse.getResponse().getContentAsString());
         assertEquals(409, createGraphResponse.getResponse().getStatus());
     }
 
@@ -114,7 +119,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
         final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, status);
     }
 
@@ -127,7 +132,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
@@ -140,7 +145,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
@@ -153,7 +158,7 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
 
-        assertEquals("{\"message\":\"Validation failed\",\"details\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
         assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
