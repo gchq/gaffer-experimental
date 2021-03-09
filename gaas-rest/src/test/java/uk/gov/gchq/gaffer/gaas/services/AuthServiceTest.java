@@ -87,7 +87,6 @@ public class AuthServiceTest {
 
     @Test
     public void getToken_shouldReturnToken_whenUsernameIsValid() throws GaaSRestApiException {
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(new ValidAuthentication());
         final JwtRequest user = new JwtRequest();
         user.setUsername("javainuse");
         user.setPassword("password");

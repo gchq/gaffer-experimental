@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
+
     @Value("${admin.username}")
     private String adminUsername;
     @Value("${admin.password}")

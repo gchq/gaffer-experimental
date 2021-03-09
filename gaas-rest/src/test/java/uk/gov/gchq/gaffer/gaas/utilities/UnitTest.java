@@ -18,6 +18,7 @@ package uk.gov.gchq.gaffer.gaas.utilities;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -32,5 +33,6 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited
 @ExtendWith(SpringExtension.class)
+@TestPropertySource("classpath:application.properties")
 public @interface UnitTest {
 }
