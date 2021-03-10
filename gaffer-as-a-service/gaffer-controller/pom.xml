@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>gaffer-controller</artifactId>
-
+  <version>1.13.0</version>
   <properties>
     <kubernetes.version>11.0.0</kubernetes.version>
     <slf4j.api.version>1.7.25</slf4j.api.version>
