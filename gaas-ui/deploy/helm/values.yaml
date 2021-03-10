@@ -6,10 +6,10 @@ replicaCount: 1
 
 image:
   #Ask about repository setting
-  repository: a-docker-repo/kai-image
+  repository: macenturalxl1/gaas-ui
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ''
+  tag: 'latest'
   containerPort: 8081
 
 imagePullSecrets: [ ]

@@ -1,13 +1,13 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ include "helmchart.fullname" . }}
+  name: {{ include "helm.fullname" . }}
   labels:
-    {{- include "helmchart.labels" . | nindent 4 }}
+    {{- include "helm.labels" . | nindent 4 }}
 spec:
   to:
     kind: Service
-    name: {{ include "helmchart.fullname" . }}
+    name: {{ include "helm.fullname" . }}
     weight: 100
   port:
     targetPort: {{ .Values.service.targetPort }}-tcp

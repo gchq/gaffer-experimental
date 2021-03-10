@@ -1,6 +1,6 @@
 apiVersion: v2
-name: helmchart
-description: A Helm chart for Kubernetes
+name: gaas-ui
+description: A Helm chart for gaas-ui UI application
 
 # A chart can be either an 'application' or a 'library' chart.
 #
