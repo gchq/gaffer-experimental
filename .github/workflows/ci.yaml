@@ -33,9 +33,10 @@ jobs:
 
     - name: Install dependencies
       run: |
-        ls
         cd gaas-ui/
-        npm run install
+        npm install
 
     - name: Run tests
-      run: npm run test
+      run: |
+        cd gaas-ui/
+        npm run test
