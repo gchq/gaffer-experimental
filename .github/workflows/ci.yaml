@@ -18,8 +18,8 @@ jobs:
 
   run_ui_tests:
     runs-on: ubuntu-latest
-    defaults:
-      run:
+#    defaults:
+#      run:
 #        working-directory: ./gaas-ui
 
     steps:
