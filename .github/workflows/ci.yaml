@@ -23,6 +23,9 @@ jobs:
 #        working-directory: ./gaas-ui
 
     steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
     - name: Set up Node
       uses: actions/setup-node@v1
       with:
