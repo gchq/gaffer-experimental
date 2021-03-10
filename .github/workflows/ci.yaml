@@ -17,7 +17,7 @@ jobs:
       run: mvn clean install
 
   run_ui_tests:
-    runs-on:
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./gaas-ui
