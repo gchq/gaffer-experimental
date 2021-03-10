@@ -5,10 +5,10 @@
     <parent>
         <groupId>uk.gov.gchq.gaffer</groupId>
         <artifactId>gaffer-as-a-service</artifactId>
-        <version>1.0.0</version>
+        <version>1.13.0</version>
     </parent>
     <artifactId>gaas-common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.13.0</version>
     <name>gaas-common</name>
     <description>Gaas common</description>
 
