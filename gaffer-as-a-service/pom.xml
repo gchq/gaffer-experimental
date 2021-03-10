@@ -20,42 +20,24 @@
 
     <parent>
         <groupId>uk.gov.gchq.gaffer</groupId>
-        <artifactId>gaffer2</artifactId>
+        <artifactId>gaffer-experimental</artifactId>
         <version>1.13.0</version>
     </parent>
 
-    <artifactId>gaffer-experimental</artifactId>
-    <version>1.13.0</version>
+    <artifactId>gaffer-as-a-service</artifactId>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>tinkerpop</module>
-        <module>graffer-ql</module>
-        <module>operation-runner</module>
-<!--        -->
-<!--        <module>gaffer-controller</module>-->
-<!--        -->
-<!--        <module>gaas-rest</module>-->
-        <module>gaffer-as-a-service</module>
+        <module>gaas-common</module>
+        <module>gaffer-controller</module>
+        <module>gaas-rest</module>
+        <module>gaas-ui</module>
     </modules>
 
     <properties>
         <gaffer.version>1.13.0</gaffer.version>
-        <scm.url>
-            https://github.com/gchq/gaffer-experimental
-        </scm.url>
-        <scm.connection>
-            scm:git:https://github.com/gchq/gaffer-experimental.git
-        </scm.connection>
-        <scm.developer.connection>
-            scm:git:https://github.com/gchq/gaffer-experimental.git
-        </scm.developer.connection>
     </properties>
 
-    <scm>
-        <url>${scm.url}</url>
-        <connection>${scm.connection}</connection>
-        <developerConnection>${scm.developer.connection}</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
+
 </project>
