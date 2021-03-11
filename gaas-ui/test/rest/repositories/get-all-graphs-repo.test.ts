@@ -3,6 +3,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { GetAllGraphsRepo } from '../../../src/rest/repositories/get-all-graphs-repo';
 import { Graph } from '../../../src/domain/graph';
 import { IAllGraphsResponse } from '../../../src/rest/http-message-interfaces/response-interfaces';
+import { RestApiError } from '../../../src/rest/RestApiError';
 
 const mock = new MockAdapter(axios);
 const repo = new GetAllGraphsRepo();
@@ -44,9 +45,21 @@ describe('Get All Graphs Repo', () => {
         expect(actual).toEqual(expected);
     });
 
-    it('should bubble up exception from rest call', async () => {
+    it('should throw RestApiError with correct status message when no response body', async () => {
         mock.onGet('/graphs').reply(404);
 
-        await expect(repo.getAll()).rejects.toThrow(new Error('Request failed with status code 404'));
+        await expect(repo.getAll()).rejects.toEqual(new RestApiError('Error Code 404', 'Not Found'));
+    });
+
+    it('should throw RestApiError with title and detail from response body', async () => {
+        mock.onGet('/graphs').reply(404, { title: 'Forbidden', detail: 'Kubernetes access denied' });
+
+        await expect(repo.getAll()).rejects.toEqual(new RestApiError('Forbidden', 'Kubernetes access denied'));
+    });
+
+    it('should throw unknown RestApiError when undefined status and body', async () => {
+        mock.onGet('/graphs').reply(0);
+
+        await expect(repo.getAll()).rejects.toEqual(new RestApiError('Unknown Error', 'Unable to make request'));
     });
 });

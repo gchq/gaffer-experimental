@@ -2,7 +2,6 @@ import { Config } from '../config';
 import { AuthApiClient } from './auth-api-client';
 import { IAuthClient } from './authclient';
 import { CognitoClient } from './cognito-client';
-import { RbacClient } from './rbac-client';
 
 export class AuthClientFactory {
     private readonly platform = Config.REACT_APP_API_PLATFORM;
@@ -13,7 +12,7 @@ export class AuthClientFactory {
                 return new CognitoClient();
             }
             case 'OPENSHIFT': {
-                return new RbacClient();
+                return new AuthApiClient();
             }
             default: {
                 return new AuthApiClient();
