@@ -1,30 +1,54 @@
 import { DeleteGraphRepo } from '../../../src/rest/repositories/delete-graph-repo';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import { RestApiError } from '../../../src/rest/RestApiError';
 
 const mock = new MockAdapter(axios);
 const repo = new DeleteGraphRepo();
 
-// TODO: Error handline, 5**/4** statuses
-
 describe('Delete Graph Repo', () => {
-    it('should resolve as successfully deleted when response status is 202', async () => {
-        mock.onDelete('/graphs/graph-1').reply(202);
+    describe('On Success', () => {
+        it('should resolve as successfully deleted when response status is 202', async () => {
+            mock.onDelete('/graphs/graph-1').reply(204);
 
-        await expect(repo.delete('graph-1')).resolves.toEqual(undefined);
+            await expect(repo.delete('graph-1')).resolves.toEqual(undefined);
+        });
     });
 
-    it('should resolve as successfully deleted when response status is 202', async () => {
-        mock.onDelete('/graphs/graph-1').reply(200);
+    describe('On Error', () => {
+        it('should throw Error when status code is not 204', async () => {
+            mock.onDelete('/graphs/graph-1').reply(200);
 
-        await expect(repo.delete('graph-1')).rejects.toEqual(
-            new Error('Expected status code 202 for Accepted Delete Graph Process but got (200)')
-        );
-    });
+            await expect(repo.delete('graph-1')).rejects.toEqual(
+                new Error('Expected status code 204 for Accepted Delete Graph Process but got (200)')
+            );
+        });
 
-    it('should reject and throw Graph Not Deleted Error when status is not 202', async () => {
-        mock.onDelete('/graphs/graph-2').reply(500);
+        it('should throw RestApiError with correct 403 Error Code and Message when response body is empty', async () => {
+            mock.onDelete('/graphs/graph-2').reply(403);
 
-        await expect(repo.delete('graph-2')).rejects.toEqual(new Error('Request failed with status code 500'));
+            await expect(repo.delete('graph-2')).rejects.toEqual(new RestApiError('Error Code 403', 'Forbidden'));
+        });
+
+        it('should throw RestApiError with correct 500 Error Code and Message when response body is empty', async () => {
+            mock.onDelete('/graphs/graph-2').reply(500);
+
+            await expect(repo.delete('graph-2')).rejects.toEqual(new RestApiError('Error Code 500', 'Internal Server Error'));
+        });
+
+        it('should throw RestApiError with title and detail from response body', async () => {
+            mock.onDelete('/graphs/graph-2').reply(500, { title: 'ServerError', detail: 'There was a server error' });
+
+            await expect(repo.delete('graph-2')).rejects.toEqual(
+                new RestApiError('ServerError', 'There was a server error')
+            );
+        });
+        it('should throw Unknowen RestApiError when no status or response body', async () => {
+            mock.onDelete('/graphs/graph-2').reply(0);
+
+            await expect(repo.delete('graph-2')).rejects.toEqual(
+                new RestApiError('Unknown Error', 'Unable to make request')
+            );
+        });
     });
 });

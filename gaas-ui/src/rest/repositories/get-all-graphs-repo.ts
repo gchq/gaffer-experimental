@@ -7,7 +7,6 @@ export class GetAllGraphsRepo {
         const response: IApiResponse<IAllGraphsResponse> = await RestClient.get();
 
         return response.data.map((jsonObject: any) => {
-            console.log(jsonObject.graphId)
             return new Graph(jsonObject.graphId, jsonObject.description);
         });
     }

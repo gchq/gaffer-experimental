@@ -1,4 +1,6 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import status from 'statuses';
+import { GaaSRestApiErrorResponse } from '../http-message-interfaces/error-response-interface';
 import { RestApiError } from '../RestApiError';
 import { Config } from './../config';
 
@@ -8,7 +10,7 @@ export class RestClient {
     public static setJwtToken(jwtToken: string) {
         this.jwtToken = jwtToken;
     }
-
+    Ò
     public static async get(pathVariable?: string): Promise<IApiResponse> {
         const path = pathVariable ? `/${pathVariable}` : ``;
 
@@ -19,7 +21,7 @@ export class RestClient {
             });
             return this.convert(response);
         } catch (e) {
-            throw new RestApiError(e.response.data.title, e.response.data.detail);
+            throw this.fromError(e);
         }
     }
 
@@ -31,7 +33,7 @@ export class RestClient {
             });
             return this.convert(response);
         } catch (e) {
-            throw new RestApiError(e.response.data.title, e.response.data.detail);
+            throw this.fromError(e);
         }
     }
 
@@ -43,8 +45,18 @@ export class RestClient {
             });
             return this.convert(response);
         } catch (e) {
-            throw new RestApiError(e.response.data.title, e.response.data.detail);
+            throw this.fromError(e);
         }
+    }
+
+    private static fromError(e: AxiosError<GaaSRestApiErrorResponse>): RestApiError {
+        if (e.response && e.response.data) {
+            return new RestApiError(e.response.data.title, e.response.data.detail);
+        }
+        if (e.response && e.response.status) {
+            return new RestApiError(`Error Code ${e.response.status}`, status(e.response.status));
+        }
+        return new RestApiError('Unknown Error', 'Unable to make request');
     }
 
     private static async convert(response: AxiosResponse<any>): Promise<IApiResponse> {
