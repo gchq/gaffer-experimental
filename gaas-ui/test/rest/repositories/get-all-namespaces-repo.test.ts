@@ -1,10 +1,8 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import {GetAllNamespacesRepo} from "../../../src/rest/repositories/get-all-namespaces-repo";
-import {RestApiError} from "../../../src/rest/RestApiError";
-import {
-    IAllNameSpacesResponse
-} from "../../../src/rest/http-message-interfaces/response-interfaces";
+import { GetAllNamespacesRepo } from '../../../src/rest/repositories/get-all-namespaces-repo';
+import { RestApiError } from '../../../src/rest/RestApiError';
+import { IAllNameSpacesResponse } from '../../../src/rest/http-message-interfaces/response-interfaces';
 
 const mock = new MockAdapter(axios);
 const repo = new GetAllNamespacesRepo();
@@ -20,8 +18,7 @@ describe('Get All Namespaces Repo', () => {
         const actual: Array<string> = await repo.getAll();
 
         const expected = ['namespace1', 'namespace2', 'namespace3'];
-        expect(actual).toEqual(expected)
-
+        expect(actual).toEqual(expected);
     });
 
     it('should return one namespace when the api returns one', async () => {
@@ -32,7 +29,7 @@ describe('Get All Namespaces Repo', () => {
         const actual: Array<string> = await repo.getAll();
 
         const expected = ['namespace1'];
-        expect(actual).toEqual(expected)
+        expect(actual).toEqual(expected);
     });
     it('should throw RestApiError with correct status message when no response body', async () => {
         mock.onGet('/namespaces').reply(404);
@@ -50,4 +47,4 @@ describe('Get All Namespaces Repo', () => {
 
         await expect(repo.getAll()).rejects.toEqual(new RestApiError('Unknown Error', 'Unable to make request'));
     });
-})
+});

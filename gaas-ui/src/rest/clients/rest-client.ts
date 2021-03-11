@@ -53,7 +53,6 @@ export class RestClient {
 
     public requestBody(requestBody: object): RestClient {
         this.data = requestBody;
-        console.log(this.data)
         return this;
     }
 
