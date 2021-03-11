@@ -34,7 +34,7 @@ describe('Navigation Appbar Component', () => {
     });
 
     it('should display menu in Navbar', () => {
-        const cols = [{ name: 'Add Graph' }, { name: 'View Graphs' }, { name: 'User Guide' }];
+        const cols = [{ name: 'Add Graph' }, { name: 'View Graphs' }, { name: 'Cluster Namespaces' }, { name: 'User Guide' }];
         const NavLi = component.find('li').at(1);
 
         NavLi.forEach((li, idx) => {
@@ -45,7 +45,7 @@ describe('Navigation Appbar Component', () => {
     });
 
     it('should have navigation link in each list item', () => {
-        const Target = [{ href: '/AddGraph' }, { href: '/ViewGraph' }, { href: '/UserGuide' }];
+        const Target = [{ href: '/AddGraph' }, { href: '/ViewGraph' }, { href: '/Namespaces' }, { href: '/UserGuide' }];
         const NavUl = component.find('ul').at(1);
         for (var index = 0; index < NavUl.length; index += 1) {
             const anchor = NavUl.find('a').at(index);
