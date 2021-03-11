@@ -3,7 +3,7 @@ import {IAllNameSpacesResponse} from "../http-message-interfaces/response-interf
 
 export class GetAllNamespacesRepo {
     public async getAll(): Promise<Array<string>> {
-        const response: IApiResponse<IAllNameSpacesResponse> = await RestClient.getNamespaces();
+        const response: IApiResponse<IAllNameSpacesResponse> = await new RestClient().get().namespaces().execute();
         return response.data;
     }
 }

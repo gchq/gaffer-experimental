@@ -7,7 +7,11 @@ export class CreateSimpleGraphRepo {
             graphId: graphId,
             description: description,
         };
-        const response: IApiResponse<undefined> = await RestClient.post(httpRequestBody);
+        const response: IApiResponse<undefined> = await new RestClient()
+            .post()
+            .graphs()
+            .requestBody(httpRequestBody)
+            .execute();
 
         if (response.status !== 201) {
             throw new Error(`Expected status code 201 for Created Graph but got (${response.status})`);

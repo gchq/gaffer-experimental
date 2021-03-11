@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse, Method } from 'axios';
 import status from 'statuses';
 import { GaaSRestApiErrorResponse } from '../http-message-interfaces/error-response-interface';
 import { RestApiError } from '../RestApiError';
@@ -10,53 +10,66 @@ export class RestClient {
     public static setJwtToken(jwtToken: string) {
         this.jwtToken = jwtToken;
     }
-    public static async get(pathVariable?: string): Promise<IApiResponse> {
-        const path = pathVariable ? `/${pathVariable}` : ``;
 
-        try {
-            const response: AxiosResponse<any> = await axios.get(`/graphs${path}`, {
-                baseURL: Config.REACT_APP_KAI_REST_API_HOST,
-                headers: { Authorization: 'Bearer ' + this.jwtToken },
-            });
-            return this.convert(response);
-        } catch (e) {
-            throw this.fromError(e);
-        }
-    };
-    public static async getNamespaces(): Promise<IApiResponse> {
-
-        try {
-            const response: AxiosResponse<any> = await axios.get(`/namespaces`, {
-                baseURL: Config.REACT_APP_KAI_REST_API_HOST,
-                headers: { Authorization: 'Bearer ' + this.jwtToken },
-            });
-            return this.convert(response);
-        } catch (e) {
-            throw this.fromError(e);
-        }
+    private url: string;
+    private method: Method;
+    private data: object;
+    constructor() {
+        this.url = '';
+        this.method = 'get';
+        this.data = {};
     }
 
-    public static async post(httpRequestBody: object): Promise<IApiResponse> {
-        try {
-            const response: AxiosResponse<any> = await axios.post(`/graphs`, httpRequestBody, {
-                baseURL: Config.REACT_APP_KAI_REST_API_HOST,
-                headers: { Authorization: 'Bearer ' + this.jwtToken },
-            });
-            return this.convert(response);
-        } catch (e) {
-            throw this.fromError(e);
-        }
+    public get(): RestClient {
+        this.method = 'get';
+        return this;
     }
 
-    public static async delete(urlPathVariable: string): Promise<IApiResponse> {
+    public graphs(pathVariable?: string): RestClient {
+        const _pathVariable = pathVariable ? `/${pathVariable}` : ``;
+        this.url = `/graphs${_pathVariable}`;
+        return this;
+    }
+
+    public namespaces(): RestClient {
+        this.url = '/namespaces';
+        return this;
+    }
+
+    public authentication(): RestClient {
+        this.url = '/auth';
+        return this;
+    }
+
+    public post(): RestClient {
+        this.method = 'post';
+        return this;
+    }
+
+    public delete(): RestClient {
+        this.method = 'delete';
+        return this;
+    }
+
+    public requestBody(requestBody: object): RestClient {
+        this.data = requestBody;
+        console.log(this.data)
+        return this;
+    }
+
+    public async execute(): Promise<IApiResponse> {
         try {
-            const response: AxiosResponse<any> = await axios.delete(`/graphs/${urlPathVariable}`, {
+            const response: AxiosResponse<any> = await axios({
+                url: this.url,
+                method: this.method,
                 baseURL: Config.REACT_APP_KAI_REST_API_HOST,
-                headers: { Authorization: 'Bearer ' + this.jwtToken },
+                headers: { Authorization: 'Bearer ' + RestClient.jwtToken },
+                data: this.data,
+                responseType: 'json',
             });
-            return this.convert(response);
+            return RestClient.convert(response);
         } catch (e) {
-            throw this.fromError(e);
+            throw RestClient.fromError(e);
         }
     }
 

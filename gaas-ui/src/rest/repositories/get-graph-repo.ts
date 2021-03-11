@@ -4,7 +4,11 @@ import { IGraphByIdResponse } from '../http-message-interfaces/response-interfac
 
 export class GetGraphRepo {
     public async get(graphId: string): Promise<Graph> {
-        const response: IApiResponse<IGraphByIdResponse> = await RestClient.get(graphId);
+        const response: IApiResponse<IGraphByIdResponse> = 
+            await new RestClient()
+                .get()
+                .graphs(graphId)
+                .execute();
 
         return new Graph(response.data.graphId, response.data.description);
     }
