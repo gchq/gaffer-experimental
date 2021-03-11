@@ -10,12 +10,23 @@ export class RestClient {
     public static setJwtToken(jwtToken: string) {
         this.jwtToken = jwtToken;
     }
-    Ò
     public static async get(pathVariable?: string): Promise<IApiResponse> {
         const path = pathVariable ? `/${pathVariable}` : ``;
 
         try {
             const response: AxiosResponse<any> = await axios.get(`/graphs${path}`, {
+                baseURL: Config.REACT_APP_KAI_REST_API_HOST,
+                headers: { Authorization: 'Bearer ' + this.jwtToken },
+            });
+            return this.convert(response);
+        } catch (e) {
+            throw this.fromError(e);
+        }
+    };
+    public static async getNamespaces(): Promise<IApiResponse> {
+
+        try {
+            const response: AxiosResponse<any> = await axios.get(`/namespaces`, {
                 baseURL: Config.REACT_APP_KAI_REST_API_HOST,
                 headers: { Authorization: 'Bearer ' + this.jwtToken },
             });

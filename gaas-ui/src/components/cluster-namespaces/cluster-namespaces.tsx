@@ -14,8 +14,12 @@ import {
 } from '@material-ui/core';
 import RefreshOutlinedIcon from '@material-ui/icons/RefreshOutlined';
 import { AlertType, NotificationAlert } from '../alerts/notification-alert';
+import {Graph} from "../../domain/graph";
+import {GetAllGraphsRepo} from "../../rest/repositories/get-all-graphs-repo";
+import {GetAllNamespacesRepo} from "../../rest/repositories/get-all-namespaces-repo";
 
 interface IState {
+    namespaces: Array<string>;
     selectedRow: any;
     errorMessage: string;
 }
@@ -24,11 +28,22 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
     constructor(props: Object) {
         super(props);
         this.state = {
+            namespaces: [],
             selectedRow: '',
             errorMessage: '',
         };
     }
-
+    public async componentDidMount() {
+        this.getNamespaces();
+    }
+    private async getNamespaces() {
+        try {
+            const namespaces: Array<string> = await new GetAllNamespacesRepo().getAll();
+            this.setState({ namespaces: namespaces, errorMessage: '' });
+        } catch (e) {
+            this.setState({ errorMessage: `Failed to get all namespaces. ${e.toString()}` });
+        }
+    }
 
     private classes: any = makeStyles({
         root: {
@@ -41,7 +56,7 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
     });
 
     public render() {
-        const {  errorMessage } = this.state;
+        const {  namespaces,errorMessage } = this.state;
 
 
         return (
@@ -55,7 +70,6 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
                                 <TableHead>
                                     <TableRow style={{ background: '#F4F2F2' }}>
                                         <TableCell>Name Space</TableCell>
-                                        <TableCell align="right">Description</TableCell>
                                     </TableRow>
                                 </TableHead>
 
