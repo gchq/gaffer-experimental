@@ -13,10 +13,12 @@ export class RestClient<T> {
 
     private url: string;
     private method: Method;
+    private headers: object;
     private data: T | undefined;
     constructor() {
         this.url = '';
         this.method = 'get';
+        this.headers = {};
         this.data = undefined;
     }
 
@@ -28,11 +30,13 @@ export class RestClient<T> {
     public graphs(pathVariable?: string): RestClient<T> {
         const _pathVariable = pathVariable ? `/${pathVariable}` : ``;
         this.url = `/graphs${_pathVariable}`;
+        this.headers = { Authorization: 'Bearer ' + RestClient.jwtToken };
         return this;
     }
 
     public namespaces(): RestClient<T> {
         this.url = '/namespaces';
+        this.headers = { Authorization: 'Bearer ' + RestClient.jwtToken };
         return this;
     }
 
@@ -63,7 +67,7 @@ export class RestClient<T> {
                 url: this.url,
                 method: this.method,
                 baseURL: Config.REACT_APP_KAI_REST_API_HOST,
-                headers: { Authorization: 'Bearer ' + RestClient.jwtToken },
+                headers: this.headers,
                 data: this.data,
                 responseType: 'json',
             });
