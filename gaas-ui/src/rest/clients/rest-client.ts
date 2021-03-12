@@ -4,7 +4,7 @@ import { GaaSRestApiErrorResponse } from '../http-message-interfaces/error-respo
 import { RestApiError } from '../RestApiError';
 import { Config } from './../config';
 
-export class RestClient {
+export class RestClient<T> {
     private static jwtToken: string;
 
     public static setJwtToken(jwtToken: string) {
@@ -13,45 +13,46 @@ export class RestClient {
 
     private url: string;
     private method: Method;
-    private data: object;
+    private data: T | undefined;
     constructor() {
         this.url = '';
         this.method = 'get';
-        this.data = {};
+        this.data = undefined;
     }
 
-    public get(): RestClient {
+    public get(): RestClient<T> {
         this.method = 'get';
         return this;
     }
 
-    public graphs(pathVariable?: string): RestClient {
+    public graphs(pathVariable?: string): RestClient<T> {
         const _pathVariable = pathVariable ? `/${pathVariable}` : ``;
         this.url = `/graphs${_pathVariable}`;
         return this;
     }
 
-    public namespaces(): RestClient {
+    public namespaces(): RestClient<T> {
         this.url = '/namespaces';
         return this;
     }
 
-    public authentication(): RestClient {
-        this.url = '/auth';
+    public authentication(pathVariable?: string): RestClient<T> {
+        const _pathVariable = pathVariable ? `/${pathVariable}` : ``;
+        this.url = `/auth${_pathVariable}`;
         return this;
     }
 
-    public post(): RestClient {
+    public post(): RestClient<T> {
         this.method = 'post';
         return this;
     }
 
-    public delete(): RestClient {
+    public delete(): RestClient<T> {
         this.method = 'delete';
         return this;
     }
 
-    public requestBody(requestBody: object): RestClient {
+    public requestBody(requestBody: T): RestClient<T> {
         this.data = requestBody;
         return this;
     }

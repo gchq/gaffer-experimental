@@ -1,4 +1,4 @@
-import { RestClient, IApiResponse } from '../clients/rest-client';
+import { IApiResponse, RestClient } from '../clients/rest-client';
 import { ICreateSimpleGraphRequestBody } from '../http-message-interfaces/request-interfaces';
 
 export class CreateSimpleGraphRepo {

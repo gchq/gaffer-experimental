@@ -1,4 +1,4 @@
-import { RestClient, IApiResponse } from '../clients/rest-client';
+import { IApiResponse, RestClient } from '../clients/rest-client';
 
 export class DeleteGraphRepo {
     public async delete(graphId: string): Promise<void> {

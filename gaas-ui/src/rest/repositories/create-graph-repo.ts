@@ -1,7 +1,7 @@
-import { RestClient, IApiResponse } from '../clients/rest-client';
-import { ICreateGraphRequestBody } from '../http-message-interfaces/request-interfaces';
 import { ElementsSchema } from '../../domain/elements-schema';
 import { TypesSchema } from '../../domain/types-schema';
+import { IApiResponse, RestClient } from '../clients/rest-client';
+import { ICreateGraphRequestBody } from '../http-message-interfaces/request-interfaces';
 
 export class CreateGraphRepo {
     public async create(

@@ -1,5 +1,5 @@
-import { RestClient, IApiResponse } from '../clients/rest-client';
 import { Graph } from '../../domain/graph';
+import { IApiResponse, RestClient } from '../clients/rest-client';
 import { IGraphByIdResponse } from '../http-message-interfaces/response-interfaces';
 
 export class GetGraphRepo {

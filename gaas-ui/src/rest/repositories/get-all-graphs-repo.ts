@@ -1,7 +1,6 @@
-import { RestClient, IApiResponse } from '../clients/rest-client';
-import { IAllGraphsResponse } from '../http-message-interfaces/response-interfaces';
 import { Graph } from '../../domain/graph';
-import { ResourcePath } from '../clients/resource-path';
+import { IApiResponse, RestClient } from '../clients/rest-client';
+import { IAllGraphsResponse } from '../http-message-interfaces/response-interfaces';
 
 export class GetAllGraphsRepo {
     public async getAll(): Promise<Graph[]> {
