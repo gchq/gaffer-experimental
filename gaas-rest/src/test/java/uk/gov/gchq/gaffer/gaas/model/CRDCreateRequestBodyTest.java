@@ -48,7 +48,7 @@ public class CRDCreateRequestBodyTest {
                         "\"metadata\":{\"name\":\"my-gaffer\"}," +
                         "\"spec\":{\"" +
                         "graph\":{\"" +
-                        "config\":{\"graphId\":\"MyGraph\",\"library\":{},\"description\":\"My Graph deployed by the Controller\",\"hooks\":[]}}}}";
+                        "config\":{\"graphId\":\"MyGraph\",\"library\":{},\"description\":\"My Graph deployed by the Controller\",\"hooks\":[]}},\"accumolo\":{\"enabled\":true}}}";
 
         assertEquals(expected, gson.toJson(requestBody));
     }

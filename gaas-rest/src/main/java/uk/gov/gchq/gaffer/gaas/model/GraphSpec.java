@@ -21,7 +21,7 @@ public class GraphSpec {
     private NewGraph graph;
     private StoreConfig accumolo;
 
-    public GraphSpec graph(final NewGraph graph, StoreConfig accumulo) {
+    public GraphSpec graph(final NewGraph graph, final StoreConfig accumulo) {
         this.graph = graph;
         this.accumolo = accumulo;
         return this;
