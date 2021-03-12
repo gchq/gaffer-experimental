@@ -28,7 +28,7 @@ export class RestClient<T> {
     }
 
     public graphs(pathVariable?: string): RestClient<T> {
-        const _pathVariable = pathVariable ? `/${pathVariable}` : ``;
+        const _pathVariable = pathVariable ? `/${pathVariable}` : '';
         this.url = `/graphs${_pathVariable}`;
         this.headers = { Authorization: 'Bearer ' + RestClient.jwtToken };
         return this;
@@ -41,7 +41,7 @@ export class RestClient<T> {
     }
 
     public authentication(pathVariable?: string): RestClient<T> {
-        const _pathVariable = pathVariable ? `/${pathVariable}` : ``;
+        const _pathVariable = pathVariable ? `/${pathVariable}` : '';
         this.url = `/auth${_pathVariable}`;
         return this;
     }
@@ -69,7 +69,6 @@ export class RestClient<T> {
                 baseURL: Config.REACT_APP_KAI_REST_API_HOST,
                 headers: this.headers,
                 data: this.data,
-                responseType: 'json',
             });
             return RestClient.convert(response);
         } catch (e) {
