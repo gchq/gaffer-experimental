@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.model;
 
-import uk.gov.gchq.gaffer.graph.GraphConfig;
+public class StoreConfig {
+    private Boolean enabled;
 
-public class NewGraph {
-
-    private GraphConfig config;
-
-
-    public NewGraph config(final GraphConfig config) {
-        this.config = config;
-        return this;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-
-    public GraphConfig getConfig() {
-        return config;
+    public StoreConfig accumulo(final Boolean enabled) {
+        this.enabled = enabled;
+        return this;
     }
 }

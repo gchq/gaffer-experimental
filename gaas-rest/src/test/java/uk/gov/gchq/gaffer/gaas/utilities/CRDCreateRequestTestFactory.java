@@ -20,6 +20,7 @@ import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
 import uk.gov.gchq.gaffer.gaas.model.NewGraph;
+import uk.gov.gchq.gaffer.gaas.model.StoreConfig;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 
 public final class CRDCreateRequestTestFactory {
@@ -37,7 +38,7 @@ public final class CRDCreateRequestTestFactory {
                                         .graphId(graph.getGraphId())
                                         .description(graph.getDescription())
                                         .library(null)
-                                        .build())));
+                                        .build()), new StoreConfig().accumulo(true)));
     }
 
     private CRDCreateRequestTestFactory() {
