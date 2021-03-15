@@ -40,7 +40,7 @@ public class CreateGraphServiceTest {
 
     @Test
     public void createGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfig() throws GaaSRestApiException {
-        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description"));
+        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", true));
 
         final ArgumentCaptor<CRDCreateRequestBody> argumentCaptor = ArgumentCaptor.forClass(CRDCreateRequestBody.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());

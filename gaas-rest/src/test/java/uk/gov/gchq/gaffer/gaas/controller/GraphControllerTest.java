@@ -104,7 +104,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, true);
         final String inputJson = mapToJson(gaaSCreateRequestBody);
 
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
@@ -249,7 +249,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION);
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, true);
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 

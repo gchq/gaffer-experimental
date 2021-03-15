@@ -62,6 +62,6 @@ public class CreateGraphService {
                                         .graphId(graph.getGraphId())
                                         .description(graph.getDescription())
                                         .library(null)
-                                        .build()), new StoreConfig().accumulo(true)));
+                                        .build()), new StoreConfig().accumulo(graph.getAccumuloEnabled())));
     }
 }
