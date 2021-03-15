@@ -14,7 +14,7 @@
   ],
   "parserOptions": {
     "ecmaVersion": 2018,
-    "project": "./tsconfig.json"
+    "project": "./prettier.config.js"
 
   },
   "plugins": [
