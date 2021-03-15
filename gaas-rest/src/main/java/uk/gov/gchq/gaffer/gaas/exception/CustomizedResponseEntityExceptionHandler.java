@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.exception;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,6 +43,12 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         final ExceptionResponse exceptionResponse = new ExceptionResponse(title, ex.getMessage());
 
         return new ResponseEntity(exceptionResponse, HttpStatus.valueOf(ex.getStatusCode()));
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        final ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), "blah");
+        return new ResponseEntity<>(exceptionResponse, status);
     }
 
     @Override
