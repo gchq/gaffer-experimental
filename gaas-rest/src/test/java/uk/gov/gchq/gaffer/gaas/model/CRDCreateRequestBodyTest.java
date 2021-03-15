@@ -35,12 +35,13 @@ public class CRDCreateRequestBodyTest {
                 .kind("Gaffer")
                 .metaData(metadata)
                 .spec(new GraphSpec()
+                        .store(StoreType.MAPSTORE)
                         .graph(new NewGraph()
                                 .config(new GraphConfig.Builder()
                                         .graphId("MyGraph")
                                         .description("My Graph deployed by the Controller")
                                         .library(null)
-                                        .build()), new AccumuloStoreConfig().accumulo(true)));
+                                        .build())));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -48,7 +49,37 @@ public class CRDCreateRequestBodyTest {
                         "\"metadata\":{\"name\":\"my-gaffer\"}," +
                         "\"spec\":{\"" +
                         "graph\":{\"" +
-                        "config\":{\"graphId\":\"MyGraph\",\"library\":{},\"description\":\"My Graph deployed by the Controller\",\"hooks\":[]}},\"accumolo\":{\"enabled\":true}}}";
+                        "config\":{\"graphId\":\"MyGraph\",\"library\":{},\"description\":\"My Graph deployed by the Controller\",\"hooks\":[]}}," +
+                        "\"accumulo\":{\"enabled\":false}}}";
+
+        assertEquals(expected, gson.toJson(requestBody));
+    }
+
+
+    @Test
+    public void shouldCreateARequestWithAccumuloStore() {
+        final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
+        final CRDCreateRequestBody requestBody = new CRDCreateRequestBody()
+                .apiVersion("gchq.gov.uk/v1")
+                .kind("Gaffer")
+                .metaData(metadata)
+                .spec(new GraphSpec()
+                        .store(StoreType.ACCUMULO)
+                        .graph(new NewGraph()
+                                .config(new GraphConfig.Builder()
+                                        .graphId("MyGraph")
+                                        .description("My Graph deployed by the Controller")
+                                        .library(null)
+                                        .build())));
+
+        final String expected =
+                "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"my-gaffer\"}," +
+                        "\"spec\":{\"" +
+                        "graph\":{\"" +
+                        "config\":{\"graphId\":\"MyGraph\",\"library\":{},\"description\":\"My Graph deployed by the Controller\",\"hooks\":[]}}," +
+                        "\"accumulo\":{\"enabled\":true}}}";
 
         assertEquals(expected, gson.toJson(requestBody));
     }

@@ -24,6 +24,7 @@ import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -42,7 +43,7 @@ public class CreateGraphServiceTest {
 
     @Test
     public void createGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
-        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", true));
+        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.ACCUMULO));
 
         final ArgumentCaptor<CRDCreateRequestBody> argumentCaptor = ArgumentCaptor.forClass(CRDCreateRequestBody.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
@@ -56,7 +57,7 @@ public class CreateGraphServiceTest {
 
     @Test
     public void createGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloDisabled() throws GaaSRestApiException {
-        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", false));
+        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.MAPSTORE));
 
         final ArgumentCaptor<CRDCreateRequestBody> argumentCaptor = ArgumentCaptor.forClass(CRDCreateRequestBody.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());

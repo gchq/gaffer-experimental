@@ -26,6 +26,7 @@ import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class CRDClientIT {
 
     private static final String TEST_GRAPH_ID = "test-graph-id";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
-    private static final boolean ACCUMULO_ENABLED = true;
+    private static final StoreType ACCUMULO_ENABLED = StoreType.ACCUMULO;
 
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {

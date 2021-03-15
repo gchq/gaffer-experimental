@@ -16,7 +16,6 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -32,15 +31,15 @@ public class GaaSCreateRequestBody {
     private String graphId;
     @NotBlank(message = "Description should not be empty")
     private String description;
-    private boolean accumuloEnabled;
+    private StoreType storeType;
 
     public GaaSCreateRequestBody() {
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final boolean accumuloEnabled) {
+    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType) {
         this.graphId = graphId;
         this.description = description;
-        this.accumuloEnabled = accumuloEnabled;
+        this.storeType = storeType;
     }
 
     public String getGraphId() {
@@ -51,7 +50,7 @@ public class GaaSCreateRequestBody {
         return description;
     }
 
-    public boolean getAccumuloEnabled() {
-        return accumuloEnabled;
+    public StoreType getStoreType() {
+        return storeType;
     }
 }

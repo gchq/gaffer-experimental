@@ -23,8 +23,14 @@ public class AccumuloStoreConfig {
         return enabled;
     }
 
-    public AccumuloStoreConfig accumulo(final boolean enabled) {
-        this.enabled = enabled;
+    public AccumuloStoreConfig enable() {
+        this.enabled = true;
         return this;
     }
+
+    public AccumuloStoreConfig disable() {
+        this.enabled = false;
+        return this;
+    }
+
 }
