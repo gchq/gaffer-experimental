@@ -28,3 +28,8 @@ __pycache__
 *.DS_Store
 .vscode/*
 .project
+
+# UI Ignores
+gaas-ui/node_modules/
+gaas-ui/coverage/
+gaas-ui/.env

@@ -31,6 +31,7 @@ public class GaaSCreateRequestBody {
     private String graphId;
     @NotBlank(message = "Description should not be empty")
     private String description;
+    @NotNull(message = "\"storeType\" must be defined. Valid Store Types supported are MAPSTORE and ACCUMULO")
     private StoreType storeType;
 
     public GaaSCreateRequestBody() {

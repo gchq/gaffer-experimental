@@ -319,7 +319,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphReturns201OnSuccessWithAccumuloStore() throws Exception {
+    public void createGraph_shouldRequestAnAccumuloStoreAndReturn201() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO);
         final String inputJson = mapToJson(gaaSCreateRequestBody);
 
@@ -333,5 +333,55 @@ public class GraphControllerTest extends AbstractTest {
 
         final int status = mvcResult.getResponse().getStatus();
         assertEquals(201, status);
+    }
+
+    @Test
+    public void createGraph_shouldRequestAMapStoreAndReturn201() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.MAPSTORE);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+
+        doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(inputJson)).andReturn();
+        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
+
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals(201, status);
+    }
+
+    @Test
+    public void createGraph_shouldReturn400BadRequestWhenStoreTypeIsNull() throws Exception {
+        final String gaaSCreateRequestBody = "{" +
+                "\"graphId\":\"invalid-store-type\"," +
+                "\"description\":\"any\"" +
+                "}";
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(gaaSCreateRequestBody)).andReturn();
+
+        assertEquals(400, mvcResult.getResponse().getStatus());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. Valid Store Types supported are MAPSTORE and ACCUMULO\"}", mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void createGraph_shouldReturn400BadRequestWhenStoreTypeIsInvalidType() throws Exception {
+        final String gaaSCreateRequestBody = "{" +
+                "\"graphId\":\"invalid-store-type\"," +
+                "\"description\":\"any\"," +
+                "\"storeType\":\"INVALID\"" +
+                "}";
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(gaaSCreateRequestBody)).andReturn();
+
+        assertEquals(400, mvcResult.getResponse().getStatus());
+        assertEquals("{\"title\":\"Invalid Credentials\",\"detail\":\"Username is incorrect\"}", mvcResult.getResponse().getContentAsString());
     }
 }
