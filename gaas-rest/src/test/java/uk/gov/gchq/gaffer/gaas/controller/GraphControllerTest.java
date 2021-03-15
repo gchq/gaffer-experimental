@@ -316,4 +316,21 @@ public class GraphControllerTest extends AbstractTest {
         assertEquals(200, namespacesResponse.getResponse().getStatus());
         assertEquals("[]", namespacesResponse.getResponse().getContentAsString());
     }
+
+    @Test
+    public void testAddGraphReturns201OnSuccessWithAccumuloStore() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, true);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+
+        doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(inputJson)).andReturn();
+        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
+
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals(201, status);
+    }
 }

@@ -51,5 +51,7 @@ public class GaaSCreateRequestBody {
         return description;
     }
 
-    public boolean getAccumuloEnabled(){return accumuloEnabled;}
+    public boolean getAccumuloEnabled() {
+        return accumuloEnabled;
+    }
 }

@@ -40,7 +40,7 @@ public class CRDCreateRequestBodyTest {
                                         .graphId("MyGraph")
                                         .description("My Graph deployed by the Controller")
                                         .library(null)
-                                        .build()), new StoreConfig().accumulo(true)));
+                                        .build()), new AccumuloStoreConfig().accumulo(true)));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +

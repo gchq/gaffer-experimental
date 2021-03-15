@@ -19,14 +19,17 @@ package uk.gov.gchq.gaffer.gaas.model;
 public class GraphSpec {
 
     private NewGraph graph;
-    private StoreConfig accumolo;
+    private AccumuloStoreConfig accumolo;
 
-    public GraphSpec graph(final NewGraph graph, final StoreConfig accumulo) {
+    public GraphSpec graph(final NewGraph graph, final AccumuloStoreConfig accumulo) {
         this.graph = graph;
         this.accumolo = accumulo;
         return this;
     }
 
+    public AccumuloStoreConfig getAccumuloStoreConfig() {
+        return accumolo;
+    }
 
     public NewGraph getGraph() {
         return graph;

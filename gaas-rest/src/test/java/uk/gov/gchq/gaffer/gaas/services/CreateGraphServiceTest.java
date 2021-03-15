@@ -26,6 +26,8 @@ import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -39,7 +41,7 @@ public class CreateGraphServiceTest {
     private CRDClient crdClient;
 
     @Test
-    public void createGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfig() throws GaaSRestApiException {
+    public void createGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", true));
 
         final ArgumentCaptor<CRDCreateRequestBody> argumentCaptor = ArgumentCaptor.forClass(CRDCreateRequestBody.class);
@@ -49,5 +51,20 @@ public class CreateGraphServiceTest {
         assertEquals("myGraph", gafferRequestBody.getSpec().getGraph().getConfig().getGraphId());
         assertEquals("Another description", gafferRequestBody.getSpec().getGraph().getConfig().getDescription());
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
+        assertTrue(gafferRequestBody.getSpec().getAccumuloStoreConfig().isEnabled());
+    }
+
+    @Test
+    public void createGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloDisabled() throws GaaSRestApiException {
+        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", false));
+
+        final ArgumentCaptor<CRDCreateRequestBody> argumentCaptor = ArgumentCaptor.forClass(CRDCreateRequestBody.class);
+        verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
+
+        final CRDCreateRequestBody gafferRequestBody = argumentCaptor.<CRDCreateRequestBody>getValue();
+        assertEquals("myGraph", gafferRequestBody.getSpec().getGraph().getConfig().getGraphId());
+        assertEquals("Another description", gafferRequestBody.getSpec().getGraph().getConfig().getDescription());
+        assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
+        assertFalse(gafferRequestBody.getSpec().getAccumuloStoreConfig().isEnabled());
     }
 }

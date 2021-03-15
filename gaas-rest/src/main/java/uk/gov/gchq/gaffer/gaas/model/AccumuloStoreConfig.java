@@ -16,14 +16,14 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
-public class StoreConfig {
+public class AccumuloStoreConfig {
     private boolean enabled;
 
-    public boolean getEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 
-    public StoreConfig accumulo(final boolean enabled) {
+    public AccumuloStoreConfig accumulo(final boolean enabled) {
         this.enabled = enabled;
         return this;
     }

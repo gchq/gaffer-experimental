@@ -27,7 +27,7 @@ import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
 import uk.gov.gchq.gaffer.gaas.model.NewGraph;
-import uk.gov.gchq.gaffer.gaas.model.StoreConfig;
+import uk.gov.gchq.gaffer.gaas.model.AccumuloStoreConfig;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 
 @Service
@@ -62,6 +62,6 @@ public class CreateGraphService {
                                         .graphId(graph.getGraphId())
                                         .description(graph.getDescription())
                                         .library(null)
-                                        .build()), new StoreConfig().accumulo(graph.getAccumuloEnabled())));
+                                        .build()), new AccumuloStoreConfig().accumulo(graph.getAccumuloEnabled())));
     }
 }
