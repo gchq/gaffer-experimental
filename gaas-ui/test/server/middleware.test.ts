@@ -121,9 +121,9 @@ describe('Namespaces', () => {
                 done();
             });
     });
-    it('Should respond with graphs when GET is called with the graphs path and user is signed in', () => {
+    it('namespaces endpoint with Autorization token should return namespaces array', async () => {
         await request(server)
-            .get('/graphs')
+            .get('/namespaces')
             .set('Authorization', token)
             .then((response) => {
                 expect(response.statusCode).toBe(200);
