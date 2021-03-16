@@ -151,8 +151,8 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWithDashShouldReturn201() throws Exception {
-        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+    public void createGraph_whenGraphIdHasDashes_isValidAndShouldReturn201() throws Exception {
+        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
 
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -192,8 +192,8 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWitCapitalLettersShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+    public void createGraph_whenGraphIdHasCapitalLetters_shouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -205,8 +205,8 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testDescriptionEmptyShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\"}";
+    public void createGraph_whenDescriptionIsEmptyOnly_return400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"storeType\":\"ACCUMULO\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -220,7 +220,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testDeleteShouldReturn200AndRemoveCRD() throws Exception {
+    public void deleteGraph_whenGraphExistsAndCanDelete_shouldReturn204() throws Exception {
         doNothing().when(deleteGraphService).deleteGraph(TEST_GRAPH_ID);
         //when delete graph
         final MvcResult mvcResult2 = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
@@ -365,7 +365,9 @@ public class GraphControllerTest extends AbstractTest {
                 .content(gaaSCreateRequestBody)).andReturn();
 
         assertEquals(400, mvcResult.getResponse().getStatus());
-        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. Valid Store Types supported are MAPSTORE and ACCUMULO\"}", mvcResult.getResponse().getContentAsString());
+        final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. " +
+                "Valid Store Types supported are MAPSTORE and ACCUMULO\"}";
+        assertEquals(expected, mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -382,6 +384,10 @@ public class GraphControllerTest extends AbstractTest {
                 .content(gaaSCreateRequestBody)).andReturn();
 
         assertEquals(400, mvcResult.getResponse().getStatus());
-        assertEquals("{\"title\":\"Invalid Credentials\",\"detail\":\"Username is incorrect\"}", mvcResult.getResponse().getContentAsString());
+        final String expected = "{\"title\":\"InvalidFormatException\",\"detail\":\"Cannot deserialize value of type " +
+                "`uk.gov.gchq.gaffer.gaas.model.StoreType` from String \\\"INVALID\\\": not one of the values accepted " +
+                "for Enum class: [MAPSTORE, ACCUMULO]\\n at [Source: (PushbackInputStream); line: 1, column: 65] " +
+                "(through reference chain: uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody[\\\"storeType\\\"])\"}";
+        assertEquals(expected, mvcResult.getResponse().getContentAsString());
     }
 }

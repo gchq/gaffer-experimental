@@ -47,7 +47,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        final ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), "blah");
+        final ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getCause().getClass().getSimpleName(), ex.getCause().getMessage());
         return new ResponseEntity<>(exceptionResponse, status);
     }
 
