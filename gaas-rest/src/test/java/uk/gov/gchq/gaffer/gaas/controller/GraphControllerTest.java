@@ -69,7 +69,7 @@ public class GraphControllerTest extends AbstractTest {
     private GetNamespacesService getNamespacesService;
 
     @Test
-    public void getGraphEndpointReturnsGraph() throws Exception {
+    public void getGraphs_ReturnsGraphsAsList_whenSuccessful() throws Exception {
         final GraphConfig graph = new GraphConfig.Builder()
                 .graphId(TEST_GRAPH_ID)
                 .description(TEST_GRAPH_DESCRIPTION)
@@ -104,7 +104,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphReturns201OnSuccess() throws Exception {
+    public void createGraph_whenSuccessful_shouldReturn201() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO);
         final String inputJson = mapToJson(gaaSCreateRequestBody);
 
@@ -121,8 +121,8 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphNotNullShouldReturn400() throws Exception {
-        final String graphRequest = "{\"description\":\"password\"}";
+    public void createGraph_whenGraphIdIsNull_shouldReturn400() throws Exception {
+        final String graphRequest = "{\"description\":\"password\",\"storeType\":\"ACCUMULO\"}";
 
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -136,8 +136,8 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWithSpacesShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+    public void createGraph_whenGraphIdHasSpaces_isInvalidAndShouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
 
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -165,8 +165,8 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWithUnderscoreShouldReturn201() throws Exception {
-        final String graphRequest = "{\"graphId\":\"graph_with_underscore\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+    public void createGraph_whenGraphIdHasUnderscore_isValidAndShouldReturn201() throws Exception {
+        final String graphRequest = "{\"graphId\":\"graph_with_underscore\",\"description\":\"a description\",\"storeType\":\"ACCUMULO\"}";
 
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -179,12 +179,14 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\"}";
+    public void createGraph_graphIdWithSpecialCharacters_isInvalidAndShouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"a description\",\"storeType\":\"ACCUMULO\"}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
+
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
         assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
@@ -235,7 +237,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testDeleteShouldReturn404WhenGraphNotExisting() throws Exception {
+    public void deleteGraph_whenGraphNDoesNotExist_return404() throws Exception {
         doThrow(new GaaSRestApiException("Graph not found", "NotFound", 404)).when(deleteGraphService).deleteGraph("nonexistentgraphfortestingpurposes");
 
         final MvcResult mvcResult2 = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
@@ -249,7 +251,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
+    public void createGraph_hasSameGraphIdAsExistingOne_shouldReturn409() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO);
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
@@ -280,7 +282,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void namespacesEndpointShouldReturnErrorMessageWhenNamespaceServiceException() throws Exception {
+    public void namespaces_shouldReturnErrorMessageWhenNamespaceServiceException() throws Exception {
         doThrow(new GaaSRestApiException("Cluster not found", "NotFound", 404)).when(getNamespacesService).getNamespaces();
 
         final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
@@ -293,7 +295,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void namespacesEndpointShouldReturn200AndArrayWithNamespacesWhenNamespacesPresent() throws Exception {
+    public void namespaces_shouldReturn200AndArrayWithNamespacesWhenNamespacesPresent() throws Exception {
         when(getNamespacesService.getNamespaces()).thenReturn(Arrays.asList("dev-team-1", "dev-team-2", "test-team-5"));
 
         final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
@@ -306,7 +308,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void namespacesEndpointShouldReturn200AndEmptyArrayWhenNoNamespacesExist() throws Exception {
+    public void namespaces_shouldReturn200AndEmptyArrayWhenNoNamespacesExist() throws Exception {
         when(getNamespacesService.getNamespaces()).thenReturn(new ArrayList(0));
 
         final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
