@@ -19,10 +19,21 @@ describe('SimpleAddGraph UI component', () => {
             const textfield = wrapper.find('textarea#graph-description');
             expect(textfield.props().name).toBe('graph-description');
         });
+        it('Should have a store type select with the correct label', () => {
+            const select = wrapper.find('div#storetype-select-grid');
+            expect(select.text()).toBe('Store TypeMap StoreStore TypeSet to Map Store by default');
+        });
         it('should have a Submit button', () => {
             const submitButton = wrapper.find('button').text();
             expect(submitButton).toBe('Add Graph');
         });
+        it('Should allow storetype to be selected', ()=> {
+            selectStoreType('ACCUMULO');
+            const selectText = wrapper.find('div#storetype-select-grid').find('div#storetype-select');
+            expect(selectText.text()).toBe('Accumulo');
+            selectStoreType('MAPSTORE');
+            expect(selectText.text()).toBe('Map Store');
+        })
     });
     describe('Add Graph Button', () => {
         it('should be disabled when Graph Name and Graph Description fields are empty', () => {
@@ -39,6 +50,7 @@ describe('SimpleAddGraph UI component', () => {
         it('Should be enabled when Graph Name and Graph Description is not empty', () => {
             inputgraphId('test');
             inputdescription('test');
+            selectStoreType('MAPSTORE');
             expect(wrapper.find('button#add-new-graph-button').props().disabled).toBe(false);
         });
     });
@@ -63,6 +75,11 @@ describe('SimpleAddGraph UI component', () => {
         wrapper.find('input#graph-id').simulate('change', {
             target: { value: graphId },
         });
+    }
+    function selectStoreType(storeType: string) {
+        wrapper.find('div#storetype-formcontrol').find('input').simulate('change',{
+            target: {value:storeType}
+        })
     }
     function inputdescription(description: string): void {
         wrapper.find('textarea#graph-description').simulate('change', {
