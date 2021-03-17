@@ -11,7 +11,7 @@ jest.mock('../../../src/rest/repositories/delete-graph-repo');
 
 afterEach(() => jest.resetAllMocks());
 
-describe('When ExampleTable mounts', () => {
+describe('When ViewGraphs mounts', () => {
     it('should display Table Headers and Graphs when GetGraphs successful', async () => {
         mockGetGraphsToReturn([new Graph('testId1', 'deployed')]);
 

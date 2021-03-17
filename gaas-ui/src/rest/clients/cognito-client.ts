@@ -1,7 +1,7 @@
-import { CognitoUserPool, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
-import { RestClient } from './rest-client';
-import { poolData } from './cognito-config';
+import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 import { IAuthClient } from './authclient';
+import { poolData } from './cognito-config';
+import { RestClient } from './rest-client';
 
 export class CognitoClient implements IAuthClient {
     private static cognitoUser: CognitoUser;

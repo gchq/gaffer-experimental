@@ -1,21 +1,24 @@
 import axios, { AxiosResponse } from 'axios';
-import { Config } from '../config';
 import { IAuthClient } from './authclient';
-import { RestClient } from './rest-client';
+import { IApiResponse, RestClient } from './rest-client';
+
+interface IAuthRequest {
+    username: string;
+    password: string;
+}
 
 export class AuthApiClient implements IAuthClient {
-    private readonly baseUrl = Config.REACT_APP_AUTH_ENDPOINT;
-
-     public async login(username: string, password: string, onSuccess: Function, onError: Function): Promise<void> {
+    public async login(username: string, password: string, onSuccess: Function, onError: Function): Promise<void> {
         try {
-            const token: AxiosResponse<string> = await axios.post(
-                `/auth`,
-                {
-                    username: username,
-                    password: password,
-                },
-                { baseURL: this.baseUrl }
-            );
+            const requestBody: IAuthRequest = {
+                username: username,
+                password: password,
+            };
+            const token: IApiResponse<string> = await new RestClient<IAuthRequest>()
+                .post()
+                .authentication()
+                .requestBody(requestBody)
+                .execute();
             RestClient.setJwtToken(token.data);
             onSuccess();
         } catch (e) {
@@ -31,14 +34,15 @@ export class AuthApiClient implements IAuthClient {
         onError: Function
     ): Promise<void> {
         try {
-            const token: AxiosResponse<string> = await axios.post(
-                `/auth`,
-                {
-                    username: username,
-                    password: tempPassword,
-                },
-                { baseURL: this.baseUrl }
-            );
+            const requestBody: IAuthRequest = {
+                username: username,
+                password: tempPassword,
+            };
+            const token: IApiResponse<string> = await new RestClient<IAuthRequest>()
+                .post()
+                .authentication()
+                .requestBody(requestBody)
+                .execute();
             RestClient.setJwtToken(token.data);
             onSuccess();
         } catch (e) {
@@ -48,7 +52,7 @@ export class AuthApiClient implements IAuthClient {
 
     public async signOut(onSuccess: Function, onError: Function): Promise<void> {
         try {
-            await axios.post(`/auth/signout`, undefined, { baseURL: this.baseUrl });
+            await new RestClient().post().authentication('signout').execute();
             onSuccess();
         } catch (e) {
             onError(e.message);

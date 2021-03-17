@@ -108,4 +108,27 @@ describe('Graph API', () => {
             });
     });
 });
+describe('Namespaces', () => {
+    beforeAll(async (done) => {
+        await request(server)
+            .post('/auth')
+            .send({
+                username: 'user@yahoo.com',
+                password: 'abc123',
+            })
+            .then((response) => {
+                token = response.body;
+                done();
+            });
+    });
+    it('namespaces endpoint with Autorization token should return namespaces array', async () => {
+        await request(server)
+            .get('/namespaces')
+            .set('Authorization', token)
+            .then((response) => {
+                expect(response.statusCode).toBe(200);
+                expect(response.body).toStrictEqual(["namespace1", "namespace2", "namespace3"]);
+            });
+    });
+});
 export {};

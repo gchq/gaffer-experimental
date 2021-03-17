@@ -1,24 +1,27 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const users = require('./users');
-var cors = require('cors')
+var cors = require('cors');
 
 // app
 const app = express();
 const port = process.env.PORT || 4000;
 const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+
 app.use(express.json());
+
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     res.header('Access-Control-Allow-Methods', 'OPTIONS,POST,GET');
     next();
 });
+
 // Token
 const jwtSecret = 'my-dev-secret';
 let token;
 
-app.options('*', cors()) 
+app.options('*', cors());
 // Sign in
 app.post('/auth', (req, res) => {
     const username = String(req.body.username).toLowerCase();
@@ -42,7 +45,7 @@ app.post('/graphs', (req, res) => {
     try {
         jwt.verify(req.get('Authorization'), jwtSecret, () => {
             if (req.body.graphId === 'fail') {
-                res.status(500).send({title: 'Server Error', detail: 'Failed to delete graph'});
+                res.status(500).send({ title: "Server Error", detail: "Failed to delete graph" });
             } else {
                 res.status(201).end();
             }
@@ -91,6 +94,15 @@ app.delete('/graphs/:graphId', (req, res) => {
     try {
         jwt.verify(req.get('Authorization'), jwtSecret, () => {
             res.status(202).end();
+        });
+    } catch (e) {
+        res.status(403).end();
+    }
+});
+app.get('/namespaces', (req, res) => {
+    try {
+        jwt.verify(req.get('Authorization'), jwtSecret, () => {
+            res.status(200).send(['namespace1', 'namespace2', 'namespace3']);
         });
     } catch (e) {
         res.status(403).end();

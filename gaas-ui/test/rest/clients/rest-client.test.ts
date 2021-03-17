@@ -19,7 +19,7 @@ describe('RestClient 2** Responses', () => {
     afterAll(() => mock.resetHandlers());
 
     it('should return status/data when GET is successful', async () => {
-        const actual = await RestClient.get();
+        const actual = await new RestClient().get().graphs().execute();
 
         expect(actual).toEqual({
             status: 200,
@@ -32,7 +32,7 @@ describe('RestClient 2** Responses', () => {
         });
     });
     it('should return status/data when GET with a path variable is successful', async () => {
-        const actual = await RestClient.get('graph-1');
+        const actual = await new RestClient().get().graphs('graph-1').execute();
 
         expect(actual).toEqual({
             status: 200,
@@ -43,14 +43,14 @@ describe('RestClient 2** Responses', () => {
         });
     });
     it('should return status when POST with request body is successful', async () => {
-        const actual = await RestClient.post({ post: 'this' });
+        const actual = await new RestClient().post().graphs().requestBody({ post: 'this' }).execute();
 
         expect(actual).toEqual({
             status: 201,
         });
     });
     it('should return status when DELETE with path variable is successful', async () => {
-        const actual = await RestClient.delete('redundant-graph');
+        const actual = await new RestClient().delete().graphs('redundant-graph').execute();
 
         expect(actual).toEqual({
             status: 202,
@@ -74,7 +74,7 @@ describe('RestClient 4**/5** Error Responses', () => {
 
     it('should throw 400 Error Message when api returns 404', async () => {
         try {
-            await RestClient.get();
+            await new RestClient().get().graphs().execute();
             throw new Error('Error did not throw');
         } catch (e) {
             expect(e.toString()).toBe('Validation Failed: Graph ID can not be null');
@@ -82,7 +82,7 @@ describe('RestClient 4**/5** Error Responses', () => {
     });
     it('should throw 404 Error Message when api returns 404', async () => {
         try {
-            await RestClient.get('unfindable-graph');
+            await new RestClient().get().graphs('unfindable-graph').execute();
             throw new Error('Error did not throw');
         } catch (e) {
             expect(e.toString()).toBe('Not Found: Could not find resource');
@@ -90,7 +90,7 @@ describe('RestClient 4**/5** Error Responses', () => {
     });
     it('should throw 500 Error Message when api returns 404', async () => {
         try {
-            await RestClient.post({ request: 'not-found' });
+            await new RestClient().post().graphs().requestBody({ request: 'not-found' }).execute();
             throw new Error('Error did not throw');
         } catch (e) {
             expect(e.toString()).toBe('Server Error: Null pointer in back end API');
@@ -98,7 +98,7 @@ describe('RestClient 4**/5** Error Responses', () => {
     });
     it('should throw 504 Error Message when api returns 404', async () => {
         try {
-            await RestClient.delete('already-deleted');
+            await new RestClient().delete().graphs('already-deleted').execute();
             throw new Error('Error did not throw');
         } catch (e) {
             expect(e.toString()).toBe('Server Error: Timeout');

@@ -19,6 +19,7 @@ import {
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
+import CategoryIcon from '@material-ui/icons/Category';
 import LoginModal from '../login/login-modal';
 
 const drawerWidth = 240;
@@ -105,6 +106,8 @@ const NavigationAppbar: React.FC = (props: any) => {
                 return <AddCircleOutlineIcon />;
             case 'View Graphs':
                 return <VisibilityIcon />;
+            case 'Cluster Namespaces':
+                return <CategoryIcon />;
             case 'User Guide':
                 return <LocalLibraryIcon />;
             default:

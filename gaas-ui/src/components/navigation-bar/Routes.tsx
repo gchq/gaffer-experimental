@@ -1,6 +1,7 @@
 import ViewGraph from '../view-graphs/view-graphs';
 import UserGuide from '../user-guide/user-guide';
 import SimpleAddGraph from "../add-graph/SimpleAddGraph";
+import ClusterNamespaces from "../cluster-namespaces/cluster-namespaces";
 
 const Routes = [
     {
@@ -12,6 +13,10 @@ const Routes = [
         path: '/ViewGraph',
         sidebarName: 'View Graphs',
         component: ViewGraph,
+    },{
+        path: '/Namespaces',
+        sidebarName: 'Cluster Namespaces',
+        component: ClusterNamespaces,
     },
     {
         path: '/UserGuide',
