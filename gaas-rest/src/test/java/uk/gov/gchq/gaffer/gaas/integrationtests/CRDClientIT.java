@@ -77,7 +77,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenGraphIdHasUppercase_throws422GaasException() {
-        final CRDCreateRequestBody gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody("UPPERCASEgraph", "A description"));
+        final CRDCreateRequestBody gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody("UPPERCASEgraph", "A description", ACCUMULO_ENABLED));
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
 
