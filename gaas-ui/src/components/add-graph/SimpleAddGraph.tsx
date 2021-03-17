@@ -1,16 +1,29 @@
 import React from 'react';
-import { Button, Container, CssBaseline, Grid, makeStyles, Slide, TextField, Tooltip, Zoom } from '@material-ui/core';
+import {
+    Button,
+    Container,
+    CssBaseline, FormControl, FormHelperText,
+    Grid,
+    InputLabel,
+    makeStyles, MenuItem, Select,
+    Slide,
+    TextField,
+    Tooltip, Typography,
+    Zoom
+} from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 import { TransitionProps } from '@material-ui/core/transitions';
 import Toolbar from '@material-ui/core/Toolbar';
 import { AlertType, NotificationAlert } from '../alerts/notification-alert';
 import { Notifications } from '../../domain/notifications';
 import { CreateSimpleGraphRepo } from '../../rest/repositories/create-simple-graph-repo';
+import {StoreType} from "../../domain/store-type";
 
 interface IState {
     dialogIsOpen: boolean;
     graphId: string;
     description: string;
+    storeType: StoreType;
     outcome: AlertType | undefined;
     outcomeMessage: string;
     errors: Notifications;
@@ -30,6 +43,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
             dialogIsOpen: false,
             graphId: '',
             description: '',
+            storeType: StoreType.MAPSTORE,
             outcome: undefined,
             outcomeMessage: '',
             errors: new Notifications(),
@@ -40,9 +54,10 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
         const errors: Notifications = new Notifications();
         const graphId = this.state.graphId;
         const description = this.state.description;
+        const storeType = this.state.storeType;
         if (errors.isEmpty()) {
             try {
-                await new CreateSimpleGraphRepo().create(graphId, description);
+                await new CreateSimpleGraphRepo().create(graphId, description, storeType);
                 this.setState({ outcome: AlertType.SUCCESS, outcomeMessage: `${graphId} was successfully added` });
                 this.resetForm();
             } catch (e) {
@@ -84,6 +99,9 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                     <Container component="main" maxWidth="xs">
                         <CssBaseline />
                         <div className={this.classes.paper}>
+                            <Grid item xs={12} container direction="row" justify="center" alignItems="center" style={{margin: 10}}>
+                                <Typography variant="h4" align={'center'}>Create Graph</Typography>
+                            </Grid>
                             <form className={this.classes.form} noValidate>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12}>
@@ -104,17 +122,6 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                         />
                                     </Grid>
                                     <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center">
-                                        {/*<Tooltip TransitionComponent={Zoom} title="Clear Schema">*/}
-                                        {/*    <IconButton*/}
-                                        {/*        onClick={() =>*/}
-                                        {/*            this.setState({*/}
-                                        {/*                    description: '',*/}
-                                        {/*            })*/}
-                                        {/*        }*/}
-                                        {/*    >*/}
-                                        {/*        <ClearIcon />*/}
-                                        {/*    </IconButton>*/}
-                                        {/*</Tooltip>*/}
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
@@ -134,6 +141,35 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                             }}
                                         />
                                     </Grid>
+                                    <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center">
+                                    </Grid>
+                                    <Grid item xs={12} id={"storetype-select-grid"}>
+                                        <FormControl variant="outlined" id={"storetype-formcontrol"}>
+                                            <InputLabel>Store Type</InputLabel>
+
+                                            <Select
+                                                label="Store Type"
+                                                inputProps={{
+                                                    name: 'Store Type',
+                                                    id: 'outlined-age-native-simple',
+                                                }}
+                                                labelId="storetype-select-label"
+                                                id="storetype-select"
+                                                value={this.state.storeType}
+                                                onChange={(event)=> {
+                                                    this.setState({
+                                                        storeType: event.target.value as StoreType,
+                                                    })
+                                                }}
+                                            >
+                                                <MenuItem value={StoreType.MAPSTORE}>Map Store</MenuItem>
+                                                <MenuItem value={StoreType.ACCUMULO}>Accumulo</MenuItem>
+                                            </Select>
+                                            <FormHelperText>Set to Map Store by default</FormHelperText>
+                                        </FormControl>
+
+                                    </Grid>
+
                                 </Grid>
                             </form>
                         </div>
