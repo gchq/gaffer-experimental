@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas.model;
 
+package uk.gov.gchq.gaffer.gaas.model;
 
 public class GraphSpec {
 
@@ -26,20 +26,20 @@ public class GraphSpec {
         return this;
     }
 
-    public AccumuloStoreConfig getAccumuloStoreConfig() {
-        return accumulo;
-    }
-
-    public NewGraph getGraph() {
-        return graph;
-    }
-
-    public GraphSpec store(StoreType storeType) {
+    public GraphSpec store(final StoreType storeType) {
         if (storeType == StoreType.ACCUMULO) {
             this.accumulo = new AccumuloStoreConfig().enable();
         } else {
             this.accumulo = new AccumuloStoreConfig().disable();
         }
         return this;
+    }
+
+    public AccumuloStoreConfig getAccumuloStoreConfig() {
+        return accumulo;
+    }
+
+    public NewGraph getGraph() {
+        return graph;
     }
 }

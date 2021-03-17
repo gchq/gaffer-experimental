@@ -27,8 +27,6 @@ import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
 import uk.gov.gchq.gaffer.gaas.model.NewGraph;
-import uk.gov.gchq.gaffer.gaas.model.AccumuloStoreConfig;
-import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 
 @Service
