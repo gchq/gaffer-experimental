@@ -12,4 +12,5 @@ export interface ICreateGraphRequestBody {
 export interface ICreateSimpleGraphRequestBody {
     graphId: string;
     description: string;
+    storeType: 'ACCUMULO'|'MAPSTORE';
 }
