@@ -23,5 +23,8 @@ service:
   type: ClusterIP
   port: 8080
   targetPort: 8080
+
+# Set serviceAccount.create to true if User deploying has assign
+# ClusterRoleBinding privileges to enable cluster namespaces endpoint
 serviceAccount:
   create: false
