@@ -16,7 +16,7 @@
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: clusterrolebinding
+  name: {{ include "helm.fullname" . }}-clusterrolebinding
 subjects:
   - kind: ServiceAccount
     name: {{ include "helm.fullname" . }}-service-account
