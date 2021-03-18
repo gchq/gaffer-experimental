@@ -23,4 +23,5 @@ service:
   type: ClusterIP
   port: 8080
   targetPort: 8080
-serviceAccountName: gaas-rest-account
+serviceAccount:
+  create: false
