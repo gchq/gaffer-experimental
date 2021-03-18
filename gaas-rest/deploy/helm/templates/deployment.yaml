@@ -28,6 +28,7 @@ spec:
       labels:
         {{- include "helm.selectorLabels" . | nindent 8 }}
     spec:
+      serviceAccountName: gaas-rest-account
       containers:
         - name: gaas-rest
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
