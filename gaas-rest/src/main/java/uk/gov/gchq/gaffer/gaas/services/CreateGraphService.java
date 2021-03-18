@@ -16,14 +16,13 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
-import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.CreateCRDRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
 import uk.gov.gchq.gaffer.gaas.model.NewGraph;
@@ -31,9 +30,6 @@ import uk.gov.gchq.gaffer.graph.GraphConfig;
 
 @Service
 public class CreateGraphService {
-
-    @Autowired
-    private ApiClient apiClient;
 
     @Autowired
     private CRDClient crdClient;
@@ -48,10 +44,18 @@ public class CreateGraphService {
         crdClient.createCRD(buildCreateCRDRequestBody(gaaSCreateRequestBodyInput));
     }
 
-    private CRDCreateRequestBody buildCreateCRDRequestBody(final GaaSCreateRequestBody graph) {
+    private CreateCRDRequestBody buildCreateCRDRequestBody(final GaaSCreateRequestBody graph) {
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
 
-        return new CRDCreateRequestBody()
+        // TODO: Test for: Path for when request has ACCUMULO, enable accumulo
+
+        // TODO: Path for when request has MAPSTORE, don't enable accumulo
+
+        // TODO: Path when request is FEDERATED_STORE, add store with fed store properties
+
+        // Possible solution is to create a CRD request body factory class method that returns the various different request structures
+
+        return new CreateCRDRequestBody()
                 .apiVersion(group + "/" + version)
                 .kind(kind)
                 .metaData(metadata)

@@ -16,8 +16,16 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
-public enum StoreType {
-    ACCUMULO,
-    FEDERATED_STORE,
-    MAPSTORE;
+public class AccumuloConfig {
+
+    private boolean enabled;
+
+    protected boolean isEnabled() {
+        return enabled;
+    }
+
+    protected AccumuloConfig enable() {
+        this.enabled = true;
+        return this;
+    }
 }
