@@ -23,7 +23,7 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 /**
  * Gaas Rest Create Gaffer CRD Request Body
  */
-public class CRDCreateRequestBody implements KubernetesObject {
+public class CreateCRDRequestBody implements KubernetesObject {
 
     public static final String SERIALISED_NAME_API_VERSION = "apiVersion";
     public static final String SERIALISED_NAME_KIND = "kind";
@@ -42,22 +42,22 @@ public class CRDCreateRequestBody implements KubernetesObject {
     @SerializedName(SERIALISED_NAME_SPEC)
     private GraphSpec spec;
 
-    public CRDCreateRequestBody apiVersion(final String apiVersion) {
+    public CreateCRDRequestBody apiVersion(final String apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
-    public CRDCreateRequestBody kind(final String kind) {
+    public CreateCRDRequestBody kind(final String kind) {
         this.kind = kind;
         return this;
     }
 
-    public CRDCreateRequestBody metaData(final V1ObjectMeta metadata) {
+    public CreateCRDRequestBody metaData(final V1ObjectMeta metadata) {
         this.metadata = metadata;
         return this;
     }
 
-    public CRDCreateRequestBody spec(final GraphSpec spec) {
+    public CreateCRDRequestBody spec(final GraphSpec spec) {
         this.spec = spec;
         return this;
     }

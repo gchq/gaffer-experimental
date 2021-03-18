@@ -19,23 +19,23 @@ package uk.gov.gchq.gaffer.gaas.model;
 public class GraphSpec {
 
     private NewGraph graph;
-    private AccumuloStoreConfig accumulo;
+    private AccumuloConfig accumulo;
 
     public GraphSpec graph(final NewGraph graph) {
         this.graph = graph;
         return this;
     }
 
-    public GraphSpec store(final StoreType storeType) {
-        if (storeType == StoreType.ACCUMULO) {
-            this.accumulo = new AccumuloStoreConfig().enable();
-        } else {
-            this.accumulo = new AccumuloStoreConfig().disable();
-        }
+    public GraphSpec enableAccumulo() {
+        this.accumulo = new AccumuloConfig().enable();
         return this;
     }
 
-    public AccumuloStoreConfig getAccumuloStoreConfig() {
+    public boolean accumuloIsEnabled() {
+        return accumulo != null && accumulo.isEnabled();
+    }
+
+    public AccumuloConfig getAccumuloStoreConfig() {
         return accumulo;
     }
 

@@ -18,5 +18,6 @@ package uk.gov.gchq.gaffer.gaas.model;
 
 public enum StoreType {
     ACCUMULO,
+    FEDERATED_STORE,
     MAPSTORE;
 }

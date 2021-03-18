@@ -16,21 +16,16 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
-public class AccumuloStoreConfig {
+public class AccumuloConfig {
+
     private boolean enabled;
 
-    public boolean isEnabled() {
+    protected boolean isEnabled() {
         return enabled;
     }
 
-    public AccumuloStoreConfig enable() {
+    protected AccumuloConfig enable() {
         this.enabled = true;
         return this;
     }
-
-    public AccumuloStoreConfig disable() {
-        this.enabled = false;
-        return this;
-    }
-
 }
