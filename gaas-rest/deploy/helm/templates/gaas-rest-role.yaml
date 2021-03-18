@@ -37,7 +37,7 @@ metadata:
   name: gaas-rest
 subjects:
   - kind: ServiceAccount
-    name: gaas-rest-account
+    name: {{ .Values.serviceAccountName }}
     namespace: kai-helm-3
 roleRef:
   kind: ClusterRole
