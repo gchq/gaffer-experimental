@@ -32,13 +32,14 @@ public class FederatedRequestBody implements CRDRequestBodyInterface {
                 .apiVersion(group + "/" + version)
                 .kind(kind)
                 .metaData(metadata)
-                .spec(new GraphSpec()
+                .spec(new GraphSpec.Builder()
                         .graph(new NewGraph()
                                 .storeProperties(StoreType.FEDERATED_STORE)
                                 .config(new GraphConfig.Builder()
                                         .graphId(graph.getGraphId())
                                         .description(graph.getDescription())
                                         .library(null)
-                                        .build())));
+                                        .build()))
+                .build());
     }
 }

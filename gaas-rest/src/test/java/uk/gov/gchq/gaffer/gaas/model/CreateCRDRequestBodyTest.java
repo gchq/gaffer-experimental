@@ -35,14 +35,15 @@ public class CreateCRDRequestBodyTest {
                 .apiVersion("gchq.gov.uk/v1")
                 .kind("Gaffer")
                 .metaData(metadata)
-                .spec(new GraphSpec()
+                .spec(new GraphSpec.Builder()
                         .graph(new NewGraph()
                                 .config(new GraphConfig.Builder()
                                         .graphId("MyGraph")
                                         .description("My Graph deployed by the Controller")
                                         .library(null)
                                         .build())
-                                .storeProperties(StoreType.FEDERATED_STORE)));
+                                .storeProperties(StoreType.FEDERATED_STORE))
+                .build());
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -74,14 +75,15 @@ public class CreateCRDRequestBodyTest {
                 .apiVersion("gchq.gov.uk/v1")
                 .kind("Gaffer")
                 .metaData(metadata)
-                .spec(new GraphSpec()
+                .spec(new GraphSpec.Builder()
                         .enableAccumulo()
                         .graph(new NewGraph()
                                 .config(new GraphConfig.Builder()
                                         .graphId("MyGraph")
                                         .description("My Graph deployed by the Controller")
                                         .library(null)
-                                        .build())));
+                                        .build()))
+                .build());
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -109,14 +111,15 @@ public class CreateCRDRequestBodyTest {
                 .apiVersion("gchq.gov.uk/v1")
                 .kind("Gaffer")
                 .metaData(metadata)
-                .spec(new GraphSpec()
+                .spec(new GraphSpec.Builder()
                         .graph(new NewGraph()
                                 .config(new GraphConfig.Builder()
                                         .graphId("MyGraph")
                                         .description("My Graph deployed by the Controller")
                                         .library(null)
                                         .build())
-                                .storeProperties(StoreType.MAPSTORE)));
+                                .storeProperties(StoreType.MAPSTORE))
+                .build());
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -144,7 +147,7 @@ public class CreateCRDRequestBodyTest {
                 .apiVersion("gchq.gov.uk/v1")
                 .kind("Gaffer")
                 .metaData(metadata)
-                .spec(new GraphSpec()
+                .spec(new GraphSpec.Builder()
                         .enableAccumulo()
                         .graph(new NewGraph()
                                 .config(new GraphConfig.Builder()
@@ -152,7 +155,8 @@ public class CreateCRDRequestBodyTest {
                                         .description("My Graph deployed by the Controller")
                                         .library(null)
                                         .build())
-                                .storeProperties(StoreType.FEDERATED_STORE)));
+                                .storeProperties(StoreType.FEDERATED_STORE))
+                .build());
 
         final String expected = "Error";
         assertEquals(expected, gson.toJson(requestBody));
@@ -165,7 +169,7 @@ public class CreateCRDRequestBodyTest {
                 .apiVersion("gchq.gov.uk/v1")
                 .kind("Gaffer")
                 .metaData(metadata)
-                .spec(new GraphSpec()
+                .spec(new GraphSpec.Builder()
                         .enableAccumulo()
                         .graph(new NewGraph()
                                 .config(new GraphConfig.Builder()
@@ -173,7 +177,9 @@ public class CreateCRDRequestBodyTest {
                                         .description("My Graph deployed by the Controller")
                                         .library(null)
                                         .build())
-                                .storeProperties(StoreType.MAPSTORE)));
+                                .storeProperties(StoreType.MAPSTORE))
+                .build());
+
 
         final String expected = "Error";
         assertEquals(expected, gson.toJson(requestBody));
