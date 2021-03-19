@@ -33,13 +33,14 @@ public class AccumuloRequestBody implements CRDRequestBodyInterface {
                 .apiVersion(group + "/" + version)
                 .kind(kind)
                 .metaData(metadata)
-                .spec(new GraphSpec()
+                .spec(new GraphSpec.Builder()
                         .enableAccumulo()
                         .graph(new NewGraph()
                                 .config(new GraphConfig.Builder()
                                         .graphId(graph.getGraphId())
                                         .description(graph.getDescription())
                                         .library(null)
-                                        .build())));
+                                        .build()))
+                .build());
     }
 }

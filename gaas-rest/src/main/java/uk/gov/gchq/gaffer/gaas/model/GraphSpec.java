@@ -18,17 +18,22 @@ package uk.gov.gchq.gaffer.gaas.model;
 
 public class GraphSpec {
 
-    private NewGraph graph;
-    private AccumuloConfig accumulo;
+    private final NewGraph graph;
 
-    public GraphSpec graph(final NewGraph graph) {
-        this.graph = graph;
-        return this;
+    public AccumuloConfig getAccumulo() {
+        return accumulo;
     }
 
-    public GraphSpec enableAccumulo() {
-        this.accumulo = new AccumuloConfig().enable();
-        return this;
+    private final AccumuloConfig accumulo;
+
+
+    private GraphSpec(Builder builder) {
+        this.graph = builder.graph;
+        this.accumulo = builder.accumulo;
+    }
+
+    public NewGraph getGraph() {
+        return graph;
     }
 
     public boolean accumuloIsEnabled() {
@@ -39,7 +44,33 @@ public class GraphSpec {
         return accumulo;
     }
 
-    public NewGraph getGraph() {
-        return graph;
+    public static class Builder {
+        private NewGraph graph;
+        private AccumuloConfig accumulo;
+
+        public Builder() {
+        }
+
+        public Builder enableAccumulo() {
+            this.accumulo = new AccumuloConfig().enable();
+            return this;
+        }
+
+        public Builder graph(NewGraph graph) {
+            this.graph = graph;
+            return this;
+        }
+
+        public GraphSpec build() {
+            GraphSpec graphSpec = new GraphSpec(this);
+            validateUserObject(graphSpec);
+            return graphSpec;
+        }
+
+        private void validateUserObject(GraphSpec graphSpec) {
+            //Do some basic validations to check
+            //if user object does not break any assumption of system
+        }
     }
+
 }
