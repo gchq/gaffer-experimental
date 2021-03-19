@@ -35,8 +35,7 @@ public class NewGraph {
 
     public NewGraph storeProperties(final StoreType storeType) {
         switch (storeType) {
-            case ACCUMULO: {
-                // No AccumuloStoreProperties required for the graph
+            case ACCUMULO: { // No AccumuloStoreProperties required for the graph
                 // Instead, enableAccumulo() in the GraphSpec to enable Accumulo properties
                 return this;
             }
