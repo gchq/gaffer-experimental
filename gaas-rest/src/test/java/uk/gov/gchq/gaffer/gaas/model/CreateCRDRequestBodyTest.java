@@ -157,4 +157,25 @@ public class CreateCRDRequestBodyTest {
         final String expected = "Error";
         assertEquals(expected, gson.toJson(requestBody));
     }
+
+    @Disabled
+    public void mapStoreRequestWithAccumuloEnabled_shouldReturnError() {
+        final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
+        final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
+                .apiVersion("gchq.gov.uk/v1")
+                .kind("Gaffer")
+                .metaData(metadata)
+                .spec(new GraphSpec()
+                        .enableAccumulo()
+                        .graph(new NewGraph()
+                                .config(new GraphConfig.Builder()
+                                        .graphId("MyGraph")
+                                        .description("My Graph deployed by the Controller")
+                                        .library(null)
+                                        .build())
+                                .storeProperties(StoreType.MAPSTORE)));
+
+        final String expected = "Error";
+        assertEquals(expected, gson.toJson(requestBody));
+    }
 }
