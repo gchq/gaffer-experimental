@@ -70,6 +70,11 @@ public class GraphSpec {
         private void validateUserObject(GraphSpec graphSpec) {
             //Do some basic validations to check
             //if user object does not break any assumption of system
+            if (graphSpec.accumuloIsEnabled()) {
+                if (!graphSpec.graph.checkIfStorePropertyNull()) {
+                    throw new IllegalArgumentException("Cannot specify an accumulo graph with store properties");
+                }
+            }
         }
     }
 

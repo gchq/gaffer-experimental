@@ -43,7 +43,6 @@ public class NewGraph {
                 this.storeProperties = getFederatedStoreProperties();
                 return this;
             case MAPSTORE:
-                // Do nothing
                 return this;
             default:
                 throw new IllegalArgumentException("Unsupported store type");
@@ -59,8 +58,13 @@ public class NewGraph {
         if (storeProperties != null) {
             return storeProperties.get(StoreProperties.STORE_CLASS);
         }
-        throw new IllegalStateException("NewGraph has not set any Store Properties");
+        throw new IllegalArgumentException("NewGraph has not set any Store Properties");
     }
+
+    public Boolean checkIfStorePropertyNull() {
+        return storeProperties == null;
+    }
+
 
     private Map<String, String> getFederatedStoreProperties() {
         final Map<String, String> federatedStoreProperties = new HashMap<>();
