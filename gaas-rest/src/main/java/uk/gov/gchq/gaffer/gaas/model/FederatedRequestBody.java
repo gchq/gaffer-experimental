@@ -18,7 +18,6 @@
 package uk.gov.gchq.gaffer.gaas.model;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.springframework.beans.factory.annotation.Value;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 
 public class FederatedRequestBody implements CRDRequestBodyInterface {

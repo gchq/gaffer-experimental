@@ -34,22 +34,21 @@ public class NewGraph {
     }
 
     public NewGraph storeProperties(final StoreType storeType) {
+
         switch (storeType) {
-            case ACCUMULO: { // No AccumuloStoreProperties required for the graph
+            case ACCUMULO:
+                // No AccumuloStoreProperties required for the graph
                 // Instead, enableAccumulo() in the GraphSpec to enable Accumulo properties
-                return this;
-            }
-            case FEDERATED_STORE: {
+            case FEDERATED_STORE:
                 this.storeProperties = getFederatedStoreProperties();
                 return this;
-            }
             case MAPSTORE:
                 // Do nothing
                 return this;
-            default: {
+            default:
                 throw new IllegalArgumentException("Unsupported store type");
-            }
         }
+
     }
 
     public GraphConfig getConfig() {

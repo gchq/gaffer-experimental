@@ -17,6 +17,7 @@ package uk.gov.gchq.gaffer.gaas.model;
 
 import com.google.gson.Gson;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
@@ -74,14 +75,13 @@ public class CreateCRDRequestBodyTest {
                 .kind("Gaffer")
                 .metaData(metadata)
                 .spec(new GraphSpec()
+                        .enableAccumulo()
                         .graph(new NewGraph()
                                 .config(new GraphConfig.Builder()
                                         .graphId("MyGraph")
                                         .description("My Graph deployed by the Controller")
                                         .library(null)
-                                        .build())
-                                .storeProperties(StoreType.ACCUMULO))
-                        .enableAccumulo());
+                                        .build())));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -103,7 +103,7 @@ public class CreateCRDRequestBodyTest {
     }
 
     @Test
-    public void mapStoreRequest_shouldCreateARequestWithAccumuloStore() {
+    public void mapStoreRequest_shouldCreateARequestWithMapStore() {
         final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
         final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
                 .apiVersion("gchq.gov.uk/v1")
@@ -134,6 +134,27 @@ public class CreateCRDRequestBodyTest {
                     "}" +
                 "}";
 
+        assertEquals(expected, gson.toJson(requestBody));
+    }
+
+    @Disabled
+    public void federatedStoreRequestWithAccumuloEnabled_shouldReturnError() {
+        final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
+        final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
+                .apiVersion("gchq.gov.uk/v1")
+                .kind("Gaffer")
+                .metaData(metadata)
+                .spec(new GraphSpec()
+                        .enableAccumulo()
+                        .graph(new NewGraph()
+                                .config(new GraphConfig.Builder()
+                                        .graphId("MyGraph")
+                                        .description("My Graph deployed by the Controller")
+                                        .library(null)
+                                        .build())
+                                .storeProperties(StoreType.FEDERATED_STORE)));
+
+        final String expected = "Error";
         assertEquals(expected, gson.toJson(requestBody));
     }
 }

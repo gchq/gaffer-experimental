@@ -18,10 +18,7 @@
 package uk.gov.gchq.gaffer.gaas.model;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 @Service
 public class AccumuloRequestBody implements CRDRequestBodyInterface {
