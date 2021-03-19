@@ -17,11 +17,14 @@ package uk.gov.gchq.gaffer.gaas.model;
 
 import com.google.gson.Gson;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import org.junit.Rule;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.rules.ExpectedException;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @UnitTest
 public class CreateCRDRequestBodyTest {
@@ -140,48 +143,52 @@ public class CreateCRDRequestBodyTest {
         assertEquals(expected, gson.toJson(requestBody));
     }
 
-    @Disabled
-    public void federatedStoreRequestWithAccumuloEnabled_shouldReturnError() {
+    @Test
+    public void federatedStoreRequestWithAccumuloEnabled_shouldThrowIllegalArgumentException() {
         final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
-        final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
-                .apiVersion("gchq.gov.uk/v1")
-                .kind("Gaffer")
-                .metaData(metadata)
-                .spec(new GraphSpec.Builder()
-                        .enableAccumulo()
-                        .graph(new NewGraph()
-                                .config(new GraphConfig.Builder()
-                                        .graphId("MyGraph")
-                                        .description("My Graph deployed by the Controller")
-                                        .library(null)
-                                        .build())
-                                .storeProperties(StoreType.FEDERATED_STORE))
-                .build());
+        try{
+            final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
+                    .apiVersion("gchq.gov.uk/v1")
+                    .kind("Gaffer")
+                    .metaData(metadata)
+                    .spec(new GraphSpec.Builder()
+                            .enableAccumulo()
+                            .graph(new NewGraph()
+                                    .config(new GraphConfig.Builder()
+                                            .graphId("MyGraph")
+                                            .description("My Graph deployed by the Controller")
+                                            .library(null)
+                                            .build())
+                                    .storeProperties(StoreType.FEDERATED_STORE))
+                            .build());
+        }catch(IllegalArgumentException e){
+            assertEquals("Cannot specify an accumulo graph with store properties", e.getMessage());
+        }
 
-        final String expected = "Error";
-        assertEquals(expected, gson.toJson(requestBody));
     }
 
-    @Disabled
-    public void mapStoreRequestWithAccumuloEnabled_shouldReturnError() {
+
+    @Test()
+    public void mapStoreRequestWithAccumuloEnabled_shouldThrowIllegalArgumentException(){
         final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
-        final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
-                .apiVersion("gchq.gov.uk/v1")
-                .kind("Gaffer")
-                .metaData(metadata)
-                .spec(new GraphSpec.Builder()
-                        .enableAccumulo()
-                        .graph(new NewGraph()
-                                .config(new GraphConfig.Builder()
-                                        .graphId("MyGraph")
-                                        .description("My Graph deployed by the Controller")
-                                        .library(null)
-                                        .build())
-                                .storeProperties(StoreType.MAPSTORE))
-                .build());
+        try{
+            final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
+                    .apiVersion("gchq.gov.uk/v1")
+                    .kind("Gaffer")
+                    .metaData(metadata)
+                    .spec(new GraphSpec.Builder()
+                            .enableAccumulo()
+                            .graph(new NewGraph()
+                                    .config(new GraphConfig.Builder()
+                                            .graphId("MyGraph")
+                                            .description("My Graph deployed by the Controller")
+                                            .library(null)
+                                            .build())
+                                    .storeProperties(StoreType.MAPSTORE))
+                            .build());
+        }catch (IllegalArgumentException e){
+            assertEquals("Cannot specify an accumulo graph with store properties",e.getMessage());
+        }
 
-
-        final String expected = "Error";
-        assertEquals(expected, gson.toJson(requestBody));
     }
 }
