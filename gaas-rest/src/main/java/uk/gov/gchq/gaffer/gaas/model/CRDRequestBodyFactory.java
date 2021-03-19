@@ -16,21 +16,10 @@
 package uk.gov.gchq.gaffer.gaas.model;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 
 @Service
 public class CRDRequestBodyFactory {
-    @Autowired
-    private CRDClient crdClient;
-    @Value("${group}")
-    private String group;
-    @Value("${version}")
-    private String version;
-    @Value("${kind}")
-    private String kind;
     public CreateCRDRequestBody buildRequest(final GaaSCreateRequestBody graph) {
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
         final StoreType storeType = graph.getStoreType();
