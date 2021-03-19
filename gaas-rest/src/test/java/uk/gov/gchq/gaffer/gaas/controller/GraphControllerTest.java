@@ -388,7 +388,7 @@ public class GraphControllerTest extends AbstractTest {
         assertEquals(400, mvcResult.getResponse().getStatus());
         final String expected = "{\"title\":\"InvalidFormatException\",\"detail\":\"Cannot deserialize value of type " +
                 "`uk.gov.gchq.gaffer.gaas.model.StoreType` from String \\\"INVALID\\\": not one of the values accepted " +
-                "for Enum class: [MAPSTORE, ACCUMULO]\\n at [Source: (PushbackInputStream); line: 1, column: 65] " +
+                "for Enum class: [MAPSTORE, FEDERATED_STORE, ACCUMULO]\\n at [Source: (PushbackInputStream); line: 1, column: 65] " +
                 "(through reference chain: uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody[\\\"storeType\\\"])\"}";
         assertEquals(expected, mvcResult.getResponse().getContentAsString());
     }
