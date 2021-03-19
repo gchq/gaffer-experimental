@@ -52,4 +52,48 @@ public class CRDRequestBodyFactoryTest {
                         "}";
         assertEquals(expected, gson.toJson(requestBody));
     }
+    @Test
+    public void accumuloStoreRequestShouldReturnAccumuloRequestBody()
+    {
+        CRDRequestBodyFactory crdRequestBodyFactory = new CRDRequestBodyFactory();
+        final CreateCRDRequestBody requestBody = crdRequestBodyFactory.buildRequest(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.ACCUMULO));
+        final String expected =
+                "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"MyGraph\"}," +
+                        "\"spec\":{\"" +
+                        "graph\":{\"" +
+                        "config\":{\"" +
+                        "graphId\":\"MyGraph\",\"library\":{},\"description\":\"Another description\",\"hooks\":[]" +
+                        "}" +
+                        "},\"" +
+                        "accumulo\":{\"" +
+                        "enabled\":true" +
+                        "}" +
+                        "}" +
+                        "}";
+        assertEquals(expected, gson.toJson(requestBody));
+    }
+    @Test
+    public void mapStoreStoreRequestShouldReturnMapStoreRequestBody()
+    {
+        CRDRequestBodyFactory crdRequestBodyFactory = new CRDRequestBodyFactory();
+        final CreateCRDRequestBody requestBody = crdRequestBodyFactory.buildRequest(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.MAPSTORE));
+        final String expected =
+                "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"MyGraph\"}," +
+                        "\"spec\":{\"" +
+                        "graph\":{\"" +
+                        "config\":{\"" +
+                        "graphId\":\"MyGraph\",\"" +
+                        "library\":{},\"" +
+                        "description\":\"Another description\",\"" +
+                        "hooks\":[]" +
+                        "}" +
+                        "}" +
+                        "}" +
+                        "}";
+        assertEquals(expected, gson.toJson(requestBody));
+    }
 }
