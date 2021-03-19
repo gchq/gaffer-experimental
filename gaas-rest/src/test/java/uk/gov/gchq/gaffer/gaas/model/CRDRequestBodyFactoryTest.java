@@ -26,8 +26,7 @@ public class CRDRequestBodyFactoryTest {
     private final Gson gson = new Gson();
 
     @Test
-    public void federatedStoreRequestShouldReturnFederatedRequestBody()
-    {
+    public void federatedStoreRequestShouldReturnFederatedRequestBody() {
         CRDRequestBodyFactory crdRequestBodyFactory = new CRDRequestBodyFactory();
         final CreateCRDRequestBody requestBody = crdRequestBodyFactory.buildRequest(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.FEDERATED_STORE));
         final String expected =
@@ -52,9 +51,9 @@ public class CRDRequestBodyFactoryTest {
                         "}";
         assertEquals(expected, gson.toJson(requestBody));
     }
+
     @Test
-    public void accumuloStoreRequestShouldReturnAccumuloRequestBody()
-    {
+    public void accumuloStoreRequestShouldReturnAccumuloRequestBody() {
         CRDRequestBodyFactory crdRequestBodyFactory = new CRDRequestBodyFactory();
         final CreateCRDRequestBody requestBody = crdRequestBodyFactory.buildRequest(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.ACCUMULO));
         final String expected =
@@ -74,9 +73,9 @@ public class CRDRequestBodyFactoryTest {
                         "}";
         assertEquals(expected, gson.toJson(requestBody));
     }
+
     @Test
-    public void mapStoreStoreRequestShouldReturnMapStoreRequestBody()
-    {
+    public void mapStoreStoreRequestShouldReturnMapStoreRequestBody() {
         CRDRequestBodyFactory crdRequestBodyFactory = new CRDRequestBodyFactory();
         final CreateCRDRequestBody requestBody = crdRequestBodyFactory.buildRequest(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.MAPSTORE));
         final String expected =
