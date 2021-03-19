@@ -316,4 +316,77 @@ public class GraphControllerTest extends AbstractTest {
         assertEquals(200, namespacesResponse.getResponse().getStatus());
         assertEquals("[]", namespacesResponse.getResponse().getContentAsString());
     }
+
+    @Test
+    public void createGraph_shouldRequestAnAccumuloStoreAndReturn201() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+
+        doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(inputJson)).andReturn();
+        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
+
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals(201, status);
+    }
+
+    @Test
+    public void createGraph_shouldRequestAMapStoreAndReturn201() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.MAPSTORE);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+
+        doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(inputJson)).andReturn();
+        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
+
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals(201, status);
+    }
+
+    @Test
+    public void createGraph_shouldReturn400BadRequestWhenStoreTypeIsNull() throws Exception {
+        final String gaaSCreateRequestBody = "{" +
+                "\"graphId\":\"invalid-store-type\"," +
+                "\"description\":\"any\"" +
+                "}";
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(gaaSCreateRequestBody)).andReturn();
+
+        assertEquals(400, mvcResult.getResponse().getStatus());
+        final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. " +
+                "Valid Store Types supported are MAPSTORE and ACCUMULO\"}";
+        assertEquals(expected, mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void createGraph_shouldReturn400BadRequestWhenStoreTypeIsInvalidType() throws Exception {
+        final String gaaSCreateRequestBody = "{" +
+                "\"graphId\":\"invalid-store-type\"," +
+                "\"description\":\"any\"," +
+                "\"storeType\":\"INVALID\"" +
+                "}";
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(gaaSCreateRequestBody)).andReturn();
+
+        assertEquals(400, mvcResult.getResponse().getStatus());
+        final String expected = "{\"title\":\"InvalidFormatException\",\"detail\":\"Cannot deserialize value of type " +
+                "`uk.gov.gchq.gaffer.gaas.model.StoreType` from String \\\"INVALID\\\": not one of the values accepted " +
+                "for Enum class: [MAPSTORE, FEDERATED_STORE, ACCUMULO]\\n at [Source: (PushbackInputStream); line: 1, column: 65] " +
+                "(through reference chain: uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody[\\\"storeType\\\"])\"}";
+        assertEquals(expected, mvcResult.getResponse().getContentAsString());
+    }
 }
