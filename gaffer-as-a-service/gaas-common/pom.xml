@@ -8,7 +8,6 @@
         <version>1.13.0</version>
     </parent>
     <artifactId>gaas-common</artifactId>
-    <version>1.13.0</version>
     <name>gaas-common</name>
     <description>Gaas common</description>
 

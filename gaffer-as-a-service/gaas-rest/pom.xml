@@ -7,7 +7,6 @@
         <version>1.13.0</version>
     </parent>
     <artifactId>gaas-rest</artifactId>
-    <version>1.13.0</version>
     <name>gaas-rest</name>
     <description>Gaffer as a Service REST API</description>
     <properties>
