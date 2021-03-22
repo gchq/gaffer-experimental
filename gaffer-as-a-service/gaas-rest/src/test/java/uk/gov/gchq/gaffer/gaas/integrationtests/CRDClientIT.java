@@ -18,7 +18,6 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -119,7 +118,6 @@ public class CRDClientIT {
         assertTrue(crdClient.listAllCRDs().toString().contains("test-graph-id"));
     }
 
-    @Disabled
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
         final List<GraphConfig> list = new ArrayList<>();
