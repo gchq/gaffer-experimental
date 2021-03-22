@@ -17,14 +17,10 @@ package uk.gov.gchq.gaffer.gaas.model;
 
 import com.google.gson.Gson;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.junit.Rule;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @UnitTest
 public class CreateCRDRequestBodyTest {
