@@ -22,7 +22,7 @@
     <dependency>
       <groupId>uk.gov.gchq.gaffer</groupId>
       <artifactId>gaas-common</artifactId>
-      <version>1.13.0</version>
+      <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>io.kubernetes</groupId>
