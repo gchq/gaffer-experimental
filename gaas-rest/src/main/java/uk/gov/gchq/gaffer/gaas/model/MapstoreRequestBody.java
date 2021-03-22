@@ -17,13 +17,16 @@
 package uk.gov.gchq.gaffer.gaas.model;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import org.springframework.beans.factory.annotation.Value;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 
 public class MapstoreRequestBody implements CRDRequestBodyInterface {
-    // todo fix injection
-    private String group = "gchq.gov.uk";
-    private String version = "v1";
-    private String kind = "Gaffer";
+    @Value("${group}")
+    private String group;
+    @Value("${version}")
+    private String version;
+    @Value("${kind}")
+    private String kind;
     @Override
     public CreateCRDRequestBody buildRequestBody(final GaaSCreateRequestBody graph) {
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
