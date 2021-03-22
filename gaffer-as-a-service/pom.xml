@@ -32,7 +32,6 @@
         <module>gaas-common</module>
         <module>gaffer-controller</module>
         <module>gaas-rest</module>
-        <module>gaas-ui</module>
     </modules>
 
     <properties>
