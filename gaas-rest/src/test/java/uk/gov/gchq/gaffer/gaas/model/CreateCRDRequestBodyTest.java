@@ -42,28 +42,28 @@ public class CreateCRDRequestBodyTest {
                                         .library(null)
                                         .build())
                                 .storeProperties(StoreType.FEDERATED_STORE))
-                .build());
+                        .build());
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
-                    "\"kind\":\"Gaffer\"," +
-                    "\"metadata\":{\"name\":\"my-gaffer\"}," +
-                    "\"spec\":{\"" +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"my-gaffer\"}," +
+                        "\"spec\":{\"" +
                         "graph\":{\"" +
-                            "config\":{\"" +
-                                "graphId\":\"MyGraph\",\"" +
-                                "library\":{},\"" +
-                                "description\":\"My Graph deployed by the Controller\",\"" +
-                                "hooks\":[]" +
-                            "}," +
-                            "\"storeProperties\":{\"" +
-                                "gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"" +
-                                "gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"" +
-                                "gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"" +
-                            "}" +
+                        "config\":{\"" +
+                        "graphId\":\"MyGraph\",\"" +
+                        "library\":{},\"" +
+                        "description\":\"My Graph deployed by the Controller\",\"" +
+                        "hooks\":[]" +
+                        "}," +
+                        "\"storeProperties\":{\"" +
+                        "gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"" +
+                        "gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"" +
+                        "gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"" +
                         "}" +
-                    "}" +
-                "}";
+                        "}" +
+                        "}" +
+                        "}";
         assertEquals(expected, gson.toJson(requestBody));
     }
 
@@ -82,23 +82,23 @@ public class CreateCRDRequestBodyTest {
                                         .description("My Graph deployed by the Controller")
                                         .library(null)
                                         .build()))
-                .build());
+                        .build());
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
-                    "\"kind\":\"Gaffer\"," +
-                    "\"metadata\":{\"name\":\"my-gaffer\"}," +
-                    "\"spec\":{\"" +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"my-gaffer\"}," +
+                        "\"spec\":{\"" +
                         "graph\":{\"" +
-                            "config\":{\"" +
-                                "graphId\":\"MyGraph\",\"library\":{},\"description\":\"My Graph deployed by the Controller\",\"hooks\":[]" +
-                            "}" +
+                        "config\":{\"" +
+                        "graphId\":\"MyGraph\",\"library\":{},\"description\":\"My Graph deployed by the Controller\",\"hooks\":[]" +
+                        "}" +
                         "},\"" +
                         "accumulo\":{\"" +
-                            "enabled\":true" +
+                        "enabled\":true" +
                         "}" +
-                    "}" +
-                "}";
+                        "}" +
+                        "}";
 
         assertEquals(expected, gson.toJson(requestBody));
     }
@@ -118,23 +118,23 @@ public class CreateCRDRequestBodyTest {
                                         .library(null)
                                         .build())
                                 .storeProperties(StoreType.MAPSTORE))
-                .build());
+                        .build());
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
-                    "\"kind\":\"Gaffer\"," +
-                    "\"metadata\":{\"name\":\"my-gaffer\"}," +
-                    "\"spec\":{\"" +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"my-gaffer\"}," +
+                        "\"spec\":{\"" +
                         "graph\":{\"" +
-                            "config\":{\"" +
-                                "graphId\":\"MyGraph\",\"" +
-                                "library\":{},\"" +
-                                "description\":\"My Graph deployed by the Controller\",\"" +
-                                "hooks\":[]" +
-                            "}" +
+                        "config\":{\"" +
+                        "graphId\":\"MyGraph\",\"" +
+                        "library\":{},\"" +
+                        "description\":\"My Graph deployed by the Controller\",\"" +
+                        "hooks\":[]" +
                         "}" +
-                    "}" +
-                "}";
+                        "}" +
+                        "}" +
+                        "}";
 
         assertEquals(expected, gson.toJson(requestBody));
     }
@@ -142,7 +142,7 @@ public class CreateCRDRequestBodyTest {
     @Test
     public void federatedStoreRequestWithAccumuloEnabled_shouldThrowIllegalArgumentException() {
         final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
-        try{
+        try {
             final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
                     .apiVersion("gchq.gov.uk/v1")
                     .kind("Gaffer")
@@ -157,7 +157,7 @@ public class CreateCRDRequestBodyTest {
                                             .build())
                                     .storeProperties(StoreType.FEDERATED_STORE))
                             .build());
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             assertEquals("Cannot specify an accumulo graph with store properties", e.getMessage());
         }
 
@@ -165,9 +165,9 @@ public class CreateCRDRequestBodyTest {
 
 
     @Test()
-    public void mapStoreRequestWithAccumuloEnabled_shouldThrowIllegalArgumentException(){
+    public void mapStoreRequestWithAccumuloEnabled_shouldThrowIllegalArgumentException() {
         final V1ObjectMeta metadata = new V1ObjectMeta().name("my-gaffer");
-        try{
+        try {
             final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
                     .apiVersion("gchq.gov.uk/v1")
                     .kind("Gaffer")
@@ -182,8 +182,8 @@ public class CreateCRDRequestBodyTest {
                                             .build())
                                     .storeProperties(StoreType.MAPSTORE))
                             .build());
-        }catch (IllegalArgumentException e){
-            assertEquals("Cannot specify an accumulo graph with store properties",e.getMessage());
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot specify an accumulo graph with store properties", e.getMessage());
         }
 
     }
