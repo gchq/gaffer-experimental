@@ -47,20 +47,6 @@ public class NewGraph {
         }
     }
 
-        switch (storeType) {
-            case ACCUMULO:
-                // No AccumuloStoreProperties required for the graph
-                // Instead, enableAccumulo() in the GraphSpec to enable Accumulo properties
-            case FEDERATED_STORE:
-                this.storeProperties = getFederatedStoreProperties();
-                return this;
-            case MAPSTORE:
-                return this;
-            default:
-                throw new IllegalArgumentException("Unsupported store type");
-        }
-
-    }
 
     public GraphConfig getConfig() {
         return config;
