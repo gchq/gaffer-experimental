@@ -24,20 +24,22 @@ import javax.validation.constraints.Pattern;
  * <b>GaaS: Create Gaffer Request Body</b>
  */
 public class GaaSCreateRequestBody {
-
     @NotNull(message = "Graph id should not be null")
     @NotBlank(message = "Graph id should not be null")
     @Pattern(regexp = "^[a-z0-9_-]*$", message = "Graph can contain only digits, lowercase letters or the special characters _ and -")
     private String graphId;
     @NotBlank(message = "Description should not be empty")
     private String description;
+    @NotNull(message = "\"storeType\" must be defined. Valid Store Types supported are MAPSTORE and ACCUMULO")
+    private StoreType storeType;
 
     public GaaSCreateRequestBody() {
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description) {
+    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType) {
         this.graphId = graphId;
         this.description = description;
+        this.storeType = storeType;
     }
 
     public String getGraphId() {
@@ -46,5 +48,9 @@ public class GaaSCreateRequestBody {
 
     public String getDescription() {
         return description;
+    }
+
+    public StoreType getStoreType() {
+        return storeType;
     }
 }

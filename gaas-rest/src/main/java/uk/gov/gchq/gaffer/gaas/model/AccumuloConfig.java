@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.model;
 
 public class AccumuloConfig {
-
     private boolean enabled;
 
     protected boolean isEnabled() {

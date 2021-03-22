@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NewGraph {
-
     private GraphConfig config;
     private Map<String, String> storeProperties;
 
@@ -34,7 +33,6 @@ public class NewGraph {
     }
 
     public NewGraph storeProperties(final StoreType storeType) {
-
         switch (storeType) {
             case ACCUMULO:
                 // No AccumuloStoreProperties required for the graph
@@ -47,7 +45,6 @@ public class NewGraph {
             default:
                 throw new IllegalArgumentException("Unsupported store type");
         }
-
     }
 
     public GraphConfig getConfig() {
@@ -64,7 +61,6 @@ public class NewGraph {
     public Boolean checkIfStorePropertyNull() {
         return storeProperties == null;
     }
-
 
     private Map<String, String> getFederatedStoreProperties() {
         final Map<String, String> federatedStoreProperties = new HashMap<>();

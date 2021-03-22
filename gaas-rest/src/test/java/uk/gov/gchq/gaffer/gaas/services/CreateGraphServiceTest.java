@@ -28,28 +28,25 @@ import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @UnitTest
 public class CreateGraphServiceTest {
-
     @Autowired
     private CreateGraphService createGraphService;
-
     @MockBean
     private CRDClient crdClient;
 
     @Test
     public void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.ACCUMULO));
-
         final ArgumentCaptor<CreateCRDRequestBody> argumentCaptor = ArgumentCaptor.forClass(CreateCRDRequestBody.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
-
         final CreateCRDRequestBody gafferRequestBody = argumentCaptor.<CreateCRDRequestBody>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
-
         final GraphSpec spec = gafferRequestBody.getSpec();
         assertEquals("myGraph", spec.getGraph().getConfig().getGraphId());
         assertEquals("Another description", spec.getGraph().getConfig().getDescription());
@@ -59,13 +56,10 @@ public class CreateGraphServiceTest {
     @Test
     public void createMapGraph_shouldCallCrdClientWithMapStoreRequest_andAccumuloConfigShouldBeNull() throws GaaSRestApiException {
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.MAPSTORE));
-
         final ArgumentCaptor<CreateCRDRequestBody> argumentCaptor = ArgumentCaptor.forClass(CreateCRDRequestBody.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
-
         final CreateCRDRequestBody gafferRequestBody = argumentCaptor.<CreateCRDRequestBody>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
-
         final GraphSpec spec = gafferRequestBody.getSpec();
         assertEquals("myGraph", spec.getGraph().getConfig().getGraphId());
         assertEquals("Another description", spec.getGraph().getConfig().getDescription());

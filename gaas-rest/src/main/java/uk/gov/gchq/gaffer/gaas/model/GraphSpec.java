@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.model;
 
 public class GraphSpec {
-
     private final NewGraph graph;
 
     public AccumuloConfig getAccumulo() {
@@ -25,7 +24,6 @@ public class GraphSpec {
     }
 
     private final AccumuloConfig accumulo;
-
 
     private GraphSpec(Builder builder) {
         this.graph = builder.graph;
@@ -77,5 +75,4 @@ public class GraphSpec {
             }
         }
     }
-
 }
