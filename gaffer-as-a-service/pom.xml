@@ -25,7 +25,6 @@
     </parent>
 
     <artifactId>gaffer-as-a-service</artifactId>
-    <version>1.13.0</version>
     <packaging>pom</packaging>
 
     <modules>
