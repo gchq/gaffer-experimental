@@ -34,6 +34,11 @@ describe('SimpleAddGraph UI component', () => {
             selectStoreType('MAPSTORE');
             expect(selectText.text()).toBe('Map Store');
         })
+        it('Should allow federated store to be selected', ()=> {
+            selectStoreType('FEDERATED_STORE');
+            const selectText = wrapper.find('div#storetype-select-grid').find('div#storetype-select');
+            expect(selectText.text()).toBe('Federated Store');
+        })
     });
     describe('Add Graph Button', () => {
         it('should be disabled when Graph Name and Graph Description fields are empty', () => {

@@ -12,5 +12,5 @@ export interface ICreateGraphRequestBody {
 export interface ICreateSimpleGraphRequestBody {
     graphId: string;
     description: string;
-    storeType: 'ACCUMULO'|'MAPSTORE';
+    storeType: 'ACCUMULO'|'MAPSTORE' | 'FEDERATED_STORE';
 }

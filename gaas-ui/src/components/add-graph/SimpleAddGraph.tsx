@@ -164,6 +164,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                             >
                                                 <MenuItem value={StoreType.MAPSTORE}>Map Store</MenuItem>
                                                 <MenuItem value={StoreType.ACCUMULO}>Accumulo</MenuItem>
+                                                <MenuItem value={StoreType.FEDERATED_STORE}>Federated Store</MenuItem>
                                             </Select>
                                             <FormHelperText>Set to Map Store by default</FormHelperText>
                                         </FormControl>
