@@ -40,7 +40,7 @@ public class CreateCRDRequestBody implements KubernetesObject {
     private V1ObjectMeta metadata;
 
     @SerializedName(SERIALISED_NAME_SPEC)
-    private GraphSpec spec;
+    private GafferHelmChartValues spec;
 
     public CreateCRDRequestBody apiVersion(final String apiVersion) {
         this.apiVersion = apiVersion;
@@ -57,7 +57,7 @@ public class CreateCRDRequestBody implements KubernetesObject {
         return this;
     }
 
-    public CreateCRDRequestBody spec(final GraphSpec spec) {
+    public CreateCRDRequestBody spec(final GafferHelmChartValues spec) {
         this.spec = spec;
         return this;
     }
@@ -77,7 +77,7 @@ public class CreateCRDRequestBody implements KubernetesObject {
         return kind;
     }
 
-    public GraphSpec getSpec() {
+    public GafferHelmChartValues getSpec() {
         return spec;
     }
 }

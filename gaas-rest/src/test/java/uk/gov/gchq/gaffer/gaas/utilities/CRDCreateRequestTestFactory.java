@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.gaas.utilities;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import uk.gov.gchq.gaffer.gaas.model.CreateCRDRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
+import uk.gov.gchq.gaffer.gaas.model.GafferHelmChartValues;
 import uk.gov.gchq.gaffer.gaas.model.NewGraph;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 
@@ -31,7 +31,7 @@ public final class CRDCreateRequestTestFactory {
                 .apiVersion("gchq.gov.uk/v1")
                 .kind("Gaffer")
                 .metaData(metadata)
-                .spec(new GraphSpec.Builder()
+                .spec(new GafferHelmChartValues.Builder()
                         .enableAccumulo()
                         .graph(new NewGraph()
                                 .config(new GraphConfig.Builder()

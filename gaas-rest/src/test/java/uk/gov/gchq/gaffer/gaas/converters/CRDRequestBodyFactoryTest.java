@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.model;
+package uk.gov.gchq.gaffer.gaas.converters;
 
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
+import uk.gov.gchq.gaffer.gaas.model.CreateCRDRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,8 +30,8 @@ public class CRDRequestBodyFactoryTest {
 
     @Test
     public void federatedStoreRequestShouldReturnFederatedRequestBody() {
-        CRDRequestBodyFactory crdRequestBodyFactory = new CRDRequestBodyFactory();
-        final CreateCRDRequestBody requestBody = crdRequestBodyFactory.buildRequest(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.FEDERATED_STORE));
+        final CreateCRDRequestBody requestBody = CRDRequestBodyFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.FEDERATED_STORE));
+
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
                         "\"kind\":\"Gaffer\"," +
@@ -54,8 +57,8 @@ public class CRDRequestBodyFactoryTest {
 
     @Test
     public void accumuloStoreRequestShouldReturnAccumuloRequestBody() {
-        CRDRequestBodyFactory crdRequestBodyFactory = new CRDRequestBodyFactory();
-        final CreateCRDRequestBody requestBody = crdRequestBodyFactory.buildRequest(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.ACCUMULO));
+        final CreateCRDRequestBody requestBody = CRDRequestBodyFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.ACCUMULO));
+
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
                         "\"kind\":\"Gaffer\"," +
@@ -76,19 +79,23 @@ public class CRDRequestBodyFactoryTest {
 
     @Test
     public void mapStoreStoreRequestShouldReturnMapStoreRequestBody() {
-        CRDRequestBodyFactory crdRequestBodyFactory = new CRDRequestBodyFactory();
-        final CreateCRDRequestBody requestBody = crdRequestBodyFactory.buildRequest(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.MAPSTORE));
+        final CreateCRDRequestBody requestBody = CRDRequestBodyFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.MAPSTORE));
+
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
                         "\"kind\":\"Gaffer\"," +
                         "\"metadata\":{\"name\":\"MyGraph\"}," +
-                        "\"spec\":{\"" +
-                        "graph\":{\"" +
-                        "config\":{\"" +
-                        "graphId\":\"MyGraph\",\"" +
-                        "library\":{},\"" +
-                        "description\":\"Another description\",\"" +
-                        "hooks\":[]" +
+                        "\"spec\":{" +
+                        "\"graph\":{" +
+                        "\"config\":{" +
+                        "\"graphId\":\"MyGraph\"," +
+                        "\"library\":{}," +
+                        "\"description\":\"Another description\"," +
+                        "\"hooks\":[]" +
+                        "}," +
+                        "\"storeProperties\":{" +
+                        "\"gaffer.store.job.tracker.enabled\":true," +
+                        "\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"" +
                         "}" +
                         "}" +
                         "}" +

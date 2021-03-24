@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.model;
 
+import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
+import uk.gov.gchq.gaffer.cache.util.CacheProperties;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
@@ -24,8 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NewGraph {
+
     private GraphConfig config;
-    private Map<String, String> storeProperties;
+    private Map<String, Object> storeProperties;
 
     public NewGraph config(final GraphConfig config) {
         this.config = config;
@@ -36,38 +40,39 @@ public class NewGraph {
         switch (storeType) {
             case ACCUMULO:
                 // No AccumuloStoreProperties required for the graph
-                // Instead, enableAccumulo() in the GraphSpec to enable Accumulo properties
+                // Instead, enableAccumulo() in the GraphSpec to enable Accumulo store properties
+                throw new IllegalArgumentException("enableAccumulo() in the GraphSpec to enable Accumulo store properties");
             case FEDERATED_STORE:
-                this.storeProperties = getFederatedStoreProperties();
+                this.storeProperties = getDefaultFederatedStoreProperties();
                 return this;
             case MAPSTORE:
+                this.storeProperties = getDefaultMapStoreProperties();
                 return this;
             default:
                 throw new IllegalArgumentException("Unsupported store type");
         }
     }
 
-
     public GraphConfig getConfig() {
         return config;
     }
 
-    public String getStorePropertyClassName() {
-        if (storeProperties != null) {
-            return storeProperties.get(StoreProperties.STORE_CLASS);
-        }
-        throw new IllegalArgumentException("NewGraph has not set any Store Properties");
+    public Map<String, Object> getStoreProperties() {
+        return storeProperties;
     }
 
-    public Boolean checkIfStorePropertyNull() {
-        return storeProperties == null;
-    }
-
-    private Map<String, String> getFederatedStoreProperties() {
-        final Map<String, String> federatedStoreProperties = new HashMap<>();
+    private Map<String, Object> getDefaultFederatedStoreProperties() {
+        final Map<String, Object> federatedStoreProperties = new HashMap<>();
         federatedStoreProperties.put(StoreProperties.STORE_CLASS, FederatedStore.class.getName());
         federatedStoreProperties.put(StoreProperties.STORE_PROPERTIES_CLASS, FederatedStoreProperties.class.getName());
         federatedStoreProperties.put(StoreProperties.JSON_SERIALISER_MODULES, SketchesJsonModules.class.getName());
         return federatedStoreProperties;
+    }
+
+    private Map<String, Object> getDefaultMapStoreProperties() {
+        final Map<String, Object> mapStoreProperties = new HashMap<>();
+        mapStoreProperties.put(CacheProperties.CACHE_SERVICE_CLASS, HashMapCacheService.class.getName());
+        mapStoreProperties.put(StoreProperties.JOB_TRACKER_ENABLED, true);
+        return mapStoreProperties;
     }
 }

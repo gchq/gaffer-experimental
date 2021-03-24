@@ -24,7 +24,7 @@ import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CreateCRDRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
+import uk.gov.gchq.gaffer.gaas.model.GafferHelmChartValues;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +47,7 @@ public class CreateGraphServiceTest {
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
         final CreateCRDRequestBody gafferRequestBody = argumentCaptor.<CreateCRDRequestBody>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
-        final GraphSpec spec = gafferRequestBody.getSpec();
+        final GafferHelmChartValues spec = gafferRequestBody.getSpec();
         assertEquals("myGraph", spec.getGraph().getConfig().getGraphId());
         assertEquals("Another description", spec.getGraph().getConfig().getDescription());
         assertTrue(spec.accumuloIsEnabled());
@@ -60,7 +60,7 @@ public class CreateGraphServiceTest {
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
         final CreateCRDRequestBody gafferRequestBody = argumentCaptor.<CreateCRDRequestBody>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
-        final GraphSpec spec = gafferRequestBody.getSpec();
+        final GafferHelmChartValues spec = gafferRequestBody.getSpec();
         assertEquals("myGraph", spec.getGraph().getConfig().getGraphId());
         assertEquals("Another description", spec.getGraph().getConfig().getDescription());
         //assertEquals("", spec.getGraph().getStorePropertyClassName());

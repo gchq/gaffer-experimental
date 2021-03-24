@@ -23,13 +23,10 @@ import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
-import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -120,35 +117,5 @@ public class AuthServiceTest {
 
         assertEquals("AccountExpiredException", exception.getTitle());
         assertEquals("This account has expired", exception.getMessage());
-    }
-
-    private static class ValidAuthentication implements Authentication {
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return null;
-        }
-        @Override
-        public Object getCredentials() {
-            return null;
-        }
-        @Override
-        public Object getDetails() {
-            return null;
-        }
-        @Override
-        public Object getPrincipal() {
-            return null;
-        }
-        @Override
-        public boolean isAuthenticated() {
-            return false;
-        }
-        @Override
-        public void setAuthenticated(final boolean isAuthenticated) throws IllegalArgumentException {
-        }
-        @Override
-        public String getName() {
-            return null;
-        }
     }
 }

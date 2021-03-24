@@ -16,16 +16,21 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
-public final class GraphSpec {
+/**
+ * GafferHelmValues is the helm Values object that is passed in to Gaffer's helm chart that deploys Gaffer to Kubernetes.
+ * <p>
+ * See <a href="https://github.com/gchq/gaffer-docker/blob/develop/kubernetes/gaffer/values.yaml">values.yaml</a> for
+ * the default helm chart values and documentation how Gaffer is deployed to Kubernetes via helm.
+ *
+ * @see <a href="https://github.com/gchq/gaffer-docker/blob/develop/kubernetes/gaffer/values-federated.yaml">Federated Store overrides</a>
+ * for more Gaffer store configuration overrides:
+ */
+public final class GafferHelmChartValues {
+
     private final NewGraph graph;
-
-    public AccumuloConfig getAccumulo() {
-        return accumulo;
-    }
-
     private final AccumuloConfig accumulo;
 
-    private GraphSpec(final Builder builder) {
+    private GafferHelmChartValues(final Builder builder) {
         this.graph = builder.graph;
         this.accumulo = builder.accumulo;
     }
@@ -34,12 +39,12 @@ public final class GraphSpec {
         return graph;
     }
 
-    public boolean accumuloIsEnabled() {
-        return accumulo != null && accumulo.isEnabled();
-    }
-
     public AccumuloConfig getAccumuloStoreConfig() {
         return accumulo;
+    }
+
+    public boolean accumuloIsEnabled() {
+        return accumulo != null && accumulo.isEnabled();
     }
 
     public static class Builder {
@@ -59,21 +64,16 @@ public final class GraphSpec {
             return this;
         }
 
-        public GraphSpec build() {
-            GraphSpec graphSpec = new GraphSpec(this);
-            validateUserObject(graphSpec);
-            return graphSpec;
+        public GafferHelmChartValues build() {
+            final GafferHelmChartValues helmValues = new GafferHelmChartValues(this);
+            validateUserObject(helmValues);
+            return helmValues;
         }
 
-        private void validateUserObject(final GraphSpec graphSpec) {
-            //Do some basic validations to check
-            //if user object does not break any assumption of system
-            if (graphSpec.accumuloIsEnabled()) {
-                if (!graphSpec.graph.checkIfStorePropertyNull()) {
-                    throw new IllegalArgumentException("Cannot specify an accumulo graph with store properties");
-                }
+        private void validateUserObject(final GafferHelmChartValues helmValues) {
+            if (helmValues.accumuloIsEnabled() && helmValues.getGraph().getStoreProperties() != null) {
+                throw new IllegalArgumentException("Cannot specify an accumulo graph with store properties");
             }
         }
     }
-
 }
