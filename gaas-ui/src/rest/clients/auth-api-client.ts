@@ -1,4 +1,3 @@
-import axios, { AxiosResponse } from 'axios';
 import { IAuthClient } from './authclient';
 import { IApiResponse, RestClient } from './rest-client';
 

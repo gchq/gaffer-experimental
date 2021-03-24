@@ -6,9 +6,6 @@ import { exampleElementsSchema } from './example-elements-schema';
 import { exampleTypesSchema } from './example-types-schema';
 
 export default class UserGuide extends React.Component<{}, {}> {
-    constructor(props: object) {
-        super(props);
-    }
 
     private classes: any = makeStyles((theme) => ({
         root: {

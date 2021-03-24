@@ -6,13 +6,9 @@ import {
     Grid,
     InputLabel,
     makeStyles, MenuItem, Select,
-    Slide,
-    TextField,
-    Tooltip, Typography,
-    Zoom
+    TextField, Typography
 } from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
-import { TransitionProps } from '@material-ui/core/transitions';
 import Toolbar from '@material-ui/core/Toolbar';
 import { AlertType, NotificationAlert } from '../alerts/notification-alert';
 import { Notifications } from '../../domain/notifications';
@@ -28,13 +24,6 @@ interface IState {
     outcomeMessage: string;
     errors: Notifications;
 }
-
-const Transition = React.forwardRef(function Transition(
-    props: TransitionProps & { children?: React.ReactElement<any, any> },
-    ref: React.Ref<unknown>
-) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
 
 export default class SimpleAddGraph extends React.Component<{}, IState> {
     constructor(props: object) {

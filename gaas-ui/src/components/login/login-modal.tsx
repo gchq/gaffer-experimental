@@ -37,7 +37,7 @@ export enum FormType {
     TEMP_PASSWORD_LOGIN,
 }
 
-enum UserStatus {
+export enum UserStatus {
     SIGNED_IN,
     SIGNED_OUT,
 }

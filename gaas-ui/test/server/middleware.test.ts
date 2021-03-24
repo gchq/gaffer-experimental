@@ -104,7 +104,7 @@ describe('Graph API', () => {
             .delete('/graphs/roadTraffic')
             .set('Authorization', token)
             .then((response) => {
-                expect(response.statusCode).toBe(202);
+                expect(response.statusCode).toBe(204);
             });
     });
 });

@@ -1,5 +1,5 @@
 import { StoreType } from '../../domain/store-type';
-import { IApiResponse, RestClient } from '../clients/rest-client';
+import { RestClient } from '../clients/rest-client';
 import { ICreateSimpleGraphRequestBody } from '../http-message-interfaces/request-interfaces';
 
 export class CreateSimpleGraphRepo {
@@ -10,7 +10,7 @@ export class CreateSimpleGraphRepo {
             storeType: storeType,
         };
 
-        const response: IApiResponse<undefined> = await new RestClient()
+        await new RestClient()
             .post()
             .graphs()
             .requestBody(httpRequestBody)

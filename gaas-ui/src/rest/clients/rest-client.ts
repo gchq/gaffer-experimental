@@ -4,6 +4,11 @@ import { GaaSRestApiErrorResponse } from '../http-message-interfaces/error-respo
 import { RestApiError } from '../RestApiError';
 import { Config } from './../config';
 
+export interface IApiResponse<T = any> {
+    status: number;
+    data: T;
+}
+
 export class RestClient<T> {
     private static jwtToken: string;
 
@@ -92,9 +97,4 @@ export class RestClient<T> {
             data: response.data,
         };
     }
-}
-
-export interface IApiResponse<T = any> {
-    status: number;
-    data: T;
 }

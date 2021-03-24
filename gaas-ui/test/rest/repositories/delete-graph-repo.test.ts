@@ -8,7 +8,7 @@ const repo = new DeleteGraphRepo();
 
 describe('Delete Graph Repo', () => {
     describe('On Success', () => {
-        it('should resolve as successfully deleted when response status is 202', async () => {
+        it('should resolve as successfully deleted when response status is 204', async () => {
             mock.onDelete('/graphs/graph-1').reply(204);
 
             await expect(repo.delete('graph-1')).resolves.toEqual(undefined);
@@ -16,14 +16,6 @@ describe('Delete Graph Repo', () => {
     });
 
     describe('On Error', () => {
-        it('should throw Error when status code is not 204', async () => {
-            mock.onDelete('/graphs/graph-1').reply(200);
-
-            await expect(repo.delete('graph-1')).rejects.toEqual(
-                new Error('Expected status code 204 for Accepted Delete Graph Process but got (200)')
-            );
-        });
-
         it('should throw RestApiError with correct 403 Error Code and Message when response body is empty', async () => {
             mock.onDelete('/graphs/graph-2').reply(403);
 
