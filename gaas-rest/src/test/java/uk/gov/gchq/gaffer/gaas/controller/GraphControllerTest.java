@@ -320,7 +320,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(gaaSCreateRequestBody)).andReturn();
         assertEquals(400, mvcResult.getResponse().getStatus());
         final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. " +
-                "Valid Store Types supported are MAPSTORE and ACCUMULO\"}";
+                "Valid Store Types supported are MAPSTORE, ACCUMULO and FEDERATED_STORE\"}";
         assertEquals(expected, mvcResult.getResponse().getContentAsString());
     }
 
