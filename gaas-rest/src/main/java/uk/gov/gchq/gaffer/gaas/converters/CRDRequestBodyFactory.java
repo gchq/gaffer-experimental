@@ -66,6 +66,16 @@ public final class CRDRequestBodyFactory {
                                         .build())
                                 .storeProperties(storeType))
                         .build();
+            case PROXY_STORE:
+                return new GafferHelmChartValues.Builder()
+                        .graph(new NewGraph()
+                                .config(new GraphConfig.Builder()
+                                        .graphId(graph.getGraphId())
+                                        .description(graph.getDescription())
+                                        .library(null)
+                                        .build())
+                                .storeProperties(storeType, graph.getProxyHost(), graph.getProxyContextRoot()))
+                        .build();
             default:
                 throw new IllegalArgumentException("Unsupported store type");
         }

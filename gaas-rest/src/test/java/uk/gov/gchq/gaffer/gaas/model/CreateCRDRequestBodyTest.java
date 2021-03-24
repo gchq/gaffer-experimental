@@ -31,6 +31,101 @@ public class CreateCRDRequestBodyTest {
     private final V1ObjectMeta v1ObjectMeta = new V1ObjectMeta().name("my-gaffer");
 
     @Test
+    public void proxyStoreRequest_shouldCreateProxyStoreRequest_whenNoContextRoot() {
+        final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
+                .apiVersion("gchq.gov.uk/v1")
+                .kind("Gaffer")
+                .metaData(v1ObjectMeta)
+                .spec(new GafferHelmChartValues.Builder()
+                        .graph(new NewGraph()
+                                .config(new GraphConfig.Builder()
+                                        .graphId("MyGraph")
+                                        .description("My proxy store graph")
+                                        .library(null)
+                                        .build())
+                                .storeProperties(StoreType.PROXY_STORE, "http://host.only.co.uk", null))
+                        .build());
+
+        final String expected = "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
+                "\"kind\":\"Gaffer\"," +
+                "\"metadata\":{\"name\":\"my-gaffer\"}," +
+                "\"spec\":{" +
+                "\"graph\":{" +
+                "\"config\":{" +
+                "\"graphId\":\"MyGraph\"," +
+                "\"library\":{}," +
+                "\"description\":\"My proxy store graph\"," +
+                "\"hooks\":[]" +
+                "}," +
+                "\"storeProperties\":{\"" +
+                "gaffer.host\":\"http://host.only.co.uk\",\"" +
+                "gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"" +
+                "}" +
+                "}" +
+                "}" +
+                "}";
+        assertEquals(expected, gson.toJson(requestBody));
+    }
+
+    @Test
+    public void proxyStoreRequest_shouldThrowIAX_whenProxyStoreTypeAndNullHost() {
+        final Exception exception = assertThrows(IllegalArgumentException.class, () -> new CreateCRDRequestBody()
+                .apiVersion("gchq.gov.uk/v1")
+                .kind("Gaffer")
+                .metaData(v1ObjectMeta)
+                .spec(new GafferHelmChartValues.Builder()
+                        .graph(new NewGraph()
+                                .config(new GraphConfig.Builder()
+                                        .graphId("MyGraph")
+                                        .description("My proxy store graph")
+                                        .library(null)
+                                        .build())
+                                .storeProperties(StoreType.PROXY_STORE))
+                        .build()));
+
+        assertEquals("Host is required to create a proxy store to proxy", exception.getMessage());
+    }
+
+    @Test
+    public void proxyStoreRequest_shouldSerialiseToHaveProxyStorePropertiesAndHostAndRoot_andNoAccumuloConfig() {
+        final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
+                .apiVersion("gchq.gov.uk/v1")
+                .kind("Gaffer")
+                .metaData(v1ObjectMeta)
+                .spec(new GafferHelmChartValues.Builder()
+                        .graph(new NewGraph()
+                                .config(new GraphConfig.Builder()
+                                        .graphId("MyGraph")
+                                        .description("My proxy store graph")
+                                        .library(null)
+                                        .build())
+                                .storeProperties(StoreType.PROXY_STORE, "http://graph.request.co.uk", "/v1/rest"))
+                        .build());
+
+        final String expected =
+                "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"my-gaffer\"}," +
+                        "\"spec\":{" +
+                        "\"graph\":{" +
+                        "\"config\":{" +
+                        "\"graphId\":\"MyGraph\"," +
+                        "\"library\":{}," +
+                        "\"description\":\"My proxy store graph\"," +
+                        "\"hooks\":[]" +
+                        "}," +
+                        "\"storeProperties\":{\"" +
+                        "gaffer.host\":\"http://graph.request.co.uk\",\"" +
+                        "gaffer.context-root\":\"/v1/rest\",\"" +
+                        "gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"" +
+                        "}" +
+                        "}" +
+                        "}" +
+                        "}";
+        assertEquals(expected, gson.toJson(requestBody));
+    }
+
+    @Test
     public void federatedStoreRequest_shouldSerialiseToHaveFederatedStoreProperties_andNoAccumuloConfig() {
         final CreateCRDRequestBody requestBody = new CreateCRDRequestBody()
                 .apiVersion("gchq.gov.uk/v1")
