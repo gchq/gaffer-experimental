@@ -18,11 +18,11 @@ package uk.gov.gchq.gaffer.gaas.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CreateCRDRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import static uk.gov.gchq.gaffer.gaas.converters.CRDRequestBodyFactory.from;
+import static uk.gov.gchq.gaffer.gaas.converters.GafferRequestBodyFactory.from;
 
 @Service
 public class CreateGraphService {
@@ -34,7 +34,7 @@ public class CreateGraphService {
         crdClient.createCRD(makeKubernetesRequest(gaaSCreateRequestBodyInput));
     }
 
-    private CreateCRDRequestBody makeKubernetesRequest(final GaaSCreateRequestBody graph) {
+    private Gaffer makeKubernetesRequest(final GaaSCreateRequestBody graph) {
         return from(graph);
     }
 }

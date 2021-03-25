@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CreateCRDRequestBody;
@@ -43,28 +45,27 @@ public class CreateGraphServiceTest {
     @Test
     public void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.ACCUMULO));
-        final ArgumentCaptor<CreateCRDRequestBody> argumentCaptor = ArgumentCaptor.forClass(CreateCRDRequestBody.class);
+        final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
-        final CreateCRDRequestBody gafferRequestBody = argumentCaptor.<CreateCRDRequestBody>getValue();
+        final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
-        final GafferHelmChartValues spec = gafferRequestBody.getSpec();
-        assertEquals("myGraph", spec.getGraph().getConfig().getGraphId());
-        assertEquals("Another description", spec.getGraph().getConfig().getDescription());
-        assertTrue(spec.accumuloIsEnabled());
+        final GafferSpec spec = gafferRequestBody.getSpec();
+        assertEquals("myGraph", spec.getNestedObject("graph","config","graphId"));
+        assertEquals("Another description", spec.getNestedObject("graph","config","description"));
+        assertEquals(true,spec.getNestedObject("accumulo","enabled"));
     }
 
     @Test
     public void createMapGraph_shouldCallCrdClientWithMapStoreRequest_andAccumuloConfigShouldBeNull() throws GaaSRestApiException {
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.MAPSTORE));
-        final ArgumentCaptor<CreateCRDRequestBody> argumentCaptor = ArgumentCaptor.forClass(CreateCRDRequestBody.class);
+        final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
-        final CreateCRDRequestBody gafferRequestBody = argumentCaptor.<CreateCRDRequestBody>getValue();
+        final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
-        final GafferHelmChartValues spec = gafferRequestBody.getSpec();
-        assertEquals("myGraph", spec.getGraph().getConfig().getGraphId());
-        assertEquals("Another description", spec.getGraph().getConfig().getDescription());
+        final GafferSpec spec = gafferRequestBody.getSpec();
+        assertEquals("myGraph", spec.getNestedObject("graph","config","graphId"));
+        assertEquals("Another description", spec.getNestedObject("graph","config","description"));
         //assertEquals("", spec.getGraph().getStorePropertyClassName());
-        assertEquals(null, spec.getAccumuloStoreConfig());
-        assertFalse(spec.accumuloIsEnabled());
+        assertEquals(null,spec.getNestedObject("accumulo","enabled"));
     }
 }

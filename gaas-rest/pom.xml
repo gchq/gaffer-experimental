@@ -120,7 +120,11 @@
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>sketches-library</artifactId>
             <version>1.13.0</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>uk.gov.gchq.gaffer</groupId>
+            <artifactId>gaffer-controller</artifactId>
+            <version>1.13.0</version>
         </dependency>
     </dependencies>
     <profiles>

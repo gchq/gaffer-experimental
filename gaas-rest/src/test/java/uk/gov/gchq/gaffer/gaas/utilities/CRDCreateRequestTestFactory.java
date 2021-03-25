@@ -16,30 +16,40 @@
 package uk.gov.gchq.gaffer.gaas.utilities;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.CreateCRDRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.GafferHelmChartValues;
-import uk.gov.gchq.gaffer.gaas.model.NewGraph;
-import uk.gov.gchq.gaffer.graph.GraphConfig;
 
 public final class CRDCreateRequestTestFactory {
 
-    public static CreateCRDRequestBody makeCreateCRDRequestBody(final GaaSCreateRequestBody graph) {
+    public static Gaffer makeCreateCRDRequestBody(final GaaSCreateRequestBody graph) {
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
-
-        return new CreateCRDRequestBody()
-                .apiVersion("gchq.gov.uk/v1")
+        final GafferSpec gafferSpec = new GafferSpec();
+        gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");
+        gafferSpec.putNestedObject("{}", "graph", "config", "library");
+        gafferSpec.putNestedObject(graph.getDescription(), "graph", "config", "description");
+        gafferSpec.putNestedObject("[]", "graph", "config", "hooks");
+        gafferSpec.putNestedObject(true, "accumulo", "enabled");
+        return new Gaffer()
+                .apiVersion("gchq.gov.uk" + "/" + "v1")
                 .kind("Gaffer")
                 .metaData(metadata)
-                .spec(new GafferHelmChartValues.Builder()
-                        .enableAccumulo()
-                        .graph(new NewGraph()
-                                .config(new GraphConfig.Builder()
-                                        .graphId(graph.getGraphId())
-                                        .description(graph.getDescription())
-                                        .library(null)
-                                        .build()))
-                .build());
+                .spec(gafferSpec);
+
+//        return new CreateCRDRequestBody()
+//                .apiVersion("gchq.gov.uk/v1")
+//                .kind("Gaffer")
+//                .metaData(metadata)
+//                .spec(new GafferHelmChartValues.Builder()
+//                        .enableAccumulo()
+//                        .graph(new NewGraph()
+//                                .config(new GraphConfig.Builder()
+//                                        .graphId(graph.getGraphId())
+//                                        .description(graph.getDescription())
+//                                        .library(null)
+//                                        .build()))
+//                .build());
     }
 
     private CRDCreateRequestTestFactory() {

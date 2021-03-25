@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CreateCRDRequestBody;
@@ -57,7 +58,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {
-        final CreateCRDRequestBody gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED));
+        final Gaffer gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED));
         assertDoesNotThrow(() -> crdClient.createCRD(gafferRequest));
     }
 
@@ -72,7 +73,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenGraphIdHasUppercase_throws422GaasException() {
-        final CreateCRDRequestBody gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody("UPPERCASEgraph", "A description", ACCUMULO_ENABLED));
+        final Gaffer gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody("UPPERCASEgraph", "A description", ACCUMULO_ENABLED));
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
         assertEquals(422, exception.getStatusCode());
         assertEquals("Unprocessable Entity", exception.getTitle());
@@ -82,7 +83,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenGraphIdHasSpecialChars_throws422GaasException() {
-        final CreateCRDRequestBody gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody("sp£ci@l_char$", "A description", ACCUMULO_ENABLED));
+        final Gaffer gafferRequest = makeCreateCRDRequestBody(new GaaSCreateRequestBody("sp£ci@l_char$", "A description", ACCUMULO_ENABLED));
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
         assertEquals(422, exception.getStatusCode());
         assertEquals("Unprocessable Entity", exception.getTitle());
