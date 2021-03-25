@@ -45,7 +45,7 @@ export class RestClient<T> {
         return this;
     }
 
-    public authentication(pathVariable?: string): RestClient<T> {
+public authentication(pathVariable?: string): RestClient<T> {
         const _pathVariable = pathVariable ? `/${pathVariable}` : '';
         this.url = `/auth${_pathVariable}`;
         return this;

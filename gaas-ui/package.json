@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "npm run client",
+    "start": "concurrently --names \"KAI_UI,MOCK_API\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run client\" \"npm run server\"",
     "build-with-env": "env-cmd ./buildWithEnv.sh",
     "client": "react-scripts start",
     "server": "node server/middleware.js",

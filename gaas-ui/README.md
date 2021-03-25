@@ -2,6 +2,61 @@
 
 # Kai: Graph as a service
 
+## Available Scripts in UI Directory
+
+In the project directory, you can run:
+
+#### `npm start`
+
+Runs the app in the development mode. Open [http://localhost:3000](http://localhost:3000) to view the UI in the browser. In development mode the UI will proxy all requests implemented in [setupProxy.js](./src/setupProxy.js) for the UI's various endpoints - by default localhost:4000 is the default target port where the mock GaaS API is hosted. The page will reload if you make edits and you will also see any lint errors in the console.
+
+The script uses [Concurrently](https://www.npmjs.com/package/concurrently) to run a mock GaaS REST API on port 4000 for the UI to send requests to. 
+
+You can stub the Mock GaaS REST API HTTP Responses for each endpoint in [middleware.js](./server/middleware.js). It runs on an Express server so here are the support [Response docs](http://expressjs.com/en/5x/api.html#res) to help with that.
+ 
+#### `npm client`
+
+Runs only the UI app in development without the mocked GaaS REST API. You can edit the [setupProxy.js](./src/setupProxy.js) file to change the target URL you want to proxy your requests to, e.g. change the default localhost:4000 target to a GaaS REST API hosted on Kubernetes.
+
+#### `npm test`
+
+Runs all tests with a coverage report. 
+
+#### `npm watch`
+
+Jest will launch all tests in watch mode. Every time you save a file, it will re-run the tests.
+
+You can specify a test file to run on loop by using the syntax `npm run watch [file_name.test.js]`. 
+
+#### `npm run build`
+
+Builds the app for production to the `/build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
+
+To add environment variables for the production build to consume, such as your own GaaS REST API host URL target, create a `env-config.js` file at the root of the `/build` directory and add the following:
+
+```javascript
+window.REACT_APP_API_PLATFORM="OPENSHIFT"
+window.REACT_APP_KAI_REST_API_HOST="http://localhost:4000"
+window.REACT_APP_COGNITO_USERPOOLID="us-east-1_ABC1def2g"
+window.REACT_APP_COGNITO_CLIENTID="42ov9u4hs69oji3y357aq26era"
+window.SKIP_PREFLIGHT_CHECK="true"
+```
+<i>*customise values with your own, COGNITO values are for builds using AWS Cognito therefore define PLATFORM variable as AWS.</i>
+
+The build is minified and the filenames include the hashes.
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+#### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
 ## Docker
 
 To run the UI React app in a docker container, follow the steps below:
@@ -68,61 +123,6 @@ aws ecr create-repository \
 
 For more commands, visit: (https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
 
-## Available Scripts in UI Directory
-
-In the project directory, you can run:
-
-#### `npm start`
-
-Runs the app in the development mode. Open [http://localhost:8080](http://localhost:8080) to view it in the browser.
-The page will reload if you make edits and you will also see any lint errors in the console.<br />
-
-It also uses [Concurrently](https://www.npmjs.com/package/concurrently) to run a mock Kai Rest Api on port 5000 for the 
-UI to send requests to. You can edit the example HTTP Responses for each endpoint in [middleware.js](./server/middleware.js).
-It runs on an Express server so here are the support [Response docs](http://expressjs.com/en/5x/api.html#res).
-
-#### `npm client`
-
-Runs only the UI app in development without a dev backend and therefore will make via proxy.
-
-#### `npm test`
-
-Runs all tests with a coverage report. 
-
-#### `npm watch`
-
-Jest will launch all tests in watch mode. Every time you save a file, it will re-run the tests.<br />
-
-You can specify a test file to run by using the `-p` option and the name (or directory name) tests you want to run. 
-
-#### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-#### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-### `npm run build-with-env`
-Passes the variables in the .env files as environment variables to the scripts in the buildWithEnv.sh file.
-
-The scripts in the buildWithEnv.sh file do the following:
-* Check whether the `REACT_APP_API_PLATFORM` variable is empty
-* If it is empty, it returns: `REACT_APP_API_PLATFORM is unset`
-* If it is not empty, it runs the `react-scripts build` command, which has the same outcome as the `npm run build` script above
-
-The purpose of this command is to validate whether an API platform has been set for Kai to use.
 ## AWS Integration
 
 For production mode and build, a .env file must be configured for the following key/values to integrated with the deployed API and it's User Pool that you want to interface with:
