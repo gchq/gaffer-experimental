@@ -46,18 +46,14 @@ public final class GafferRequestBodyFactory {
             case ACCUMULO: {
                 final GafferSpec gafferSpec = new GafferSpec();
                 gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");
-                gafferSpec.putNestedObject("{}", "graph", "config", "library");
                 gafferSpec.putNestedObject(graph.getDescription(), "graph", "config", "description");
-                gafferSpec.putNestedObject("[]", "graph", "config", "hooks");
                 gafferSpec.putNestedObject(true, "accumulo", "enabled");
                 return gafferSpec;
             }
             case FEDERATED_STORE: {
                 final GafferSpec gafferSpec = new GafferSpec();
                 gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");
-                gafferSpec.putNestedObject("{}", "graph", "config", "library");
                 gafferSpec.putNestedObject(graph.getDescription(), "graph", "config", "description");
-                gafferSpec.putNestedObject("[]", "graph", "config", "hooks");
                 gafferSpec.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
                 gafferSpec.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
                 gafferSpec.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -66,9 +62,7 @@ public final class GafferRequestBodyFactory {
             case MAPSTORE: {
                 final GafferSpec gafferSpec = new GafferSpec();
                 gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");
-                gafferSpec.putNestedObject("{}", "graph", "config", "library");
                 gafferSpec.putNestedObject(graph.getDescription(), "graph", "config", "description");
-                gafferSpec.putNestedObject("[]", "graph", "config", "hooks");
                 gafferSpec.putNestedObject(true, "graph", "storeProperties", "gaffer.store.job.tracker.enabled");
                 gafferSpec.putNestedObject("uk.gov.gchq.gaffer.cache.impl.HashMapCacheService", "graph", "storeProperties", "gaffer.cache.service.class");
                 return gafferSpec;

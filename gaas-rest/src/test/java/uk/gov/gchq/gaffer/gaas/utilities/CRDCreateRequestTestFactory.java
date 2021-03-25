@@ -37,19 +37,6 @@ public final class CRDCreateRequestTestFactory {
                 .metaData(metadata)
                 .spec(gafferSpec);
 
-//        return new CreateCRDRequestBody()
-//                .apiVersion("gchq.gov.uk/v1")
-//                .kind("Gaffer")
-//                .metaData(metadata)
-//                .spec(new GafferHelmChartValues.Builder()
-//                        .enableAccumulo()
-//                        .graph(new NewGraph()
-//                                .config(new GraphConfig.Builder()
-//                                        .graphId(graph.getGraphId())
-//                                        .description(graph.getDescription())
-//                                        .library(null)
-//                                        .build()))
-//                .build());
     }
 
     private CRDCreateRequestTestFactory() {

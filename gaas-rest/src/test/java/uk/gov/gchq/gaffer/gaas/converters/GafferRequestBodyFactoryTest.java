@@ -38,16 +38,14 @@ public class GafferRequestBodyFactoryTest {
                         "\"metadata\":{\"name\":\"MyGraph\"}," +
                         "\"spec\":{\"" +
                         "graph\":{\"" +
-                        "config\":{\"" +
-                        "graphId\":\"MyGraph\",\"" +
-                        "library\":{},\"" +
-                        "description\":\"Another description\",\"" +
-                        "hooks\":[]" +
-                        "}," +
-                        "\"storeProperties\":{\"" +
+                        "storeProperties\":{\"" +
                         "gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"" +
                         "gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"" +
                         "gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"" +
+                        "},\"" +
+                        "config\":{\"" +
+                        "description\":\"Another description\",\"" +
+                        "graphId\":\"MyGraph\"" +
                         "}" +
                         "}" +
                         "}" +
@@ -65,12 +63,10 @@ public class GafferRequestBodyFactoryTest {
                         "\"metadata\":{\"name\":\"MyGraph\"}," +
                         "\"spec\":{\"" +
                             "graph\":{\"" +
-                                "config\":{\"" +
-                                    "graphId\":\"MyGraph\"," +
-                                    "\"library\":{}," +
+                                "config\":{" +
                                     "\"description\":\"Another description\"," +
-                                    "\"hooks\":[]" +
-                                "}" +
+                                    "\"graphId\":\"MyGraph\"" +
+                        "}" +
                             "},\"" +
                             "accumulo\":{\"" +
                                 "enabled\":true" +
@@ -89,16 +85,14 @@ public class GafferRequestBodyFactoryTest {
                         "\"kind\":\"Gaffer\"," +
                         "\"metadata\":{\"name\":\"MyGraph\"}," +
                         "\"spec\":{" +
-                            "\"graph\":{" +
-                                "\"config\":{" +
-                                    "\"graphId\":\"MyGraph\"," +
-                                    "\"library\":{}," +
-                                    "\"description\":\"Another description\"," +
-                                    "\"hooks\":[]" +
-                                "}," +
-                                "\"storeProperties\":{" +
-                                    "\"gaffer.store.job.tracker.enabled\":true," +
-                                    "\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"" +
+                        "\"graph\":{" +
+                        "\"storeProperties\":{" +
+                        "\"gaffer.store.job.tracker.enabled\":true," +
+                        "\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"" +
+                        "}," +
+                        "\"config\":{" +
+                        "\"description\":\"Another description\"," +
+                        "\"graphId\":\"MyGraph\"" +
                         "}" +
                         "}" +
                         "}" +
