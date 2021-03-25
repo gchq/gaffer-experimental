@@ -24,14 +24,10 @@ import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CreateCRDRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.GafferHelmChartValues;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -50,9 +46,9 @@ public class CreateGraphServiceTest {
         final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
         final GafferSpec spec = gafferRequestBody.getSpec();
-        assertEquals("myGraph", spec.getNestedObject("graph","config","graphId"));
-        assertEquals("Another description", spec.getNestedObject("graph","config","description"));
-        assertEquals(true,spec.getNestedObject("accumulo","enabled"));
+        assertEquals("myGraph", spec.getNestedObject("graph", "config", "graphId"));
+        assertEquals("Another description", spec.getNestedObject("graph", "config", "description"));
+        assertEquals(true, spec.getNestedObject("accumulo", "enabled"));
     }
 
     @Test
@@ -63,9 +59,9 @@ public class CreateGraphServiceTest {
         final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
         final GafferSpec spec = gafferRequestBody.getSpec();
-        assertEquals("myGraph", spec.getNestedObject("graph","config","graphId"));
-        assertEquals("Another description", spec.getNestedObject("graph","config","description"));
+        assertEquals("myGraph", spec.getNestedObject("graph", "config", "graphId"));
+        assertEquals("Another description", spec.getNestedObject("graph", "config", "description"));
         //assertEquals("", spec.getGraph().getStorePropertyClassName());
-        assertEquals(null,spec.getNestedObject("accumulo","enabled"));
+        assertEquals(null, spec.getNestedObject("accumulo", "enabled"));
     }
 }

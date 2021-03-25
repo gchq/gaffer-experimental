@@ -25,7 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CreateCRDRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
@@ -93,7 +92,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenCreateRequestBodyHasNullValues_throws_400GaasException() {
-        final CreateCRDRequestBody requestBody = new CreateCRDRequestBody();
+        final Gaffer requestBody = new Gaffer();
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
         assertEquals(400, exception.getStatusCode());
         assertEquals("Bad Request", exception.getTitle());

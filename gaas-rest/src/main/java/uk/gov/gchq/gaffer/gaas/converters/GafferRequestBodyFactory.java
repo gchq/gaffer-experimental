@@ -43,30 +43,16 @@ public final class GafferRequestBodyFactory {
     private static GafferSpec createGafferSpec(final GaaSCreateRequestBody graph) {
         final StoreType storeType = graph.getStoreType();
         switch (storeType) {
-            case ACCUMULO: {
-                final GafferSpec gafferSpec = new GafferSpec();
-                gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");
-                gafferSpec.putNestedObject(graph.getDescription(), "graph", "config", "description");
-                gafferSpec.putNestedObject(true, "accumulo", "enabled");
-                return gafferSpec;
-            }
-            case FEDERATED_STORE: {
-                final GafferSpec gafferSpec = new GafferSpec();
-                gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");
-                gafferSpec.putNestedObject(graph.getDescription(), "graph", "config", "description");
-                gafferSpec.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
-                gafferSpec.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-                gafferSpec.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
-                return gafferSpec;
-            }
-            case MAPSTORE: {
-                final GafferSpec gafferSpec = new GafferSpec();
-                gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");
-                gafferSpec.putNestedObject(graph.getDescription(), "graph", "config", "description");
-                gafferSpec.putNestedObject(true, "graph", "storeProperties", "gaffer.store.job.tracker.enabled");
-                gafferSpec.putNestedObject("uk.gov.gchq.gaffer.cache.impl.HashMapCacheService", "graph", "storeProperties", "gaffer.cache.service.class");
-                return gafferSpec;
-            }
+            case ACCUMULO:
+                return new GafferSpecBuilder()
+                        .graphId(graph.getGraphId())
+                        .description(graph.getDescription())
+                        .enableAccumulo()
+                        .build();
+            case FEDERATED_STORE:
+                return new GafferSpecBuilder().createFederatedRequest(graph);
+            case MAPSTORE:
+                return new GafferSpecBuilder().createMapStoreRequest(graph);
             default:
                 throw new IllegalArgumentException("Unsupported store type");
         }
