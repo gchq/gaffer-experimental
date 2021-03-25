@@ -55,18 +55,18 @@ const NavigationDrawer: React.FC = (props: any) => {
     return (
         <div>
             <div>
-                <AppBar position="static" className={classes.appBar}>
+                <AppBar position='static' className={classes.appBar}>
                     <Toolbar>
                         <IconButton
-                            edge="start"
+                            edge='start'
                             className={classes.menuButton}
-                            color="inherit"
-                            aria-label="menu"
+                            color='inherit'
+                            aria-label='menu'
                             onClick={toggleDrawer(true)}
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h4" className={classes.title}>
+                        <Typography variant='h4' className={classes.title}>
                             Kai
                         </Typography>
                     </Toolbar>
@@ -76,7 +76,7 @@ const NavigationDrawer: React.FC = (props: any) => {
             <Drawer classes={{ paper: classes.drawer }} open={isOpen} onClose={toggleDrawer(false)}>
                 <div
                     className={classes.fullList}
-                    role="presentation"
+                    role='presentation'
                     onClick={toggleDrawer(false)}
                     onKeyDown={toggleDrawer(false)}
                 >

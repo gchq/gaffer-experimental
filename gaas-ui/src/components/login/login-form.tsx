@@ -53,8 +53,8 @@ export default class LoginForm extends React.Component<IProps, IState> {
     
     public render() {
         return (
-            <main id="login-form">
-                <Container component="main" maxWidth="xs">
+            <main id='login-form'>
+                <Container component='main' maxWidth='xs'>
                     {this.state.outcome && (
                         <NotificationAlert alertType={this.state.outcome} message={this.state.outcomeMessage} />
                     )}
@@ -67,7 +67,7 @@ export default class LoginForm extends React.Component<IProps, IState> {
                             alignItems: 'center',
                         }}
                     >
-                        <Typography component="h1" variant="h5">
+                        <Typography component='h1' variant='h5'>
                             Sign in
                         </Typography>
                         <Grid item>
@@ -78,15 +78,15 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                 noValidate
                             >
                                 <TextField
-                                    id="username"
-                                    variant="outlined"
+                                    id='username'
+                                    variant='outlined'
                                     value={this.state.username}
-                                    margin="normal"
+                                    margin='normal'
                                     required
                                     fullWidth
-                                    label="Username"
-                                    name="username"
-                                    autoComplete="username"
+                                    label='Username'
+                                    name='username'
+                                    autoComplete='username'
                                     autoFocus
                                     onChange={(event) => {
                                         this.setState({
@@ -102,16 +102,16 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                     }}
                                 />
                                 <TextField
-                                    variant="outlined"
+                                    variant='outlined'
                                     value={this.state.password}
-                                    margin="normal"
+                                    margin='normal'
                                     required
                                     fullWidth
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    id="password"
-                                    autoComplete="current-password"
+                                    name='password'
+                                    label='Password'
+                                    type='password'
+                                    id='password'
+                                    autoComplete='current-password'
                                     onChange={(event) => {
                                         this.setState({
                                             password: event.target.value,
@@ -127,9 +127,9 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                 />
                                 <Button
                                     fullWidth
-                                    id="submit-sign-in-button"
-                                    variant="contained"
-                                    color="primary"
+                                    id='submit-sign-in-button'
+                                    variant='contained'
+                                    color='primary'
                                     style={{ marginTop: '20px' }}
                                     disabled={this.disableSignInButton()}
                                     onClick={() => {
@@ -141,7 +141,7 @@ export default class LoginForm extends React.Component<IProps, IState> {
                             </form>
                             <Typography style={{ marginTop: '20px' }}>
                                 <Link
-                                    id="temp-password-form-link"
+                                    id='temp-password-form-link'
                                     onClick={() => this.props.onChangeForm(FormType.TEMP_PASSWORD_LOGIN)}
                                 >
                                     Logging in for the first time with a temporary password?

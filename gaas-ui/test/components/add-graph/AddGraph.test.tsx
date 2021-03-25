@@ -185,7 +185,7 @@ describe('On Submit Request', () => {
         clickSubmit();
 
         expect(wrapper.find('div#notification-alert').text()).toBe(
-            "Failed to Add 'Break Server' Graph. Validation Error: Can\'t have spaces"
+            'Failed to Add \'Break Server\' Graph. Validation Error: Can\'t have spaces'
         );
     });
 });

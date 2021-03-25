@@ -55,8 +55,8 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
 
     public render() {
         return (
-            <main id="old-password-login-form">
-                <Container component="main" maxWidth="xs">
+            <main id='old-password-login-form'>
+                <Container component='main' maxWidth='xs'>
                     {this.state.outcome && (
                         <NotificationAlert alertType={this.state.outcome} message={this.state.outcomeMessage} />
                     )}
@@ -69,7 +69,7 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                             alignItems: 'center',
                         }}
                     >
-                        <Typography component="h1" variant="h5">
+                        <Typography component='h1' variant='h5'>
                             Reset Password & Sign In
                         </Typography>
                         <Grid item>
@@ -80,15 +80,15 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                 noValidate
                             >
                                 <TextField
-                                    id="username"
-                                    variant="outlined"
+                                    id='username'
+                                    variant='outlined'
                                     value={this.state.username}
-                                    margin="normal"
+                                    margin='normal'
                                     required
                                     fullWidth
-                                    label="Username"
-                                    name="username"
-                                    autoComplete="username"
+                                    label='Username'
+                                    name='username'
+                                    autoComplete='username'
                                     autoFocus
                                     onChange={(event) => {
                                         this.setState({
@@ -103,16 +103,16 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                     }}
                                 />
                                 <TextField
-                                    variant="outlined"
+                                    variant='outlined'
                                     value={this.state.oldPassword}
-                                    margin="normal"
+                                    margin='normal'
                                     required
                                     fullWidth
-                                    name="old-password"
-                                    label="Old Password"
-                                    type="password"
-                                    id="old-password"
-                                    autoComplete="current-password"
+                                    name='old-password'
+                                    label='Old Password'
+                                    type='password'
+                                    id='old-password'
+                                    autoComplete='current-password'
                                     onChange={(event) => {
                                         this.setState({
                                             oldPassword: event.target.value,
@@ -126,16 +126,16 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                     }}
                                 />
                                 <TextField
-                                    variant="outlined"
+                                    variant='outlined'
                                     value={this.state.newPassword}
-                                    margin="normal"
+                                    margin='normal'
                                     required
                                     fullWidth
-                                    name="new-password"
-                                    label="New Password"
-                                    type="password"
-                                    id="new-password"
-                                    autoComplete="current-password"
+                                    name='new-password'
+                                    label='New Password'
+                                    type='password'
+                                    id='new-password'
+                                    autoComplete='current-password'
                                     onChange={(event) => {
                                         this.setState({
                                             newPassword: event.target.value,
@@ -150,9 +150,9 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                 />
                                 <Button
                                     fullWidth
-                                    id="submit-sign-in-button"
-                                    variant="contained"
-                                    color="primary"
+                                    id='submit-sign-in-button'
+                                    variant='contained'
+                                    color='primary'
                                     style={{ marginTop: '20px' }}
                                     disabled={this.disableUpdateButton()}
                                     onClick={() => {
@@ -164,7 +164,7 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                             </form>
                             <Typography style={{ marginTop: '20px' }}>
                                 <Link
-                                    id="login-form-link"
+                                    id='login-form-link'
                                     onClick={() => this.props.onChangeForm(FormType.EXISTING_USER_LOGIN)}
                                 >
                                     Back to sign in

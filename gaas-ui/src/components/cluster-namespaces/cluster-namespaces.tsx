@@ -1,19 +1,11 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {
-    Button,
-    Container,
-    Grid,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow, Toolbar,
+    Button, Container, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar,
 } from '@material-ui/core';
 import RefreshOutlinedIcon from '@material-ui/icons/RefreshOutlined';
 import {AlertType, NotificationAlert} from '../alerts/notification-alert';
-import {GetAllNamespacesRepo} from "../../rest/repositories/get-all-namespaces-repo";
+import { GetAllNamespacesRepo } from '../../rest/repositories/get-all-namespaces-repo';
 
 interface IState {
     namespaces: Array<string>;
@@ -62,10 +54,10 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
             <main>
                 {errorMessage && <NotificationAlert alertType={AlertType.FAILED} message={errorMessage}/>}
                 <Toolbar/>
-                <Grid container justify="center">
-                    <Container component="main" maxWidth="sm">
+                <Grid container justify='center'>
+                    <Container component='main' maxWidth='sm'>
                         <TableContainer>
-                            <Table size="medium" className={this.classes.table} aria-label="Namespaces Table">
+                            <Table size='medium' className={this.classes.table} aria-label='Namespaces Table'>
                                 <TableHead>
                                     <TableRow style={{background: '#F4F2F2'}}>
                                         <TableCell>Namespaces</TableCell>
@@ -75,7 +67,7 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
                                 <TableBody>
                                     {namespaces.map((namespace: string, index)=>(
                                         <TableRow key={index} hover>
-                                            <TableCell component="th" scope="row">
+                                            <TableCell component='th' scope='row'>
                                                 {namespace}
                                             </TableCell>
                                         </TableRow>
@@ -85,13 +77,13 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
                                 {namespaces.length === 0 && <caption>No Namespaces</caption>}
                             </Table>
                         </TableContainer>
-                        <Grid container style={{margin: 10}} direction="row" justify="center" alignItems="center">
+                        <Grid container style={{margin: 10}} direction='row' justify='center' alignItems='center'>
                             <Button
-                                id="namespaces-refresh-button"
+                                id='namespaces-refresh-button'
                                 startIcon={<RefreshOutlinedIcon/>}
                                 onClick={async () => await this.getNamespaces()}
-                                variant="contained"
-                                color="primary"
+                                variant='contained'
+                                color='primary'
                                 className={this.classes.submit}
                             >
                                 Refresh Table

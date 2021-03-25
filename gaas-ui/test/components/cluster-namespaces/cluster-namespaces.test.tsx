@@ -1,9 +1,10 @@
-import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import ClusterNamespaces from "../../../src/components/cluster-namespaces/cluster-namespaces";
+import React from 'react';
+import ClusterNamespaces from '../../../src/components/cluster-namespaces/cluster-namespaces';
 import { GetAllNamespacesRepo } from '../../../src/rest/repositories/get-all-namespaces-repo';
 import { RestApiError } from '../../../src/rest/RestApiError';
-jest.mock("../../../src/rest/repositories/get-all-namespaces-repo");
+
+jest.mock('../../../src/rest/repositories/get-all-namespaces-repo');
 afterEach(() => jest.resetAllMocks());
 
 describe('When ViewGraphs mounts', () => {
@@ -35,11 +36,11 @@ describe('When ViewGraphs mounts', () => {
         const component = mount(<ClusterNamespaces />);
 
         expect(component.find('div#notification-alert').text()).toBe(
-            "Failed to get all namespaces. Client Error: 404 Not Found"
+            'Failed to get all namespaces. Client Error: 404 Not Found'
         );
     });
     it('should not display Error AlertNotification when GetNamespaces request successful', async () => {
-        mockGetNamespacesToReturn(['namespace1', "namespace2"]);
+        mockGetNamespacesToReturn(['namespace1', 'namespace2']);
 
         const component = mount(<ClusterNamespaces />);
         await component.update();
@@ -52,7 +53,7 @@ describe('When ViewGraphs mounts', () => {
 });
 describe('Refresh Button', () => {
     it('should call GetNamespaces again when refresh button clicked', async () => {
-        mockGetNamespacesToReturn(['namespace1', "namespace2"]);
+        mockGetNamespacesToReturn(['namespace1', 'namespace2']);
 
         const component = mount(<ClusterNamespaces />);
         await component.update();
@@ -70,7 +71,7 @@ describe('Refresh Button', () => {
 
         const component = mount(<ClusterNamespaces />);
         expect(component.find('div#notification-alert').text()).toBe(
-            "Failed to get all namespaces. Server Error: Timeout exception"
+            'Failed to get all namespaces. Server Error: Timeout exception'
         );
 
         mockGetNamespacesToReturn(['namespace1', 'namespace2']);

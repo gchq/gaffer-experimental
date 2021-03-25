@@ -15,7 +15,7 @@ export class NotificationAlert extends React.Component<INotificationAlertProps> 
     
     public render() {
         return (
-            <Alert id="notification-alert" severity={this.props.alertType}>
+            <Alert id='notification-alert' severity={this.props.alertType}>
                 {this.props.message}
             </Alert>
         );

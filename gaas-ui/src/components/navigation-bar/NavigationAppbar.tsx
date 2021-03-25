@@ -122,9 +122,9 @@ const NavigationAppbar: React.FC = (props: any) => {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <AppBar position="fixed" className={classes.appBar}>
+            <AppBar position='fixed' className={classes.appBar}>
                 <Toolbar>
-                    <Typography variant="h6" className={classes.title}>
+                    <Typography variant='h6' className={classes.title}>
                         Kai: Graph As A Service
                     </Typography>
                     <LoginModal onLogin={(username) => setUsername(username)} />
@@ -133,7 +133,7 @@ const NavigationAppbar: React.FC = (props: any) => {
 
             <nav className={classes.drawer}>
                 <Drawer
-                    variant="permanent"
+                    variant='permanent'
                     classes={{
                         paper: classes.drawerPaper,
                     }}
@@ -146,7 +146,7 @@ const NavigationAppbar: React.FC = (props: any) => {
                                     <Avatar>{username.slice(0, 1)}</Avatar>
                                 </ListItemAvatar>
                                 <ListItemText
-                                    id="signedin-user-details"
+                                    id='signedin-user-details'
                                     primary={buildUsername()}
                                     secondary={username}
                                 />

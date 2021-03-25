@@ -67,10 +67,10 @@ class LoginModal extends React.Component<IProps, IState> {
         const { formType, status, openSignOutModal } = this.state;
 
         return (
-            <div id="login-modal">
+            <div id='login-modal'>
                 <Button
-                    id="sign-out-button"
-                    color="inherit"
+                    id='sign-out-button'
+                    color='inherit'
                     startIcon={<ExitToAppIcon />}
                     onClick={() => {
                         const onSuccess = () => this.setState({ status: UserStatus.SIGNED_OUT });
@@ -85,7 +85,7 @@ class LoginModal extends React.Component<IProps, IState> {
                 >
                     Sign out
                 </Button>
-                <Dialog id="login-modal" fullScreen open={status === UserStatus.SIGNED_OUT}>
+                <Dialog id='login-modal' fullScreen open={status === UserStatus.SIGNED_OUT}>
                     <DialogContent style={{ padding: 30 }}>
                         <Logo />
                         {formType === FormType.EXISTING_USER_LOGIN && (
@@ -108,10 +108,10 @@ class LoginModal extends React.Component<IProps, IState> {
                         )}
                     </DialogContent>
                 </Dialog>
-                <Dialog id="signout-outcome-modal" open={openSignOutModal}>
+                <Dialog id='signout-outcome-modal' open={openSignOutModal}>
                     <IconButton
-                        id="close-signout-outcome-modal"
-                        aria-label="close"
+                        id='close-signout-outcome-modal'
+                        aria-label='close'
                         className={classes.closeButton}
                         onClick={() => {
                             this.setState({ openSignOutModal: false });
@@ -119,7 +119,7 @@ class LoginModal extends React.Component<IProps, IState> {
                     >
                         <CloseIcon />
                     </IconButton>
-                    <DialogTitle id="alert-dialog-title" style={{ padding: 40 }}>
+                    <DialogTitle id='alert-dialog-title' style={{ padding: 40 }}>
                         {this.state.signOutMessage}
                     </DialogTitle>
                 </Dialog>

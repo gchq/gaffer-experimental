@@ -1,29 +1,19 @@
-import React from 'react';
 import {
-    Button,
-    Container,
-    CssBaseline,
-    Dialog,
-    DialogContent,
-    Grid,
-    IconButton,
-    makeStyles,
-    Slide,
-    TextField,
-    Tooltip,
-    Zoom,
+    Button, Container, CssBaseline, Dialog, DialogContent, Grid,
+    IconButton, makeStyles, Slide, TextField, Tooltip, Zoom
 } from '@material-ui/core';
-import { Notifications } from '../../domain/notifications';
-import { CreateGraphRepo } from '../../rest/repositories/create-graph-repo';
-import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
-import { DropzoneArea } from 'material-ui-dropzone';
-import { TransitionProps } from '@material-ui/core/transitions';
 import Toolbar from '@material-ui/core/Toolbar';
-import { AlertType, NotificationAlert } from '../alerts/notification-alert';
+import { TransitionProps } from '@material-ui/core/transitions';
+import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
 import ClearIcon from '@material-ui/icons/Clear';
+import { DropzoneArea } from 'material-ui-dropzone';
+import React from 'react';
 import { ElementsSchema } from '../../domain/elements-schema';
+import { Notifications } from '../../domain/notifications';
 import { TypesSchema } from '../../domain/types-schema';
+import { CreateGraphRepo } from '../../rest/repositories/create-graph-repo';
+import { AlertType, NotificationAlert } from '../alerts/notification-alert';
 
 interface IState {
     dialogIsOpen: boolean;
@@ -46,7 +36,7 @@ const Transition = React.forwardRef(function Transition(
     props: TransitionProps & { children?: React.ReactElement<any, any> },
     ref: React.Ref<unknown>
 ) {
-    return <Slide direction="up" ref={ref} {...props} />;
+    return <Slide direction='up' ref={ref} {...props} />;
 });
 
 export default class AddGraph extends React.Component<{}, IState> {
@@ -161,22 +151,22 @@ export default class AddGraph extends React.Component<{}, IState> {
                 )}
                 <Toolbar />
 
-                <Grid container justify="center">
-                    <Container component="main" maxWidth="xs">
+                <Grid container justify='center'>
+                    <Container component='main' maxWidth='xs'>
                         <CssBaseline />
                         <div className={this.classes.paper}>
                             <form className={this.classes.form} noValidate>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12}>
                                         <TextField
-                                            id="graph-name"
-                                            label="Graph Name"
-                                            variant="outlined"
+                                            id='graph-name'
+                                            label='Graph Name'
+                                            variant='outlined'
                                             value={this.state.newGraph.graphName}
                                             required
                                             fullWidth
-                                            name="graphName"
-                                            autoComplete="graph-name"
+                                            name='graphName'
+                                            autoComplete='graph-name'
                                             onChange={(event) => {
                                                 this.setState({
                                                     newGraph: {
@@ -187,13 +177,13 @@ export default class AddGraph extends React.Component<{}, IState> {
                                             }}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center">
-                                        <Tooltip TransitionComponent={Zoom} title="Add Schema From File">
-                                            <IconButton id="attach-file-button" onClick={openDialogBox}>
+                                    <Grid item xs={12} container direction='row' justify='flex-end' alignItems='center'>
+                                        <Tooltip TransitionComponent={Zoom} title='Add Schema From File'>
+                                            <IconButton id='attach-file-button' onClick={openDialogBox}>
                                                 <AttachFileIcon />
                                             </IconButton>
                                         </Tooltip>
-                                        <Tooltip TransitionComponent={Zoom} title="Clear Schema">
+                                        <Tooltip TransitionComponent={Zoom} title='Clear Schema'>
                                             <IconButton
                                                 onClick={() =>
                                                     this.setState({
@@ -208,28 +198,28 @@ export default class AddGraph extends React.Component<{}, IState> {
                                             </IconButton>
                                         </Tooltip>
                                         <Dialog
-                                            id="dropzone"
+                                            id='dropzone'
                                             open={this.state.dialogIsOpen}
                                             TransitionComponent={Transition}
                                             keepMounted
                                             onClose={closeDialogBox}
                                             style={{ minWidth: '500px' }}
-                                            aria-labelledby="alert-dialog-slide-title"
-                                            aria-describedby="alert-dialog-slide-description"
+                                            aria-labelledby='alert-dialog-slide-title'
+                                            aria-describedby='alert-dialog-slide-description'
                                         >
-                                            <Grid container direction="row" justify="flex-end" alignItems="flex-start">
-                                                <IconButton id="close-dropzone-button" onClick={closeDialogBox}>
+                                            <Grid container direction='row' justify='flex-end' alignItems='flex-start'>
+                                                <IconButton id='close-dropzone-button' onClick={closeDialogBox}>
                                                     <ClearIcon />
                                                 </IconButton>
                                             </Grid>
 
                                             <DialogContent>
-                                                <Grid id="elements-drop-zone">
+                                                <Grid id='elements-drop-zone'>
                                                     <DropzoneArea
                                                         showPreviews={true}
                                                         onChange={async (files) => this.uploadElementsFiles(files)}
                                                         showPreviewsInDropzone={false}
-                                                        dropzoneText="Drag and drop elements.JSON"
+                                                        dropzoneText='Drag and drop elements.JSON'
                                                         useChipsForPreview
                                                         previewGridProps={{
                                                             container: { spacing: 1, direction: 'row' },
@@ -237,18 +227,18 @@ export default class AddGraph extends React.Component<{}, IState> {
                                                         previewChipProps={{
                                                             classes: { root: this.classes.previewChip },
                                                         }}
-                                                        previewText="Selected files"
+                                                        previewText='Selected files'
                                                         clearOnUnmount={true}
                                                         acceptedFiles={['application/json']}
                                                         filesLimit={1}
                                                     />
                                                 </Grid>
-                                                <Grid id="types-drop-zone">
+                                                <Grid id='types-drop-zone'>
                                                     <DropzoneArea
                                                         showPreviews={true}
                                                         onChange={async (files) => this.uploadTypesFiles(files)}
                                                         showPreviewsInDropzone={false}
-                                                        dropzoneText="Drag and drop types.JSON"
+                                                        dropzoneText='Drag and drop types.JSON'
                                                         useChipsForPreview
                                                         previewGridProps={{
                                                             container: { spacing: 1, direction: 'row' },
@@ -256,7 +246,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                                                         previewChipProps={{
                                                             classes: { root: this.classes.previewChip },
                                                         }}
-                                                        previewText="Selected files"
+                                                        previewText='Selected files'
                                                         clearOnUnmount={true}
                                                         acceptedFiles={['application/json']}
                                                         filesLimit={1}
@@ -268,16 +258,16 @@ export default class AddGraph extends React.Component<{}, IState> {
 
                                     <Grid item xs={12}>
                                         <TextField
-                                            id="schema-elements"
+                                            id='schema-elements'
                                             style={{ width: 400 }}
                                             value={this.state.elements}
-                                            label="Schema Elements JSON"
+                                            label='Schema Elements JSON'
                                             disabled={this.state.elementsFieldDisabled}
                                             required
                                             multiline
                                             rows={5}
-                                            name="schema-elements"
-                                            variant="outlined"
+                                            name='schema-elements'
+                                            variant='outlined'
                                             onChange={(event) => {
                                                 this.setState({
                                                     elements: event.target.value,
@@ -287,16 +277,16 @@ export default class AddGraph extends React.Component<{}, IState> {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
-                                            id="schema-types"
+                                            id='schema-types'
                                             style={{ width: 400 }}
                                             value={this.state.types}
                                             disabled={this.state.typesFieldDisabled}
-                                            name="schema-types"
-                                            label="Schema Types JSON"
+                                            name='schema-types'
+                                            label='Schema Types JSON'
                                             required
                                             multiline
                                             rows={5}
-                                            variant="outlined"
+                                            variant='outlined'
                                             onChange={(event) => {
                                                 this.setState({
                                                     types: event.target.value,
@@ -308,16 +298,16 @@ export default class AddGraph extends React.Component<{}, IState> {
                             </form>
                         </div>
                     </Container>
-                    <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
+                    <Grid container style={{ margin: 10 }} direction='row' justify='center' alignItems='center'>
                         <Button
-                            id="add-new-graph-button"
+                            id='add-new-graph-button'
                             onClick={() => {
                                 this.submitNewGraph();
                             }}
                             startIcon={<AddCircleOutlineOutlinedIcon />}
-                            type="submit"
-                            variant="contained"
-                            color="primary"
+                            type='submit'
+                            variant='contained'
+                            color='primary'
                             className={this.classes.submit}
                             disabled={this.disableSubmitButton()}
                         >

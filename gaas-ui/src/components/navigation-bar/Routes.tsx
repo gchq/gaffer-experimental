@@ -1,7 +1,7 @@
-import ViewGraph from '../view-graphs/view-graphs';
+import SimpleAddGraph from '../add-graph/SimpleAddGraph';
+import ClusterNamespaces from '../cluster-namespaces/cluster-namespaces';
 import UserGuide from '../user-guide/user-guide';
-import SimpleAddGraph from "../add-graph/SimpleAddGraph";
-import ClusterNamespaces from "../cluster-namespaces/cluster-namespaces";
+import ViewGraph from '../view-graphs/view-graphs';
 
 const Routes = [
     {
