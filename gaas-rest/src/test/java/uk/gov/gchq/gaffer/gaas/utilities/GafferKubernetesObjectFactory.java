@@ -20,25 +20,26 @@ import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 
-public final class CRDCreateRequestTestFactory {
+public final class GafferKubernetesObjectFactory {
 
-    public static Gaffer makeCreateCRDRequestBody(final GaaSCreateRequestBody graph) {
+    public static Gaffer from(final GaaSCreateRequestBody graph) {
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
+
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");
         gafferSpec.putNestedObject("{}", "graph", "config", "library");
         gafferSpec.putNestedObject(graph.getDescription(), "graph", "config", "description");
         gafferSpec.putNestedObject("[]", "graph", "config", "hooks");
         gafferSpec.putNestedObject(true, "accumulo", "enabled");
+
         return new Gaffer()
                 .apiVersion("gchq.gov.uk" + "/" + "v1")
                 .kind("Gaffer")
                 .metaData(metadata)
                 .spec(gafferSpec);
-
     }
 
-    private CRDCreateRequestTestFactory() {
+    private GafferKubernetesObjectFactory() {
         // prevents calls from subclass
         throw new UnsupportedOperationException();
     }

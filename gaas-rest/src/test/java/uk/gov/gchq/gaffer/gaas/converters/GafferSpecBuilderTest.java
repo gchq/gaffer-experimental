@@ -1,4 +1,4 @@
-package uk.gov.gchq.gaffer.gaas.converters;/*
+/*
  * Copyright 2020 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,8 @@ package uk.gov.gchq.gaffer.gaas.converters;/*
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package uk.gov.gchq.gaffer.gaas.converters;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;

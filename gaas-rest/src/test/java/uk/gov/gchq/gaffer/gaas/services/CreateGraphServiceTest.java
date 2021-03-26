@@ -33,18 +33,22 @@ import static org.mockito.Mockito.verify;
 
 @UnitTest
 public class CreateGraphServiceTest {
+
     @Autowired
     private CreateGraphService createGraphService;
+
     @MockBean
     private CRDClient crdClient;
 
     @Test
     public void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.ACCUMULO));
+
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
         final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
+
         final GafferSpec spec = gafferRequestBody.getSpec();
         assertEquals("myGraph", spec.getNestedObject("graph", "config", "graphId"));
         assertEquals("Another description", spec.getNestedObject("graph", "config", "description"));
@@ -54,14 +58,15 @@ public class CreateGraphServiceTest {
     @Test
     public void createMapGraph_shouldCallCrdClientWithMapStoreRequest_andAccumuloConfigShouldBeNull() throws GaaSRestApiException {
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.MAPSTORE));
+
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
+
         final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
         final GafferSpec spec = gafferRequestBody.getSpec();
         assertEquals("myGraph", spec.getNestedObject("graph", "config", "graphId"));
         assertEquals("Another description", spec.getNestedObject("graph", "config", "description"));
-        //assertEquals("", spec.getGraph().getStorePropertyClassName());
         assertEquals(null, spec.getNestedObject("accumulo", "enabled"));
     }
 }
