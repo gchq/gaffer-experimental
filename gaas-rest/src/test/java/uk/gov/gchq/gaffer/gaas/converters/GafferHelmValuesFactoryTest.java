@@ -25,13 +25,13 @@ import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
-public class GafferRequestBodyFactoryTest {
+public class GafferHelmValuesFactoryTest {
 
     private final Gson gson = new Gson();
 
     @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody_whenNoContextRootSpecified() {
-        final Gaffer requestBody = GafferRequestBodyFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.PROXY_STORE, "http://my.graph.co.uk", null));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.PROXY_STORE, "http://my.graph.co.uk", null));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -55,7 +55,7 @@ public class GafferRequestBodyFactoryTest {
 
     @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody() {
-        final Gaffer requestBody = GafferRequestBodyFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.PROXY_STORE, "http://my.graph.co.uk", "/rest"));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.PROXY_STORE, "http://my.graph.co.uk", "/rest"));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -80,7 +80,7 @@ public class GafferRequestBodyFactoryTest {
 
     @Test
     public void federatedStoreRequestShouldReturnFederatedRequestBody() {
-        final Gaffer requestBody = GafferRequestBodyFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.FEDERATED_STORE));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.FEDERATED_STORE));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -105,7 +105,7 @@ public class GafferRequestBodyFactoryTest {
 
     @Test
     public void accumuloStoreRequestShouldReturnAccumuloRequestBody() {
-        final Gaffer requestBody = GafferRequestBodyFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.ACCUMULO));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.ACCUMULO));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -128,7 +128,7 @@ public class GafferRequestBodyFactoryTest {
 
     @Test
     public void mapStoreStoreRequestShouldReturnMapStoreRequestBody() {
-        final Gaffer requestBody = GafferRequestBodyFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.MAPSTORE));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.MAPSTORE));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +

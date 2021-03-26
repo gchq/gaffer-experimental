@@ -23,8 +23,8 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
 
 /**
- * GafferHelmValuesFactory is a factory class that creates a Gaffer Helm Values Object that is passed to the Kubernetes client
- * and uses helm to deploy a custom resource instance of Gaffer.
+ * GafferHelmValuesFactory is a factory class that creates a Gaffer Helm Values Object that can be passed to the
+ * Kubernetes java client and use helm to deploy a Gaffer custom resource instance to a Kubernetes cluster..
  * <p>
  * See <a href="https://github.com/gchq/gaffer-docker/blob/develop/kubernetes/gaffer/values.yaml">values.yaml</a> for
  * the default helm chart values and documentation how Gaffer is deployed to Kubernetes via helm.
@@ -32,7 +32,7 @@ import uk.gov.gchq.gaffer.gaas.model.StoreType;
  * @see <a href="https://github.com/gchq/gaffer-docker/blob/develop/kubernetes/gaffer/values-federated.yaml">Federated Store overrides</a>
  * for more Gaffer store configuration overrides:
  */
-public final class GafferRequestBodyFactory {
+public final class GafferHelmValuesFactory {
 
     // todo fix injection
     private static final String GROUP = "gchq.gov.uk";
@@ -47,11 +47,12 @@ public final class GafferRequestBodyFactory {
                 .apiVersion(GROUP + "/" + VERSION)
                 .kind(KIND)
                 .metaData(metadata)
-                .spec(createGafferSpec(graph));
+                .spec(createGafferSpecFrom(graph));
     }
 
-    private static GafferSpec createGafferSpec(final GaaSCreateRequestBody graph) {
+    private static GafferSpec createGafferSpecFrom(final GaaSCreateRequestBody graph) {
         final StoreType storeType = graph.getStoreType();
+
         switch (storeType) {
             case ACCUMULO:
                 return new GafferSpecBuilder()
@@ -77,7 +78,7 @@ public final class GafferRequestBodyFactory {
         }
     }
 
-    private GafferRequestBodyFactory() {
+    private GafferHelmValuesFactory() {
         // prevents calls from subclass
         throw new UnsupportedOperationException();
     }

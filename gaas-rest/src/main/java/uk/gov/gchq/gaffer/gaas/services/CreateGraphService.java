@@ -22,7 +22,7 @@ import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import static uk.gov.gchq.gaffer.gaas.converters.GafferRequestBodyFactory.from;
+import static uk.gov.gchq.gaffer.gaas.converters.GafferHelmValuesFactory.from;
 
 @Service
 public class CreateGraphService {
