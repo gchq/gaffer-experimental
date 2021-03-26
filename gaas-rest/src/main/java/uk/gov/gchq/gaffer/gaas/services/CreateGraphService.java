@@ -31,10 +31,10 @@ public class CreateGraphService {
     private CRDClient crdClient;
 
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
-        crdClient.createCRD(makeKubernetesRequest(gaaSCreateRequestBodyInput));
+        crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
     }
 
-    private Gaffer makeKubernetesRequest(final GaaSCreateRequestBody graph) {
+    private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
         return from(graph);
     }
 }

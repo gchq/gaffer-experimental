@@ -16,38 +16,81 @@
 
 package uk.gov.gchq.gaffer.gaas.converters;
 
+import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
+import uk.gov.gchq.gaffer.cache.util.CacheProperties;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import javax.annotation.Resource;
+import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
+import uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
+import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
+import uk.gov.gchq.gaffer.store.StoreProperties;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GafferSpecBuilder {
-    final GafferSpec gafferSpec = new GafferSpec();
 
-    public void commonSetup(final GaaSCreateRequestBody graph) {
-        gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");
-        gafferSpec.putNestedObject(graph.getDescription(), "graph", "config", "description");
+    private String graphId;
+    private String description;
+    private Map<String, Object> storeProperties;
+    private boolean accumuloIsEnabled;
+
+    public GafferSpecBuilder graphId(final String graphId) {
+        this.graphId = graphId;
+        return this;
     }
 
-    public GafferSpec createAccumuloRequest(final GaaSCreateRequestBody graph) {
-        commonSetup(graph);
-        gafferSpec.putNestedObject(true, "accumulo", "enabled");
+    public GafferSpecBuilder description(final String description) {
+        this.description = description;
+        return this;
+    }
+
+    public GafferSpecBuilder storeProperties(final StoreType storeType) {
+        switch (storeType) {
+            case ACCUMULO:
+                // No AccumuloStoreProperties required for the graph
+                // Instead, enableAccumulo() in the GraphSpec to enable Accumulo store properties
+                throw new IllegalArgumentException("enableAccumulo() in the GraphSpec to enable Accumulo store properties");
+            case FEDERATED_STORE:
+                this.storeProperties = getDefaultFederatedStoreProperties();
+                return this;
+            case MAPSTORE:
+                this.storeProperties = getDefaultMapStoreProperties();
+                return this;
+            default:
+                throw new IllegalArgumentException("Unsupported store type");
+        }
+    }
+
+    public GafferSpecBuilder enableAccumulo() {
+        this.accumuloIsEnabled = true;
+        return this;
+    }
+
+    public GafferSpec build() {
+        final GafferSpec gafferSpec = new GafferSpec();
+        gafferSpec.putNestedObject(graphId, "graph", "config", "graphId");
+        gafferSpec.putNestedObject(description, "graph", "config", "description");
+        gafferSpec.putNestedObject(storeProperties, "graph", "storeProperties");
+
+        if (accumuloIsEnabled) {
+            gafferSpec.putNestedObject(true, "accumulo", "enabled");
+        }
+
         return gafferSpec;
     }
 
-    public GafferSpec createFederatedRequest(final GaaSCreateRequestBody graph) {
-        commonSetup(graph);
-        gafferSpec.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
-        gafferSpec.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-        gafferSpec.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
-        return gafferSpec;
+    private Map<String, Object> getDefaultFederatedStoreProperties() {
+        final Map<String, Object> federatedStoreProperties = new HashMap<>();
+        federatedStoreProperties.put(StoreProperties.STORE_CLASS, FederatedStore.class.getName());
+        federatedStoreProperties.put(StoreProperties.STORE_PROPERTIES_CLASS, FederatedStoreProperties.class.getName());
+        federatedStoreProperties.put(StoreProperties.JSON_SERIALISER_MODULES, SketchesJsonModules.class.getName());
+        return federatedStoreProperties;
     }
 
-    public GafferSpec createMapStoreRequest(final GaaSCreateRequestBody graph) {
-        commonSetup(graph);
-        gafferSpec.putNestedObject(true, "graph", "storeProperties", "gaffer.store.job.tracker.enabled");
-        gafferSpec.putNestedObject("uk.gov.gchq.gaffer.cache.impl.HashMapCacheService", "graph", "storeProperties", "gaffer.cache.service.class");
-        return gafferSpec;
+    private Map<String, Object> getDefaultMapStoreProperties() {
+        final Map<String, Object> mapStoreProperties = new HashMap<>();
+        mapStoreProperties.put(CacheProperties.CACHE_SERVICE_CLASS, HashMapCacheService.class.getName());
+        mapStoreProperties.put(StoreProperties.JOB_TRACKER_ENABLED, true);
+        return mapStoreProperties;
     }
-
-
 }
