@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import static uk.gov.gchq.gaffer.gaas.converters.GaaSRestExceptionFactory.from;
+import static uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory.from;
 
 @Service
 public class CRDClient {

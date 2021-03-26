@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.converters;
+package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
