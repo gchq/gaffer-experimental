@@ -30,8 +30,10 @@ public class GaaSCreateRequestBody {
     private String graphId;
     @NotBlank(message = "Description should not be empty")
     private String description;
-    @NotNull(message = "\"storeType\" must be defined. Valid Store Types supported are MAPSTORE, ACCUMULO and FEDERATED_STORE")
+    @NotNull(message = "\"storeType\" must be defined. Valid Store Types supported are MAPSTORE, ACCUMULO, FEDERATED_STORE or PROXY_STORE")
     private StoreType storeType;
+    private String proxyHost;
+    private String proxyContextRoot;
 
     public GaaSCreateRequestBody() {
     }
@@ -40,6 +42,14 @@ public class GaaSCreateRequestBody {
         this.graphId = graphId;
         this.description = description;
         this.storeType = storeType;
+    }
+
+    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType, final String proxyHost, final String proxyContextRoot) {
+        this.graphId = graphId;
+        this.description = description;
+        this.storeType = storeType;
+        this.proxyHost = proxyHost;
+        this.proxyContextRoot = proxyContextRoot;
     }
 
     public String getGraphId() {
@@ -52,5 +62,13 @@ public class GaaSCreateRequestBody {
 
     public StoreType getStoreType() {
         return storeType;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public String getProxyContextRoot() {
+        return proxyContextRoot;
     }
 }

@@ -309,18 +309,36 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
+    public void createGraph_shouldRequestAProxyStoreAndReturn201() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.PROXY_STORE);
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+        doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(inputJson)).andReturn();
+
+        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
+        final int status = mvcResult.getResponse().getStatus();
+        assertEquals(201, status);
+    }
+
+    @Test
     public void createGraph_shouldReturn400BadRequestWhenStoreTypeIsNull() throws Exception {
         final String gaaSCreateRequestBody = "{" +
                 "\"graphId\":\"invalid-store-type\"," +
                 "\"description\":\"any\"" +
                 "}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(gaaSCreateRequestBody)).andReturn();
+
         assertEquals(400, mvcResult.getResponse().getStatus());
         final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. " +
-                "Valid Store Types supported are MAPSTORE, ACCUMULO and FEDERATED_STORE\"}";
+                "Valid Store Types supported are MAPSTORE, ACCUMULO, FEDERATED_STORE or PROXY_STORE\"}";
         assertEquals(expected, mvcResult.getResponse().getContentAsString());
     }
 
@@ -331,15 +349,17 @@ public class GraphControllerTest extends AbstractTest {
                 "\"description\":\"any\"," +
                 "\"storeType\":\"INVALID\"" +
                 "}";
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(gaaSCreateRequestBody)).andReturn();
+
         assertEquals(400, mvcResult.getResponse().getStatus());
         final String expected = "{\"title\":\"InvalidFormatException\",\"detail\":\"Cannot deserialize value of type " +
                 "`uk.gov.gchq.gaffer.gaas.model.StoreType` from String \\\"INVALID\\\": not one of the values accepted " +
-                "for Enum class: [MAPSTORE, FEDERATED_STORE, ACCUMULO]\\n at [Source: (PushbackInputStream); line: 1, column: 65] " +
-                "(through reference chain: uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody[\\\"storeType\\\"])\"}";
+                "for Enum class: [PROXY_STORE, MAPSTORE, FEDERATED_STORE, ACCUMULO]\\n at [Source: (PushbackInputStream); " +
+                "line: 1, column: 65] (through reference chain: uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody[\\\"storeType\\\"])\"}";
         assertEquals(expected, mvcResult.getResponse().getContentAsString());
     }
 }

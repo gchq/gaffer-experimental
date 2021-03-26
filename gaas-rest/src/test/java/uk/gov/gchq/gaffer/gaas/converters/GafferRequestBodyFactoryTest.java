@@ -26,7 +26,57 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
 public class GafferRequestBodyFactoryTest {
+
     private final Gson gson = new Gson();
+
+    @Test
+    public void proxyStoreRequest_shouldReturnProxyStoreRequestBody_whenNoContextRootSpecified() {
+        final Gaffer requestBody = GafferRequestBodyFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.PROXY_STORE, "http://my.graph.co.uk", null));
+
+        final String expected =
+                "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"MyGraph\"}," +
+                        "\"spec\":{" +
+                        "\"graph\":{" +
+                        "\"storeProperties\":{" +
+                        "\"gaffer.host\":\"http://my.graph.co.uk\"," +
+                        "\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"" +
+                        "}," +
+                        "\"config\":{" +
+                        "\"description\":\"Another description\"," +
+                        "\"graphId\":\"MyGraph\"" +
+                        "}" +
+                        "}" +
+                        "}" +
+                        "}";
+        assertEquals(expected, gson.toJson(requestBody));
+    }
+
+    @Test
+    public void proxyStoreRequest_shouldReturnProxyStoreRequestBody() {
+        final Gaffer requestBody = GafferRequestBodyFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.PROXY_STORE, "http://my.graph.co.uk", "/rest"));
+
+        final String expected =
+                "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"MyGraph\"}," +
+                        "\"spec\":{" +
+                        "\"graph\":{" +
+                        "\"storeProperties\":{" +
+                        "\"gaffer.host\":\"http://my.graph.co.uk\"," +
+                        "\"gaffer.context-root\":\"/rest\"," +
+                        "\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"" +
+                        "}," +
+                        "\"config\":{" +
+                        "\"description\":\"Another description\"," +
+                        "\"graphId\":\"MyGraph\"" +
+                        "}" +
+                        "}" +
+                        "}" +
+                        "}";
+        assertEquals(expected, gson.toJson(requestBody));
+    }
 
     @Test
     public void federatedStoreRequestShouldReturnFederatedRequestBody() {

@@ -1,4 +1,4 @@
-/*
+package uk.gov.gchq.gaffer.gaas.converters;/*
  * Copyright 2020 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.model;
+import org.junit.jupiter.api.Test;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public enum StoreType {
-    // TODO: rename to ACCUMULO_STORE & MAP_STORE
-    ACCUMULO,
-    FEDERATED_STORE,
-    MAPSTORE,
-    PROXY_STORE;
+public class GafferSpecBuilderTest {
+
+    @Test
+    public void whenAccumuloIsEnabledAndStorePropertiesIsSet_throwIAX() {
+        assertThrows(IllegalArgumentException.class, () -> new GafferSpecBuilder()
+                .graphId("id")
+                .description("a description")
+                .storeProperties(StoreType.MAPSTORE)
+                .enableAccumulo()
+                .build());
+    }
 }

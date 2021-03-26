@@ -66,6 +66,12 @@ public final class GafferRequestBodyFactory {
                         .description(graph.getDescription())
                         .storeProperties(storeType)
                         .build();
+            case PROXY_STORE:
+                return new GafferSpecBuilder()
+                        .graphId(graph.getGraphId())
+                        .description(graph.getDescription())
+                        .storeProperties(storeType, graph.getProxyHost(), graph.getProxyContextRoot())
+                        .build();
             default:
                 throw new IllegalArgumentException("Unsupported store type");
         }
