@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.model;
+package uk.gov.gchq.gaffer.gaas.factories;
 
-public class AccumuloConfig {
-    private boolean enabled;
+import org.junit.jupiter.api.Test;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-    protected boolean isEnabled() {
-        return enabled;
-    }
+public class GafferSpecBuilderTest {
 
-    protected AccumuloConfig enable() {
-        this.enabled = true;
-        return this;
+    @Test
+    public void whenAccumuloIsEnabledAndStorePropertiesIsSet_throwIAX() {
+        assertThrows(IllegalArgumentException.class, () -> new GafferSpecBuilder()
+                .graphId("id")
+                .description("a description")
+                .storeProperties(StoreType.MAPSTORE)
+                .enableAccumulo()
+                .build());
     }
 }

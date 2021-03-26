@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.converters;
+package uk.gov.gchq.gaffer.gaas.factories;
 
 import io.kubernetes.client.openapi.ApiException;
 import org.junit.jupiter.api.Test;

@@ -17,7 +17,9 @@
 package uk.gov.gchq.gaffer.gaas.model;
 
 public enum StoreType {
+    // TODO: rename to ACCUMULO_STORE & MAP_STORE
     ACCUMULO,
     FEDERATED_STORE,
-    MAPSTORE;
+    MAPSTORE,
+    PROXY_STORE;
 }

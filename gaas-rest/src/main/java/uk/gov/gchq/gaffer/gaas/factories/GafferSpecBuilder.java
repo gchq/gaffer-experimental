@@ -14,29 +14,43 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.model;
+package uk.gov.gchq.gaffer.gaas.factories;
 
 import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
 import uk.gov.gchq.gaffer.cache.util.CacheProperties;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties;
-import uk.gov.gchq.gaffer.graph.GraphConfig;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
+import uk.gov.gchq.gaffer.proxystore.ProxyProperties;
+import uk.gov.gchq.gaffer.proxystore.ProxyStore;
 import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
 import uk.gov.gchq.gaffer.store.StoreProperties;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NewGraph {
+public class GafferSpecBuilder {
 
-    private GraphConfig config;
+    private String graphId;
+    private String description;
     private Map<String, Object> storeProperties;
+    private boolean accumuloIsEnabled;
 
-    public NewGraph config(final GraphConfig config) {
-        this.config = config;
+    public GafferSpecBuilder graphId(final String graphId) {
+        this.graphId = graphId;
         return this;
     }
 
-    public NewGraph storeProperties(final StoreType storeType) {
+    public GafferSpecBuilder description(final String description) {
+        this.description = description;
+        return this;
+    }
+
+    public GafferSpecBuilder storeProperties(final StoreType storeType) {
+        return storeProperties(storeType, null, null);
+    }
+
+    public GafferSpecBuilder storeProperties(final StoreType storeType, final String host, final String contextRoot) {
         switch (storeType) {
             case ACCUMULO:
                 // No AccumuloStoreProperties required for the graph
@@ -48,17 +62,37 @@ public class NewGraph {
             case MAPSTORE:
                 this.storeProperties = getDefaultMapStoreProperties();
                 return this;
+            case PROXY_STORE:
+                if (host == null) {
+                    throw new IllegalArgumentException("Host is required to create a proxy store to proxy");
+                }
+                this.storeProperties = getDefaultProxyStoreProperties(host, contextRoot);
+                return this;
             default:
                 throw new IllegalArgumentException("Unsupported store type");
         }
     }
 
-    public GraphConfig getConfig() {
-        return config;
+    public GafferSpecBuilder enableAccumulo() {
+        this.accumuloIsEnabled = true;
+        return this;
     }
 
-    public Map<String, Object> getStoreProperties() {
-        return storeProperties;
+    public GafferSpec build() {
+        final GafferSpec gafferSpec = new GafferSpec();
+        gafferSpec.putNestedObject(graphId, "graph", "config", "graphId");
+        gafferSpec.putNestedObject(description, "graph", "config", "description");
+        gafferSpec.putNestedObject(storeProperties, "graph", "storeProperties");
+
+        if (accumuloIsEnabled && storeProperties != null) {
+            throw new IllegalArgumentException("Enabling Accumulo does not require any Store Properties being set.");
+        }
+
+        if (accumuloIsEnabled) {
+            gafferSpec.putNestedObject(true, "accumulo", "enabled");
+        }
+
+        return gafferSpec;
     }
 
     private Map<String, Object> getDefaultFederatedStoreProperties() {
@@ -74,5 +108,16 @@ public class NewGraph {
         mapStoreProperties.put(CacheProperties.CACHE_SERVICE_CLASS, HashMapCacheService.class.getName());
         mapStoreProperties.put(StoreProperties.JOB_TRACKER_ENABLED, true);
         return mapStoreProperties;
+    }
+
+    private Map<String, Object> getDefaultProxyStoreProperties(final String host, final String contextRoot) {
+        final Map<String, Object> proxyStoreProperties = new HashMap<>();
+        proxyStoreProperties.put(StoreProperties.STORE_CLASS, ProxyStore.class.getName());
+        proxyStoreProperties.put(ProxyProperties.GAFFER_HOST, host);
+        if (contextRoot != null) {
+            proxyStoreProperties.put(ProxyProperties.GAFFER_CONTEXT_ROOT, contextRoot);
+            // else, let Gaffer handle the default context root when not specified in GaaS REST request
+        }
+        return proxyStoreProperties;
     }
 }
