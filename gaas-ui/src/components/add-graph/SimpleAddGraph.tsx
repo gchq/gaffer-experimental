@@ -76,7 +76,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
     }
 
     private disableSubmitButton(): boolean {
-        return !this.state.graphId || !this.state.description;
+        return !this.state.graphId || !this.state.description || !(this.state.storeType===StoreType.PROXY_STORE && this.state.url);
     }
 
     private checkProxy(): boolean {
@@ -196,6 +196,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                     <Grid item xs={12}>
                                         <TextField
                                             disabled={this.checkProxy()}
+                                            required
                                             id="proxy-url"
                                             label="Proxy URL"
                                             variant="outlined"
