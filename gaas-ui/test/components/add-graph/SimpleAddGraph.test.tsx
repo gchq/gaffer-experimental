@@ -44,6 +44,23 @@ describe('SimpleAddGraph UI component', () => {
             const selectText = wrapper.find('div#storetype-select-grid').find('div#storetype-select');
             expect(selectText.text()).toBe('Proxy Store');
         })
+        it('Disable url input when proxy store is not selected', ()=> {
+            selectStoreType('ACCUMULO');
+            const selectText = wrapper.find('input#proxy-url');
+            expect(selectText.props().disabled).toBe(true);
+        })
+        it('Disable root input when proxy store is not selected', ()=> {
+            selectStoreType('ACCUMULO');
+            const selectText = wrapper.find('input#proxy-root');
+            expect(selectText.props().disabled).toBe(true);
+        })
+        it('Enable root input and url input when proxy store is selected', ()=> {
+            selectStoreType('PROXY_STORE');
+            const selectText = wrapper.find('input#proxy-root');
+            expect(selectText.props().disabled).toBe(false);
+            const selectText2 = wrapper.find('input#proxy-url');
+            expect(selectText2.props().disabled).toBe(false);
+        })
     });
     describe('Add Graph Button', () => {
         it('should be disabled when Graph Name and Graph Description fields are empty', () => {
