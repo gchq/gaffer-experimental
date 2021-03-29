@@ -7,26 +7,24 @@
   },
   "extends": [
     "react-app",
-    "prettier",
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": 2018,
-    "project": "./prettier.config.js"
+    "project": "./tsconfig.json"
 
   },
   "plugins": [
     "react",
     "@typescript-eslint",
-    "@typescript-eslint/eslint-plugin",
-    "prettier"
+    "@typescript-eslint/eslint-plugin"
   ],
   "rules": {
     "semi": 2,
     "semi-style": ["error", "last"],
-    "quotes": [2, "double"],
+    "quotes": [2, "single"],
     "indent": 2,
     "default-case": 1,
     "no-duplicate-imports": 2,
@@ -36,23 +34,7 @@
     "@typescript-eslint/prefer-readonly": 1,
     "@typescript-eslint/array-type": 2,
     "@typescript-eslint/consistent-type-definitions": [2, "interface"],
-    "notice/notice": [2, {
-        "templateFile": "header.js",
-        "onNonMatchingHeader": "replace"
-    }],
     "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/no-useless-constructor": "off",
-    "prettier/prettier": [
-      "error",
-      {
-        "printWidth": 120,
-        "trailingComma": "es5",
-        "tabWidth": 4,
-        "semi": true,
-        "singleQuote": true,
-        "bracketSpacing": true,
-        "eslintIntegration": true
-      }
-    ]
+    "@typescript-eslint/no-useless-constructor": "off"
   }
 }
