@@ -27,39 +27,23 @@ describe("SimpleAddGraph UI component", () => {
             const submitButton = wrapper.find("button").text();
             expect(submitButton).toBe("Add Graph");
         });
-        it("Should allow storetype to be selected", () => {
-            selectStoreType("ACCUMULO");
-            const selectText = wrapper.find("div#storetype-select-grid").find("div#storetype-select");
-            expect(selectText.text()).toBe("Accumulo");
-            selectStoreType("MAPSTORE");
-            expect(selectText.text()).toBe("Map Store");
-        });
-        it("Should allow federated store to be selected", () => {
-            selectStoreType("FEDERATED_STORE");
-            const selectText = wrapper.find("div#storetype-select-grid").find("div#storetype-select");
-            expect(selectText.text()).toBe("Federated Store");
-        });
-        it("Should allow proxy store to be selected", () => {
-            selectStoreType("PROXY_STORE");
-            
-            const selectText = wrapper.find("div#storetype-select-grid").find("div#storetype-select");
-            expect(selectText.text()).toBe("Proxy Store");
-        });
-        it("should hide URL and Root inputs when Accumulo Store is selected", () => {
-            selectStoreType("ACCUMULO");
-
-            const urlInput = wrapper.find("input#proxy-url");
-            expect(urlInput.length).toBe(0);
-            const rootInput = wrapper.find("input#proxy-root");
-            expect(rootInput.length).toBe(0);
-        });
-        it("should show URL and Root inputs when Proxy Store is selected", () => {
-            selectStoreType("PROXY_STORE");
-            const selectText = wrapper.find("input#proxy-root");
-            expect(selectText.length).toBe(1);
-            const selectText2 = wrapper.find("input#proxy-url");
-            expect(selectText2.length).toBe(1);
-        });
+        it('Should allow storetype to be selected', ()=> {
+            selectStoreType('ACCUMULO');
+            const selectText = wrapper.find('div#storetype-select-grid').find('div#storetype-select');
+            expect(selectText.text()).toBe('Accumulo');
+            selectStoreType('MAPSTORE');
+            expect(selectText.text()).toBe('Map Store');
+        })
+        it('Should allow federated store to be selected', ()=> {
+            selectStoreType('FEDERATED_STORE');
+            const selectText = wrapper.find('div#storetype-select-grid').find('div#storetype-select');
+            expect(selectText.text()).toBe('Federated Store');
+        })
+        it('Should allow proxy store to be selected', ()=> {
+            selectStoreType('PROXY_STORE');
+            const selectText = wrapper.find('div#storetype-select-grid').find('div#storetype-select');
+            expect(selectText.text()).toBe('Proxy Store');
+        })
     });
     describe("Add Graph Button", () => {
         it("should be disabled when Graph Name and Graph Description fields are empty", () => {
