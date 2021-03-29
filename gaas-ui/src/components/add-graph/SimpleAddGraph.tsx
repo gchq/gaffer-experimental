@@ -14,7 +14,6 @@ import {
 } from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
-import { Console } from "node:console";
 import React from "react";
 import { Notifications } from "../../domain/notifications";
 import { StoreType } from "../../domain/store-type";
@@ -26,6 +25,7 @@ interface IState {
     graphId: string;
     description: string;
     url: string;
+    root: string;
     storeType: StoreType;
     outcome: AlertType | undefined;
     outcomeMessage: string;
@@ -43,6 +43,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
             outcome: undefined,
             outcomeMessage: "",
             url: "",
+            root: "",
             errors: new Notifications(),
         };
     }
@@ -216,6 +217,23 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                             onChange={(event) => {
                                                 this.setState({
                                                     url: event.target.value,
+                                                });
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            disabled={this.checkProxy()}
+                                            id="proxy-root"
+                                            label="Proxy Root"
+                                            variant="outlined"
+                                            value={this.state.root}
+                                            fullWidth
+                                            name="root"
+                                            autoComplete="root"
+                                            onChange={(event) => {
+                                                this.setState({
+                                                    root: event.target.value,
                                                 });
                                             }}
                                         />
