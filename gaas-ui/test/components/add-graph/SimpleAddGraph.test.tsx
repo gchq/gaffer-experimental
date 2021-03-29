@@ -69,6 +69,12 @@ describe("SimpleAddGraph UI component", () => {
             selectStoreType("PROXY_STORE");
             expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(true);
         });
+        it('Should be disabled when Graph Name and Graph Description is not empty but Proxy Store is selected and a URL has not been entered', () => {
+            inputgraphId('test');
+            inputdescription('test');
+            selectStoreType('PROXY_STORE');
+            expect(wrapper.find('button#add-new-graph-button').props().disabled).toBe(true);
+        });
     });
     describe("On Submit Request", () => {
         it("should display success message in the NotificationAlert", async () => {
