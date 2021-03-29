@@ -1,4 +1,4 @@
-import { Notifications } from './notifications';
+import { Notifications } from "./notifications";
 
 export class ElementsSchema {
     private elements: any;
@@ -13,7 +13,7 @@ export class ElementsSchema {
     public validate(): Notifications {
         const notes: Notifications = new Notifications();
         if (this.elements.length === 0) {
-            notes.addError('Elements Schema is empty');
+            notes.addError("Elements Schema is empty");
             return notes;
         }
         if (!this.elementsIsValidJson(notes)) {
@@ -30,24 +30,24 @@ export class ElementsSchema {
             this.elements = JSON.parse(this.elements);
             return true;
         } catch (e) {
-            notes.addError('Elements Schema is not valid JSON');
+            notes.addError("Elements Schema is not valid JSON");
             return false;
         }
     }
 
     private validateEntities(notes: Notifications): void {
         if (this.elements.entities === undefined) {
-            notes.addError('Elements Schema does not contain property entities');
+            notes.addError("Elements Schema does not contain property entities");
             return;
         }
-        if (typeof this.elements.entities !== 'object') {
+        if (typeof this.elements.entities !== "object") {
             notes.addError(`Entities is type ${typeof this.elements.entities} and not an object of Entity objects`);
             return;
         }
         Object.keys(this.elements.entities).forEach((entityName: string) => {
             const entity: IEntity = this.elements.entities[entityName];
 
-            let missingProps: Array<string> = [];
+            const missingProps: Array<string> = [];
             if (entity.description === undefined) {
                 missingProps.push('"description"');
             }
@@ -61,25 +61,25 @@ export class ElementsSchema {
                 missingProps.push('"groupBy"');
             }
             if (missingProps.length > 0) {
-                notes.addError(`${entityName} entity is missing [${missingProps.join(', ')}]`);
+                notes.addError(`${entityName} entity is missing [${missingProps.join(", ")}]`);
             }
         });
     }
 
     private validateEdges(notes: Notifications): void {
         if (this.elements.edges === undefined) {
-            notes.addError('Elements Schema does not contain property edges');
+            notes.addError("Elements Schema does not contain property edges");
             return;
         }
-        if (typeof this.elements.edges !== 'object') {
+        if (typeof this.elements.edges !== "object") {
             notes.addError(`Edges is type ${typeof this.elements.edges} and not an object of Edges objects`);
             return;
         }
 
         Object.keys(this.elements.edges).forEach((edgeName: string) => {
-            if (edgeName !== 'groupBy') {
+            if (edgeName !== "groupBy") {
                 const edge: IEdge = this.elements.edges[edgeName];
-                let missingProps: Array<string> = [];
+                const missingProps: Array<string> = [];
                 if (edge.description === undefined) {
                     missingProps.push('"description"');
                 }
@@ -93,7 +93,7 @@ export class ElementsSchema {
                     missingProps.push('"directed"');
                 }
                 if (missingProps.length > 0) {
-                    notes.addError(`${edgeName} edge is missing [${missingProps.join(', ')}]`);
+                    notes.addError(`${edgeName} edge is missing [${missingProps.join(", ")}]`);
                 }
             }
         });
@@ -101,7 +101,7 @@ export class ElementsSchema {
 
     private validateInvalidProperties(notes: Notifications): void {
         const invalidProperties = Object.keys(this.elements).filter(
-            (key) => key !== 'entities' && key !== 'edges' && key !== 'visibilityProperty'
+            (key) => key !== "entities" && key !== "edges" && key !== "visibilityProperty"
         );
 
         if (invalidProperties.length > 0) {

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { NavLink, withRouter } from 'react-router-dom';
-import Routes from './Routes';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { AppBar, Drawer, IconButton, ListItemText, MenuItem, MenuList, Toolbar, Typography } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+import React, { useState } from "react";
+import { NavLink, withRouter } from "react-router-dom";
+import Routes from "./Routes";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { AppBar, Drawer, IconButton, ListItemText, MenuItem, MenuList, Toolbar, Typography } from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/Menu";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -17,19 +17,19 @@ const useStyles = makeStyles((theme: Theme) =>
             width: 240,
         },
         fullList: {
-            width: 'auto',
-            flexDirection: 'row',
+            width: "auto",
+            flexDirection: "row",
         },
         appBar: {
-            transition: theme.transitions.create(['margin', 'width'], {
+            transition: theme.transitions.create(["margin", "width"], {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.leavingScreen,
             }),
         },
         listItem: {},
         listItemText: {
-            '& span, & svg': {
-                fontSize: '20px',
+            "& span, & svg": {
+                fontSize: "20px",
             },
         },
     })
@@ -40,33 +40,31 @@ const NavigationDrawer: React.FC = (props: any) => {
     const [isOpen, setIsOpen] = useState(false);
     const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
         if (
-            event.type === 'keydown' &&
-            ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')
+            event.type === "keydown" &&
+            ((event as React.KeyboardEvent).key === "Tab" || (event as React.KeyboardEvent).key === "Shift")
         ) {
             return;
         }
         setIsOpen(open);
     };
 
-    const activeRoute = (routeName: any) => {
-        return props.location.pathname === routeName;
-    };
+    const activeRoute = (routeName: any) => props.location.pathname === routeName;
 
     return (
         <div>
             <div>
-                <AppBar position='static' className={classes.appBar}>
+                <AppBar position="static" className={classes.appBar}>
                     <Toolbar>
                         <IconButton
-                            edge='start'
+                            edge="start"
                             className={classes.menuButton}
-                            color='inherit'
-                            aria-label='menu'
+                            color="inherit"
+                            aria-label="menu"
                             onClick={toggleDrawer(true)}
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant='h4' className={classes.title}>
+                        <Typography variant="h4" className={classes.title}>
                             Kai
                         </Typography>
                     </Toolbar>
@@ -76,27 +74,21 @@ const NavigationDrawer: React.FC = (props: any) => {
             <Drawer classes={{ paper: classes.drawer }} open={isOpen} onClose={toggleDrawer(false)}>
                 <div
                     className={classes.fullList}
-                    role='presentation'
+                    role="presentation"
                     onClick={toggleDrawer(false)}
                     onKeyDown={toggleDrawer(false)}
                 >
                     <MenuList>
-                        {Routes.map((prop, key) => {
-                            return (
-                                <NavLink
-                                    to={prop.path}
-                                    style={{ color: 'inherit', textDecoration: 'inherit' }}
-                                    key={key}
-                                >
-                                    <MenuItem className={classes.listItem} selected={activeRoute(prop.path)}>
-                                        <ListItemText
-                                            classes={{ primary: classes.listItemText }}
-                                            primary={prop.sidebarName}
-                                        />
-                                    </MenuItem>
-                                </NavLink>
-                            );
-                        })}
+                        {Routes.map((prop, key) => (
+                            <NavLink to={prop.path} style={{ color: "inherit", textDecoration: "inherit" }} key={key}>
+                                <MenuItem className={classes.listItem} selected={activeRoute(prop.path)}>
+                                    <ListItemText
+                                        classes={{ primary: classes.listItemText }}
+                                        primary={prop.sidebarName}
+                                    />
+                                </MenuItem>
+                            </NavLink>
+                        ))}
                     </MenuList>
                 </div>
             </Drawer>
