@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
+import { Console } from "node:console";
 import React from "react";
 import { Notifications } from "../../domain/notifications";
 import { StoreType } from "../../domain/store-type";
@@ -88,7 +89,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
     }
 
     private checkProxy(): boolean {
-        return this.state.storeType === StoreType.PROXY_STORE;
+        return !(this.state.storeType === StoreType.PROXY_STORE);
     }
 
     public render() {
@@ -204,12 +205,12 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                     <Grid item xs={12}>
                                         <TextField
                                             disabled={this.checkProxy()}
-                                            id="url"
-                                            label="url"
+                                            id="proxy-url"
+                                            label="Proxy URL"
                                             variant="outlined"
                                             value={this.state.url}
                                             fullWidth
-                                            name="url"
+                                            name="URL"
                                             autoComplete="url"
                                             onChange={(event) => {
                                                 this.setState({
