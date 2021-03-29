@@ -53,9 +53,11 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
         const graphId = this.state.graphId;
         const description = this.state.description;
         const storeType = this.state.storeType;
+        const url = this.state.url;
+        const root = this.state.root;
         if (errors.isEmpty()) {
             try {
-                await new CreateSimpleGraphRepo().create(graphId, description, storeType);
+                await new CreateSimpleGraphRepo().create(graphId, description, storeType, url, root);
                 this.setState({ outcome: AlertType.SUCCESS, outcomeMessage: `${graphId} was successfully added` });
                 this.resetForm();
             } catch (e) {
