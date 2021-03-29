@@ -79,7 +79,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
     }
 
     private checkProxy(): boolean {
-        return (this.state.storeType === StoreType.PROXY_STORE); 
+        return this.state.storeType === StoreType.PROXY_STORE;
     }
 
     public render() {
@@ -194,7 +194,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
-                                            disabled = {this.checkProxy()}
+                                            disabled={this.checkProxy()}
                                             id="url"
                                             label="url"
                                             variant="outlined"
