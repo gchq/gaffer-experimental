@@ -15,7 +15,6 @@
     "prettier"
   ],
   "rules": {
-    //    "func-style": ["error", "global"],
     "no-new-func": "error",
     "no-param-reassign": "error",
     "prefer-arrow-callback": "error",
