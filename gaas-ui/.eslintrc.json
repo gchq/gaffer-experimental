@@ -1,42 +1,44 @@
 {
-  "root": true,
-  "parser": "@typescript-eslint/parser",
   "env": {
     "browser": true,
     "es6": true
   },
   "extends": [
     "react-app",
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "prettier"
   ],
   "parserOptions": {
-    "ecmaVersion": 2018,
-    "project": "./tsconfig.json"
-
+    "ecmaVersion": 2018
   },
   "plugins": [
     "react",
-    "@typescript-eslint",
-    "@typescript-eslint/eslint-plugin"
+    "prettier"
   ],
   "rules": {
-    "semi": 2,
-    "semi-style": ["error", "last"],
-    "quotes": [2, "single"],
-    "space-in-brackets": ["error", "always"],
-    "comma-dangle": ["error", "never"],
-    "indent": 2,
-    "default-case": 1,
-    "no-duplicate-imports": 2,
-    "space-before-blocks": [1, "always"],
-    "space-before-function-paren": [1, "never"],
-    "@typescript-eslint/no-require-imports": 2,
-    "@typescript-eslint/prefer-readonly": 1,
-    "@typescript-eslint/array-type": 2,
-    "@typescript-eslint/consistent-type-definitions": [2, "interface"],
-    "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/no-useless-constructor": "off"
+    //    "func-style": ["error", "global"],
+    "no-new-func": "error",
+    "no-param-reassign": "error",
+    "prefer-arrow-callback": "error",
+    "arrow-parens": ["error", "always"],
+    "arrow-body-style": ["error", "as-needed"],
+    "new-cap": "error",
+    "no-invalid-this": "error",
+    "prefer-const": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-with": "error",
+    "no-plusplus": "error",
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 120,
+        "trailingComma": "es5",
+        "tabWidth": 4,
+        "semi": true,
+        "singleQuote": true,
+        "bracketSpacing": true,
+        "eslintIntegration": true
+      }
+    ]
   }
 }
