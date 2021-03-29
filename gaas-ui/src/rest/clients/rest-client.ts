@@ -86,6 +86,7 @@ export class RestClient<T> {
             return new RestApiError(e.response.data.title, e.response.data.detail);
         }
         if (e.response && e.response.status) {
+            // @ts-ignore
             return new RestApiError(`Error Code ${e.response.status}`, status(e.response.status));
         }
         return new RestApiError("Unknown Error", "Unable to make request");
