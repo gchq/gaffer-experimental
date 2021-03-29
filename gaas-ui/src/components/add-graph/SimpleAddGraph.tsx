@@ -1,5 +1,16 @@
 import {
-    Button, Container, CssBaseline, FormControl, FormHelperText, Grid, InputLabel, makeStyles, MenuItem, Select, TextField, Typography
+    Button,
+    Container,
+    CssBaseline,
+    FormControl,
+    FormHelperText,
+    Grid,
+    InputLabel,
+    makeStyles,
+    MenuItem,
+    Select,
+    TextField,
+    Typography,
 } from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
@@ -31,8 +42,6 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
             storeType: StoreType.MAPSTORE,
             outcome: undefined,
             outcomeMessage: "",
-            url: "",
-            root: "",
             errors: new Notifications(),
         };
     }
@@ -192,39 +201,6 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                             <FormHelperText>Set to Map Store by default</FormHelperText>
                                         </FormControl>
                                     </Grid>
-                                    {this.state.storeType === StoreType.PROXY_STORE && <Grid item xs={12}>
-                                        <TextField
-                                            disabled={this.checkProxy()}
-                                            required
-                                            id="proxy-url"
-                                            label="Proxy URL"
-                                            variant="outlined"
-                                            value={this.state.url}
-                                            fullWidth
-                                            name="URL"
-                                            autoComplete="url"
-                                            onChange={(event) => {
-                                                this.setState({
-                                                    url: event.target.value,
-                                                });
-                                            }}
-                                        />
-                                        <TextField
-                                            disabled={this.checkProxy()}
-                                            id="proxy-root"
-                                            label="Proxy Root"
-                                            variant="outlined"
-                                            value={this.state.root}
-                                            fullWidth
-                                            name="root"
-                                            autoComplete="root"
-                                            onChange={(event) => {
-                                                this.setState({
-                                                    root: event.target.value,
-                                                });
-                                            }}
-                                        />
-                                    </Grid>}
                                 </Grid>
                             </form>
                         </div>
