@@ -124,7 +124,7 @@ describe("Namespaces", () => {
                 done();
             });
     });
-    it("namespaces endpoint with Authorization token should return namespaces array", async () => {
+    it("namespaces endpoint with Autorization token should return namespaces array", async () => {
         await request(server)
             .get("/namespaces")
             .set("Authorization", token)
