@@ -76,7 +76,11 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
     }
 
     private disableSubmitButton(): boolean {
-        return !this.state.graphId || !this.state.description || !(this.state.storeType===StoreType.PROXY_STORE && this.state.url);
+        return (
+            !this.state.graphId ||
+            !this.state.description ||
+            !(this.state.storeType === StoreType.PROXY_STORE && this.state.url)
+        );
     }
 
     private checkProxy(): boolean {
