@@ -39,6 +39,11 @@ describe('SimpleAddGraph UI component', () => {
             const selectText = wrapper.find('div#storetype-select-grid').find('div#storetype-select');
             expect(selectText.text()).toBe('Federated Store');
         })
+        it('Should allow proxy store to be selected', ()=> {
+            selectStoreType('PROXY_STORE');
+            const selectText = wrapper.find('div#storetype-select-grid').find('div#storetype-select');
+            expect(selectText.text()).toBe('Proxy Store');
+        })
     });
     describe('Add Graph Button', () => {
         it('should be disabled when Graph Name and Graph Description fields are empty', () => {

@@ -24,6 +24,7 @@ interface IState {
     dialogIsOpen: boolean;
     graphId: string;
     description: string;
+    url: string;
     storeType: StoreType;
     outcome: AlertType | undefined;
     outcomeMessage: string;
@@ -40,6 +41,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
             storeType: StoreType.MAPSTORE,
             outcome: undefined,
             outcomeMessage: "",
+            url: "",
             errors: new Notifications(),
         };
     }
@@ -74,6 +76,10 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
 
     private disableSubmitButton(): boolean {
         return !this.state.graphId || !this.state.description;
+    }
+
+    private checkProxy(): boolean {
+        return (this.state.storeType === StoreType.PROXY_STORE); 
     }
 
     public render() {
@@ -181,9 +187,27 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                                 <MenuItem value={StoreType.MAPSTORE}>Map Store</MenuItem>
                                                 <MenuItem value={StoreType.ACCUMULO}>Accumulo</MenuItem>
                                                 <MenuItem value={StoreType.FEDERATED_STORE}>Federated Store</MenuItem>
+                                                <MenuItem value={StoreType.PROXY_STORE}>Proxy Store</MenuItem>
                                             </Select>
                                             <FormHelperText>Set to Map Store by default</FormHelperText>
                                         </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            disabled = {this.checkProxy()}
+                                            id="url"
+                                            label="url"
+                                            variant="outlined"
+                                            value={this.state.url}
+                                            fullWidth
+                                            name="url"
+                                            autoComplete="url"
+                                            onChange={(event) => {
+                                                this.setState({
+                                                    url: event.target.value,
+                                                });
+                                            }}
+                                        />
                                     </Grid>
                                 </Grid>
                             </form>
