@@ -14,4 +14,6 @@ export interface ICreateSimpleGraphRequestBody {
     graphId: string;
     description: string;
     storeType: StoreType;
+    url: string;
+    root: string;
 }
