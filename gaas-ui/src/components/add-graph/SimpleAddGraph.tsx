@@ -84,7 +84,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
         return (
             !this.state.graphId ||
             !this.state.description ||
-            !(this.state.storeType === StoreType.PROXY_STORE && this.state.url)
+            (this.state.storeType === StoreType.PROXY_STORE && !this.state.url)
         );
     }
 
