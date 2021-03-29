@@ -74,6 +74,7 @@ describe("Graph API", () => {
             .get("/graphs")
             .set("Authorization", token)
             .then((response) => {
+                // @ts-ignore
                 expect(response.statusCode).toBe(200);
                 expect(response.body).toStrictEqual([
                     {
@@ -92,6 +93,7 @@ describe("Graph API", () => {
             .get("/graphs/roadTraffic")
             .set("Authorization", token)
             .then((response) => {
+                // @ts-ignore
                 expect(response.statusCode).toBe(200);
                 expect(response.body).toStrictEqual({
                     graphId: "roadTraffic",
@@ -104,6 +106,7 @@ describe("Graph API", () => {
             .delete("/graphs/roadTraffic")
             .set("Authorization", token)
             .then((response) => {
+                // @ts-ignore
                 expect(response.statusCode).toBe(204);
             });
     });
@@ -121,11 +124,12 @@ describe("Namespaces", () => {
                 done();
             });
     });
-    it("namespaces endpoint with Autorization token should return namespaces array", async () => {
+    it("namespaces endpoint with Authorization token should return namespaces array", async () => {
         await request(server)
             .get("/namespaces")
             .set("Authorization", token)
             .then((response) => {
+                // @ts-ignore
                 expect(response.statusCode).toBe(200);
                 expect(response.body).toStrictEqual(["namespace1", "namespace2", "namespace3"]);
             });
