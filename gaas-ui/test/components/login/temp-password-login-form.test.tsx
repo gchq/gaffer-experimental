@@ -124,25 +124,31 @@ function clickSubmitSignIn() {
 }
 
 function mockAuthApiClientNewUserLogin() {
-    // @ts-ignore
-    AuthApiClient.prototype.setNewPasswordAndLogin.mockImplementationOnce(
-        (username: string, password: string, oldPassword: string, onSuccess: () => void, onError: () => void) => {
-            onSuccess();
-        }
-    );
+  // @ts-ignore
+  AuthApiClient.prototype.setNewPasswordAndLogin.mockImplementationOnce(
+    (
+      username: string,
+      password: string,
+      oldPassword: string,
+      onSuccess: () => void,
+      onError: () => void
+    ) => {
+      onSuccess();
+    }
+  );
 }
 
 function mockAuthApiClientNewUserLoginWithError(errorMessage: string) {
-    // @ts-ignore
-    AuthApiClient.prototype.setNewPasswordAndLogin.mockImplementationOnce(
-        (
-            username: string,
-            password: string,
-            oldPassword: string,
-            onSuccess: () => void,
-            onError: (errorMessage: string) => void
-        ) => {
-            onError(errorMessage);
-        }
-    );
+  // @ts-ignore
+  AuthApiClient.prototype.setNewPasswordAndLogin.mockImplementationOnce(
+    (
+      username: string,
+      password: string,
+      oldPassword: string,
+      onSuccess: () => void,
+      onError: (errorMessage: string) => void
+    ) => {
+      onError(errorMessage);
+    }
+  );
 }

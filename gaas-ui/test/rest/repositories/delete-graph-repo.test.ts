@@ -14,6 +14,7 @@ describe("Delete Graph Repo", () => {
             await expect(repo.delete("graph-1")).resolves.toEqual(undefined);
         });
     });
+  });
 
     describe("On Error", () => {
         it("should throw RestApiError with correct 403 Error Code and Message when response body is empty", async () => {
@@ -48,4 +49,5 @@ describe("Delete Graph Repo", () => {
             );
         });
     });
+  });
 });

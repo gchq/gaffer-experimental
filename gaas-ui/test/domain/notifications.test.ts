@@ -24,7 +24,7 @@ describe("Error Message", () => {
         notes1.addError("notification 1");
         notes2.addError("notification 2");
 
-        notes1.concat(notes2);
+    notes1.concat(notes2);
 
         expect(notes1.errorMessage()).toBe("notification 1, notification 2");
     });
@@ -34,7 +34,7 @@ describe("Error Message", () => {
 
         notes1.addError("notification 1");
 
-        notes1.concat(notes2);
+    notes1.concat(notes2);
 
         expect(notes1.errorMessage()).toBe("notification 1");
     });
@@ -44,7 +44,7 @@ describe("Error Message", () => {
 
         notes2.addError("notification 2");
 
-        notes1.concat(notes2);
+    notes1.concat(notes2);
 
         expect(notes1.errorMessage()).toBe("notification 2");
     });
@@ -52,8 +52,8 @@ describe("Error Message", () => {
         const notes1 = new Notifications();
         const notes2 = new Notifications();
 
-        notes1.concat(notes2);
+    notes1.concat(notes2);
 
-        expect(notes1.isEmpty()).toBe(true);
-    });
+    expect(notes1.isEmpty()).toBe(true);
+  });
 });

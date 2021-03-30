@@ -9,7 +9,7 @@ describe("Types Schema Validation", () => {
     it("should return invalid JSON notifications when string is not JSON format", () => {
         const invalidJsonString = "invalid: blahJson";
 
-        const notifications = new TypesSchema(invalidJsonString).validate();
+    const notifications = new TypesSchema(invalidJsonString).validate();
 
         expect(notifications.errorMessage()).toBe("Types Schema is not valid JSON");
     });
@@ -21,11 +21,19 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawElementsSchema).validate();
+    const notifications = new TypesSchema(rawElementsSchema).validate();
 
-        expect(notifications.errorMessage()).toBe(
-            'Types Schema does not contain property types, ["junction"] are invalid Types schema root properties'
-        );
+    expect(notifications.errorMessage()).toBe(
+      'Types Schema does not contain property types, ["junction"] are invalid Types schema root properties'
+    );
+  });
+  it("should return invalid properties notification when invalid properties is in Types schema", () => {
+    const rawSchema = JSON.stringify({
+      junction: {
+        description: "A road junction represented by a String.",
+        class: "java.lang.String",
+      },
+      types: {},
     });
     it("should return invalid properties notification when invalid properties is in Types schema", () => {
         const rawSchema = JSON.stringify({
@@ -36,9 +44,37 @@ describe("Types Schema Validation", () => {
             types: {},
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
-        expect(notifications.errorMessage()).toBe('["junction"] are invalid Types schema root properties');
+    expect(notifications.errorMessage()).toBe(
+      '["junction"] are invalid Types schema root properties'
+    );
+  });
+  it("should return all invalid properties notification when multi invalid properties is in Types schema", () => {
+    const rawSchema = JSON.stringify({
+      road: {
+        description: "A road represented by a String.",
+        class: "java.lang.String",
+      },
+      junction: {
+        description: "A road junction represented by a String.",
+        class: "java.lang.String",
+      },
+      types: {
+        "date.latest": {
+          description:
+            "A Date that when aggregated together will be the latest date.",
+          class: "java.util.Date",
+          validateFunctions: [
+            {
+              class: "uk.gov.gchq.koryphe.impl.predicate.Exists",
+            },
+          ],
+          aggregateFunction: {
+            class: "uk.gov.gchq.koryphe.impl.binaryoperator.Max",
+          },
+        },
+      },
     });
     it("should return all invalid properties notification when multi invalid properties is in Types schema", () => {
         const rawSchema = JSON.stringify({
@@ -66,16 +102,22 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
-        expect(notifications.errorMessage()).toBe('["road", "junction"] are invalid Types schema root properties');
+    expect(notifications.errorMessage()).toBe(
+      '["road", "junction"] are invalid Types schema root properties'
+    );
+  });
+  it("should return invalid types in Types schema when types is not object", () => {
+    const rawSchema = JSON.stringify({
+      types: "blah blah blah",
     });
     it("should return invalid types in Types schema when types is not object", () => {
         const rawSchema = JSON.stringify({
             types: "blah blah blah",
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe("Types is a string and not an object of types objects");
     });
@@ -97,7 +139,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe(
             "description in date.latest type is a object, it needs to be a string"
@@ -121,7 +163,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe("class in date.latest type is a object, it needs to be a string");
     });
@@ -139,7 +181,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe(
             "validateFunctions in date.latest type is a string, it needs to be an Array of objects"
@@ -159,7 +201,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe("validateFunctions in date.latest type doesnt have class");
     });
@@ -182,7 +224,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe(
             "test in validateFunctions in date.latest type is a string. validateFunctions is an array of objects"
@@ -206,7 +248,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe(
             "class in validateFunctions in date.latest is object. Should be string"
@@ -228,7 +270,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe(
             "aggregateFunction in date.latest type is a string, it needs to be an object"
@@ -250,7 +292,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe("aggregateFunction in date.latest type doesnt have class");
     });
@@ -272,7 +314,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe(
             "class in aggregateFunction in date.latest type is object should be string"
@@ -297,7 +339,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe(
             "serialiser in date.latest type is a string, it needs to be an object"
@@ -322,7 +364,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe("serialiser in date.latest type doesnt have class");
     });
@@ -347,7 +389,7 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
         expect(notifications.errorMessage()).toBe(
             "class in serialiser in date.latest type is a object, should be a string"
@@ -379,9 +421,17 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
-        expect(notifications.isEmpty()).toBe(true);
+    expect(notifications.isEmpty()).toBe(true);
+  });
+  it("should not return any errors when description, functions and serialiser are undefined", () => {
+    const rawSchema = JSON.stringify({
+      types: {
+        "count.long": {
+          class: "java.lang.Long",
+        },
+      },
     });
     it("should not return any errors when description, functions and serialiser are undefined", () => {
         const rawSchema = JSON.stringify({
@@ -392,8 +442,8 @@ describe("Types Schema Validation", () => {
             },
         });
 
-        const notifications = new TypesSchema(rawSchema).validate();
+    const notifications = new TypesSchema(rawSchema).validate();
 
-        expect(notifications.isEmpty()).toBe(true);
-    });
+    expect(notifications.isEmpty()).toBe(true);
+  });
 });

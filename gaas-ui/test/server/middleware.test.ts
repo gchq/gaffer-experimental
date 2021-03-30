@@ -4,36 +4,36 @@ import server from "../../server/middleware";
 let token: string;
 
 afterEach(() => {
-    server.close();
+  server.close();
 });
 
 describe("Auth", () => {
-    it("Should respond to the POST method with a 200 status code when the username and password is correct", async () => {
-        await request(server)
-            .post("/auth")
-            .send({
-                username: "user@yahoo.com",
-                password: "abc123",
-            })
-            .expect(200)
-            .expect((res) => res.body !== undefined);
+  it("Should respond to the POST method with a 200 status code when the username and password is correct", async () => {
+    await request(server)
+      .post("/auth")
+      .send({
+        username: "user@yahoo.com",
+        password: "abc123",
+      })
+      .expect(200)
+      .expect((res) => res.body !== undefined);
+  });
+  it("Should respond with a 403 code when the POST method is called with the incorrect username and password", async () => {
+    await request(server)
+      .post("/auth")
+      .send({
+        username: "invalidUser",
+        password: "invalidPassword",
+      })
+      .expect(403);
+  });
+  it("Should respond with a 204 code when the POST method is called with the sign out path", async () => {
+    await request(server).post("/auth").send({
+      username: "user@yahoo.com",
+      password: "abc123",
     });
-    it("Should respond with a 403 code when the POST method is called with the incorrect username and password", async () => {
-        await request(server)
-            .post("/auth")
-            .send({
-                username: "invalidUser",
-                password: "invalidPassword",
-            })
-            .expect(403);
-    });
-    it("Should respond with a 204 code when the POST method is called with the sign out path", async () => {
-        await request(server).post("/auth").send({
-            username: "user@yahoo.com",
-            password: "abc123",
-        });
-        await request(server).post("/auth/signout").expect(204);
-    });
+    await request(server).post("/auth/signout").expect(204);
+  });
 });
 
 describe("Graph API", () => {
@@ -128,27 +128,31 @@ describe("Graph API", () => {
     });
 });
 describe("Namespaces", () => {
-    beforeAll(async (done) => {
-        await request(server)
-            .post("/auth")
-            .send({
-                username: "user@yahoo.com",
-                password: "abc123",
-            })
-            .then((response) => {
-                token = response.body;
-                done();
-            });
-    });
-    it("namespaces endpoint with Authorization token should return namespaces array", async () => {
-        await request(server)
-            .get("/namespaces")
-            .set("Authorization", token)
-            .then((response) => {
-                // @ts-ignore
-                expect(response.statusCode).toBe(200);
-                expect(response.body).toStrictEqual(["namespace1", "namespace2", "namespace3"]);
-            });
-    });
+  beforeAll(async (done) => {
+    await request(server)
+      .post("/auth")
+      .send({
+        username: "user@yahoo.com",
+        password: "abc123",
+      })
+      .then((response) => {
+        token = response.body;
+        done();
+      });
+  });
+  it("namespaces endpoint with Authorization token should return namespaces array", async () => {
+    await request(server)
+      .get("/namespaces")
+      .set("Authorization", token)
+      .then((response) => {
+        // @ts-ignore
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toStrictEqual([
+          "namespace1",
+          "namespace2",
+          "namespace3",
+        ]);
+      });
+  });
 });
 export {};

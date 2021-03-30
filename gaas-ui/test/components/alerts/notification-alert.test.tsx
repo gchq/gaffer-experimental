@@ -13,7 +13,7 @@ describe("Notification Alert", () => {
             message: "Was a success",
         };
 
-        const component = mount(<NotificationAlert {...successProps} />);
+    const component = mount(<NotificationAlert {...successProps} />);
 
         expect(component.text()).toBe("Was a success");
         expect(component.html()).toContain("MuiAlert-standardSuccess");
@@ -24,7 +24,7 @@ describe("Notification Alert", () => {
             message: "Did not work",
         };
 
-        const component = mount(<NotificationAlert {...failProps} />);
+    const component = mount(<NotificationAlert {...failProps} />);
 
         expect(component.text()).toBe("Did not work");
         expect(component.html()).toContain("MuiAlert-standardError");

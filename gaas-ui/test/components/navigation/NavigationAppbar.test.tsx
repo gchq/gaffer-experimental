@@ -15,11 +15,11 @@ beforeAll(
         }))
 );
 beforeEach(() => {
-    component = mount(
-        <MemoryRouter>
-            <NavigationAppbar />
-        </MemoryRouter>
-    );
+  component = mount(
+    <MemoryRouter>
+      <NavigationAppbar />
+    </MemoryRouter>
+  );
 });
 afterEach(() => component.unmount());
 afterAll(() => (process.env = Object.assign(process.env, { REACT_APP_API_PLATFORM: "" })));
@@ -53,6 +53,7 @@ describe("Navigation Appbar Component", () => {
             expect(NavIcon).toHaveLength(1);
         });
     });
+  });
 
     it("should have navigation link in each list item", () => {
         const Target = [{ href: "/AddGraph" }, { href: "/ViewGraph" }, { href: "/Namespaces" }, { href: "/UserGuide" }];
@@ -71,7 +72,7 @@ describe("Display Signed In User Details", () => {
         inputUsername("Harry@gmail.com");
         inputPassword("asdfgh");
 
-        clickSubmitSignIn();
+    clickSubmitSignIn();
 
         expect(component.find("div#signedin-user-details").text()).toBe("HarryHarry@gmail.com");
     });
@@ -80,7 +81,7 @@ describe("Display Signed In User Details", () => {
         inputUsername("Batman");
         inputPassword("zxcvb");
 
-        clickSubmitSignIn();
+    clickSubmitSignIn();
 
         expect(component.find("div#signedin-user-details").text()).toBe("BatmanBatman");
     });
@@ -105,10 +106,15 @@ function clickSubmitSignIn() {
 }
 
 function mockAuthClient() {
-    // @ts-ignore
-    AuthApiClient.prototype.login.mockImplementationOnce(
-        (username: string, password: string, onSuccess: () => void, onError: () => void) => {
-            onSuccess();
-        }
-    );
+  // @ts-ignore
+  AuthApiClient.prototype.login.mockImplementationOnce(
+    (
+      username: string,
+      password: string,
+      onSuccess: () => void,
+      onError: () => void
+    ) => {
+      onSuccess();
+    }
+  );
 }

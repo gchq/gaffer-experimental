@@ -16,9 +16,9 @@ describe("When ViewGraphs mounts", () => {
     it("should display Table Headers and Graphs when GetGraphs successful", async () => {
         mockGetGraphsToReturn([new Graph("testId1", "deployed", "http://testId-1.app", "UP", GraphType.GAAS_GRAPH)]);
 
-        const component = mount(<ViewGraph />);
-        await component.update();
-        await component.update();
+    const component = mount(<ViewGraph />);
+    await component.update();
+    await component.update();
 
         expect(component.find("thead").text()).toBe("Graph IDStatusURLActions");
         expect(component.find("tbody").text()).toBe("testId1UPhttp://testId-1.app");
@@ -27,8 +27,8 @@ describe("When ViewGraphs mounts", () => {
     it("should display No Graphs caption when ", async () => {
         mockGetGraphsToReturn([]);
 
-        const component = mount(<ViewGraph />);
-        await component.update();
+    const component = mount(<ViewGraph />);
+    await component.update();
 
         expect(component.find("caption").text()).toBe("No Graphs.");
     });
@@ -37,7 +37,7 @@ describe("When ViewGraphs mounts", () => {
             throw new RestApiError("Client Error", "404 Not Found");
         });
 
-        const component = mount(<ViewGraph />);
+    const component = mount(<ViewGraph />);
 
         expect(component.find("div#notification-alert").text()).toBe(
             "Failed to get all graphs. Client Error: 404 Not Found"
@@ -46,8 +46,8 @@ describe("When ViewGraphs mounts", () => {
     it("should not display Error AlertNotification when GetGraphs request successful", async () => {
         mockGetGraphsToReturn([new Graph("roadTraffic", "DEPLOYED", "http://roadTraffic.graph", "UP", GraphType.GAAS_GRAPH)]);
 
-        const component = mount(<ViewGraph />);
-        await component.update();
+    const component = mount(<ViewGraph />);
+    await component.update();
 
         const table = component.find("table");
         expect(table).toHaveLength(1);

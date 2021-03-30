@@ -15,7 +15,7 @@ describe("Get All Namespaces Repo", () => {
 
         mock.onGet("/namespaces").reply(200, apiResponse);
 
-        const actual: Array<string> = await repo.getAll();
+    const actual: Array<string> = await repo.getAll();
 
         const expected = ["namespace1", "namespace2", "namespace3"];
         expect(actual).toEqual(expected);
@@ -26,7 +26,7 @@ describe("Get All Namespaces Repo", () => {
 
         mock.onGet("/namespaces").reply(200, apiResponse);
 
-        const actual: Array<string> = await repo.getAll();
+    const actual: Array<string> = await repo.getAll();
 
         const expected = ["namespace1"];
         expect(actual).toEqual(expected);

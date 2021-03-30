@@ -17,11 +17,11 @@ beforeAll(
         }))
 );
 beforeEach(() => {
-    component = mount(<LoginModal onLogin={usernameCallback} />);
+  component = mount(<LoginModal onLogin={usernameCallback} />);
 });
 afterEach(() => {
-    component.unmount();
-    jestMock.mockReset();
+  component.unmount();
+  jestMock.mockReset();
 });
 afterAll(() => (process.env = Object.assign(process.env, { REACT_APP_API_PLATFORM: "" })));
 
@@ -44,7 +44,7 @@ describe("onLogin call back", () => {
         inputUsername("testUsername");
         inputPassword("testPassword");
 
-        clickSubmitSignIn();
+    clickSubmitSignIn();
 
         expect(usernameCallback).toHaveBeenCalledWith("testUsername");
     });
@@ -73,7 +73,7 @@ describe("Sign Out Outcomes", () => {
         inputPassword("testPassword");
         clickSubmitSignIn();
 
-        clickSignOutButton();
+    clickSignOutButton();
 
         expect(component.find(Dialog).at(1).text()).toBe("Sign out was a failure");
     });
@@ -106,19 +106,24 @@ function inputPassword(password: string): void {
 }
 
 function mockAuthApiClientLogin() {
-    // @ts-ignore
-    AuthApiClient.prototype.login.mockImplementationOnce(
-        (username: string, password: string, onSuccess: () => void, onError: () => void) => {
-            onSuccess();
-        }
-    );
+  // @ts-ignore
+  AuthApiClient.prototype.login.mockImplementationOnce(
+    (
+      username: string,
+      password: string,
+      onSuccess: () => void,
+      onError: () => void
+    ) => {
+      onSuccess();
+    }
+  );
 }
 
 function mockAuthApiClientFailedLogOut(errorMessage: string) {
-    // @ts-ignore
-    AuthApiClient.prototype.signOut.mockImplementationOnce(
-        (onSuccess: () => void, onError: (errorMessage: string) => void) => {
-            onError(errorMessage);
-        }
-    );
+  // @ts-ignore
+  AuthApiClient.prototype.signOut.mockImplementationOnce(
+    (onSuccess: () => void, onError: (errorMessage: string) => void) => {
+      onError(errorMessage);
+    }
+  );
 }
