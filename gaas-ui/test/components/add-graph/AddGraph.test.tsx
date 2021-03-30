@@ -436,58 +436,55 @@ describe("AddGraph UI component", () => {
 });
 
 const elements = {
-  entities: {
-    Cardinality: {
-      description:
-        "An entity that is added to every vertex representing the connectivity of the vertex.",
-      vertex: "anyVertex",
-      properties: {
-        edgeGroup: "set",
-        hllp: "hllp",
-        count: "count.long",
-      },
-      groupBy: ["edgeGroup"],
+    entities: {
+        Cardinality: {
+            description: "An entity that is added to every vertex representing the connectivity of the vertex.",
+            vertex: "anyVertex",
+            properties: {
+                edgeGroup: "set",
+                hllp: "hllp",
+                count: "count.long",
+            },
+            groupBy: ["edgeGroup"],
+        },
     },
-  },
-  edges: {
-    RoadUse: {
-      description:
-        "A directed edge representing vehicles moving from junction A to junction B.",
-      source: "junction",
-      destination: "junction",
-      directed: "true",
-      properties: {
-        startDate: "date.earliest",
-        endDate: "date.latest",
-        count: "count.long",
-        countByVehicleType: "counts.freqmap",
-      },
+    edges: {
+        RoadUse: {
+            description: "A directed edge representing vehicles moving from junction A to junction B.",
+            source: "junction",
+            destination: "junction",
+            directed: "true",
+            properties: {
+                startDate: "date.earliest",
+                endDate: "date.latest",
+                count: "count.long",
+                countByVehicleType: "counts.freqmap",
+            },
+        },
+        groupBy: ["startDate", "endDate"],
     },
-    groupBy: ["startDate", "endDate"],
-  },
 };
 
 const types = {
-  types: {
-    "count.long": {
-      description: "A long count that must be greater than or equal to 0.",
-      class: "java.lang.Long",
-      validateFunctions: [
-        {
-          class: "uk.gov.gchq.koryphe.impl.predicate.IsMoreThan",
-          orEqualTo: true,
-          value: {
-            "java.lang.Long": 0,
-          },
+    types: {
+        "count.long": {
+            description: "A long count that must be greater than or equal to 0.",
+            class: "java.lang.Long",
+            validateFunctions: [
+                {
+                    class: "uk.gov.gchq.koryphe.impl.predicate.IsMoreThan",
+                    orEqualTo: true,
+                    value: {
+                        "java.lang.Long": 0,
+                    },
+                },
+            ],
+            aggregateFunction: {
+                class: "uk.gov.gchq.koryphe.impl.binaryoperator.Sum",
+            },
+            serialiser: {
+                class: "uk.gov.gchq.gaffer.sketches.clearspring.cardinality.serialisation.HyperLogLogPlusSerialiser",
+            },
         },
-      ],
-      aggregateFunction: {
-        class: "uk.gov.gchq.koryphe.impl.binaryoperator.Sum",
-      },
-      serialiser: {
-        class:
-          "uk.gov.gchq.gaffer.sketches.clearspring.cardinality.serialisation.HyperLogLogPlusSerialiser",
-      },
     },
-  },
 };

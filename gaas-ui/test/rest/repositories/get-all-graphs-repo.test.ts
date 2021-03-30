@@ -29,7 +29,7 @@ describe("Get All Graphs Repo", () => {
         ];
         mock.onGet("/graphs").reply(200, apiResponse);
 
-    const actual: Graph[] = await repo.getAll();
+        const actual: Graph[] = await repo.getAll();
 
         const expected = [new Graph("roadTraffic", "DEPLOYED", "roadTraffic URL", "UP", GraphType.GAAS_GRAPH), new Graph("basicGraph", "DELETION_QUEUED", "basicGraph URL", "UP", GraphType.GAAS_GRAPH)];
         expect(actual).toEqual(expected);
@@ -46,35 +46,27 @@ describe("Get All Graphs Repo", () => {
         ];
         mock.onGet("/graphs").reply(200, apiResponse);
 
-    const actual: Graph[] = await repo.getAll();
+        const actual: Graph[] = await repo.getAll();
 
         const expected = [new Graph("streetTraffic", "DELETION_QUEUED", "streetTraffic URL", "UP", GraphType.GAAS_GRAPH)];
         expect(actual).toEqual(expected);
     });
 
-  it("should throw RestApiError with correct status message when no response body", async () => {
-    mock.onGet("/graphs").reply(404);
+    it("should throw RestApiError with correct status message when no response body", async () => {
+        mock.onGet("/graphs").reply(404);
 
-    await expect(repo.getAll()).rejects.toEqual(
-      new RestApiError("Error Code 404", "Not Found")
-    );
-  });
+        await expect(repo.getAll()).rejects.toEqual(new RestApiError("Error Code 404", "Not Found"));
+    });
 
-  it("should throw RestApiError with title and detail from response body", async () => {
-    mock
-      .onGet("/graphs")
-      .reply(404, { title: "Forbidden", detail: "Kubernetes access denied" });
+    it("should throw RestApiError with title and detail from response body", async () => {
+        mock.onGet("/graphs").reply(404, { title: "Forbidden", detail: "Kubernetes access denied" });
 
-    await expect(repo.getAll()).rejects.toEqual(
-      new RestApiError("Forbidden", "Kubernetes access denied")
-    );
-  });
+        await expect(repo.getAll()).rejects.toEqual(new RestApiError("Forbidden", "Kubernetes access denied"));
+    });
 
-  it("should throw unknown RestApiError when undefined status and body", async () => {
-    mock.onGet("/graphs").reply(0);
+    it("should throw unknown RestApiError when undefined status and body", async () => {
+        mock.onGet("/graphs").reply(0);
 
-    await expect(repo.getAll()).rejects.toEqual(
-      new RestApiError("Unknown Error", "Unable to make request")
-    );
-  });
+        await expect(repo.getAll()).rejects.toEqual(new RestApiError("Unknown Error", "Unable to make request"));
+    });
 });

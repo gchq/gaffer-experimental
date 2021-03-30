@@ -16,9 +16,9 @@ describe("When ViewGraphs mounts", () => {
     it("should display Table Headers and Graphs when GetGraphs successful", async () => {
         mockGetGraphsToReturn([new Graph("testId1", "deployed", "http://testId-1.app", "UP", GraphType.GAAS_GRAPH)]);
 
-    const component = mount(<ViewGraph />);
-    await component.update();
-    await component.update();
+        const component = mount(<ViewGraph />);
+        await component.update();
+        await component.update();
 
         expect(component.find("thead").text()).toBe("Graph IDStatusURLActions");
         expect(component.find("tbody").text()).toBe("testId1UPhttp://testId-1.app");
@@ -27,17 +27,17 @@ describe("When ViewGraphs mounts", () => {
     it("should display No Graphs caption when ", async () => {
         mockGetGraphsToReturn([]);
 
-    const component = mount(<ViewGraph />);
-    await component.update();
+        const component = mount(<ViewGraph />);
+        await component.update();
 
-    expect(component.find("caption").text()).toBe("No Graphs.");
-  });
-  it("should display Error Message in AlertNotification when GetGraphs request fails", () => {
-    mockGetAllGraphsThrowsError(() => {
-      throw new RestApiError("Client Error", "404 Not Found");
+        expect(component.find("caption").text()).toBe("No Graphs.");
     });
+    it("should display Error Message in AlertNotification when GetGraphs request fails", () => {
+        mockGetAllGraphsThrowsError(() => {
+            throw new RestApiError("Client Error", "404 Not Found");
+        });
 
-    const component = mount(<ViewGraph />);
+        const component = mount(<ViewGraph />);
 
         expect(component.find("div#notification-alert").text()).toBe(
             "Failed to get all graphs. Client Error: 404 Not Found"
@@ -46,8 +46,8 @@ describe("When ViewGraphs mounts", () => {
     it("should not display Error AlertNotification when GetGraphs request successful", async () => {
         mockGetGraphsToReturn([new Graph("roadTraffic", "DEPLOYED", "http://roadTraffic.graph", "UP", GraphType.GAAS_GRAPH)]);
 
-    const component = mount(<ViewGraph />);
-    await component.update();
+        const component = mount(<ViewGraph />);
+        await component.update();
 
         const table = component.find("table");
         expect(table).toHaveLength(1);
@@ -69,17 +69,21 @@ describe("Refresh Button", () => {
 
         expect(component.find("tbody").text()).toBe("roadTrafficUPhttp://roadTraffic.app");
     });
+    it("should reset an existing error message when refresh button is clicked", async () => {
+        mockGetAllGraphsThrowsError(() => {
+            throw new RestApiError("Server Error", "Timeout exception");
+        });
 
-    const component = mount(<ViewGraph />);
-    expect(component.find("div#notification-alert").text()).toBe(
-      "Failed to get all graphs. Server Error: Timeout exception"
-    );
+        const component = mount(<ViewGraph />);
+        expect(component.find("div#notification-alert").text()).toBe(
+            "Failed to get all graphs. Server Error: Timeout exception"
+        );
 
         mockGetGraphsToReturn([new Graph("roadTraffic", "FINISHED DEPLOYMENT", "roadTraffic URL", "UP", GraphType.GAAS_GRAPH)]);
         await clickRefreshButton(component);
 
-    expect(component.find("div#notification-alert").length).toBe(0);
-  });
+        expect(component.find("div#notification-alert").length).toBe(0);
+    });
 });
 
 describe("Delete Button", () => {
@@ -143,53 +147,43 @@ describe("Delete Button", () => {
         await component.update();
         expect(component.find("tbody").text()).toBe("bananasUPbananas URL");
 
-    component
-      .find("tbody")
-      .find("button#view-graphs-delete-button-0")
-      .simulate("click");
-    await component.update();
+        component.find("tbody").find("button#view-graphs-delete-button-0").simulate("click");
+        await component.update();
 
-    // Only call GetGraphsRepo on mount and not 2nd time when delete graph is unsuccessful
-    expect(GetAllGraphsRepo).toBeCalledTimes(1);
-    expect(component.find("div#notification-alert").text()).toBe(
-      'Failed to delete graph "bananas". Server Error: Timeout exception'
-    );
-  });
+        // Only call GetGraphsRepo on mount and not 2nd time when delete graph is unsuccessful
+        expect(GetAllGraphsRepo).toBeCalledTimes(1);
+        expect(component.find("div#notification-alert").text()).toBe(
+            'Failed to delete graph "bananas". Server Error: Timeout exception'
+        );
+    });
 });
 
 async function clickRefreshButton(component: ReactWrapper) {
-  component.find("button#view-graphs-refresh-button").simulate("click");
-  await component.update();
-  await component.update();
+    component.find("button#view-graphs-refresh-button").simulate("click");
+    await component.update();
+    await component.update();
 }
 
 function mockDeleteGraphRepoToThrowError(f: () => void) {
-  // @ts-ignore
-  DeleteGraphRepo.mockImplementationOnce(() => {
-    return {
-      delete: f,
-    };
-  });
+    // @ts-ignore
+    DeleteGraphRepo.mockImplementationOnce(() => ({
+        delete: f,
+    }));
 }
 
 function mockGetGraphsToReturn(graphs: Graph[]): void {
-  // @ts-ignore
-  GetAllGraphsRepo.mockImplementationOnce(() => {
-    return {
-      getAll: () => {
-        return new Promise((resolve, reject) => {
-          resolve(graphs);
-        });
-      },
-    };
-  });
+    // @ts-ignore
+    GetAllGraphsRepo.mockImplementationOnce(() => ({
+        getAll: () =>
+            new Promise((resolve, reject) => {
+                resolve(graphs);
+            }),
+    }));
 }
 
 function mockGetAllGraphsThrowsError(f: () => void): void {
-  // @ts-ignore
-  GetAllGraphsRepo.mockImplementationOnce(() => {
-    return {
-      getAll: f,
-    };
-  });
+    // @ts-ignore
+    GetAllGraphsRepo.mockImplementationOnce(() => ({
+        getAll: f,
+    }));
 }
