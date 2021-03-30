@@ -59,6 +59,7 @@ describe("Create Graph Repo", () => {
             );
         });
     });
+  });
 
     describe("Null checks", ()=>{
         it("Should throw an error when StoreType is Federated and proxyStores is undefined", async () => {
@@ -104,4 +105,5 @@ describe("Create Graph Repo", () => {
             );
         });
     });
+  });
 });
