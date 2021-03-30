@@ -16,7 +16,7 @@ describe("Existing User Sign In", () => {
         const onSuccess = jest.fn();
         const onError = jest.fn();
 
-    cognitoClient.login(username, password, onSuccess, onError);
+        cognitoClient.login(username, password, onSuccess, onError);
 
         expect(onSuccess).toHaveBeenCalledTimes(1);
         expect(onError).toHaveBeenCalledTimes(0);
@@ -30,7 +30,7 @@ describe("Existing User Sign In", () => {
         const onSuccess = jest.fn();
         const onError = jest.fn();
 
-    cognitoClient.login(username, password, onSuccess, onError);
+        cognitoClient.login(username, password, onSuccess, onError);
 
         expect(onSuccess).toHaveBeenCalledTimes(0);
         expect(onError).toHaveBeenCalledTimes(1);
@@ -42,8 +42,8 @@ describe("New User Sign In", () => {
     it("should call onSuccess when login is successful", () => {
         mockSuccessfulAuthenticateNewUser("My-co6n1t0-t0k3n");
 
-    const onSuccess = jest.fn();
-    const onError = jest.fn();
+        const onSuccess = jest.fn();
+        const onError = jest.fn();
 
         cognitoClient.setNewPasswordAndLogin("John Smith", "P@$$word", "N3wPassw0rd", onSuccess, onError);
 
@@ -54,8 +54,8 @@ describe("New User Sign In", () => {
     it("should call onError with error message when login fails", () => {
         mockFailAuthenticateNewUser("Unable to set new password");
 
-    const onSuccess = jest.fn();
-    const onError = jest.fn();
+        const onSuccess = jest.fn();
+        const onError = jest.fn();
 
         cognitoClient.setNewPasswordAndLogin("John Smith", "P@$$word", "N3wPassw0rd", onSuccess, onError);
 
@@ -69,10 +69,10 @@ describe("Sign Out", () => {
     it("should call onSuccess when login is successful", () => {
         mockSuccessfulGlobalSignOut();
 
-    const onSuccess = jest.fn();
-    const onError = jest.fn();
+        const onSuccess = jest.fn();
+        const onError = jest.fn();
 
-    cognitoClient.signOut(onSuccess, onError);
+        cognitoClient.signOut(onSuccess, onError);
 
         expect(onSuccess).toHaveBeenCalledTimes(1);
         expect(onError).toHaveBeenCalledTimes(0);
@@ -80,10 +80,10 @@ describe("Sign Out", () => {
     it("should call onSuccess when login is successful", () => {
         mockFailedGlobalSignOut("Failed to sign out");
 
-    const onSuccess = jest.fn();
-    const onError = jest.fn();
+        const onSuccess = jest.fn();
+        const onError = jest.fn();
 
-    cognitoClient.signOut(onSuccess, onError);
+        cognitoClient.signOut(onSuccess, onError);
 
         expect(onSuccess).toHaveBeenCalledTimes(0);
         expect(onError).toHaveBeenCalledTimes(1);
@@ -106,12 +106,12 @@ function mockSuccessfulAuthenticateUser(jwtToken: string) {
 }
 
 function mockFailAuthenticateUser(errorMessage: string) {
-  // @ts-ignore
-  CognitoUser.prototype.authenticateUser.mockImplementationOnce(
-    (authDetails: AuthenticationDetails, callBacks: CognitoCallBacks) => {
-      callBacks.onFailure({ message: errorMessage });
-    }
-  );
+    // @ts-ignore
+    CognitoUser.prototype.authenticateUser.mockImplementationOnce(
+        (authDetails: AuthenticationDetails, callBacks: CognitoCallBacks) => {
+            callBacks.onFailure({ message: errorMessage });
+        }
+    );
 }
 
 function mockSuccessfulAuthenticateNewUser(jwtToken: string) {
@@ -130,34 +130,30 @@ function mockSuccessfulAuthenticateNewUser(jwtToken: string) {
 }
 
 function mockFailAuthenticateNewUser(errorMessage: string) {
-  // @ts-ignore
-  CognitoUser.prototype.authenticateUser.mockImplementationOnce(
-    (authDetails: AuthenticationDetails, callBacks: CognitoCallBacks) => {
-      callBacks.onFailure({ message: errorMessage });
-    }
-  );
+    // @ts-ignore
+    CognitoUser.prototype.authenticateUser.mockImplementationOnce(
+        (authDetails: AuthenticationDetails, callBacks: CognitoCallBacks) => {
+            callBacks.onFailure({ message: errorMessage });
+        }
+    );
 }
 
 function mockSuccessfulGlobalSignOut() {
-  // @ts-ignore
-  CognitoUser.prototype.globalSignOut.mockImplementationOnce(
-    (callBacks: CognitoCallBacks) => {
-      callBacks.onSuccess();
-    }
-  );
+    // @ts-ignore
+    CognitoUser.prototype.globalSignOut.mockImplementationOnce((callBacks: CognitoCallBacks) => {
+        callBacks.onSuccess();
+    });
 }
 
 function mockFailedGlobalSignOut(errorMessage: string) {
-  // @ts-ignore
-  CognitoUser.prototype.globalSignOut.mockImplementationOnce(
-    (callBacks: CognitoCallBacks) => {
-      callBacks.onFailure({ message: errorMessage });
-    }
-  );
+    // @ts-ignore
+    CognitoUser.prototype.globalSignOut.mockImplementationOnce((callBacks: CognitoCallBacks) => {
+        callBacks.onFailure({ message: errorMessage });
+    });
 }
 
 interface CognitoCallBacks {
-  onSuccess: (result?: any) => void;
-  onFailure: (error: { message: string }) => void;
-  newPasswordRequired: (userAttributes: any) => void;
+    onSuccess: (result?: any) => void;
+    onFailure: (error: { message: string }) => void;
+    newPasswordRequired: (userAttributes: any) => void;
 }

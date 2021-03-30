@@ -45,16 +45,17 @@ describe("RestClient 2** Responses", () => {
     it("should return status when POST with request body is successful", async () => {
         const actual = await new RestClient().post().graphs().requestBody({ post: "this" }).execute();
 
-    expect(actual).toEqual({
-      status: 201,
+        expect(actual).toEqual({
+            status: 201,
+        });
     });
     it("should return status when DELETE with path variable is successful", async () => {
         const actual = await new RestClient().delete().graphs("redundant-graph").execute();
 
-    expect(actual).toEqual({
-      status: 202,
+        expect(actual).toEqual({
+            status: 202,
+        });
     });
-  });
 });
 
 describe("RestClient 4**/5** Error Responses", () => {

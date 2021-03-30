@@ -11,9 +11,9 @@ describe("When ViewGraphs mounts", () => {
     it("should display table headers and namespaces when GetNamespaces is successful", async () => {
         mockGetNamespacesToReturn(["namespace1"]);
 
-    const component = mount(<ClusterNamespaces />);
-    await component.update();
-    await component.update();
+        const component = mount(<ClusterNamespaces />);
+        await component.update();
+        await component.update();
 
         expect(component.find("thead").text()).toBe("Namespaces");
         expect(component.find("tbody").text()).toBe("namespace1");
@@ -22,9 +22,9 @@ describe("When ViewGraphs mounts", () => {
     it("should display No Namespaces when there are no namespaces", async () => {
         mockGetNamespacesToReturn([]);
 
-    const component = mount(<ClusterNamespaces />);
-    await component.update();
-    await component.update();
+        const component = mount(<ClusterNamespaces />);
+        await component.update();
+        await component.update();
 
         expect(component.find("caption").text()).toBe("No Namespaces");
     });
@@ -33,7 +33,7 @@ describe("When ViewGraphs mounts", () => {
             throw new RestApiError("Client Error", "404 Not Found");
         });
 
-    const component = mount(<ClusterNamespaces />);
+        const component = mount(<ClusterNamespaces />);
 
         expect(component.find("div#notification-alert").text()).toBe(
             "Failed to get all namespaces. Client Error: 404 Not Found"
@@ -42,8 +42,8 @@ describe("When ViewGraphs mounts", () => {
     it("should not display Error AlertNotification when GetNamespaces request successful", async () => {
         mockGetNamespacesToReturn(["namespace1", "namespace2"]);
 
-    const component = mount(<ClusterNamespaces />);
-    await component.update();
+        const component = mount(<ClusterNamespaces />);
+        await component.update();
 
         const table = component.find("table");
         expect(table).toHaveLength(1);
