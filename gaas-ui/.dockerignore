@@ -1,0 +1,12 @@
+node_modules
+.git
+.cache
+*.md
+/test
+/build
+/coverage
+*.config.js
+.eslintrc.json
+.travis.yml
+LICENCE
+.gitignore

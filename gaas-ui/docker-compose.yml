@@ -1,0 +1,9 @@
+# By default, docker-compose looks for and uses the .env for environment variables.
+# You can specify other custom .env.* files as args, e.g.: docker-compose --env-file ./config/.env.dev up 
+
+version: "3.8"
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"

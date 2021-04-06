@@ -1,0 +1,51 @@
+$base-color: #607D8B;
+
+body {
+    font-family: 'Lucida Sans', Verdana, sans-serif;
+}
+
+main {
+    width: 100%;
+    margin-top: 30px;
+    }
+
+#login-form, #temp-password-login-form {
+    margin-top: 0px;
+    main {
+        margin-top: 0px;
+        }
+}    
+
+a {
+    &:hover {
+        cursor: pointer;
+    }
+}
+.MuiAppBar-colorPrimary {
+    background-color: $base-color;
+    box-shadow: none;  
+}
+
+.MuiButton-contained {
+    background-color: $base-color;
+    box-shadow: none;
+    &:hover {
+        background-color: #49606b;
+        box-shadow: none;
+    }
+}
+
+#notification-alert {
+    position: absolute;
+    top: 65px;
+    border-radius: 0;
+    width: 100%;
+}
+
+.MuiDialogContent-root {
+    #notification-alert {
+       position: unset;
+    }
+} 
+
+

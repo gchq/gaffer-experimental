@@ -1,0 +1,30 @@
+# Default values for helmchart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  #Ask about repository setting
+  repository: macenturalxl1/gaas-ui
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 'latest'
+  containerPort: 8081
+
+imagePullSecrets: [ ]
+nameOverride: ''
+fullnameOverride: ''
+
+service:
+  type: ClusterIP
+  port: 8081
+  targetPort: 8081
+
+envConfigFile: "env-config.js"
+
+envVariables:
+  reactAPIPlatform: "test"
+  kaiRestAPIHost: "http://openshift.host.co.uk/"
+  cognitoUserpoolID: "us-east-1_ABC1def2g"
+  cognitoClientID: "c0gN1t0Id"
