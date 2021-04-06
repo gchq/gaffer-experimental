@@ -1,16 +1,5 @@
 import {
-    Button,
-    Container,
-    CssBaseline,
-    FormControl,
-    FormHelperText,
-    Grid,
-    InputLabel,
-    makeStyles,
-    MenuItem,
-    Select,
-    TextField,
-    Typography,
+    Button, Container, CssBaseline, FormControl, FormHelperText, Grid, InputLabel, makeStyles, MenuItem, Select, TextField, Typography
 } from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
@@ -203,7 +192,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                             <FormHelperText>Set to Map Store by default</FormHelperText>
                                         </FormControl>
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    {this.state.storeType === StoreType.PROXY_STORE && <Grid item xs={12}>
                                         <TextField
                                             disabled={this.checkProxy()}
                                             required
@@ -220,8 +209,6 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                                 });
                                             }}
                                         />
-                                    </Grid>
-                                    <Grid item xs={12}>
                                         <TextField
                                             disabled={this.checkProxy()}
                                             id="proxy-root"
@@ -237,7 +224,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                                                 });
                                             }}
                                         />
-                                    </Grid>
+                                    </Grid>}
                                 </Grid>
                             </form>
                         </div>
