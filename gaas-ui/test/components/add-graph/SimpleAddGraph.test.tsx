@@ -41,25 +41,24 @@ describe("SimpleAddGraph UI component", () => {
         });
         it("Should allow proxy store to be selected", () => {
             selectStoreType("PROXY_STORE");
+            
             const selectText = wrapper.find("div#storetype-select-grid").find("div#storetype-select");
             expect(selectText.text()).toBe("Proxy Store");
         });
-        it("Disable url input when proxy store is not selected", () => {
+        it("should hide URL and Root inputs when Accumulo Store is selected", () => {
             selectStoreType("ACCUMULO");
-            const selectText = wrapper.find("input#proxy-url");
-            expect(selectText.props().disabled).toBe(true);
+
+            const urlInput = wrapper.find("input#proxy-url");
+            expect(urlInput.length).toBe(0);
+            const rootInput = wrapper.find("input#proxy-root");
+            expect(rootInput.length).toBe(0);
         });
-        it("Disable root input when proxy store is not selected", () => {
-            selectStoreType("ACCUMULO");
-            const selectText = wrapper.find("input#proxy-root");
-            expect(selectText.props().disabled).toBe(true);
-        });
-        it("Enable root input and url input when proxy store is selected", () => {
+        it("should show URL and Root inputs when Proxy Store is selected", () => {
             selectStoreType("PROXY_STORE");
             const selectText = wrapper.find("input#proxy-root");
-            expect(selectText.props().disabled).toBe(false);
+            expect(selectText.length).toBe(1);
             const selectText2 = wrapper.find("input#proxy-url");
-            expect(selectText2.props().disabled).toBe(false);
+            expect(selectText2.length).toBe(1);
         });
     });
     describe("Add Graph Button", () => {
