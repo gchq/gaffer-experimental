@@ -26,7 +26,6 @@ spec:
   port:
     targetPort: {{ .Values.service.targetPort }}-tcp
   wildcardPolicy: None
-
-  tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Redirect
+tls:
+  termination: edge
+  insecureEdgeTerminationPolicy: Redirect
