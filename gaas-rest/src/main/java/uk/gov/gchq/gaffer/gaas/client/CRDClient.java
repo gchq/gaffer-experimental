@@ -47,7 +47,7 @@ public class CRDClient {
   private String group;
   @Value("${version}")
   private String version;
-  @Value("${namespace}")
+  @Value("${gaffer.namespace}")
   private String namespace;
   private static final String PLURAL = "gaffers";
   private static final String PRETTY = null;

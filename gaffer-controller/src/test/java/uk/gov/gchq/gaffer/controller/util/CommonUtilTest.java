@@ -38,7 +38,7 @@ class CommonUtilTest {
         HashMap<Object, Object> map = new HashMap<>();
         HashMap<Object, Object> metadata = new HashMap<>();
         metadata.put("name", "my-graph");
-        metadata.put("namespace", "my-gaffer-namespace");
+        metadata.put("gaffer.namespace", "my-gaffer-namespace");
         map.put("metadata", metadata);
 
         // When

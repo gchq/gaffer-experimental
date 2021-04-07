@@ -32,6 +32,22 @@ spec:
       serviceAccountName: {{ include "helm.fullname" . }}-service-account
       {{ end }}
       containers:
-        - name: gaas-rest
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          name: gaas-rest
+          env:
+            - name: namespace
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "helm.fullname" . }}
+                  key: namespace
+          volumeMounts:
+            - name: application-config
+              mountPath: "/deployments/config"
+              readOnly: true
+      volumes:
+        - name: application-config
+          configMap:
+            name: {{ include "helm.fullname" . }}
+            items:
+              - key: application.properties
+                path: application.properties

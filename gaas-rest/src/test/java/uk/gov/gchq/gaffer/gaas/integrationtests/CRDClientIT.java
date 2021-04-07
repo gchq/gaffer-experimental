@@ -45,7 +45,7 @@ public class CRDClientIT {
     private CRDClient crdClient;
     @Autowired
     private ApiClient apiClient;
-    @Value("${namespace}")
+    @Value("${gaffer.namespace}")
     private String namespace;
     @Value("${group}")
     private String group;
