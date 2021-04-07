@@ -19,11 +19,13 @@ package uk.gov.gchq.gaffer.gaas.model;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * <b>GaaS: Create Gaffer Request Body</b>
  */
-public class GaaSCreateRequestBody {
+public class GaaSCreateRequestBody implements Serializable {
     @NotNull(message = "Graph id should not be null")
     @NotBlank(message = "Graph id should not be null")
     @Pattern(regexp = "^[a-z0-9_-]*$", message = "Graph can contain only digits, lowercase letters or the special characters _ and -")
@@ -34,6 +36,8 @@ public class GaaSCreateRequestBody {
     private StoreType storeType;
     private String proxyHost;
     private String proxyContextRoot;
+    private Map<String, Object> elementsSchema;
+    private Map<String, Object> typesSchema;
 
     public GaaSCreateRequestBody() {
     }
@@ -44,10 +48,20 @@ public class GaaSCreateRequestBody {
         this.storeType = storeType;
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType, final String proxyHost, final String proxyContextRoot) {
+    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType, final Map<String, Object> elementsSchema, final Map<String, Object> typesSchema) {
         this.graphId = graphId;
         this.description = description;
         this.storeType = storeType;
+        this.elementsSchema = elementsSchema;
+        this.typesSchema = typesSchema;
+    }
+
+    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType, final Map<String, Object> elementsSchema, final Map<String, Object> typesSchema, final String proxyHost, final String proxyContextRoot) {
+        this.graphId = graphId;
+        this.description = description;
+        this.storeType = storeType;
+        this.elementsSchema = elementsSchema;
+        this.typesSchema = typesSchema;
         this.proxyHost = proxyHost;
         this.proxyContextRoot = proxyContextRoot;
     }
@@ -58,6 +72,14 @@ public class GaaSCreateRequestBody {
 
     public String getDescription() {
         return description;
+    }
+
+    public Map<String, Object> getElementsSchema() {
+        return elementsSchema;
+    }
+
+    public Map<String, Object> getTypesSchema() {
+        return typesSchema;
     }
 
     public StoreType getStoreType() {
@@ -71,4 +93,5 @@ public class GaaSCreateRequestBody {
     public String getProxyContextRoot() {
         return proxyContextRoot;
     }
+
 }

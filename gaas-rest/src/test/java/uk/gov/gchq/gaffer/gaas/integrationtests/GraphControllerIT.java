@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
+import com.google.gson.Gson;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
+import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -46,6 +48,20 @@ public class GraphControllerIT extends AbstractTest {
                 .content(authRequest)).andReturn();
         assertEquals(200, result.getResponse().getStatus());
         assertEquals(179, result.getResponse().getContentAsString().length());
+    }
+
+    @Test
+    public void testAddGraph_WithSchema_Returns201OnSuccess() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO, getElementsSchema(), getTypesSchema());
+        final Gson gson = new Gson();
+        final String inputJson = gson.toJson(gaaSCreateRequestBody);
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(inputJson)).andReturn();
+
+        assertEquals(201, mvcResult.getResponse().getStatus());
     }
 
     @Test
@@ -193,5 +209,18 @@ public class GraphControllerIT extends AbstractTest {
         } catch (Exception e) {
             // Do nothing
         }
+    }
+
+    private LinkedHashMap<String, Object> getTypesSchema() {
+        final LinkedHashMap<String, Object> typesSchema = new LinkedHashMap<>();
+        typesSchema.put("types", new Object());
+        return typesSchema;
+    }
+
+    private LinkedHashMap<String, Object> getElementsSchema() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("entities", new Object());
+        elementsSchema.put("edges", new Object());
+        return elementsSchema;
     }
 }

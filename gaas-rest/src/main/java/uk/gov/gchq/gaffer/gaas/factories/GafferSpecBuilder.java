@@ -33,6 +33,8 @@ public class GafferSpecBuilder {
 
     private String graphId;
     private String description;
+    private Map<String, Object> elementsJson;
+    private Map<String, Object> typesJson;
     private Map<String, Object> storeProperties;
     private boolean accumuloIsEnabled;
 
@@ -43,6 +45,16 @@ public class GafferSpecBuilder {
 
     public GafferSpecBuilder description(final String description) {
         this.description = description;
+        return this;
+    }
+
+    public GafferSpecBuilder elementsJson(final Map<String, Object> elementsJson) {
+        this.elementsJson = elementsJson;
+        return this;
+    }
+
+    public GafferSpecBuilder typesJson(final Map<String, Object> typesJson) {
+        this.typesJson = typesJson;
         return this;
     }
 
@@ -82,6 +94,8 @@ public class GafferSpecBuilder {
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(graphId, "graph", "config", "graphId");
         gafferSpec.putNestedObject(description, "graph", "config", "description");
+        gafferSpec.putNestedObject(elementsJson, "graph", "schema", "elements.json");
+        gafferSpec.putNestedObject(typesJson, "graph", "schema", "types.json");
         gafferSpec.putNestedObject(storeProperties, "graph", "storeProperties");
 
         if (accumuloIsEnabled && storeProperties != null) {
