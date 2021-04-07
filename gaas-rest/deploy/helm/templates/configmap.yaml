@@ -16,4 +16,4 @@ kind: ConfigMap
 metadata:
   name: {{ include "helm.fullname" . }}
 data:
-  namespace: {{ .Values.namespace}}
+  GAFFER_NAMESPACE: {{ .Values.namespace}}
