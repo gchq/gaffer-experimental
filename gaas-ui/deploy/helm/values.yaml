@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   #Ask about repository setting
   repository: macenturalxl1/gaas-ui
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: 'latest'
   containerPort: 8081
