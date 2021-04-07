@@ -15,7 +15,7 @@
 replicaCount: 1
 image:
   #Set the repository value below to your own
-  repository: dockerhub/repo
+  repository: kitkat520/api
   pullPolicy: Always
   tag: latest
   containerPort: 8080
