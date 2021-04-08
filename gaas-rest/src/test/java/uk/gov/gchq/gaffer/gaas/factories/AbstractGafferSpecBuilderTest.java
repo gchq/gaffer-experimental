@@ -20,15 +20,14 @@ import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class GafferSpecBuilderTest {
+public class AbstractGafferSpecBuilderTest {
 
     @Test
-    public void whenAccumuloIsEnabledAndStorePropertiesIsSet_throwIAX() {
+    public void whenStoreTypeIsAccumuloForGenericGafferSpecBuilder_throwIAX() {
         assertThrows(IllegalArgumentException.class, () -> new GafferSpecBuilder()
                 .graphId("id")
                 .description("a description")
-                .storeProperties(StoreType.MAPSTORE)
-                .enableAccumulo()
+                .storeProperties(StoreType.ACCUMULO)
                 .build());
     }
 }

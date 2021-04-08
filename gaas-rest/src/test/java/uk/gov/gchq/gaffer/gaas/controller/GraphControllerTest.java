@@ -49,6 +49,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 public class GraphControllerTest extends AbstractTest {
+
     @MockBean
     private ApiClient apiClient;
     @MockBean
@@ -225,10 +226,12 @@ public class GraphControllerTest extends AbstractTest {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO);
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
+
         verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
         assertEquals(409, mvcResult.getResponse().getStatus());
         assertEquals("{\"title\":\"This graph\",\"detail\":\"already exists\"}", mvcResult.getResponse().getContentAsString());
@@ -285,10 +288,12 @@ public class GraphControllerTest extends AbstractTest {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO);
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
+
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
+
         verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
         final int status = mvcResult.getResponse().getStatus();
         assertEquals(201, status);

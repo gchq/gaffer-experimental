@@ -16,5 +16,19 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
-public class GafferSpecBuilder extends AbstractGafferSpecBuilder {
+import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+
+public class AccumuloGafferSpecBuilder extends AbstractGafferSpecBuilder {
+
+    @Override
+    public GafferSpec build() {
+        final GafferSpec gafferSpec = new GafferSpec();
+        gafferSpec.putNestedObject(graphId, "graph", "config", "graphId");
+        gafferSpec.putNestedObject(description, "graph", "config", "description");
+        gafferSpec.putNestedObject(storeProperties, "graph", "storeProperties");
+
+        gafferSpec.putNestedObject(true, "accumulo", "enabled");
+
+        return gafferSpec;
+    }
 }
