@@ -15,8 +15,8 @@
 replicaCount: 1
 image:
   #Set the repository value below to your own
-  repository: dockerhub/repo
-  pullPolicy: IfNotPresent
+  repository: kitkat520/api
+  pullPolicy: Always
   tag: latest
   containerPort: 8080
 imagePullSecrets: []
@@ -29,3 +29,5 @@ service:
 # ClusterRoleBinding privileges to enable cluster namespaces endpoint
 serviceAccount:
   create: false
+
+namespace: kai-dev

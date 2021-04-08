@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.gchq.gaffer</groupId>
         <artifactId>gaffer-experimental</artifactId>
-        <version>1.13.0</version>
+        <version>1.16.0</version>
     </parent>
     <artifactId>gaas-rest</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -38,6 +38,10 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
             <version>3.0.0</version>
@@ -59,7 +63,7 @@
         <dependency>
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>federated-store</artifactId>
-            <version>1.13.3</version>
+            <version>${gaffer.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -119,17 +123,17 @@
         <dependency>
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>sketches-library</artifactId>
-            <version>1.13.0</version>
+            <version>${gaffer.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>gaffer-controller</artifactId>
-            <version>1.13.0</version>
+            <version>${gaffer.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>proxy-store</artifactId>
-            <version>1.13.0</version>
+            <version>${gaffer.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

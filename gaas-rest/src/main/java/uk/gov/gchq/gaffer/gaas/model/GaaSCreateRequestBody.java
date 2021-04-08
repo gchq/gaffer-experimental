@@ -36,8 +36,8 @@ public class GaaSCreateRequestBody implements Serializable {
     private StoreType storeType;
     private String proxyHost;
     private String proxyContextRoot;
-    private Map<String, Object> elementsSchema;
-    private Map<String, Object> typesSchema;
+    private Object elementsSchema;
+    private Object typesSchema;
 
     public GaaSCreateRequestBody() {
     }
@@ -74,11 +74,11 @@ public class GaaSCreateRequestBody implements Serializable {
         return description;
     }
 
-    public Map<String, Object> getElementsSchema() {
+    public Object getElementsSchema() {
         return elementsSchema;
     }
 
-    public Map<String, Object> getTypesSchema() {
+    public Object getTypesSchema() {
         return typesSchema;
     }
 

@@ -55,28 +55,27 @@ public final class GafferHelmValuesFactory {
 
         switch (storeType) {
             case ACCUMULO:
-                return new GafferSpecBuilder()
+                return new AccumuloGafferSpecBuilder()
                         .graphId(graph.getGraphId())
                         .description(graph.getDescription())
-                        .elementsJson(graph.getElementsSchema())
-                        .typesJson(graph.getTypesSchema())
-                        .enableAccumulo()
+                        .elementsSchema(graph.getElementsSchema())
+                        .typesSchema(graph.getTypesSchema())
                         .build();
             case FEDERATED_STORE:
             case MAPSTORE:
                 return new GafferSpecBuilder()
                         .graphId(graph.getGraphId())
                         .description(graph.getDescription())
-                        .elementsJson(graph.getElementsSchema())
-                        .typesJson(graph.getTypesSchema())
+                        .elementsSchema(graph.getElementsSchema())
+                        .typesSchema(graph.getTypesSchema())
                         .storeProperties(storeType)
                         .build();
             case PROXY_STORE:
                 return new GafferSpecBuilder()
                         .graphId(graph.getGraphId())
                         .description(graph.getDescription())
-                        .elementsJson(graph.getElementsSchema())
-                        .typesJson(graph.getTypesSchema())
+                        .elementsSchema(graph.getElementsSchema())
+                        .typesSchema(graph.getTypesSchema())
                         .storeProperties(storeType, graph.getProxyHost(), graph.getProxyContextRoot())
                         .build();
             default:

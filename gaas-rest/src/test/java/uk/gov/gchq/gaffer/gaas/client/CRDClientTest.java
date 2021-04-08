@@ -52,7 +52,7 @@ public class CRDClientTest {
   private String group;
   @Value("${version}")
   private String version;
-  @Value("${namespace}")
+  @Value("${gaffer.namespace}")
   private String namespace;
   private final String plural = "gaffers";
   private final String pretty = null;

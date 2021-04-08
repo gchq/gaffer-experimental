@@ -46,7 +46,7 @@ public abstract class AbstractTest {
     protected static final String TEST_GRAPH_ID = "testgraphid";
     protected static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
 
-    @Value("${namespace}")
+    @Value("${gaffer.namespace}")
     protected String namespace;
 
     protected String mapToJson(final Object obj) throws JsonProcessingException {
