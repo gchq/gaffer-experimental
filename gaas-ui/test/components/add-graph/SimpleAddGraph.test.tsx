@@ -39,27 +39,6 @@ describe("SimpleAddGraph UI component", () => {
             const selectText = wrapper.find("div#storetype-select-grid").find("div#storetype-select");
             expect(selectText.text()).toBe("Federated Store");
         });
-        it("Should allow proxy store to be selected", () => {
-            selectStoreType("PROXY_STORE");
-            
-            const selectText = wrapper.find("div#storetype-select-grid").find("div#storetype-select");
-            expect(selectText.text()).toBe("Proxy Store");
-        });
-        it("should hide URL and Root inputs when Accumulo Store is selected", () => {
-            selectStoreType("ACCUMULO");
-
-            const urlInput = wrapper.find("input#proxy-url");
-            expect(urlInput.length).toBe(0);
-            const rootInput = wrapper.find("input#proxy-root");
-            expect(rootInput.length).toBe(0);
-        });
-        it("should show URL and Root inputs when Proxy Store is selected", () => {
-            selectStoreType("PROXY_STORE");
-            const selectText = wrapper.find("input#proxy-root");
-            expect(selectText.length).toBe(1);
-            const selectText2 = wrapper.find("input#proxy-url");
-            expect(selectText2.length).toBe(1);
-        });
     });
     describe("Add Graph Button", () => {
         it("should be disabled when Graph Name and Graph Description fields are empty", () => {
@@ -78,12 +57,6 @@ describe("SimpleAddGraph UI component", () => {
             inputdescription("test");
             selectStoreType("MAPSTORE");
             expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(false);
-        });
-        it("Should be disabled when Graph Name and Graph Description is not empty but Proxy Store is selected and a URL has not been entered", () => {
-            inputgraphId("test");
-            inputdescription("test");
-            selectStoreType("PROXY_STORE");
-            expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(true);
         });
     });
     describe("On Submit Request", () => {
