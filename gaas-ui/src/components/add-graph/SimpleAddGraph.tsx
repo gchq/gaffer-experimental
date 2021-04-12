@@ -216,7 +216,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                             <TableCell component="th" scope="row">
                               {graph.getId()}
                             </TableCell>
-                            <TableCell align="right">{graph.getStatus()}</TableCell>
+                            <TableCell align="right">{graph.getDescription()}</TableCell>
                             <TableCell padding="checkbox">
                               <Checkbox
                                 id={`${graph.getId()}-checkbox`}

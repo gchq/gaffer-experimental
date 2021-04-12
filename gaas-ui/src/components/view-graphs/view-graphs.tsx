@@ -85,6 +85,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                     <TableRow style={{ background: "#F4F2F2" }}>
                                         <TableCell>Graph ID</TableCell>
                                         <TableCell align="right">Description</TableCell>
+                                        <TableCell align="right">Status</TableCell>
                                         <TableCell align="right">Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -95,6 +96,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                             <TableCell component="th" scope="row">
                                                 {graph.getId()}
                                             </TableCell>
+                                            <TableCell align="right">{graph.getDescription()}</TableCell>
                                             <TableCell align="right">{graph.getStatus()}</TableCell>
                                             <TableCell align="right">
                                                 <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
