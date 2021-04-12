@@ -1,6 +1,7 @@
 import { IElements } from "../../domain/elements-schema";
 import { ITypesSchema } from "../../domain/types-schema";
 import { StoreType } from "../../domain/store-type";
+import {Graph} from "../../domain/graph";
 
 export interface ICreateGraphInterface {
     graphId: string;
