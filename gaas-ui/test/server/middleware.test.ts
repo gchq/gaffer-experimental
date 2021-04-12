@@ -80,10 +80,12 @@ describe("Graph API", () => {
                     {
                         graphId: "roadTraffic",
                         description: "DEPLOYED",
+                        url: "roadTraffic URL",
                     },
                     {
                         graphId: "basicGraph",
                         description: "DEPLOYED",
+                        url: "basicGraph URL",
                     },
                 ]);
             });
