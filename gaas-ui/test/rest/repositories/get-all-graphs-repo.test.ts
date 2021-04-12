@@ -16,17 +16,19 @@ describe("Get All Graphs Repo", () => {
             {
                 graphId: "roadTraffic",
                 description: "DEPLOYED",
+                url: "roadTraffic URL"
             },
             {
                 graphId: "basicGraph",
                 description: "DELETION_QUEUED",
+                url: "basicGraph URL"
             },
         ];
         mock.onGet("/graphs").reply(200, apiResponse);
 
         const actual: Graph[] = await repo.getAll();
 
-        const expected = [new Graph("roadTraffic", "DEPLOYED"), new Graph("basicGraph", "DELETION_QUEUED")];
+        const expected = [new Graph("roadTraffic", "DEPLOYED", "roadTraffic URL"), new Graph("basicGraph", "DELETION_QUEUED", "basicGraph URL")];
         expect(actual).toEqual(expected);
     });
 
@@ -35,13 +37,14 @@ describe("Get All Graphs Repo", () => {
             {
                 graphId: "streetTraffic",
                 description: "DELETION_QUEUED",
+                url: "streetTraffic URL"
             },
         ];
         mock.onGet("/graphs").reply(200, apiResponse);
 
         const actual: Graph[] = await repo.getAll();
 
-        const expected = [new Graph("streetTraffic", "DELETION_QUEUED")];
+        const expected = [new Graph("streetTraffic", "DELETION_QUEUED", "streetTraffic URL")];
         expect(actual).toEqual(expected);
     });
 

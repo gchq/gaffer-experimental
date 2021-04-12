@@ -13,12 +13,13 @@ describe("Get Graph By Id Repo", () => {
         const apiResponse: IGraphByIdResponse = {
             graphId: "graph-1",
             description: "DEPLOYED",
+            url: "graph-1 URL"
         };
         mock.onGet("/graphs/graph-1").reply(200, apiResponse);
 
         const actual: Graph = await repo.get("graph-1");
 
-        const expected: Graph = new Graph("graph-1", "DEPLOYED");
+        const expected: Graph = new Graph("graph-1", "DEPLOYED", "graph-1 URL");
         expect(actual).toEqual(expected);
     });
 

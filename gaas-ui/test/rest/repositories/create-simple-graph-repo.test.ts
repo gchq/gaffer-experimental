@@ -64,8 +64,8 @@ describe("Create Graph Repo", () => {
             };
             mock.onPost("/graphs", request).reply(201);
 
-            await expect(repo.create("map-graph", "a description", StoreType.MAPSTORE, [], "")).resolves.toEqual(
-                request
+            await expect(repo.create("fed-store", "a description", StoreType.FEDERATED_STORE, [], "")).resolves.toEqual(
+                undefined
             );
         });
     });
