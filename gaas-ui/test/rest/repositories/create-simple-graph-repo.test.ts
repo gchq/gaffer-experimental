@@ -15,7 +15,7 @@ describe("Create Graph Repo", () => {
                 graphId: "accumulo-graph",
                 description: "a description",
                 storeType: StoreType.ACCUMULO,
-                url: "",
+                proxyStores: "",
                 root: "",
             };
             mock.onPost("/graphs", request).reply(201);
@@ -30,7 +30,7 @@ describe("Create Graph Repo", () => {
                 graphId: "map-graph",
                 description: "a description",
                 storeType: StoreType.MAPSTORE,
-                url: "",
+                proxyStores: "",
                 root: "",
             };
             mock.onPost("/graphs", request).reply(201);
@@ -47,7 +47,7 @@ describe("Create Graph Repo", () => {
                 graphId: "bad-request-graph",
                 description: "a description",
                 storeType: StoreType.MAPSTORE,
-                url: "",
+                proxyStores: "",
                 root: "",
             };
             mock.onPost("/graphs", request).reply(400);
@@ -62,7 +62,7 @@ describe("Create Graph Repo", () => {
                 graphId: "forbidden-graph",
                 description: "a description",
                 storeType: StoreType.MAPSTORE,
-                url: "",
+                proxyStores: "",
                 root: "",
             };
             mock.onPost("/graphs", request).reply(403, { title: "Forbidden", detail: "Kubernetes access denied" });

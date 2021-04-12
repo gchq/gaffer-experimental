@@ -1,20 +1,21 @@
 import { StoreType } from "../../domain/store-type";
 import { RestClient } from "../clients/rest-client";
 import { ICreateSimpleGraphRequestBody } from "../http-message-interfaces/request-interfaces";
+import {Graph} from "../../domain/graph";
 
 export class CreateSimpleGraphRepo {
     public async create(
         graphId: string,
         description: string,
         storeType: StoreType,
-        url: string,
+        proxyStores: Graph[],
         root: string
     ): Promise<void> {
         const httpRequestBody: ICreateSimpleGraphRequestBody = {
             graphId: graphId,
             description: description,
             storeType: storeType,
-            url: url,
+            proxyStores: proxyStores,
             root: root,
         };
 
