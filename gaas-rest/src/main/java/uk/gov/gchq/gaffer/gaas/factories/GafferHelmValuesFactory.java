@@ -58,24 +58,21 @@ public final class GafferHelmValuesFactory {
                 return new AccumuloGafferSpecBuilder()
                         .graphId(graph.getGraphId())
                         .description(graph.getDescription())
-                        .elementsSchema(graph.getElementsSchema())
-                        .typesSchema(graph.getTypesSchema())
+                        .schema(graph.getSchema())
                         .build();
             case FEDERATED_STORE:
             case MAPSTORE:
                 return new GafferSpecBuilder()
                         .graphId(graph.getGraphId())
                         .description(graph.getDescription())
-                        .elementsSchema(graph.getElementsSchema())
-                        .typesSchema(graph.getTypesSchema())
+                        .schema(graph.getSchema())
                         .storeProperties(storeType)
                         .build();
             case PROXY_STORE:
                 return new GafferSpecBuilder()
                         .graphId(graph.getGraphId())
                         .description(graph.getDescription())
-                        .elementsSchema(graph.getElementsSchema())
-                        .typesSchema(graph.getTypesSchema())
+                        .schema(graph.getSchema())
                         .storeProperties(storeType, graph.getProxyHost(), graph.getProxyContextRoot())
                         .build();
             default:

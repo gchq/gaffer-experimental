@@ -30,6 +30,7 @@ import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,7 +58,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {
-        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED));
+        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema()));
         assertDoesNotThrow(() -> crdClient.createCRD(gafferRequest));
     }
 
@@ -72,7 +73,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenGraphIdHasUppercase_throws422GaasException() {
-        final Gaffer gafferRequest = from(new GaaSCreateRequestBody("UPPERCASEgraph", "A description", ACCUMULO_ENABLED));
+        final Gaffer gafferRequest = from(new GaaSCreateRequestBody("UPPERCASEgraph", "A description", ACCUMULO_ENABLED, getSchema()));
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
         assertEquals(422, exception.getStatusCode());
         assertEquals("Unprocessable Entity", exception.getTitle());
@@ -82,7 +83,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenGraphIdHasSpecialChars_throws422GaasException() {
-        final Gaffer gafferRequest = from(new GaaSCreateRequestBody("sp£ci@l_char$", "A description", ACCUMULO_ENABLED));
+        final Gaffer gafferRequest = from(new GaaSCreateRequestBody("sp£ci@l_char$", "A description", ACCUMULO_ENABLED, getSchema()));
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
         assertEquals(422, exception.getStatusCode());
         assertEquals("Unprocessable Entity", exception.getTitle());
@@ -102,7 +103,7 @@ public class CRDClientIT {
 
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
-        crdClient.createCRD(from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED)));
+        crdClient.createCRD(from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema())));
         assertTrue(crdClient.listAllCRDs().toString().contains("test-graph-id"));
     }
 
@@ -123,7 +124,7 @@ public class CRDClientIT {
     @Test
     public void deleteCRD_whenGraphDoesExist_doesNotThrowException() throws GaaSRestApiException {
         final String existingGraph = "existing-graph";
-        crdClient.createCRD(from(new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED)));
+        crdClient.createCRD(from(new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema())));
         assertDoesNotThrow(() -> crdClient.deleteCRD(existingGraph));
     }
 
@@ -143,5 +144,13 @@ public class CRDClientIT {
         } catch (Exception e) {
             // Do nothing
         }
+    }
+
+    private LinkedHashMap<String, Object> getSchema() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("entities", new Object());
+        elementsSchema.put("edges", new Object());
+        elementsSchema.put("types", new Object());
+        return elementsSchema;
     }
 }

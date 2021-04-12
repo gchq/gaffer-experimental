@@ -26,6 +26,7 @@ import java.util.Map;
  * <b>GaaS: Create Gaffer Request Body</b>
  */
 public class GaaSCreateRequestBody implements Serializable {
+
     @NotNull(message = "Graph id should not be null")
     @NotBlank(message = "Graph id should not be null")
     @Pattern(regexp = "^[a-z0-9_-]*$", message = "Graph can contain only digits, lowercase letters or the special characters _ and -")
@@ -36,32 +37,23 @@ public class GaaSCreateRequestBody implements Serializable {
     private StoreType storeType;
     private String proxyHost;
     private String proxyContextRoot;
-    private Object elementsSchema;
-    private Object typesSchema;
+    private Map<String, Object> schema;
 
     public GaaSCreateRequestBody() {
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType) {
+    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType, final Map<String, Object> schema) {
         this.graphId = graphId;
         this.description = description;
         this.storeType = storeType;
+        this.schema = schema;
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType, final Map<String, Object> elementsSchema, final Map<String, Object> typesSchema) {
+    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType, final Map<String, Object> schema, final String proxyHost, final String proxyContextRoot) {
         this.graphId = graphId;
         this.description = description;
         this.storeType = storeType;
-        this.elementsSchema = elementsSchema;
-        this.typesSchema = typesSchema;
-    }
-
-    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType, final Map<String, Object> elementsSchema, final Map<String, Object> typesSchema, final String proxyHost, final String proxyContextRoot) {
-        this.graphId = graphId;
-        this.description = description;
-        this.storeType = storeType;
-        this.elementsSchema = elementsSchema;
-        this.typesSchema = typesSchema;
+        this.schema = schema;
         this.proxyHost = proxyHost;
         this.proxyContextRoot = proxyContextRoot;
     }
@@ -74,12 +66,8 @@ public class GaaSCreateRequestBody implements Serializable {
         return description;
     }
 
-    public Object getElementsSchema() {
-        return elementsSchema;
-    }
-
-    public Object getTypesSchema() {
-        return typesSchema;
+    public Map<String, Object> getSchema() {
+        return schema;
     }
 
     public StoreType getStoreType() {

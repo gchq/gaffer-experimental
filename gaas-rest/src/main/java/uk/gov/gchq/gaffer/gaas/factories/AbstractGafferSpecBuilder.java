@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
+import com.google.gson.Gson;
 import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
 import uk.gov.gchq.gaffer.cache.util.CacheProperties;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
@@ -33,7 +34,7 @@ public abstract class AbstractGafferSpecBuilder {
 
     protected String graphId;
     protected String description;
-    protected Object elementsSchema;
+    protected Object schema;
     protected Object typesSchema;
     protected Map<String, Object> storeProperties;
 
@@ -47,13 +48,8 @@ public abstract class AbstractGafferSpecBuilder {
         return this;
     }
 
-    public AbstractGafferSpecBuilder elementsSchema(final Object elementsSchema) {
-        this.elementsSchema = elementsSchema;
-        return this;
-    }
-
-    public AbstractGafferSpecBuilder typesSchema(final Object typesSchema) {
-        this.typesSchema = typesSchema;
+    public AbstractGafferSpecBuilder schema(final Object schema) {
+        this.schema = schema;
         return this;
     }
 
@@ -84,8 +80,7 @@ public abstract class AbstractGafferSpecBuilder {
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(graphId, "graph", "config", "graphId");
         gafferSpec.putNestedObject(description, "graph", "config", "description");
-        gafferSpec.putNestedObject(elementsSchema,"graph", "schema", "elements.json");
-        gafferSpec.putNestedObject(typesSchema, "graph", "schema", "types.json");
+        gafferSpec.putNestedObject(new Gson().toJson(schema), "graph", "schema", "schema.json");
         gafferSpec.putNestedObject(storeProperties, "graph", "storeProperties");
 
         return gafferSpec;

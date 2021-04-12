@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
+import com.google.gson.Gson;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 
 public class AccumuloGafferSpecBuilder extends AbstractGafferSpecBuilder {
@@ -25,8 +26,7 @@ public class AccumuloGafferSpecBuilder extends AbstractGafferSpecBuilder {
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(graphId, "graph", "config", "graphId");
         gafferSpec.putNestedObject(description, "graph", "config", "description");
-        gafferSpec.putNestedObject(elementsSchema,"graph", "schema", "elements.json");
-        gafferSpec.putNestedObject(typesSchema, "graph", "schema", "types.json");
+        gafferSpec.putNestedObject(new Gson().toJson(schema), "graph", "schema", "schema.json");
         gafferSpec.putNestedObject(storeProperties, "graph", "storeProperties");
 
         gafferSpec.putNestedObject(true, "accumulo", "enabled");

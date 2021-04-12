@@ -32,40 +32,34 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody_whenNoContextRootSpecified() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.PROXY_STORE, getElementsSchema(), getTypesSchema(), "http://my.graph.co.uk", null));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.PROXY_STORE, getSchema(), "http://my.graph.co.uk", null));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
                         "\"kind\":\"Gaffer\"," +
                         "\"metadata\":{\"name\":\"MyGraph\"}," +
                         "\"spec\":{" +
-                        "\"graph\":{" +
-                        "\"schema\":{" +
-                        "\"elements.json\":{" +
-                        "\"entities\":{}," +
-                        "\"edges\":{}" +
-                        "}," +
-                        "\"types.json\":{" +
-                        "\"types\":{}" +
+                            "\"graph\":{" +
+                                "\"schema\":{" +
+                                    "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
+                                "}," +
+                                "\"storeProperties\":{" +
+                                    "\"gaffer.host\":\"http://my.graph.co.uk\"," +
+                                    "\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"" +
+                                "}," +
+                                "\"config\":{" +
+                                    "\"description\":\"Another description\"," +
+                                    "\"graphId\":\"MyGraph\"" +
+                                "}" +
+                            "}" +
                         "}" +
-                        "}," +
-                        "\"storeProperties\":{" +
-                        "\"gaffer.host\":\"http://my.graph.co.uk\"," +
-                        "\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"" +
-                        "}," +
-                        "\"config\":{" +
-                        "\"description\":\"Another description\"," +
-                        "\"graphId\":\"MyGraph\"" +
-                        "}" +
-                        "}" +
-                        "}" +
-                        "}";
+                "}";
         assertEquals(expected, gson.toJson(requestBody));
     }
 
     @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.PROXY_STORE, getElementsSchema(), getTypesSchema(), "http://my.graph.co.uk", "/rest"));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.PROXY_STORE, getSchema(), "http://my.graph.co.uk", "/rest"));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -74,13 +68,7 @@ public class GafferHelmValuesFactoryTest {
                         "\"spec\":{" +
                         "\"graph\":{" +
                         "\"schema\":{" +
-                        "\"elements.json\":{" +
-                        "\"entities\":{}," +
-                        "\"edges\":{}" +
-                        "}," +
-                        "\"types.json\":{" +
-                        "\"types\":{}" +
-                        "}" +
+                        "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
                         "}," +
                         "\"storeProperties\":{" +
                         "\"gaffer.host\":\"http://my.graph.co.uk\"," +
@@ -99,7 +87,7 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void federatedStoreRequestShouldReturnFederatedRequestBody() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.FEDERATED_STORE, getElementsSchema(), getTypesSchema()));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.FEDERATED_STORE, getSchema()));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -108,13 +96,7 @@ public class GafferHelmValuesFactoryTest {
                         "\"spec\":{\"" +
                         "graph\":{" +
                         "\"schema\":{" +
-                        "\"elements.json\":{" +
-                        "\"entities\":{}," +
-                        "\"edges\":{}" +
-                        "}," +
-                        "\"types.json\":{" +
-                        "\"types\":{}" +
-                        "}" +
+                        "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
                         "}," +
                         "\"storeProperties\":{" +
                         "\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\"," +
@@ -133,7 +115,7 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void accumuloStoreRequestShouldReturnAccumuloRequestBody() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.ACCUMULO, getElementsSchema(), getTypesSchema()));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.ACCUMULO, getSchema()));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -142,13 +124,7 @@ public class GafferHelmValuesFactoryTest {
                         "\"spec\":{" +
                         "\"graph\":{" +
                         "\"schema\":{" +
-                        "\"elements.json\":{" +
-                        "\"entities\":{}," +
-                        "\"edges\":{}" +
-                        "}," +
-                        "\"types.json\":{" +
-                        "\"types\":{}" +
-                        "}" +
+                        "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
                         "}," +
                         "\"config\":{" +
                         "\"description\":\"Another description\"," +
@@ -165,7 +141,7 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void mapStoreStoreRequestShouldReturnMapStoreRequestBody() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.MAPSTORE, getElementsSchema(), getTypesSchema()));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.MAPSTORE, getSchema()));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -174,13 +150,7 @@ public class GafferHelmValuesFactoryTest {
                         "\"spec\":{" +
                         "\"graph\":{" +
                         "\"schema\":{" +
-                        "\"elements.json\":{" +
-                        "\"entities\":{}," +
-                        "\"edges\":{}" +
-                        "}," +
-                        "\"types.json\":{" +
-                        "\"types\":{}" +
-                        "}" +
+                        "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
                         "}," +
                         "\"storeProperties\":{" +
                         "\"gaffer.store.job.tracker.enabled\":true," +
@@ -198,10 +168,7 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void addSchema_shouldAddElementsJsonAndTypesJson() {
-        final LinkedHashMap<String, Object> elementsSchema = getElementsSchema();
-        final LinkedHashMap<String, Object> typesSchema = getTypesSchema();
-
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.FEDERATED_STORE, elementsSchema, typesSchema));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", StoreType.FEDERATED_STORE, getSchema()));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -210,13 +177,7 @@ public class GafferHelmValuesFactoryTest {
                         "\"spec\":{" +
                         "\"graph\":{" +
                         "\"schema\":{" +
-                        "\"elements.json\":{" +
-                        "\"entities\":{}," +
-                        "\"edges\":{}" +
-                        "}," +
-                        "\"types.json\":{" +
-                        "\"types\":{}" +
-                        "}" +
+                        "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
                         "}," +
                         "\"storeProperties\":{" +
                         "\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\"," +
@@ -233,16 +194,11 @@ public class GafferHelmValuesFactoryTest {
         assertEquals(expected, gson.toJson(requestBody));
     }
 
-    private LinkedHashMap<String, Object> getTypesSchema() {
-        final LinkedHashMap<String, Object> typesSchema = new LinkedHashMap<>();
-        typesSchema.put("types", new Object());
-        return typesSchema;
-    }
-
-    private LinkedHashMap<String, Object> getElementsSchema() {
+    private LinkedHashMap<String, Object> getSchema() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("entities", new Object());
         elementsSchema.put("edges", new Object());
+        elementsSchema.put("types", new Object());
         return elementsSchema;
     }
 }
