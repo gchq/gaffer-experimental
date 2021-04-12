@@ -59,7 +59,7 @@ describe("Create Graph Repo", () => {
                 graphId: "fed-store",
                 description: "a description",
                 storeType: StoreType.FEDERATED_STORE,
-                proxyStores: [new Graph("proxy-graph","description","proxy-graph URL")],
+                proxyStores: [new Graph("proxy-graph","description","proxy-graph URL", "UP")],
                 root: "",
             };
             mock.onPost("/graphs", request).reply(201);
