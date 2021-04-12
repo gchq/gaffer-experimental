@@ -108,14 +108,8 @@ describe("SimpleAddGraph UI component", () => {
     });
     expect(wrapper.find("textarea#graph-description").props().value).toBe(description);
   }
-  function selectProxyStore() {
-    wrapper
-      .find("tbody")
-      .find("input#roadTraffic-checkbox")
-      .simulate("change", {
-        target: { checked: true },
-      });
-  }
+  
+  
   function mockAddGraphRepoWithFunction(f: () => void): void {
     // @ts-ignore
     CreateSimpleGraphRepo.mockImplementationOnce(() => ({
