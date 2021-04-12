@@ -34,7 +34,7 @@ interface IState {
   dialogIsOpen: boolean;
   graphId: string;
   description: string;
-  url: string;
+  proxyStores: Graph[];
   root: string;
   storeType: StoreType;
   outcome: AlertType | undefined;
@@ -54,7 +54,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
       storeType: StoreType.MAPSTORE,
       outcome: undefined,
       outcomeMessage: "",
-      url: "",
+      proxyStores: [],
       root: "",
       errors: new Notifications(),
       graphs: [],
@@ -67,7 +67,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
     const graphId = this.state.graphId;
     const description = this.state.description;
     const storeType = this.state.storeType;
-    const url = this.state.url;
+    const url = this.state.proxyStores;
     const root = this.state.root;
     if (errors.isEmpty()) {
       try {
@@ -111,7 +111,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
   }
 
   private disableSubmitButton(): boolean {
-    return !this.state.graphId || !this.state.description || (this.state.storeType === StoreType.PROXY_STORE && !this.state.url);
+    return !this.state.graphId || !this.state.description || (this.state.storeType === StoreType.PROXY_STORE && !this.state.proxyStores);
   }
 
   public render() {
@@ -220,10 +220,19 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                             <TableCell align="right">{graph.getStatus()}</TableCell>
                             <TableCell padding="checkbox">
                               <Checkbox
+                                  required
                                   onChange={(event)=>{
-                                    this.setState({
-                                      selectedRow: [...this.state.selectedRow, graph]
-                                    })
+                                    if(event.target.checked){
+                                      this.setState({
+                                        proxyStores: [...this.state.proxyStores, graph]
+                                      })
+                                    } else {
+                                      const tempProxyStore = this.state.proxyStores.filter((obj)=>obj !== graph );
+                                        this.setState({
+                                          proxyStores: tempProxyStore
+                                        })
+                                    }
+
                                   }}
                               />
                             </TableCell>
