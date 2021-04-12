@@ -13,14 +13,14 @@ afterEach(() => jest.resetAllMocks());
 
 describe("When ViewGraphs mounts", () => {
     it("should display Table Headers and Graphs when GetGraphs successful", async () => {
-        mockGetGraphsToReturn([new Graph("testId1", "deployed", "testId1 URL")]);
+        mockGetGraphsToReturn([new Graph("testId1", "deployed", "testId1 URL", "UP")]);
 
         const component = mount(<ViewGraph />);
         await component.update();
         await component.update();
 
-        expect(component.find("thead").text()).toBe("Graph IDDescriptionActions");
-        expect(component.find("tbody").text()).toBe("testId1deployed");
+        expect(component.find("thead").text()).toBe("Graph IDDescriptionStatusActions");
+        expect(component.find("tbody").text()).toBe("testId1deployedUP");
         expect(component.find("caption").length).toBe(0);
     });
     it("should display No Graphs caption when ", async () => {
@@ -43,30 +43,30 @@ describe("When ViewGraphs mounts", () => {
         );
     });
     it("should not display Error AlertNotification when GetGraphs request successful", async () => {
-        mockGetGraphsToReturn([new Graph("roadTraffic", "DEPLOYED", "roadTraffic URL")]);
+        mockGetGraphsToReturn([new Graph("roadTraffic", "DEPLOYED", "roadTraffic URL", "UP")]);
 
         const component = mount(<ViewGraph />);
         await component.update();
 
         const table = component.find("table");
         expect(table).toHaveLength(1);
-        expect(table.find("tbody").text()).toBe("roadTrafficDEPLOYED");
+        expect(table.find("tbody").text()).toBe("roadTrafficDEPLOYEDUP");
         expect(component.find("div#notification-alert").length).toBe(0);
     });
 });
 
 describe("Refresh Button", () => {
     it("should call GetGraphs again when refresh button clicked", async () => {
-        mockGetGraphsToReturn([new Graph("roadTraffic", "DEPLOYING", "roadTraffic URL")]);
+        mockGetGraphsToReturn([new Graph("roadTraffic", "DEPLOYING", "roadTraffic URL", "UP")]);
 
         const component = mount(<ViewGraph />);
         await component.update();
-        expect(component.find("tbody").text()).toBe("roadTrafficDEPLOYING");
+        expect(component.find("tbody").text()).toBe("roadTrafficDEPLOYINGUP");
 
-        mockGetGraphsToReturn([new Graph("roadTraffic", "FINISHED DEPLOYMENT", "roadTraffic URL")]);
+        mockGetGraphsToReturn([new Graph("roadTraffic", "FINISHED DEPLOYMENT", "roadTraffic URL", "UP")]);
         await clickRefreshButton(component);
 
-        expect(component.find("tbody").text()).toBe("roadTrafficFINISHED DEPLOYMENT");
+        expect(component.find("tbody").text()).toBe("roadTrafficFINISHED DEPLOYMENTUP");
     });
     it("should reset an existing error message when refresh button is clicked", async () => {
         mockGetAllGraphsThrowsError(() => {
@@ -78,7 +78,7 @@ describe("Refresh Button", () => {
             "Failed to get all graphs. Server Error: Timeout exception"
         );
 
-        mockGetGraphsToReturn([new Graph("roadTraffic", "FINISHED DEPLOYMENT", "roadTraffic URL")]);
+        mockGetGraphsToReturn([new Graph("roadTraffic", "FINISHED DEPLOYMENT", "roadTraffic URL", "UP")]);
         await clickRefreshButton(component);
 
         expect(component.find("div#notification-alert").length).toBe(0);
@@ -88,14 +88,14 @@ describe("Refresh Button", () => {
 describe("Delete Button", () => {
     it("should send a delete request when the delete button has been clicked", async () => {
         DeleteGraphRepo.prototype.delete = jest.fn();
-        mockGetGraphsToReturn([new Graph("peaches", "ACTIVE", "peaches URL")]);
+        mockGetGraphsToReturn([new Graph("peaches", "ACTIVE", "peaches URL", "UP")]);
 
         const component = mount(<ViewGraph />);
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("peachesACTIVE");
+        expect(component.find("tbody").text()).toBe("peachesACTIVEUP");
 
-        mockGetGraphsToReturn([new Graph("peaches", "DELETED", "peaches URL")]);
+        mockGetGraphsToReturn([new Graph("peaches", "DELETED", "peaches URL", "UP")]);
         component.find("tbody").find("button#view-graphs-delete-button-0").simulate("click");
         await component.update();
         await component.update();
@@ -104,14 +104,14 @@ describe("Delete Button", () => {
     });
     it("should send a delete request for correct graphId from many graphs when the delete button has been clicked", async () => {
         DeleteGraphRepo.prototype.delete = jest.fn();
-        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL"), new Graph("pears", "INACTIVE", "pears URL")]);
+        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL", "UP"), new Graph("pears", "INACTIVE", "pears URL",  "UP")]);
 
         const component = mount(<ViewGraph />);
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("applesACTIVEpearsINACTIVE");
+        expect(component.find("tbody").text()).toBe("applesACTIVEUPpearsINACTIVEUP");
 
-        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL"), new Graph("pears", "DELETED", "pears URL")]);
+        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL", "UP"), new Graph("pears", "DELETED", "pears URL", "UP")]);
         component.find("tbody").find("button#view-graphs-delete-button-1").simulate("click");
         await component.update();
         await component.update();
@@ -120,31 +120,31 @@ describe("Delete Button", () => {
     });
     it("should change the current status of the graph when the delete button is clicked", async () => {
         DeleteGraphRepo.prototype.delete = jest.fn();
-        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL"), new Graph("pears", "INACTIVE", "pears URL")]);
+        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL", "UP"), new Graph("pears", "INACTIVE", "pears URL", "UP")]);
 
         const component = mount(<ViewGraph />);
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("applesACTIVEpearsINACTIVE");
+        expect(component.find("tbody").text()).toBe("applesACTIVEUPpearsINACTIVEUP");
 
-        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL"), new Graph("pears", "DELETION IN PROGRESS", "pears URL")]);
+        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL", "UP"), new Graph("pears", "DELETION IN PROGRESS", "pears URL", "UP")]);
         component.find("tbody").find("button#view-graphs-delete-button-1").simulate("click");
         await component.update();
         await component.update();
         await component.update();
 
-        expect(component.find("tbody").text()).toBe("applesACTIVEpearsDELETION IN PROGRESS");
+        expect(component.find("tbody").text()).toBe("applesACTIVEUPpearsDELETION IN PROGRESSUP");
     });
     it("should notify error and not refresh graphs when delete request returns server error", async () => {
         mockDeleteGraphRepoToThrowError(() => {
             throw new RestApiError("Server Error", "Timeout exception");
         });
-        mockGetGraphsToReturn([new Graph("bananas", "INACTIVE", "bananas URL")]);
+        mockGetGraphsToReturn([new Graph("bananas", "INACTIVE", "bananas URL", "UP")]);
 
         const component = mount(<ViewGraph />);
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("bananasINACTIVE");
+        expect(component.find("tbody").text()).toBe("bananasINACTIVEUP");
 
         component.find("tbody").find("button#view-graphs-delete-button-0").simulate("click");
         await component.update();
