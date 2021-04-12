@@ -6,6 +6,7 @@ import {
   FormControl,
   FormHelperText,
   Grid,
+  Hidden,
   InputLabel,
   makeStyles,
   MenuItem,
@@ -22,12 +23,12 @@ import {
 } from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import React from "react";
-import { Notifications } from "../../domain/notifications";
-import { StoreType } from "../../domain/store-type";
-import { CreateSimpleGraphRepo } from "../../rest/repositories/create-simple-graph-repo";
-import { AlertType, NotificationAlert } from "../alerts/notification-alert";
-import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
-import { Graph } from "../../domain/graph";
+import {Notifications} from "../../domain/notifications";
+import {StoreType} from "../../domain/store-type";
+import {CreateSimpleGraphRepo} from "../../rest/repositories/create-simple-graph-repo";
+import {AlertType, NotificationAlert} from "../alerts/notification-alert";
+import {GetAllGraphsRepo} from "../../rest/repositories/get-all-graphs-repo";
+import {Graph} from "../../domain/graph";
 
 interface IState {
   dialogIsOpen: boolean;
@@ -40,8 +41,7 @@ interface IState {
   outcomeMessage: string;
   errors: Notifications;
   graphs: Graph[];
-  numSelected: number;
-  rowCount: number;
+  selectedRow: Graph[]
 }
 
 export default class SimpleAddGraph extends React.Component<{}, IState> {
@@ -58,8 +58,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
       root: "",
       errors: new Notifications(),
       graphs: [],
-      numSelected: 0,
-      rowCount: 0,
+      selectedRow: []
     };
   }
 
@@ -117,6 +116,9 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
 
   public render() {
     const { graphs } = this.state;
+    const isHidden= (): boolean =>this.state.storeType !== StoreType.FEDERATED_STORE
+
+
     return (
       <main>
         {this.state.outcome && <NotificationAlert alertType={this.state.outcome} message={this.state.outcomeMessage} />}
@@ -198,34 +200,41 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                   </Grid>
                 </Grid>
               </form>
-              <TableContainer>
-                <Table size="medium" className={this.classes.table} aria-label="Graphs Table">
-                  <TableHead>
-                    <TableRow style={{ background: "#F4F2F2" }}>
-                      <TableCell padding="checkbox">
-                        <Checkbox />
-                      </TableCell>
-                      <TableCell>Graph ID</TableCell>
-                      <TableCell align="right">Description</TableCell>
-                    </TableRow>
-                  </TableHead>
-
-                  <TableBody>
-                    {graphs.map((graph: Graph, index) => (
-                      <TableRow key={graph.getId()} hover>
-                        <TableCell padding="checkbox">
-                          <Checkbox />
-                        </TableCell>
-                        <TableCell component="th" scope="row">
-                          {graph.getId()}
-                        </TableCell>
-                        <TableCell align="right">{graph.getStatus()}</TableCell>
+              <Hidden xsUp={isHidden()}>
+                <TableContainer>
+                  <Table size="medium" className={this.classes.table} aria-label="Graphs Table">
+                    <TableHead>
+                      <TableRow style={{ background: "#F4F2F2" }}>
+                        <TableCell>Graph ID</TableCell>
+                        <TableCell align="right">Description</TableCell>
+                        <TableCell/>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                  {graphs.length === 0 && <caption>No Graphs.</caption>}
-                </Table>
-              </TableContainer>
+                    </TableHead>
+
+                    <TableBody>
+                      {graphs.map((graph: Graph, index) => (
+                          <TableRow key={graph.getId()} hover>
+                            <TableCell component="th" scope="row">
+                              {graph.getId()}
+                            </TableCell>
+                            <TableCell align="right">{graph.getStatus()}</TableCell>
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                  onChange={(event)=>{
+                                    this.setState({
+                                      selectedRow: [...this.state.selectedRow, graph]
+                                    })
+                                  }}
+                              />
+                            </TableCell>
+                          </TableRow>
+                      ))}
+                    </TableBody>
+                    {graphs.length === 0 && <caption>No Graphs.</caption>}
+                  </Table>
+                </TableContainer>
+              </Hidden>
+
             </div>
           </Container>
           <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
