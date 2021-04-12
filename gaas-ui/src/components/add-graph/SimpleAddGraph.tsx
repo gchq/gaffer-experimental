@@ -219,7 +219,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                             </TableCell>
                             <TableCell align="right">{graph.getStatus()}</TableCell>
                             <TableCell padding="checkbox">
-                              <Checkbox
+                              <Checkbox id = {`${graph.getId()}-checkbox`}
                                   required
                                   onChange={(event)=>{
                                     if(event.target.checked){
