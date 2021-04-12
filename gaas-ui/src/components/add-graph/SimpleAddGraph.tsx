@@ -72,13 +72,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
     const root = this.state.root;
     if (errors.isEmpty()) {
       try {
-        await new CreateSimpleGraphRepo().create(
-          graphId,
-          description,
-          storeType,
-          url,
-          root
-        );
+        await new CreateSimpleGraphRepo().create(graphId, description, storeType, url, root);
         this.setState({
           outcome: AlertType.SUCCESS,
           outcomeMessage: `${graphId} was successfully added`,
@@ -118,43 +112,21 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
   }
 
   private disableSubmitButton(): boolean {
-    return (
-      !this.state.graphId ||
-      !this.state.description ||
-      (this.state.storeType === StoreType.PROXY_STORE && !this.state.url)
-    );
+    return !this.state.graphId || !this.state.description || (this.state.storeType === StoreType.PROXY_STORE && !this.state.url);
   }
 
   public render() {
     const { graphs } = this.state;
     return (
       <main>
-        {this.state.outcome && (
-          <NotificationAlert
-            alertType={this.state.outcome}
-            message={this.state.outcomeMessage}
-          />
-        )}
-        {!this.state.errors.isEmpty() && (
-          <NotificationAlert
-            alertType={AlertType.FAILED}
-            message={`Error(s): ${this.state.errors.errorMessage()}`}
-          />
-        )}
+        {this.state.outcome && <NotificationAlert alertType={this.state.outcome} message={this.state.outcomeMessage} />}
+        {!this.state.errors.isEmpty() && <NotificationAlert alertType={AlertType.FAILED} message={`Error(s): ${this.state.errors.errorMessage()}`} />}
         <Toolbar />
         <Grid container justify="center">
           <Container component="main" maxWidth="xs">
             <CssBaseline />
             <div className={this.classes.paper}>
-              <Grid
-                item
-                xs={12}
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-                style={{ margin: 10 }}
-              >
+              <Grid item xs={12} container direction="row" justify="center" alignItems="center" style={{ margin: 10 }}>
                 <Typography variant="h4" align={"center"}>
                   Create Graph
                 </Typography>
@@ -178,14 +150,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                       }}
                     />
                   </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    container
-                    direction="row"
-                    justify="flex-end"
-                    alignItems="center"
-                  ></Grid>
+                  <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
                   <Grid item xs={12}>
                     <TextField
                       id="graph-description"
@@ -204,19 +169,9 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                       }}
                     />
                   </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    container
-                    direction="row"
-                    justify="flex-end"
-                    alignItems="center"
-                  ></Grid>
+                  <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
                   <Grid item xs={12} id={"storetype-select-grid"}>
-                    <FormControl
-                      variant="outlined"
-                      id={"storetype-formcontrol"}
-                    >
+                    <FormControl variant="outlined" id={"storetype-formcontrol"}>
                       <InputLabel>Store Type</InputLabel>
 
                       <Select
@@ -234,27 +189,17 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                           });
                         }}
                       >
-                        <MenuItem value={StoreType.MAPSTORE}>
-                          Map Store
-                        </MenuItem>
+                        <MenuItem value={StoreType.MAPSTORE}>Map Store</MenuItem>
                         <MenuItem value={StoreType.ACCUMULO}>Accumulo</MenuItem>
-                        <MenuItem value={StoreType.FEDERATED_STORE}>
-                          Federated Store
-                        </MenuItem>
+                        <MenuItem value={StoreType.FEDERATED_STORE}>Federated Store</MenuItem>
                       </Select>
-                      <FormHelperText>
-                        Set to Map Store by default
-                      </FormHelperText>
+                      <FormHelperText>Set to Map Store by default</FormHelperText>
                     </FormControl>
                   </Grid>
                 </Grid>
               </form>
               <TableContainer>
-                <Table
-                  size="medium"
-                  className={this.classes.table}
-                  aria-label="Graphs Table"
-                >
+                <Table size="medium" className={this.classes.table} aria-label="Graphs Table">
                   <TableHead>
                     <TableRow style={{ background: "#F4F2F2" }}>
                       <TableCell padding="checkbox">
@@ -283,13 +228,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
               </TableContainer>
             </div>
           </Container>
-          <Grid
-            container
-            style={{ margin: 10 }}
-            direction="row"
-            justify="center"
-            alignItems="center"
-          >
+          <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
             <Button
               id="add-new-graph-button"
               onClick={() => {
