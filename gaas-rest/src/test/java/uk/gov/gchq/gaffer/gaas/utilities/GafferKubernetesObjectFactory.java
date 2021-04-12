@@ -27,10 +27,6 @@ public final class GafferKubernetesObjectFactory {
 
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");
-        gafferSpec.putNestedObject("{}", "graph", "config", "library");
-        gafferSpec.putNestedObject(graph.getDescription(), "graph", "config", "description");
-        gafferSpec.putNestedObject("[]", "graph", "config", "hooks");
-        gafferSpec.putNestedObject(true, "accumulo", "enabled");
 
         return new Gaffer()
                 .apiVersion("gchq.gov.uk" + "/" + "v1")

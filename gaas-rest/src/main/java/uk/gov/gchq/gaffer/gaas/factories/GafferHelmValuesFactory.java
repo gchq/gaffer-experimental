@@ -41,6 +41,7 @@ public final class GafferHelmValuesFactory {
 
     public static Gaffer from(final GaaSCreateRequestBody graph) {
 
+        // TODO: Validate only - and . special characters, see Kubernetes metadata regex
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
 
         return new Gaffer()
