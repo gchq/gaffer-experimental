@@ -1,5 +1,5 @@
-import { IAuthClient } from './authclient';
-import { IApiResponse, RestClient } from './rest-client';
+import { IAuthClient } from "./authclient";
+import { IApiResponse, RestClient } from "./rest-client";
 
 interface IAuthRequest {
     username: string;
@@ -51,7 +51,7 @@ export class AuthApiClient implements IAuthClient {
 
     public async signOut(onSuccess: Function, onError: Function): Promise<void> {
         try {
-            await new RestClient().post().authentication('signout').execute();
+            await new RestClient().post().authentication("signout").execute();
             onSuccess();
         } catch (e) {
             onError(e.message);

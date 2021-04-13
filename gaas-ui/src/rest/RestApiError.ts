@@ -1,5 +1,4 @@
 export class RestApiError {
-
     private detail;
     private title;
     constructor(title: string, detail: string) {
@@ -8,6 +7,6 @@ export class RestApiError {
     }
 
     public toString(): string {
-        return this.title + ': ' + this.detail;
+        return this.title + ": " + this.detail;
     }
 }
