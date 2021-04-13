@@ -22,6 +22,7 @@ public class GaaSGraph {
 
     private String graphId;
     private String description;
+    private String url;
     private RestApiStatus status;
 
     public GaaSGraph graphId(final String graphId) {
@@ -31,6 +32,11 @@ public class GaaSGraph {
 
     public GaaSGraph description(final String description) {
         this.description = description;
+        return this;
+    }
+
+    public GaaSGraph url(final String url) {
+        this.url = url;
         return this;
     }
 
@@ -45,6 +51,10 @@ public class GaaSGraph {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public RestApiStatus getStatus() {

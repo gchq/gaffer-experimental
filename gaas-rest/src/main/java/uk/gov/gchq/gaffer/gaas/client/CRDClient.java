@@ -111,6 +111,7 @@ public class CRDClient {
         final List<GaaSGraph> list = gaffers.stream().map(gaffer -> new GaaSGraph()
                 .graphId(gaffer.getSpec().getNestedObject("graph", "config", "graphId").toString())
                 .description(gaffer.getSpec().getNestedObject("graph", "config", "description").toString())
+                .url(gaffer.getSpec().getNestedObject("ingress", "host").toString() + gaffer.getSpec().getNestedObject("ingress", "pathPrefix", "api").toString())
                 .status(gaffer.getStatus().getRestApiStatus())).collect(Collectors.toList());
 
         return list;
