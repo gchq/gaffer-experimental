@@ -24,6 +24,7 @@ import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 
 @UnitTest
 public class GafferHelmValuesFactoryTest {
@@ -53,7 +54,7 @@ public class GafferHelmValuesFactoryTest {
                         "}" +
                         "}," +
                         "\"ingress\":{" +
-                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"," +
+                        "\"host\":\"mygraph-kai-dev." + INGRESS_SUFFIX + "\"," +
                         "\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}" +
                         "}" +
                         "}" +
@@ -85,7 +86,7 @@ public class GafferHelmValuesFactoryTest {
                         "}" +
                         "}," +
                         "\"ingress\":{" +
-                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"," +
+                        "\"host\":\"mygraph-kai-dev." + INGRESS_SUFFIX + "\"," +
                         "\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}" +
                         "}" +
                         "}" +
@@ -117,7 +118,7 @@ public class GafferHelmValuesFactoryTest {
                         "}" +
                         "}," +
                         "\"ingress\":{" +
-                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"," +
+                        "\"host\":\"mygraph-kai-dev." + INGRESS_SUFFIX + "\"," +
                         "\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}" +
                         "}" +
                         "}" +
@@ -144,7 +145,7 @@ public class GafferHelmValuesFactoryTest {
                         "}" +
                         "}," +
                         "\"ingress\":{" +
-                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"," +
+                        "\"host\":\"mygraph-kai-dev." + INGRESS_SUFFIX + "\"," +
                         "\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}" +
                         "}," +
                         "\"accumulo\":{" +
@@ -178,7 +179,7 @@ public class GafferHelmValuesFactoryTest {
                         "}" +
                         "}," +
                         "\"ingress\":{" +
-                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"," +
+                        "\"host\":\"mygraph-kai-dev." + INGRESS_SUFFIX + "\"," +
                         "\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}" +
                         "}" +
                         "}" +
@@ -210,7 +211,7 @@ public class GafferHelmValuesFactoryTest {
                         "}" +
                         "}," +
                         "\"ingress\":{" +
-                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"," +
+                        "\"host\":\"mygraph-kai-dev." + INGRESS_SUFFIX + "\"," +
                         "\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}" +
                         "}" +
                         "}" +

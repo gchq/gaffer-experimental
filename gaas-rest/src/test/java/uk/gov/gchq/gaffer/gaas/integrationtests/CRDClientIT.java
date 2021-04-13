@@ -20,7 +20,6 @@ import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
@@ -36,6 +35,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.controller.util.Constants.PLURAL;
+import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 import static uk.gov.gchq.gaffer.gaas.utilities.GafferKubernetesObjectFactory.from;
 
 @SpringBootTest
@@ -48,12 +51,12 @@ public class CRDClientIT {
     @Autowired
     private ApiClient apiClient;
 
-    @Value("${gaffer.namespace}")
-    private String namespace;
-    @Value("${group}")
-    private String group;
-    @Value("${version}")
-    private String version;
+//    @Value("${gaffer.namespace}")
+//    private String namespace;
+//    @Value("${group}")
+//    private String group;
+//    @Value("${version}")
+//    private String version;
 
     private static final String TEST_GRAPH_ID = "test-graph-id";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
@@ -134,16 +137,15 @@ public class CRDClientIT {
     @Test
     void testGetAllNamespacesReturnsSuccessResponseWithExistingNamespace() throws GaaSRestApiException {
         final List<String> allNameSpaces = crdClient.getAllNameSpaces();
-        assertTrue(allNameSpaces.contains(namespace));
+        assertTrue(allNameSpaces.contains(NAMESPACE));
     }
 
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        final String plural = "gaffers";
         final String name = TEST_GRAPH_ID;
         try {
-            apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
+            apiInstance.deleteNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, name, null, null, null, null, null);
         } catch (Exception e) {
             // Do nothing
         }

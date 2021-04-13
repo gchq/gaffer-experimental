@@ -33,21 +33,23 @@ import static org.mockito.Mockito.when;
 @UnitTest
 class GetGafferServiceTest {
 
-    protected static final String TEST_GRAPH_ID = "testgraphid";
-    protected static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
-    protected static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
-
     @Autowired
     private GetGafferService getGafferService;
 
     @MockBean
-    CRDClient crdClient;
+    private CRDClient crdClient;
+
+    private static final String TEST_GRAPH_ID = "testgraphid";
+    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
+    private static final String TEST_GRAPH_URL = "graph-namespace.k8s.my.cluster/rest";
+    private static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
 
     @Test
     void testGetGraphs_whenGraphRequestIsNotEmpty() throws GaaSRestApiException {
         final GaaSGraph graph = new GaaSGraph()
                 .graphId(TEST_GRAPH_ID)
                 .description(TEST_GRAPH_DESCRIPTION)
+                .url(TEST_GRAPH_URL)
                 .status(TEST_GRAPH_STATUS);
         final ArrayList<GaaSGraph> graphList = new ArrayList<>();
         graphList.add(graph);
@@ -57,6 +59,7 @@ class GetGafferServiceTest {
 
         assertEquals(TEST_GRAPH_ID, actual.get(0).getGraphId());
         assertEquals(TEST_GRAPH_DESCRIPTION, actual.get(0).getDescription());
+        assertEquals(TEST_GRAPH_URL, actual.get(0).getUrl());
         assertEquals(TEST_GRAPH_STATUS, actual.get(0).getStatus());
         assertArrayEquals(graphList.toArray(), actual.toArray());
     }

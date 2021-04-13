@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
+import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
@@ -67,7 +68,9 @@ public class GraphControllerTest extends AbstractTest {
     public void getGraphs_ReturnsGraphsAsList_whenSuccessful() throws Exception {
         final GaaSGraph graph = new GaaSGraph()
                 .graphId(TEST_GRAPH_ID)
-                .description(TEST_GRAPH_DESCRIPTION);
+                .description(TEST_GRAPH_DESCRIPTION)
+                .url("my-graph-namespace.apps.k8s.cluster")
+                .status(RestApiStatus.UP);
         ArrayList<GaaSGraph> graphList = new ArrayList<>();
         graphList.add(graph);
         when(getGafferService.getAllGraphs()).thenReturn(graphList);
@@ -77,7 +80,8 @@ public class GraphControllerTest extends AbstractTest {
                 .header("Authorization", token))
                 .andReturn();
 
-        final String expected = "[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"status\":null}]";
+        final String expected = "[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\"," +
+                "\"url\":\"my-graph-namespace.apps.k8s.cluster\",\"status\":\"UP\"}]";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
@@ -190,7 +194,7 @@ public class GraphControllerTest extends AbstractTest {
 
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
         assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits, lowercase letters or the special character _\"}", result.getResponse().getContentAsString());
-        assertEquals(400,  result.getResponse().getStatus());
+        assertEquals(400, result.getResponse().getStatus());
     }
 
     @Test
@@ -328,7 +332,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(inputJson)).andReturn();
 
         verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-        assertEquals(201,  result.getResponse().getStatus());
+        assertEquals(201, result.getResponse().getStatus());
     }
 
     @Test
