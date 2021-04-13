@@ -26,14 +26,13 @@ import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-import uk.gov.gchq.gaffer.graph.GraphConfig;
-import uk.gov.gchq.gaffer.store.library.FileGraphLibrary;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -66,12 +65,10 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void getGraphs_ReturnsGraphsAsList_whenSuccessful() throws Exception {
-        final GraphConfig graph = new GraphConfig.Builder()
+        final GaaSGraph graph = new GaaSGraph()
                 .graphId(TEST_GRAPH_ID)
-                .description(TEST_GRAPH_DESCRIPTION)
-                .library(new FileGraphLibrary())
-                .build();
-        ArrayList<GraphConfig> graphList = new ArrayList<>();
+                .description(TEST_GRAPH_DESCRIPTION);
+        ArrayList<GaaSGraph> graphList = new ArrayList<>();
         graphList.add(graph);
         when(getGafferService.getAllGraphs()).thenReturn(graphList);
 
@@ -80,8 +77,7 @@ public class GraphControllerTest extends AbstractTest {
                 .header("Authorization", token))
                 .andReturn();
 
-        final String expected = "[{\"description\":\"Test Graph Description\",\"graphId\":\"testgraphid\",\"hooks\":[]," +
-                "\"library\":{\"class\":\"uk.gov.gchq.gaffer.store.library.FileGraphLibrary\",\"path\":\"graphLibrary\"},\"view\":null}]";
+        final String expected = "[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"status\":null}]";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }

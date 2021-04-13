@@ -81,6 +81,8 @@ public class GafferSpecBuilder {
 
     public GafferSpecBuilder ingress(final String graphId) {
         gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, "ingress", "host");
+        gafferSpec.putNestedObject("/rest", "ingress", "pathPrefix", "api");
+        gafferSpec.putNestedObject("/ui", "ingress", "pathPrefix", "ui");
         return this;
     }
 

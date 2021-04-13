@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.graph.GraphConfig;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import java.util.List;
 
 @Service
@@ -29,7 +29,7 @@ public class GetGafferService {
     @Autowired
     private CRDClient crdClient;
 
-    public List<GraphConfig> getAllGraphs() throws GaaSRestApiException {
+    public List<GaaSGraph> getAllGraphs() throws GaaSRestApiException {
         return crdClient.listAllCRDs();
     }
 }
