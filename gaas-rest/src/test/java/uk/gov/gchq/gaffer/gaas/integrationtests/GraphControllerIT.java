@@ -52,7 +52,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testAddGraph_WithSchema_Returns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO, getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("ashgraph4", TEST_GRAPH_DESCRIPTION, StoreType.MAPSTORE, getSchema());
         final Gson gson = new Gson();
         final String inputJson = gson.toJson(gaaSCreateRequestBody);
 
