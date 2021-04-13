@@ -60,6 +60,7 @@ public final class GafferHelmValuesFactory {
                         .graphId(graph.getGraphId())
                         .description(graph.getDescription())
                         .schema(graph.getSchema())
+                        .ingress(graph.getGraphId())
                         .build();
             case FEDERATED_STORE:
             case MAPSTORE:
@@ -68,6 +69,7 @@ public final class GafferHelmValuesFactory {
                         .description(graph.getDescription())
                         .schema(graph.getSchema())
                         .storeProperties(storeType)
+                        .ingress(graph.getGraphId())
                         .build();
             case PROXY_STORE:
                 return new GafferSpecBuilder()
@@ -75,6 +77,7 @@ public final class GafferHelmValuesFactory {
                         .description(graph.getDescription())
                         .schema(graph.getSchema())
                         .storeProperties(storeType, graph.getProxyHost(), graph.getProxyContextRoot())
+                        .ingress(graph.getGraphId())
                         .build();
             default:
                 throw new IllegalArgumentException("Unsupported store type");
