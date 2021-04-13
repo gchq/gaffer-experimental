@@ -33,15 +33,15 @@ import static org.mockito.Mockito.when;
 @UnitTest
 class GetGafferServiceTest {
 
-    protected static final String TEST_GRAPH_ID = "testgraphid";
-    protected static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
-    protected static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
-
     @Autowired
     private GetGafferService getGafferService;
 
     @MockBean
-    CRDClient crdClient;
+    private CRDClient crdClient;
+
+    private static final String TEST_GRAPH_ID = "testgraphid";
+    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
+    private static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
 
     @Test
     void testGetGraphs_whenGraphRequestIsNotEmpty() throws GaaSRestApiException {
