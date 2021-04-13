@@ -39,21 +39,24 @@ public class GafferHelmValuesFactoryTest {
                         "\"kind\":\"Gaffer\"," +
                         "\"metadata\":{\"name\":\"MyGraph\"}," +
                         "\"spec\":{" +
-                            "\"graph\":{" +
-                                "\"schema\":{" +
-                                    "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
-                                "}," +
-                                "\"storeProperties\":{" +
-                                    "\"gaffer.host\":\"http://my.graph.co.uk\"," +
-                                    "\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"" +
-                                "}," +
-                                "\"config\":{" +
-                                    "\"description\":\"Another description\"," +
-                                    "\"graphId\":\"MyGraph\"" +
-                                "}" +
-                            "}" +
+                        "\"graph\":{" +
+                        "\"schema\":{" +
+                        "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
+                        "}," +
+                        "\"storeProperties\":{" +
+                        "\"gaffer.host\":\"http://my.graph.co.uk\"," +
+                        "\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"" +
+                        "}," +
+                        "\"config\":{" +
+                        "\"description\":\"Another description\"," +
+                        "\"graphId\":\"MyGraph\"" +
                         "}" +
-                "}";
+                        "}," +
+                        "\"ingress\":{" +
+                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"" +
+                        "}" +
+                        "}" +
+                        "}";
         assertEquals(expected, gson.toJson(requestBody));
     }
 
@@ -79,6 +82,9 @@ public class GafferHelmValuesFactoryTest {
                         "\"description\":\"Another description\"," +
                         "\"graphId\":\"MyGraph\"" +
                         "}" +
+                        "}," +
+                        "\"ingress\":{" +
+                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"" +
                         "}" +
                         "}" +
                         "}";
@@ -107,6 +113,9 @@ public class GafferHelmValuesFactoryTest {
                         "\"description\":\"Another description\"," +
                         "\"graphId\":\"MyGraph\"" +
                         "}" +
+                        "}," +
+                        "\"ingress\":{" +
+                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"" +
                         "}" +
                         "}" +
                         "}";
@@ -130,6 +139,9 @@ public class GafferHelmValuesFactoryTest {
                         "\"description\":\"Another description\"," +
                         "\"graphId\":\"MyGraph\"" +
                         "}" +
+                        "}," +
+                        "\"ingress\":{" +
+                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"" +
                         "}," +
                         "\"accumulo\":{" +
                         "\"enabled\":true" +
@@ -160,6 +172,9 @@ public class GafferHelmValuesFactoryTest {
                         "\"description\":\"Another description\"," +
                         "\"graphId\":\"MyGraph\"" +
                         "}" +
+                        "}," +
+                        "\"ingress\":{" +
+                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"" +
                         "}" +
                         "}" +
                         "}";
@@ -188,6 +203,9 @@ public class GafferHelmValuesFactoryTest {
                         "\"description\":\"Another description\"," +
                         "\"graphId\":\"MyGraph\"" +
                         "}" +
+                        "}," +
+                        "\"ingress\":{" +
+                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"" +
                         "}" +
                         "}" +
                         "}";

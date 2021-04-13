@@ -74,10 +74,12 @@ public class GraphControllerTest extends AbstractTest {
         ArrayList<GraphConfig> graphList = new ArrayList<>();
         graphList.add(graph);
         when(getGafferService.getAllGraphs()).thenReturn(graphList);
+
         final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
         final String expected = "[{\"description\":\"Test Graph Description\",\"graphId\":\"testgraphid\",\"hooks\":[]," +
                 "\"library\":{\"class\":\"uk.gov.gchq.gaffer.store.library.FileGraphLibrary\",\"path\":\"graphLibrary\"},\"view\":null}]";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
@@ -88,9 +90,11 @@ public class GraphControllerTest extends AbstractTest {
     public void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
         final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
         when(authService.getToken(any(JwtRequest.class))).thenReturn("token received");
+
         final MvcResult result = mvc.perform(post("/auth")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(authRequest)).andReturn();
+
         assertEquals(200, result.getResponse().getStatus());
         assertEquals("token received", result.getResponse().getContentAsString());
     }
@@ -100,126 +104,137 @@ public class GraphControllerTest extends AbstractTest {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO, getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
+
         verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals(201, status);
+        assertEquals(201, result.getResponse().getStatus());
     }
 
     @Test
     public void createGraph_whenGraphIdIsNull_shouldReturn400() throws Exception {
         final String graphRequest = "{\"description\":\"password\",\"storeType\":\"ACCUMULO\"}";
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
+
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph id should not be null\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph id should not be null\"}", result.getResponse().getContentAsString());
+        assertEquals(400, result.getResponse().getStatus());
     }
 
     @Test
     public void createGraph_whenGraphIdHasSpaces_isInvalidAndShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
+
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits, lowercase letters or the special character _\"}", result.getResponse().getContentAsString());
+        assertEquals(400, result.getResponse().getStatus());
     }
 
     @Test
     public void createGraph_whenGraphIdHasDashes_isValidAndShouldReturn201() throws Exception {
         final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals(201, status);
+
+        verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits, lowercase letters or the special character _\"}", result.getResponse().getContentAsString());
+        assertEquals(400, result.getResponse().getStatus());
     }
 
     @Test
     public void createGraph_whenGraphIdHasUnderscore_isValidAndShouldReturn201() throws Exception {
         final String graphRequest = "{\"graphId\":\"graph_with_underscore\",\"description\":\"a description\",\"storeType\":\"ACCUMULO\"}";
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
+
         verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals(201, status);
+        assertEquals(201, result.getResponse().getStatus());
     }
 
     @Test
     public void createGraph_graphIdWithSpecialCharacters_isInvalidAndShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"a description\",\"storeType\":\"ACCUMULO\"}";
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
+
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits, lowercase letters or the special character _\"}", result.getResponse().getContentAsString());
+        assertEquals(400, result.getResponse().getStatus());
     }
 
     @Test
     public void createGraph_whenGraphIdHasCapitalLetters_shouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        final int status = mvcResult.getResponse().getStatus();
+
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph can contain only digits, lowercase letters or the special characters _ and -\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits, lowercase letters or the special character _\"}", result.getResponse().getContentAsString());
+        assertEquals(400,  result.getResponse().getStatus());
     }
 
     @Test
     public void createGraph_whenDescriptionIsEmptyOnly_return400() throws Exception {
         final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"storeType\":\"ACCUMULO\"}";
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+
+        final MvcResult response = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
+
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Description should not be empty\"}", mvcResult.getResponse().getContentAsString());
-        assertEquals(400, status);
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Description should not be empty\"}", response.getResponse().getContentAsString());
+        assertEquals(400, response.getResponse().getStatus());
     }
 
     @Test
     public void deleteGraph_whenGraphExistsAndCanDelete_shouldReturn204() throws Exception {
         doNothing().when(deleteGraphService).deleteGraph(TEST_GRAPH_ID);
-        //when delete graph
-        final MvcResult mvcResult2 = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
+
+        final MvcResult result = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
         verify(deleteGraphService, times(1)).deleteGraph(any(String.class));
-        //then have no graphs / 200 return
-        assertEquals(204, mvcResult2.getResponse().getStatus());
+
+        assertEquals(204, result.getResponse().getStatus());
     }
 
     @Test
     public void deleteGraph_whenGraphNDoesNotExist_return404() throws Exception {
         doThrow(new GaaSRestApiException("Graph not found", "NotFound", 404)).when(deleteGraphService).deleteGraph("nonexistentgraphfortestingpurposes");
-        final MvcResult mvcResult2 = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
+
+        final MvcResult result = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
         verify(deleteGraphService, times(1)).deleteGraph("nonexistentgraphfortestingpurposes");
-        assertEquals(404, mvcResult2.getResponse().getStatus());
+        assertEquals(404, result.getResponse().getStatus());
     }
 
     @Test
@@ -228,14 +243,14 @@ public class GraphControllerTest extends AbstractTest {
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
 
         verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-        assertEquals(409, mvcResult.getResponse().getStatus());
-        assertEquals("{\"title\":\"This graph\",\"detail\":\"already exists\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals(409, result.getResponse().getStatus());
+        assertEquals("{\"title\":\"This graph\",\"detail\":\"already exists\"}", result.getResponse().getContentAsString());
     }
 
     @Test
@@ -243,9 +258,11 @@ public class GraphControllerTest extends AbstractTest {
         final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
         doThrow(new GaaSRestApiException("Invalid Credentials", "Username is incorrect", 401))
                 .when(authService).getToken(any(JwtRequest.class));
+
         final MvcResult result = mvc.perform(post("/auth")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(authRequest)).andReturn();
+
         verify(authService, times(2)).getToken(any(JwtRequest.class));
         assertEquals(401, result.getResponse().getStatus());
         assertEquals("{\"title\":\"Invalid Credentials\",\"detail\":\"Username is incorrect\"}", result.getResponse().getContentAsString());
@@ -254,10 +271,12 @@ public class GraphControllerTest extends AbstractTest {
     @Test
     public void namespaces_shouldReturnErrorMessageWhenNamespaceServiceException() throws Exception {
         doThrow(new GaaSRestApiException("Cluster not found", "NotFound", 404)).when(getNamespacesService).getNamespaces();
+
         final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
         assertEquals(404, namespacesResponse.getResponse().getStatus());
         assertEquals("{\"title\":\"Cluster not found\",\"detail\":\"NotFound\"}", namespacesResponse.getResponse().getContentAsString());
     }
@@ -265,10 +284,12 @@ public class GraphControllerTest extends AbstractTest {
     @Test
     public void namespaces_shouldReturn200AndArrayWithNamespacesWhenNamespacesPresent() throws Exception {
         when(getNamespacesService.getNamespaces()).thenReturn(Arrays.asList("dev-team-1", "dev-team-2", "test-team-5"));
+
         final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
         assertEquals(200, namespacesResponse.getResponse().getStatus());
         assertEquals("[\"dev-team-1\",\"dev-team-2\",\"test-team-5\"]", namespacesResponse.getResponse().getContentAsString());
     }
@@ -290,14 +311,13 @@ public class GraphControllerTest extends AbstractTest {
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
 
         verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals(201, status);
+        assertEquals(201, result.getResponse().getStatus());
     }
 
     @Test
@@ -305,13 +325,14 @@ public class GraphControllerTest extends AbstractTest {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.MAPSTORE, getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
+
         verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals(201, status);
+        assertEquals(201,  result.getResponse().getStatus());
     }
 
     @Test
@@ -320,32 +341,31 @@ public class GraphControllerTest extends AbstractTest {
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
 
         verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-        final int status = mvcResult.getResponse().getStatus();
-        assertEquals(201, status);
+        assertEquals(201, result.getResponse().getStatus());
     }
 
     @Test
     public void createGraph_shouldReturn400BadRequestWhenStoreTypeIsNull() throws Exception {
         final String gaaSCreateRequestBody = "{" +
-                "\"graphId\":\"invalid-store-type\"," +
+                "\"graphId\":\"invalidstoretype\"," +
                 "\"description\":\"any\"" +
                 "}";
 
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(gaaSCreateRequestBody)).andReturn();
 
-        assertEquals(400, mvcResult.getResponse().getStatus());
+        assertEquals(400, result.getResponse().getStatus());
         final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. " +
                 "Valid Store Types supported are MAPSTORE, ACCUMULO, FEDERATED_STORE or PROXY_STORE\"}";
-        assertEquals(expected, mvcResult.getResponse().getContentAsString());
+        assertEquals(expected, result.getResponse().getContentAsString());
     }
 
     @Test
@@ -356,17 +376,17 @@ public class GraphControllerTest extends AbstractTest {
                 "\"storeType\":\"INVALID\"" +
                 "}";
 
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(gaaSCreateRequestBody)).andReturn();
 
-        assertEquals(400, mvcResult.getResponse().getStatus());
+        assertEquals(400, result.getResponse().getStatus());
         final String expected = "{\"title\":\"InvalidFormatException\",\"detail\":\"Cannot deserialize value of type " +
                 "`uk.gov.gchq.gaffer.gaas.model.StoreType` from String \\\"INVALID\\\": not one of the values accepted " +
                 "for Enum class: [PROXY_STORE, MAPSTORE, FEDERATED_STORE, ACCUMULO]\\n at [Source: (PushbackInputStream); " +
                 "line: 1, column: 65] (through reference chain: uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody[\\\"storeType\\\"])\"}";
-        assertEquals(expected, mvcResult.getResponse().getContentAsString());
+        assertEquals(expected, result.getResponse().getContentAsString());
     }
 
     private LinkedHashMap<String, Object> getSchema() {

@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.factories;
+package uk.gov.gchq.gaffer.gaas.util;
 
-import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-public class AccumuloGafferSpecBuilder extends GafferSpecBuilder {
+@Component
+public class Properties {
 
-    @Override
-    public GafferSpec build() {
-        gafferSpec.putNestedObject(true, "accumulo", "enabled");
-        return gafferSpec;
+    public static String INGRESS_SUFFIX;
+    public static String NAMESPACE;
+
+    @Value("${ingress.suffix}")
+    public void setIngressSuffix(final String ingressSuffix) {
+        Properties.INGRESS_SUFFIX = ingressSuffix;
+    }
+
+    @Value("${gaffer.namespace}")
+    public void setNamespace(final String namespace) {
+        Properties.NAMESPACE = namespace;
     }
 }

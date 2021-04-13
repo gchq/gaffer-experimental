@@ -40,18 +40,21 @@ import static uk.gov.gchq.gaffer.gaas.utilities.GafferKubernetesObjectFactory.fr
 
 @SpringBootTest
 public class CRDClientIT {
+
     @Autowired
     private CreateGraphService createGraphService;
     @Autowired
     private CRDClient crdClient;
     @Autowired
     private ApiClient apiClient;
+
     @Value("${gaffer.namespace}")
     private String namespace;
     @Value("${group}")
     private String group;
     @Value("${version}")
     private String version;
+
     private static final String TEST_GRAPH_ID = "test-graph-id";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
     private static final StoreType ACCUMULO_ENABLED = StoreType.ACCUMULO;
