@@ -1,8 +1,8 @@
-import axios, { AxiosError, AxiosResponse, Method } from 'axios';
-import status from 'statuses';
-import { GaaSRestApiErrorResponse } from '../http-message-interfaces/error-response-interface';
-import { RestApiError } from '../RestApiError';
-import { Config } from './../config';
+import axios, { AxiosError, AxiosResponse, Method } from "axios";
+import status from "statuses";
+import { GaaSRestApiErrorResponse } from "../http-message-interfaces/error-response-interface";
+import { RestApiError } from "../RestApiError";
+import { Config } from "./../config";
 
 export interface IApiResponse<T = any> {
     status: number;
@@ -21,43 +21,43 @@ export class RestClient<T> {
     private headers: object;
     private data: T | undefined;
     constructor() {
-        this.url = '';
-        this.method = 'get';
+        this.url = "";
+        this.method = "get";
         this.headers = {};
         this.data = undefined;
     }
 
     public get(): RestClient<T> {
-        this.method = 'get';
+        this.method = "get";
         return this;
     }
 
     public graphs(pathVariable?: string): RestClient<T> {
-        const _pathVariable = pathVariable ? `/${pathVariable}` : '';
+        const _pathVariable = pathVariable ? `/${pathVariable}` : "";
         this.url = `/graphs${_pathVariable}`;
-        this.headers = { Authorization: 'Bearer ' + RestClient.jwtToken };
+        this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
         return this;
     }
 
     public namespaces(): RestClient<T> {
-        this.url = '/namespaces';
-        this.headers = { Authorization: 'Bearer ' + RestClient.jwtToken };
+        this.url = "/namespaces";
+        this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
         return this;
     }
 
-public authentication(pathVariable?: string): RestClient<T> {
-        const _pathVariable = pathVariable ? `/${pathVariable}` : '';
+    public authentication(pathVariable?: string): RestClient<T> {
+        const _pathVariable = pathVariable ? `/${pathVariable}` : "";
         this.url = `/auth${_pathVariable}`;
         return this;
     }
 
     public post(): RestClient<T> {
-        this.method = 'post';
+        this.method = "post";
         return this;
     }
 
     public delete(): RestClient<T> {
-        this.method = 'delete';
+        this.method = "delete";
         return this;
     }
 
@@ -86,9 +86,10 @@ public authentication(pathVariable?: string): RestClient<T> {
             return new RestApiError(e.response.data.title, e.response.data.detail);
         }
         if (e.response && e.response.status) {
+            // @ts-ignore
             return new RestApiError(`Error Code ${e.response.status}`, status(e.response.status));
         }
-        return new RestApiError('Unknown Error', 'Unable to make request');
+        return new RestApiError("Unknown Error", "Unable to make request");
     }
 
     private static async convert(response: AxiosResponse<any>): Promise<IApiResponse> {

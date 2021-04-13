@@ -1,11 +1,11 @@
-import React from 'react';
-import { Button, CssBaseline, Grid, TextField, Link } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import { AlertType, NotificationAlert } from '../alerts/notification-alert';
-import { FormType } from './login-modal';
-import { IAuthClient } from '../../rest/clients/authclient';
-import { AuthClientFactory } from '../../rest/clients/auth-client-factory';
+import React from "react";
+import { Button, CssBaseline, Grid, TextField, Link } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import Container from "@material-ui/core/Container";
+import { AlertType, NotificationAlert } from "../alerts/notification-alert";
+import { FormType } from "./login-modal";
+import { IAuthClient } from "../../rest/clients/authclient";
+import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
 
 interface IProps {
     onChangeForm(fromType: FormType): void;
@@ -24,11 +24,11 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
     constructor(props: IProps) {
         super(props);
         this.state = {
-            username: '',
-            oldPassword: '',
-            newPassword: '',
+            username: "",
+            oldPassword: "",
+            newPassword: "",
             outcome: undefined,
-            outcomeMessage: '',
+            outcomeMessage: "",
         };
     }
 
@@ -55,40 +55,40 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
 
     public render() {
         return (
-            <main id='old-password-login-form'>
-                <Container component='main' maxWidth='xs'>
+            <main id="old-password-login-form">
+                <Container component="main" maxWidth="xs">
                     {this.state.outcome && (
                         <NotificationAlert alertType={this.state.outcome} message={this.state.outcomeMessage} />
                     )}
                     <CssBaseline />
                     <div
                         style={{
-                            marginTop: '20px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
+                            marginTop: "20px",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
                         }}
                     >
-                        <Typography component='h1' variant='h5'>
+                        <Typography component="h1" variant="h5">
                             Reset Password & Sign In
                         </Typography>
                         <Grid item>
                             <form
                                 style={{
-                                    width: '100%',
+                                    width: "100%",
                                 }}
                                 noValidate
                             >
                                 <TextField
-                                    id='username'
-                                    variant='outlined'
+                                    id="username"
+                                    variant="outlined"
                                     value={this.state.username}
-                                    margin='normal'
+                                    margin="normal"
                                     required
                                     fullWidth
-                                    label='Username'
-                                    name='username'
-                                    autoComplete='username'
+                                    label="Username"
+                                    name="username"
+                                    autoComplete="username"
                                     autoFocus
                                     onChange={(event) => {
                                         this.setState({
@@ -96,53 +96,53 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                         });
                                     }}
                                     onKeyPress={(ev) => {
-                                        if (ev.key === 'Enter') {
+                                        if (ev.key === "Enter") {
                                             this.resetPassword();
                                             ev.preventDefault();
                                         }
                                     }}
                                 />
                                 <TextField
-                                    variant='outlined'
+                                    variant="outlined"
                                     value={this.state.oldPassword}
-                                    margin='normal'
+                                    margin="normal"
                                     required
                                     fullWidth
-                                    name='old-password'
-                                    label='Old Password'
-                                    type='password'
-                                    id='old-password'
-                                    autoComplete='current-password'
+                                    name="old-password"
+                                    label="Old Password"
+                                    type="password"
+                                    id="old-password"
+                                    autoComplete="current-password"
                                     onChange={(event) => {
                                         this.setState({
                                             oldPassword: event.target.value,
                                         });
                                     }}
                                     onKeyPress={(ev) => {
-                                        if (ev.key === 'Enter') {
+                                        if (ev.key === "Enter") {
                                             this.resetPassword();
                                             ev.preventDefault();
                                         }
                                     }}
                                 />
                                 <TextField
-                                    variant='outlined'
+                                    variant="outlined"
                                     value={this.state.newPassword}
-                                    margin='normal'
+                                    margin="normal"
                                     required
                                     fullWidth
-                                    name='new-password'
-                                    label='New Password'
-                                    type='password'
-                                    id='new-password'
-                                    autoComplete='current-password'
+                                    name="new-password"
+                                    label="New Password"
+                                    type="password"
+                                    id="new-password"
+                                    autoComplete="current-password"
                                     onChange={(event) => {
                                         this.setState({
                                             newPassword: event.target.value,
                                         });
                                     }}
                                     onKeyPress={(ev) => {
-                                        if (ev.key === 'Enter') {
+                                        if (ev.key === "Enter") {
                                             this.resetPassword();
                                             ev.preventDefault();
                                         }
@@ -150,10 +150,10 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                 />
                                 <Button
                                     fullWidth
-                                    id='submit-sign-in-button'
-                                    variant='contained'
-                                    color='primary'
-                                    style={{ marginTop: '20px' }}
+                                    id="submit-sign-in-button"
+                                    variant="contained"
+                                    color="primary"
+                                    style={{ marginTop: "20px" }}
                                     disabled={this.disableUpdateButton()}
                                     onClick={() => {
                                         this.resetPassword();
@@ -162,9 +162,9 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                     Reset Password And Sign In
                                 </Button>
                             </form>
-                            <Typography style={{ marginTop: '20px' }}>
+                            <Typography style={{ marginTop: "20px" }}>
                                 <Link
-                                    id='login-form-link'
+                                    id="login-form-link"
                                     onClick={() => this.props.onChangeForm(FormType.EXISTING_USER_LOGIN)}
                                 >
                                     Back to sign in

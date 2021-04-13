@@ -6,8 +6,8 @@ replicaCount: 1
 
 image:
   #Ask about repository setting
-  repository: macenturalxl1/gaas-ui
-  pullPolicy: IfNotPresent
+  repository: gchq/gaas-ui
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: 'latest'
   containerPort: 8081
@@ -25,6 +25,6 @@ envConfigFile: "env-config.js"
 
 envVariables:
   reactAPIPlatform: "test"
-  kaiRestAPIHost: "http://openshift.host.co.uk/"
-  cognitoUserpoolID: "us-east-1_ABC1def2g"
+  kaiRestAPIHost: "http://kubernetes.host.co.uk/"
+  cognitoUserpoolID: "us-east-1_uS3rPo0L1D"
   cognitoClientID: "c0gN1t0Id"

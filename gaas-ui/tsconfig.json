@@ -21,15 +21,16 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
-    "typeRoots": ["./typings", "./node_modules/@types"],
-    "noImplicitAny": false
+    "jsx": "react-jsx",
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": ["./typings", "./node_modules/@types"]
   },
   "include": [
-    "./src/**/*.tsx", 
+    "./src/**/*.tsx",
     "./src/**/*.ts",
     "./test/**/*.tsx",
-    "./test/**/*.ts", "test/setupTests.ts", "src/setupProxy.js", "src/components/logo.tsx"
+    "./test/**/*.ts",
+    "test/setupTests.ts"
   ],
   "exclude": [
     "node_modules",
