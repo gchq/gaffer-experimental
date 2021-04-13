@@ -2,15 +2,15 @@ import {
   Button,
   Checkbox,
   Container,
-  CssBaseline,
+  CssBaseline, Dialog, DialogContent,
   FormControl,
   FormHelperText,
   Grid,
-  Hidden,
+  Hidden, IconButton,
   InputLabel,
   makeStyles,
   MenuItem,
-  Select,
+  Select, Slide,
   Table,
   TableBody,
   TableCell,
@@ -18,8 +18,8 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Toolbar,
-  Typography,
+  Toolbar, Tooltip,
+  Typography, Zoom,
 } from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import React from "react";
@@ -29,6 +29,12 @@ import { CreateSimpleGraphRepo } from "../../rest/repositories/create-simple-gra
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../domain/graph";
+import {ElementsSchema} from "../../domain/elements-schema";
+import {TypesSchema} from "../../domain/types-schema";
+import AttachFileIcon from "@material-ui/icons/AttachFile";
+import ClearIcon from "@material-ui/icons/Clear";
+import {DropzoneArea} from "material-ui-dropzone";
+import {TransitionProps} from "@material-ui/core/transitions";
 
 interface IState {
   dialogIsOpen: boolean;
@@ -41,13 +47,30 @@ interface IState {
   outcomeMessage: string;
   errors: Notifications;
   graphs: Graph[];
-  selectedRow: Graph[];
+  elementsFiles: Array<File>;
+  typesFiles: Array<File>;
+  typesFieldDisabled: boolean;
+  elementsFieldDisabled: boolean;
+  elements: string;
+  types: string;
+  schemaJson: string;
 }
-
+const Transition = React.forwardRef(
+    (props: TransitionProps & { children?: React.ReactElement<any, any> }, ref: React.Ref<unknown>) => (
+        <Slide direction="up" ref={ref} {...props} />
+    )
+);
 export default class SimpleAddGraph extends React.Component<{}, IState> {
   constructor(props: object) {
     super(props);
     this.state = {
+      schemaJson: "",
+      elements: "",
+      types: "",
+      elementsFieldDisabled: false,
+      elementsFiles: [],
+      typesFieldDisabled: false,
+      typesFiles: [],
       dialogIsOpen: false,
       graphId: "",
       description: "",
@@ -57,8 +80,7 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
       proxyStores: [],
       root: "",
       errors: new Notifications(),
-      graphs: [],
-      selectedRow: [],
+      graphs: []
     };
   }
 
@@ -67,11 +89,18 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
     const graphId = this.state.graphId;
     const description = this.state.description;
     const storeType = this.state.storeType;
-    const url = this.state.proxyStores;
+    const proxyStores = this.state.proxyStores;
     const root = this.state.root;
+    const elements = new ElementsSchema(this.state.elements);
+    const types = new TypesSchema(this.state.types);
+    errors.concat(elements.validate());
+    errors.concat(types.validate());
     if (errors.isEmpty()) {
       try {
-        await new CreateSimpleGraphRepo().create(graphId, description, storeType, url, root);
+        await new CreateSimpleGraphRepo().create(graphId, description, storeType, proxyStores,{
+          elements: elements.getElements(),
+          types: types.getTypes()
+        }, root);
         this.setState({
           outcome: AlertType.SUCCESS,
           outcomeMessage: `${graphId} was successfully added`,
@@ -92,6 +121,11 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
     this.setState({
       graphId: "",
       description: "",
+      elementsFiles: [],
+      typesFiles: [],
+      schemaJson: "",
+      elements: "",
+      types: "",
     });
   }
 
@@ -105,18 +139,53 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
       });
     }
   }
+  private async uploadElementsFiles(elementsFiles: File[]) {
+    this.setState({ elementsFiles: elementsFiles });
+    if (elementsFiles.length > 0) {
+      const elementsSchemaFiles = await elementsFiles[0].text();
+      this.setState({
+        elementsFieldDisabled: true,
+        elements: elementsSchemaFiles,
+      });
+    } else {
+      this.setState({
+        elementsFieldDisabled: false,
+      });
+    }
+  }
+
+  private async uploadTypesFiles(typesFiles: File[]) {
+    this.setState({ typesFiles: typesFiles });
+    if (typesFiles.length > 0) {
+      const typesSchemaFiles = await typesFiles[0].text();
+      this.setState({
+        typesFieldDisabled: true,
+        types: typesSchemaFiles,
+      });
+    } else {
+      this.setState({
+        typesFieldDisabled: false,
+      });
+    }
+  }
 
   public async componentDidMount() {
     this.getGraphs();
   }
 
   private disableSubmitButton(): boolean {
-    return !this.state.graphId || !this.state.description || (this.state.storeType === StoreType.FEDERATED_STORE && !(this.state.proxyStores.length > 0));
+    return !this.state.elements || !this.state.types || !this.state.graphId || !this.state.description || (this.state.storeType === StoreType.FEDERATED_STORE && !(this.state.proxyStores.length > 0));
   }
 
   public render() {
     const { graphs } = this.state;
     const isHidden = (): boolean => this.state.storeType !== StoreType.FEDERATED_STORE;
+    const openDialogBox = () => {
+      this.setState({ dialogIsOpen: true });
+    };
+    const closeDialogBox = () => {
+      this.setState({ dialogIsOpen: false });
+    };
 
     return (
       <main>
@@ -171,6 +240,120 @@ export default class SimpleAddGraph extends React.Component<{}, IState> {
                     />
                   </Grid>
                   <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
+                  <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center">
+                    <Tooltip TransitionComponent={Zoom} title="Add Schema From File">
+                      <IconButton id="attach-file-button" onClick={openDialogBox}>
+                        <AttachFileIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip TransitionComponent={Zoom} title="Clear Schema">
+                      <IconButton
+                          onClick={() =>
+                              this.setState({
+                                  schemaJson: "",
+                              })
+                          }
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Dialog
+                        id="dropzone"
+                        open={this.state.dialogIsOpen}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={closeDialogBox}
+                        style={{ minWidth: "500px" }}
+                        aria-labelledby="alert-dialog-slide-title"
+                        aria-describedby="alert-dialog-slide-description"
+                    >
+                      <Grid container direction="row" justify="flex-end" alignItems="flex-start">
+                        <IconButton id="close-dropzone-button" onClick={closeDialogBox}>
+                          <ClearIcon />
+                        </IconButton>
+                      </Grid>
+
+                      <DialogContent>
+                        <Grid id="elements-drop-zone">
+                          <DropzoneArea
+                              showPreviews={true}
+                              onChange={async (files) => this.uploadElementsFiles(files)}
+                              showPreviewsInDropzone={false}
+                              dropzoneText="Drag and drop elements.JSON"
+                              useChipsForPreview
+                              previewGridProps={{
+                                container: { spacing: 1, direction: "row" },
+                              }}
+                              previewChipProps={{
+                                classes: { root: this.classes.previewChip },
+                              }}
+                              previewText="Selected files"
+                              clearOnUnmount={true}
+                              acceptedFiles={["application/json"]}
+                              filesLimit={1}
+                          />
+                        </Grid>
+                        <Grid id="types-drop-zone">
+                          <DropzoneArea
+                              showPreviews={true}
+                              onChange={async (files) => this.uploadTypesFiles(files)}
+                              showPreviewsInDropzone={false}
+                              dropzoneText="Drag and drop types.JSON"
+                              useChipsForPreview
+                              previewGridProps={{
+                                container: { spacing: 1, direction: "row" },
+                              }}
+                              previewChipProps={{
+                                classes: { root: this.classes.previewChip },
+                              }}
+                              previewText="Selected files"
+                              clearOnUnmount={true}
+                              acceptedFiles={["application/json"]}
+                              filesLimit={1}
+                          />
+                        </Grid>
+                      </DialogContent>
+                    </Dialog>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                        id="schema-elements"
+                        style={{ width: 400 }}
+                        value={this.state.elements}
+                        label="Schema Elements JSON"
+                        disabled={this.state.elementsFieldDisabled}
+                        required
+                        multiline
+                        rows={5}
+                        name="schema-elements"
+                        variant="outlined"
+                        onChange={(event) => {
+                          this.setState({
+                            elements: event.target.value,
+                          });
+                        }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                        id="schema-types"
+                        style={{ width: 400 }}
+                        value={this.state.types}
+                        disabled={this.state.typesFieldDisabled}
+                        name="schema-types"
+                        label="Schema Types JSON"
+                        required
+                        multiline
+                        rows={5}
+                        variant="outlined"
+                        onChange={(event) => {
+                          this.setState({
+                            types: event.target.value,
+                          });
+                        }}
+                    />
+                  </Grid>
+
                   <Grid item xs={12} id={"storetype-select-grid"}>
                     <FormControl variant="outlined" id={"storetype-formcontrol"}>
                       <InputLabel>Store Type</InputLabel>

@@ -14,6 +14,10 @@ export interface ICreateGraphRequestBody {
 export interface ICreateSimpleGraphRequestBody {
     graphId: string;
     description: string;
+    schema: {
+        elements: IElements;
+        types: ITypesSchema;
+    };
     storeType: StoreType;
     proxyStores: Graph[];
     root: string;
