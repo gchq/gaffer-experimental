@@ -20,9 +20,8 @@ RUN groupadd ${GROUP} && useradd --home-dir /spring --gid ${GROUP} --no-create-h
 RUN mkdir -p /usr/share/man/man1 && \
     apt -qq update &&  \
     apt -qq install -y openjdk-8-jre-headless
-    
-EXPOSE 8080
+
 USER ${USER}
 WORKDIR /spring
-COPY --from=builder /workspace/gaffer-as-a-service/gaas-rest/target/gaas-rest-*-exec.jar ./gaas-rest.jar
+COPY --from=builder /workspace/gaas-rest/target/gaas-rest-*-exec.jar ./gaas-rest.jar
 ENTRYPOINT [ "java", "-jar", "./gaas-rest.jar"]
