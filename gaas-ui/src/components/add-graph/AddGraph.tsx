@@ -138,9 +138,9 @@ export default class AddGraph extends React.Component<{}, IState> {
       }
   }
 
-  private async addProxyGraph() {
+  private async addProxyGraph(url:string) {
     this.setState({
-      graphs: [...this.state.graphs, new Graph("testProxy", "something", this.state.proxyURL, "")],
+      graphs: [...this.state.graphs, new Graph(url+"-graph", "Proxy Graph", this.state.proxyURL, "")],
     });
   }
 
