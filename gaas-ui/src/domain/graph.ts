@@ -1,8 +1,8 @@
 export class Graph {
     private graphId: string;
     private description: string;
-    private url: string
-    private status: string
+    private url: string;
+    private status: string;
 
     constructor(graphId: string, description: string, url: string, status: string) {
         this.graphId = graphId;
