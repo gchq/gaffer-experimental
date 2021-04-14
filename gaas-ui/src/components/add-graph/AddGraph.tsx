@@ -449,6 +449,9 @@ export default class AddGraph extends React.Component<{}, IState> {
                         <TableCell component="th">Graph ID</TableCell>
                         <TableCell align="center">Description</TableCell>
                         <TableCell align="right"><Checkbox
+                        checked={
+                          (this.state.graphs.length>0 && (this.state.proxyStores.length < this.state.graphs.length))
+                       }
                               onChange={(event) => {
                                   this.setState({selectAllGraphs:event.target.checked})
                                 }
@@ -466,7 +469,9 @@ export default class AddGraph extends React.Component<{}, IState> {
                           <TableCell align="center">{graph.getDescription()}</TableCell>
                           <TableCell align="right">
                             <Checkbox
-                            checked={this.state.selectAllGraphs}
+                            checked={
+                               (this.state.graphs.length>0 && (this.state.proxyStores.length < this.state.graphs.length))
+                            }
                               id={`${graph.getId()}-checkbox`}
                               required
                               onChange={(event) => {
