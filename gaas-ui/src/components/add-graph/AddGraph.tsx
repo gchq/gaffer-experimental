@@ -55,14 +55,12 @@ interface IState {
   outcome: AlertType | undefined;
   outcomeMessage: string;
 }
-
 const Transition = React.forwardRef(
   (
     props: TransitionProps & { children?: React.ReactElement<any, any> },
     ref: React.Ref<unknown>
   ) => <Slide direction="up" ref={ref} {...props} />
 );
-
 export default class AddGraph extends React.Component<{}, IState> {
   constructor(props: object) {
     super(props);
