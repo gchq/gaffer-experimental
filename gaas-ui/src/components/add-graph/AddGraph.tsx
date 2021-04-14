@@ -138,6 +138,12 @@ export default class AddGraph extends React.Component<{}, IState> {
       }
   }
 
+  private async addProxyGraph() {
+    this.setState({
+      graphs: [...this.state.graphs, new Graph("testProxy", "something", this.state.proxyURL, "")],
+    });
+  }
+
   private resetForm() {
     this.setState({
       graphId: "",
@@ -192,6 +198,10 @@ export default class AddGraph extends React.Component<{}, IState> {
       (storeType !== StoreType.FEDERATED_STORE && !new ElementsSchema(elements).validate().isEmpty()) || 
       (storeType !== StoreType.FEDERATED_STORE && !new TypesSchema(types).validate().isEmpty())
     );
+  }
+
+  private disableProxyButton(): boolean {
+    return this.state.proxyURL === "";
   }
 
   public render() {
