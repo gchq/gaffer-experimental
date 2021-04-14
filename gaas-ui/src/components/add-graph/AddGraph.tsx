@@ -204,6 +204,20 @@ export default class AddGraph extends React.Component<{}, IState> {
     return this.state.proxyURL === "";
   }
 
+  private checkSelections(graph: Graph): boolean{
+    if(this.state.proxyStores.length===0){
+      return false;
+    }
+    if(this.state.proxyStores.includes(graph)){
+      return true;
+    }
+    if(this.state.proxyStores.length===this.state.graphs.length){
+      return true;
+    }
+    return false;
+  };
+
+
   public render() {
     const federatedStoreIsNotSelected = (): boolean =>
       this.state.storeType !== StoreType.FEDERATED_STORE;
@@ -213,6 +227,7 @@ export default class AddGraph extends React.Component<{}, IState> {
     const closeDialogBox = () => {
       this.setState({ dialogIsOpen: false });
     };
+
 
     return (
       <main>
