@@ -201,6 +201,20 @@ export default class AddGraph extends React.Component<{}, IState> {
     return this.state.proxyURL === "";
   }
 
+  private checkSelections(graph: Graph): boolean{
+    if(this.state.proxyStores.length===0){
+      return false;
+    }
+    if(this.state.proxyStores.includes(graph)){
+      return true;
+    }
+    if(this.state.proxyStores.length===this.state.graphs.length){
+      return true;
+    }
+    return false;
+  };
+
+
   public render() {
     const { graphs } = this.state;
     const isHidden = (): boolean => this.state.storeType !== StoreType.FEDERATED_STORE;
@@ -210,6 +224,7 @@ export default class AddGraph extends React.Component<{}, IState> {
     const closeDialogBox = () => {
       this.setState({ dialogIsOpen: false });
     };
+
 
     return (
       <main>
@@ -450,12 +465,15 @@ export default class AddGraph extends React.Component<{}, IState> {
                         <TableCell align="center">Description</TableCell>
                         <TableCell align="right"><Checkbox
                         checked={
-                          (this.state.graphs.length>0 && (this.state.proxyStores.length < this.state.graphs.length))
+                          (this.state.graphs.length>0 && (this.state.proxyStores.length === this.state.graphs.length))
                        }
-                              onChange={(event) => {
-                                  this.setState({selectAllGraphs:event.target.checked})
-                                }
-                              }
+                       onChange={(event) => {
+                         if(event.target.checked){
+                           this.setState({proxyStores: this.state.graphs})
+                         }else{
+                          this.setState({proxyStores: []})
+                         }
+                        }}
                             /> </TableCell>
                       </TableRow>
                     </TableHead>
@@ -469,11 +487,9 @@ export default class AddGraph extends React.Component<{}, IState> {
                           <TableCell align="center">{graph.getDescription()}</TableCell>
                           <TableCell align="right">
                             <Checkbox
-                            checked={
-                               (this.state.graphs.length>0 && (this.state.proxyStores.length < this.state.graphs.length))
-                            }
                               id={`${graph.getId()}-checkbox`}
                               required
+                              checked={this.checkSelections(graph)}
                               onChange={(event) => {
                                 if (event.target.checked) {
                                   this.setState({
