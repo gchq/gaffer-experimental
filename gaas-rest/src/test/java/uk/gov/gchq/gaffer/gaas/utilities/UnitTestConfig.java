@@ -30,6 +30,7 @@ import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+import uk.gov.gchq.gaffer.gaas.util.Properties;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
@@ -84,6 +85,11 @@ public class UnitTestConfig {
     @Bean
     public JwtUserDetailsService jwtUserDetailsService() {
         return new JwtUserDetailsService();
+    }
+
+    @Bean
+    public Properties properties() {
+        return new Properties();
     }
 
     @Bean

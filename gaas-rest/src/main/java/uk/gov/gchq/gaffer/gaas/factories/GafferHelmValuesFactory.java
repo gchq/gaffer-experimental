@@ -21,6 +21,8 @@ import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
+import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
 
 /**
  * GafferHelmValuesFactory is a factory class that creates a Gaffer Helm Values Object that can be passed to the
@@ -34,13 +36,11 @@ import uk.gov.gchq.gaffer.gaas.model.StoreType;
  */
 public final class GafferHelmValuesFactory {
 
-    // todo fix injection
-    private static final String GROUP = "gchq.gov.uk";
-    private static final String VERSION = "v1";
     private static final String KIND = "Gaffer";
 
     public static Gaffer from(final GaaSCreateRequestBody graph) {
 
+        // TODO: Validate only - and . special characters, see Kubernetes metadata regex
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
 
         return new Gaffer()
@@ -58,19 +58,25 @@ public final class GafferHelmValuesFactory {
                 return new AccumuloGafferSpecBuilder()
                         .graphId(graph.getGraphId())
                         .description(graph.getDescription())
+                        .schema(graph.getSchema())
+                        .ingress(graph.getGraphId())
                         .build();
             case FEDERATED_STORE:
             case MAPSTORE:
                 return new GafferSpecBuilder()
                         .graphId(graph.getGraphId())
                         .description(graph.getDescription())
+                        .schema(graph.getSchema())
                         .storeProperties(storeType)
+                        .ingress(graph.getGraphId())
                         .build();
             case PROXY_STORE:
                 return new GafferSpecBuilder()
                         .graphId(graph.getGraphId())
                         .description(graph.getDescription())
+                        .schema(graph.getSchema())
                         .storeProperties(storeType, graph.getProxyHost(), graph.getProxyContextRoot())
+                        .ingress(graph.getGraphId())
                         .build();
             default:
                 throw new IllegalArgumentException("Unsupported store type");
