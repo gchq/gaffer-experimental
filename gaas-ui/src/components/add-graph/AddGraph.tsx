@@ -441,7 +441,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                   />
                   <FormHelperText>Enter URL for proxy store if not shown below</FormHelperText>
                 </Grid>
-                <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
+                <Grid id="proxy-button-grid" container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
                   <Button
                     id="add-new-proxy-button"
                     onClick={() => {

@@ -190,6 +190,19 @@ describe("AddGraph UI component", () => {
       expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(true);
     });
   });
+
+  describe("Add Proxy Button", () => {
+    it("should be disabled when federated is selected but no proxy url entered", () => {
+      selectStoreType(StoreType.FEDERATED_STORE);
+      wrapper.update();
+      wrapper.update();
+      wrapper.update();
+      wrapper.update();
+      wrapper.update();
+      expect(wrapper.find("div#storetype-select-grid").html()).toBe("");
+      expect(wrapper.find("button#add-new-proxy-button").props().disabled).toBe(true);
+    });
+  });
   describe("On Submit Request", () => {
     it("should display success message in the NotificationAlert", async () => {
       mockAddGraphRepoWithFunction(() => {});
