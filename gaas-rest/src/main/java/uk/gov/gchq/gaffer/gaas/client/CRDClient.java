@@ -25,9 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
-import uk.gov.gchq.gaffer.controller.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import java.util.List;
@@ -35,6 +32,7 @@ import java.util.stream.Collectors;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.controller.util.Constants.PLURAL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.gaas.factories.GaaSGraphsFactory.from;
 import static uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory.from;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
@@ -68,7 +66,7 @@ public class CRDClient {
     public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
         try {
             final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null);
-            return convertJsonToGraphs(customObject);
+            return from(customObject);
         } catch (ApiException e) {
             LOGGER.debug("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);
@@ -101,19 +99,6 @@ public class CRDClient {
                 v1NamespaceList.getItems().stream()
                         .map(v1Namespace -> v1Namespace.getMetadata().getName())
                         .collect(Collectors.toList());
-        return list;
-    }
-
-    private List<GaaSGraph> convertJsonToGraphs(final Object response) {
-        final GafferList gafferList = CommonUtil.convertToCustomObject(response, GafferList.class);
-        final List<Gaffer> gaffers = (List<Gaffer>) gafferList.getItems();
-
-        final List<GaaSGraph> list = gaffers.stream().map(gaffer -> new GaaSGraph()
-                .graphId(gaffer.getSpec().getNestedObject("graph", "config", "graphId").toString())
-                .description(gaffer.getSpec().getNestedObject("graph", "config", "description").toString())
-                .url(gaffer.getSpec().getNestedObject("ingress", "host").toString() + gaffer.getSpec().getNestedObject("ingress", "pathPrefix", "api").toString())
-                .status(gaffer.getStatus().getRestApiStatus())).collect(Collectors.toList());
-
         return list;
     }
 }

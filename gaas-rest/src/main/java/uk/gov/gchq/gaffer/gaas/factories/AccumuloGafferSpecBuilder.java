@@ -17,12 +17,13 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.ACCUMULO_ENABLED_KEY;
 
 public class AccumuloGafferSpecBuilder extends GafferSpecBuilder {
 
     @Override
     public GafferSpec build() {
-        gafferSpec.putNestedObject(true, "accumulo", "enabled");
+        gafferSpec.putNestedObject(true, ACCUMULO_ENABLED_KEY);
         return gafferSpec;
     }
 }
