@@ -1,4 +1,4 @@
-import { mount, ReactWrapper } from "enzyme";
+import {mount, ReactWrapper} from "enzyme";
 import React from "react";
 import AddGraph from "../../../src/components/add-graph/AddGraph";
 import { Graph } from "../../../src/domain/graph";
