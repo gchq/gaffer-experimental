@@ -1,14 +1,17 @@
-import { mount, ReactWrapper } from "enzyme";
+import {mount, ReactWrapper} from "enzyme";
 import React from "react";
 import AddGraph from "../../../src/components/add-graph/AddGraph";
-import { StoreType } from "../../../src/domain/store-type";
-import { CreateSimpleGraphRepo } from "../../../src/rest/repositories/create-simple-graph-repo";
+import {StoreType} from "../../../src/domain/store-type";
+import {CreateSimpleGraphRepo} from "../../../src/rest/repositories/create-simple-graph-repo";
 
 jest.mock("../../../src/rest/repositories/create-simple-graph-repo");
 let wrapper: ReactWrapper;
 
 beforeEach(() => (wrapper = mount(<AddGraph />)));
-afterEach(() => wrapper.unmount());
+afterEach(() => {
+  wrapper.unmount();
+  jest.resetAllMocks();
+});
 const elements = {
   entities: {
     Cardinality: {
@@ -92,6 +95,21 @@ describe("AddGraph UI component", () => {
       const selectText = wrapper.find("div#storetype-select-grid").find("div#storetype-select");
       expect(selectText.text()).toBe("Federated Store");
     });
+    it("Should have a URL text field when federated store is selected",()=>{
+      selectStoreType(StoreType.FEDERATED_STORE);
+      const textField = wrapper.find("input#proxy-url");
+      expect(textField.props().name).toBe("proxy-url");
+    })
+    it("Should have a Add Proxy URL button when federated store is selected", () => {
+      selectStoreType(StoreType.FEDERATED_STORE);
+      const button = wrapper.find("button#add-new-proxy-button");
+      expect(button.text()).toBe("Add Proxy Graph");
+    })
+    it("Should have a graphs table when federated store is selected",()=>{
+      selectStoreType(StoreType.FEDERATED_STORE);
+      const table = wrapper.find("table");
+      expect(table.text()).toBe("Graph IDDescription No Graphs.");
+    })
     it("should have an elements text area", () => {
       const elementsTextfield = wrapper.find("textarea#schema-elements");
       expect(elementsTextfield.props().name).toBe("schema-elements");
@@ -105,6 +123,67 @@ describe("AddGraph UI component", () => {
       expect(fileButton).toHaveLength(1);
     });
   });
+  describe("Federated storetype selected", () => {
+    it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", () =>{
+      selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("test.URL");
+      clickAddProxy();
+      const table = wrapper.find("table");
+      expect(table.text()).toEqual("Graph IDDescription test.URL-graphProxy Graph")
+    })
+    it("Should disable the add proxy graph button when the proxy graph URL textfield is empty", ()=>{
+      selectStoreType(StoreType.FEDERATED_STORE);
+      const button = wrapper.find("button#add-new-proxy-button");
+      expect(button.props().disabled).toEqual(true);
+    })
+    it("Should allow an existing graph from the table to be selected",async ()=>{
+      selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("test.URL");
+      await clickAddProxy();
+      inputProxyURL("test2.URL");
+      await clickAddProxy();
+      wrapper.find("table").find("input").at(1).simulate("change", {
+        target: { checked: true },
+      })
+      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(true);
+    })
+    it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async ()=>{
+      selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("test.URL");
+      await clickAddProxy();
+      inputProxyURL("test2.URL");
+      await clickAddProxy();
+      wrapper.find("table").find("input").at(0).simulate("change", {
+        target: { checked: true },
+      })
+      expect(wrapper.find("table").find("input").at(0).props().checked).toBe(true);
+      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(true);
+      expect(wrapper.find("table").find("input").at(2).props().checked).toBe(true);
+    })
+    it("Should disable the submit graph button when no proxy stores are selected", ()=>{
+      inputGraphId("test");
+      inputDescription("test");
+      selectStoreType(StoreType.FEDERATED_STORE);
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(true);
+    })
+    it("Should uncheck all graphs in the table when the uncheck all button is clicked", async ()=>{
+      selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("test.URL");
+      await clickAddProxy();
+      inputProxyURL("test2.URL");
+      await clickAddProxy();
+      wrapper.find("table").find("input").at(0).simulate("change", {
+        target: { checked: true },
+      })
+      wrapper.find("table").find("input").at(0).simulate("change", {
+        target: { checked: false },
+      })
+      expect(wrapper.find("table").find("input").at(0).props().checked).toBe(false);
+      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(false);
+      expect(wrapper.find("table").find("input").at(2).props().checked).toBe(false);
+    })
+
+  })
   describe("Dropzone behaviour", () => {
     it("should have an elements drop zone that accepts JSON files", () => {
       const dropZone = wrapper.find("div#elements-drop-zone").find("input");
@@ -190,6 +269,13 @@ describe("AddGraph UI component", () => {
       expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(true);
     });
   });
+
+  describe("Add Proxy Button", () => {
+    it("should be disabled when federated is selected but no proxy url entered", () => {
+      selectStoreType(StoreType.FEDERATED_STORE);
+      expect(wrapper.find("button#add-new-proxy-button").props().disabled).toBe(true);
+    });
+  });
   describe("On Submit Request", () => {
     it("should display success message in the NotificationAlert", async () => {
       mockAddGraphRepoWithFunction(() => {});
@@ -222,6 +308,18 @@ describe("AddGraph UI component", () => {
         target: { value: storeType },
       });
   }
+  function inputProxyURL(url: string){
+    wrapper
+        .find("div#proxy-url-grid")
+        .find("input")
+        .simulate("change", {
+          target: { value: url },
+        });
+  }
+  function clickAddProxy(){
+    wrapper.find("button#add-new-proxy-button").simulate("click");
+
+  }
   function inputDescription(description: string): void {
     wrapper.find("textarea#graph-description").simulate("change", {
       target: { value: description },
@@ -241,8 +339,7 @@ describe("AddGraph UI component", () => {
     });
     expect(wrapper.find("textarea#schema-types").props().value).toBe(JSON.stringify(typesObject));
   }
-  
-  
+
   function mockAddGraphRepoWithFunction(f: () => void): void {
     // @ts-ignore
     CreateSimpleGraphRepo.mockImplementationOnce(() => ({
