@@ -138,10 +138,10 @@ export default class AddGraph extends React.Component<{}, IState> {
       }
   }
 
-  private async addProxyGraph(url:string) {
+  private async addProxyGraph(url: string) {
     this.setState({
-      graphs: [...this.state.graphs, new Graph(url+"-graph", "Proxy Graph", this.state.proxyURL, "")],
-      proxyURL:"",
+      graphs: [...this.state.graphs, new Graph(url + "-graph", "Proxy Graph", this.state.proxyURL, "")],
+      proxyURL: "",
     });
   }
 
@@ -205,19 +205,18 @@ export default class AddGraph extends React.Component<{}, IState> {
     return this.state.proxyURL === "";
   }
 
-  private checkSelections(graph: Graph): boolean{
-    if(this.state.proxyStores.length===0){
+  private checkSelections(graph: Graph): boolean {
+    if (this.state.proxyStores.length === 0) {
       return false;
     }
-    if(this.state.proxyStores.includes(graph)){
+    if (this.state.proxyStores.includes(graph)) {
       return true;
     }
-    if(this.state.proxyStores.length===this.state.graphs.length){
+    if (this.state.proxyStores.length === this.state.graphs.length) {
       return true;
     }
     return false;
-  };
-
+  }
 
   public render() {
     const federatedStoreIsNotSelected = (): boolean =>
@@ -228,7 +227,6 @@ export default class AddGraph extends React.Component<{}, IState> {
     const closeDialogBox = () => {
       this.setState({ dialogIsOpen: false });
     };
-
 
     return (
       <main>

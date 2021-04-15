@@ -350,6 +350,23 @@ describe("AddGraph UI component", () => {
         "OK Graph was successfully added"
       );
     });
+    it("should display success message in the NotificationAlert when Federated store selected and no schema added", async () => {
+      mockAddGraphRepoWithFunction(() => {});
+      inputGraphId("OK Graph");
+      inputDescription("test");
+      selectStoreType(StoreType.FEDERATED_STORE);
+      await inputProxyURL("test.URL");
+      await clickAddProxy();
+      wrapper.find("table").find("input").at(1).simulate("change", {
+        target: { checked: true },
+      })
+      clickSubmit();
+      //@ts-ignore
+      await wrapper.update();
+      await wrapper.update();
+
+      expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
+    });
   });
 
   function clickSubmit(): void {
@@ -431,6 +448,7 @@ describe("AddGraph UI component", () => {
     // @ts-ignore
     CreateGraphRepo.mockImplementationOnce(() => ({
       create: f,
+      createFederated: f,
     }));
   }
 });
