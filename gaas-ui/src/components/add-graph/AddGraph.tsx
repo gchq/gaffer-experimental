@@ -529,6 +529,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                                 checked={this.checkSelections(graph)}
                                 onChange={(event) => {
                                   if (event.target.checked && !this.state.proxyStores.includes(graph)) {
+                                    console.log("here");
                                     this.setState({
                                       proxyStores: [...this.state.proxyStores, graph],
                                     });
@@ -543,8 +544,9 @@ export default class AddGraph extends React.Component<{}, IState> {
                                     if (this.state.userEnteredProxies.has(graph.getId())) {
                                       this.state.userEnteredProxies.set(graph.getId(), false);
                                     }
-                                    console.log(this.state.userEnteredProxies);
                                   }
+                                  console.log("End of the on change event:")
+                                  console.log(this.state.proxyStores);
                                 }}
                               />
                             </TableCell>
