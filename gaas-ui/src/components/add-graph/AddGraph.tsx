@@ -41,6 +41,7 @@ import AttachFileIcon from "@material-ui/icons/AttachFile";
 import ClearIcon from "@material-ui/icons/Clear";
 import { DropzoneArea } from "material-ui-dropzone";
 import { TransitionProps } from "@material-ui/core/transitions";
+import { GraphicEqSharp } from "@material-ui/icons";
 
 interface IState {
   dialogIsOpen: boolean;
@@ -62,6 +63,7 @@ interface IState {
   schemaJson: string;
   proxyURL: string;
   selectAllGraphs: boolean;
+  userEnteredProxies: Map<string, boolean>;
 }
 const Transition = React.forwardRef((props: TransitionProps & { children?: React.ReactElement<any, any> }, ref: React.Ref<unknown>) => <Slide direction="up" ref={ref} {...props} />);
 export default class AddGraph extends React.Component<{}, IState> {
@@ -87,6 +89,7 @@ export default class AddGraph extends React.Component<{}, IState> {
       graphs: [],
       proxyURL: "",
       selectAllGraphs: false,
+      userEnteredProxies: new Map(),
     };
   }
 
@@ -149,8 +152,10 @@ export default class AddGraph extends React.Component<{}, IState> {
   }
 
   private async addProxyGraph(url: string) {
+    this.state.userEnteredProxies.set(url + "-graph", true);
     this.setState({
       graphs: [...this.state.graphs, new Graph(url + "-graph", "Proxy Graph", this.state.proxyURL, "")],
+      proxyStores: [...this.state.proxyStores, new Graph(url + "-graph", "Proxy Graph", this.state.proxyURL, "")],
       proxyURL: "",
     });
   }
@@ -165,6 +170,8 @@ export default class AddGraph extends React.Component<{}, IState> {
       elements: "",
       types: "",
       proxyURL: "",
+      proxyStores: [],
+      userEnteredProxies: new Map(),
     });
   }
 
@@ -235,6 +242,10 @@ export default class AddGraph extends React.Component<{}, IState> {
     if (this.state.proxyStores.length === this.state.graphs.length) {
       return true;
     }
+    if (this.state.userEnteredProxies.get(graph.getId()) === true) {
+      return true;
+    }
+    // console.log("Graph: "+graph);
     return false;
   }
 
@@ -517,15 +528,22 @@ export default class AddGraph extends React.Component<{}, IState> {
                                 required
                                 checked={this.checkSelections(graph)}
                                 onChange={(event) => {
-                                  if (event.target.checked) {
+                                  if (event.target.checked && !this.state.proxyStores.includes(graph)) {
                                     this.setState({
                                       proxyStores: [...this.state.proxyStores, graph],
                                     });
+                                    if (this.state.userEnteredProxies.has(graph.getId())) {
+                                      this.state.userEnteredProxies.set(graph.getId(), true);
+                                    }
                                   } else {
                                     const tempProxyStore = this.state.proxyStores.filter((obj) => obj !== graph);
                                     this.setState({
                                       proxyStores: tempProxyStore,
                                     });
+                                    if (this.state.userEnteredProxies.has(graph.getId())) {
+                                      this.state.userEnteredProxies.set(graph.getId(), false);
+                                    }
+                                    console.log(this.state.userEnteredProxies);
                                   }
                                 }}
                               />
