@@ -195,7 +195,9 @@ export default class AddGraph extends React.Component<{}, IState> {
   }
 
   private disableSubmitButton(): boolean {
-    return !this.state.elements || !this.state.types || !this.state.graphId || !this.state.description || (this.state.storeType === StoreType.FEDERATED_STORE && !(this.state.proxyStores.length > 0));
+    return (this.state.storeType !== StoreType.FEDERATED_STORE) && (!this.state.elements || !this.state.types)
+        || !this.state.graphId || !this.state.description
+        || (this.state.storeType === StoreType.FEDERATED_STORE && !(this.state.proxyStores.length > 0));
   }
 
   private disableProxyButton(): boolean {
@@ -280,23 +282,28 @@ export default class AddGraph extends React.Component<{}, IState> {
                     />
                   </Grid>
                   <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
+                  {isHidden() && (
+                      <>
                   <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center">
-                    <Tooltip TransitionComponent={Zoom} title="Add Schema From File">
-                      <IconButton id="attach-file-button" onClick={openDialogBox}>
-                        <AttachFileIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip TransitionComponent={Zoom} title="Clear Schema">
-                      <IconButton
-                        onClick={() =>
-                          this.setState({
-                            schemaJson: "",
-                          })
-                        }
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    </Tooltip>
+                          <Tooltip TransitionComponent={Zoom} title="Add Schema From File">
+                            <IconButton id="attach-file-button" onClick={openDialogBox}>
+                              <AttachFileIcon />
+                            </IconButton>
+                          </Tooltip>
+                            <Tooltip TransitionComponent={Zoom} title="Clear Schema">
+                              <IconButton
+                                  onClick={() =>
+                                      this.setState({
+                                        schemaJson: "",
+                                      })
+                                  }
+                              >
+                                <ClearIcon />
+                              </IconButton>
+                            </Tooltip>
+
+
+
                     <Dialog
                       id="dropzone"
                       open={this.state.dialogIsOpen}
@@ -393,6 +400,8 @@ export default class AddGraph extends React.Component<{}, IState> {
                       }}
                     />
                   </Grid>
+                      </>
+                    )}
                   <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
                   <Grid item xs={12} id={"storetype-select-grid"}>
                     <FormControl variant="outlined" id={"storetype-formcontrol"}>
@@ -423,8 +432,9 @@ export default class AddGraph extends React.Component<{}, IState> {
                 </Grid>
               </form>
               <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
-              <Hidden xsUp={isHidden()}>
-                <Grid item xs={12}>
+              {!isHidden() && (
+                  <>
+                <Grid item xs={12} id={"proxy-url-grid"}>
                   <TextField
                     id="proxy-url"
                     label="Proxy URL"
@@ -486,7 +496,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                             {graph.getId()}
                           </TableCell>
                           <TableCell align="center">{graph.getDescription()}</TableCell>
-                          <TableCell align="right">
+                          <TableCell align="right" id={`${graph.getId()}-checkbox-cell`}>
                             <Checkbox
                               id={`${graph.getId()}-checkbox`}
                               required
@@ -511,7 +521,8 @@ export default class AddGraph extends React.Component<{}, IState> {
                     {graphs.length === 0 && <caption>No Graphs.</caption>}
                   </Table>
                 </TableContainer>
-              </Hidden>
+                  </>
+                )}
             </div>
           </Container>
           <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
