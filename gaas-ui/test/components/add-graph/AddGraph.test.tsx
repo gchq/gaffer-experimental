@@ -142,16 +142,45 @@ describe("AddGraph UI component", () => {
       await clickAddProxy();
       inputProxyURL("test2.URL");
       await clickAddProxy();
-      await wrapper.find("td#test.URL-graph-checkbox-cell").find("input").simulate("change", {
-        target: { value: true },
+      wrapper.find("table").find("input").at(1).simulate("change", {
+        target: { checked: true },
       })
-      expect(wrapper.find("td#test.URL-graph-checkbox-cell")).toHaveProperty("checked",true)
+      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(true);
     })
-    it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", ()=>{
+    it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async ()=>{
       selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("test.URL");
+      await clickAddProxy();
+      inputProxyURL("test2.URL");
+      await clickAddProxy();
+      wrapper.find("table").find("input").at(0).simulate("change", {
+        target: { checked: true },
+      })
+      expect(wrapper.find("table").find("input").at(0).props().checked).toBe(true);
+      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(true);
+      expect(wrapper.find("table").find("input").at(2).props().checked).toBe(true);
     })
     it("Should disable the submit graph button when no proxy stores are selected", ()=>{
+      inputGraphId("test");
+      inputDescription("test");
       selectStoreType(StoreType.FEDERATED_STORE);
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(true);
+    })
+    it("Should uncheck all graphs in the table when the uncheck all button is clicked", async ()=>{
+      selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("test.URL");
+      await clickAddProxy();
+      inputProxyURL("test2.URL");
+      await clickAddProxy();
+      wrapper.find("table").find("input").at(0).simulate("change", {
+        target: { checked: true },
+      })
+      wrapper.find("table").find("input").at(0).simulate("change", {
+        target: { checked: false },
+      })
+      expect(wrapper.find("table").find("input").at(0).props().checked).toBe(false);
+      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(false);
+      expect(wrapper.find("table").find("input").at(2).props().checked).toBe(false);
     })
 
   })
@@ -244,12 +273,6 @@ describe("AddGraph UI component", () => {
   describe("Add Proxy Button", () => {
     it("should be disabled when federated is selected but no proxy url entered", () => {
       selectStoreType(StoreType.FEDERATED_STORE);
-      wrapper.update();
-      wrapper.update();
-      wrapper.update();
-      wrapper.update();
-      wrapper.update();
-      expect(wrapper.find("div#storetype-select-grid").html()).toBe("");
       expect(wrapper.find("button#add-new-proxy-button").props().disabled).toBe(true);
     });
   });
