@@ -27,6 +27,13 @@ import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
 import java.util.HashMap;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.cache.util.CacheProperties.CACHE_SERVICE_CLASS;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 import static uk.gov.gchq.gaffer.proxystore.ProxyProperties.GAFFER_CONTEXT_ROOT;
@@ -41,17 +48,17 @@ public class GafferSpecBuilder {
     protected final GafferSpec gafferSpec = new GafferSpec();
 
     public GafferSpecBuilder graphId(final String graphId) {
-        gafferSpec.putNestedObject(graphId, "graph", "config", "graphId");
+        gafferSpec.putNestedObject(graphId, GRAPH_ID_KEY);
         return this;
     }
 
     public GafferSpecBuilder description(final String description) {
-        gafferSpec.putNestedObject(description, "graph", "config", "description");
+        gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
         return this;
     }
 
     public GafferSpecBuilder schema(final Object schema) {
-        gafferSpec.putNestedObject(new Gson().toJson(schema), "graph", "schema", "schema.json");
+        gafferSpec.putNestedObject(new Gson().toJson(schema), SCHEMA_FILE_KEY);
         return this;
     }
 
@@ -63,10 +70,10 @@ public class GafferSpecBuilder {
     public GafferSpecBuilder storeProperties(final StoreType storeType, final String host, final String contextRoot) {
         switch (storeType) {
             case FEDERATED_STORE:
-                gafferSpec.putNestedObject(getDefaultFederatedStoreProperties(), "graph", "storeProperties");
+                gafferSpec.putNestedObject(getDefaultFederatedStoreProperties(), STORE_PROPERTIES_KEY);
                 return this;
             case MAPSTORE:
-                gafferSpec.putNestedObject(getDefaultMapStoreProperties(), "graph", "storeProperties");
+                gafferSpec.putNestedObject(getDefaultMapStoreProperties(), STORE_PROPERTIES_KEY);
                 return this;
             case PROXY_STORE:
                 if (host == null) {
@@ -80,9 +87,9 @@ public class GafferSpecBuilder {
     }
 
     public GafferSpecBuilder ingress(final String graphId) {
-        gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, "ingress", "host");
-        gafferSpec.putNestedObject("/rest", "ingress", "pathPrefix", "api");
-        gafferSpec.putNestedObject("/ui", "ingress", "pathPrefix", "ui");
+        gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
+        gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
+        gafferSpec.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
         return this;
     }
 
