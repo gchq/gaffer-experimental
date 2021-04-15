@@ -23,3 +23,11 @@ export interface ICreateSimpleGraphRequestBody {
     root: string;
 }
 
+export interface ICreateFederatedRequestBody {
+    graphId: string;
+    description: string;
+    storeType: StoreType;
+    proxyStores: Graph[];
+    root: string;
+}
+
