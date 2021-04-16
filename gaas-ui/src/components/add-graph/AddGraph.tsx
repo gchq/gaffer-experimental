@@ -220,7 +220,6 @@ export default class AddGraph extends React.Component<{}, IState> {
     if (this.state.userEnteredProxies.get(graph.getId()) === true) {
       return true;
     }
-    // console.log("Graph: "+graph);
     return false;
   }
 
