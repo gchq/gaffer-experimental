@@ -357,9 +357,6 @@ describe("AddGraph UI component", () => {
       selectStoreType(StoreType.FEDERATED_STORE);
       await inputProxyURL("test.URL");
       await clickAddProxy();
-      wrapper.find("table").find("input").at(1).simulate("change", {
-        target: { checked: true },
-      })
       clickSubmit();
       //@ts-ignore
       await wrapper.update();

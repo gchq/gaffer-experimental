@@ -139,10 +139,10 @@ export default class AddGraph extends React.Component<{}, IState> {
   }
 
   private async addProxyGraph(url: string) {
-    this.state.userEnteredProxies.set(url + "-graph", true);
+    const newGraph:Graph = new Graph(url + "-graph", "Proxy Graph", this.state.proxyURL, "");
     this.setState({
-      graphs: [...this.state.graphs, new Graph(url + "-graph", "Proxy Graph", this.state.proxyURL, "")],
-      proxyStores: [...this.state.proxyStores, new Graph(url + "-graph", "Proxy Graph", this.state.proxyURL, "")],
+      graphs: [...this.state.graphs, newGraph],
+      proxyStores: [...this.state.proxyStores, newGraph],
       proxyURL: "",
     });
   }
@@ -215,9 +215,6 @@ export default class AddGraph extends React.Component<{}, IState> {
       return true;
     }
     if (this.state.proxyStores.length === this.state.graphs.length) {
-      return true;
-    }
-    if (this.state.userEnteredProxies.get(graph.getId()) === true) {
       return true;
     }
     return false;
