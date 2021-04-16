@@ -63,7 +63,6 @@ interface IState {
   schemaJson: string;
   proxyURL: string;
   selectAllGraphs: boolean;
-  userEnteredProxies: Map<string, boolean>;
   tempGraph: [];
 }
 const Transition = React.forwardRef((props: TransitionProps & { children?: React.ReactElement<any, any> }, ref: React.Ref<unknown>) => <Slide direction="up" ref={ref} {...props} />);
@@ -90,7 +89,6 @@ export default class AddGraph extends React.Component<{}, IState> {
       graphs: [],
       proxyURL: "",
       selectAllGraphs: false,
-      userEnteredProxies: new Map(),
       tempGraph: [],
     };
   }
@@ -154,10 +152,10 @@ export default class AddGraph extends React.Component<{}, IState> {
   }
 
   private async addProxyGraph(url: string) {
-    this.state.userEnteredProxies.set(url + "-graph", true);
+    const newGraph:Graph = new Graph(url + "-graph", "Proxy Graph", this.state.proxyURL, "");
     this.setState({
-      graphs: [...this.state.graphs, new Graph(url + "-graph", "Proxy Graph", this.state.proxyURL, "")],
-      proxyStores: [...this.state.proxyStores, new Graph(url + "-graph", "Proxy Graph", this.state.proxyURL, "")],
+      graphs: [...this.state.graphs, newGraph],
+      proxyStores: [...this.state.proxyStores, newGraph],
       proxyURL: "",
     });
   }
@@ -173,7 +171,6 @@ export default class AddGraph extends React.Component<{}, IState> {
       types: "",
       proxyURL: "",
       proxyStores: [],
-      userEnteredProxies: new Map(),
     });
   }
 
@@ -242,9 +239,6 @@ export default class AddGraph extends React.Component<{}, IState> {
       return true;
     }
     if (this.state.proxyStores.length === this.state.graphs.length) {
-      return true;
-    }
-    if (this.state.userEnteredProxies.get(graph.getId()) === true) {
       return true;
     }
     return false;
@@ -519,7 +513,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                       </TableHead>
 
                       <TableBody>
-                        {graphs.map((graph: Graph, index) => (
+                        {graphs.map((graph: Graph) => (
                           <TableRow key={graph.getId()} hover>
                             <TableCell scope="row">{graph.getId()}</TableCell>
                             <TableCell align="center">{graph.getDescription()}</TableCell>
@@ -533,17 +527,11 @@ export default class AddGraph extends React.Component<{}, IState> {
                                     this.setState({
                                       proxyStores: [...this.state.proxyStores, graph],
                                     });
-                                    if (this.state.userEnteredProxies.has(graph.getId())) {
-                                      this.state.userEnteredProxies.set(graph.getId(), true);
-                                    }
                                   } else {
                                     const tempProxyStore = this.state.proxyStores.filter((obj) => obj.getId() !== graph.getId());
                                     this.setState({
                                       proxyStores: tempProxyStore,
                                     });
-                                    if (this.state.userEnteredProxies.has(graph.getId())) {
-                                      this.state.userEnteredProxies.set(graph.getId(), false);
-                                    }
                                   }
                                 }}
                               />

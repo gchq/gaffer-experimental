@@ -143,9 +143,9 @@ describe("AddGraph UI component", () => {
       inputProxyURL("test2.URL");
       await clickAddProxy();
       wrapper.find("table").find("input").at(1).simulate("change", {
-        target: { checked: true },
+        target: { checked: false },
       })
-      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(true);
+      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(false);
     })
     it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async ()=>{
       selectStoreType(StoreType.FEDERATED_STORE);
@@ -298,9 +298,6 @@ describe("AddGraph UI component", () => {
       selectStoreType(StoreType.FEDERATED_STORE);
       await inputProxyURL("test.URL");
       await clickAddProxy();
-      wrapper.find("table").find("input").at(1).simulate("change", {
-        target: { checked: true },
-      })
       clickSubmit();
       //@ts-ignore
       await wrapper.update();
