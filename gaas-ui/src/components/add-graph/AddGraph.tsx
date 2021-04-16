@@ -64,6 +64,7 @@ interface IState {
   proxyURL: string;
   selectAllGraphs: boolean;
   userEnteredProxies: Map<string, boolean>;
+  tempGraph: [];
 }
 const Transition = React.forwardRef((props: TransitionProps & { children?: React.ReactElement<any, any> }, ref: React.Ref<unknown>) => <Slide direction="up" ref={ref} {...props} />);
 export default class AddGraph extends React.Component<{}, IState> {
@@ -90,6 +91,7 @@ export default class AddGraph extends React.Component<{}, IState> {
       proxyURL: "",
       selectAllGraphs: false,
       userEnteredProxies: new Map(),
+      tempGraph: [],
     };
   }
 
@@ -245,7 +247,6 @@ export default class AddGraph extends React.Component<{}, IState> {
     if (this.state.userEnteredProxies.get(graph.getId()) === true) {
       return true;
     }
-    // console.log("Graph: "+graph);
     return false;
   }
 
@@ -529,7 +530,6 @@ export default class AddGraph extends React.Component<{}, IState> {
                                 checked={this.checkSelections(graph)}
                                 onChange={(event) => {
                                   if (event.target.checked && !this.state.proxyStores.includes(graph)) {
-                                    console.log("here");
                                     this.setState({
                                       proxyStores: [...this.state.proxyStores, graph],
                                     });
@@ -537,7 +537,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                                       this.state.userEnteredProxies.set(graph.getId(), true);
                                     }
                                   } else {
-                                    const tempProxyStore = this.state.proxyStores.filter((obj) => obj !== graph);
+                                    const tempProxyStore = this.state.proxyStores.filter((obj) => obj.getId() !== graph.getId());
                                     this.setState({
                                       proxyStores: tempProxyStore,
                                     });
@@ -545,8 +545,6 @@ export default class AddGraph extends React.Component<{}, IState> {
                                       this.state.userEnteredProxies.set(graph.getId(), false);
                                     }
                                   }
-                                  console.log("End of the on change event:")
-                                  console.log(this.state.proxyStores);
                                 }}
                               />
                             </TableCell>
