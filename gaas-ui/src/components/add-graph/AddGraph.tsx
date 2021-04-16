@@ -8,7 +8,6 @@ import {
   FormControl,
   FormHelperText,
   Grid,
-  Hidden,
   IconButton,
   InputLabel,
   makeStyles,
@@ -41,8 +40,7 @@ import AttachFileIcon from "@material-ui/icons/AttachFile";
 import ClearIcon from "@material-ui/icons/Clear";
 import { DropzoneArea } from "material-ui-dropzone";
 import { TransitionProps } from "@material-ui/core/transitions";
-import { GraphicEqSharp } from "@material-ui/icons";
-import { GraphIdDescriptionInput } from "./graph-id-description";
+import GraphIdDescriptionInput from "./graph-id-description";
 
 interface IState {
   dialogIsOpen: boolean;
@@ -272,8 +270,10 @@ export default class AddGraph extends React.Component<{}, IState> {
               <form className={this.classes.form} noValidate>
               <Grid container spacing={2}>
                   <GraphIdDescriptionInput 
-                    graphIdValue={this.state.graphId} onChangeGraphId={(graphId) => this.setState({ graphId })}
-                    descriptionValue={this.state.description} onChangeDescription={(description) => this.setState({ description })}
+                    graphIdValue={this.state.graphId} 
+                    onChangeGraphId={(graphId) => this.setState({ graphId })}
+                    descriptionValue={this.state.description} 
+                    onChangeDescription={(description) => this.setState({ description })}
                     />
                   <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center" />
                   {isHidden() && (

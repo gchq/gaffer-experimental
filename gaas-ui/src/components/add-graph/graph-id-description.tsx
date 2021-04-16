@@ -1,6 +1,7 @@
+
+import React, { ReactElement } from "react";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
-import { ReactElement } from "react";
 
 interface IProps {
   graphIdValue: string;
@@ -9,7 +10,7 @@ interface IProps {
   onChangeDescription(graphId: string): void;
 }
 
-export function GraphIdDescriptionInput(props: IProps): ReactElement {
+export default function GraphIdDescriptionInput(props: IProps): ReactElement {
 
     const {
       graphIdValue,
