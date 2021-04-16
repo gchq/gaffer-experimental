@@ -143,9 +143,9 @@ describe("AddGraph UI component", () => {
       inputProxyURL("test2.URL");
       await clickAddProxy();
       wrapper.find("table").find("input").at(1).simulate("change", {
-        target: { checked: true },
+        target: { checked: false },
       })
-      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(true);
+      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(false);
     })
     it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async ()=>{
       selectStoreType(StoreType.FEDERATED_STORE);
@@ -291,6 +291,20 @@ describe("AddGraph UI component", () => {
 
       expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
     });
+    it("should display success message in the NotificationAlert when Federated store selected and no schema added", async () => {
+      mockAddGraphRepoWithFunction(() => {});
+      inputGraphId("OK Graph");
+      inputDescription("test");
+      selectStoreType(StoreType.FEDERATED_STORE);
+      await inputProxyURL("test.URL");
+      await clickAddProxy();
+      clickSubmit();
+      //@ts-ignore
+      await wrapper.update();
+      await wrapper.update();
+
+      expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
+    });
   });
   function clickSubmit(): void {
     wrapper.find("button#add-new-graph-button").simulate("click");
@@ -344,6 +358,7 @@ describe("AddGraph UI component", () => {
     // @ts-ignore
     CreateSimpleGraphRepo.mockImplementationOnce(() => ({
       create: f,
+      createFederated: f,
     }));
   }
 });
