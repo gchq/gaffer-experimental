@@ -42,6 +42,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import { DropzoneArea } from "material-ui-dropzone";
 import { TransitionProps } from "@material-ui/core/transitions";
 import { GraphicEqSharp } from "@material-ui/icons";
+import { GraphIdDescriptionInput } from "./graph-id-description";
 
 interface IState {
   dialogIsOpen: boolean;
@@ -269,7 +270,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                 </Typography>
               </Grid>
               <form className={this.classes.form} noValidate>
-                <Grid container spacing={2}>
+                {/* <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <TextField
                       id="graph-id"
@@ -305,7 +306,8 @@ export default class AddGraph extends React.Component<{}, IState> {
                         });
                       }}
                     />
-                  </Grid>
+                  </Grid> */}
+                  <GraphIdDescriptionInput onChangeGraphId={(graphId) => this.setState( graphId )} />
                   <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
                   {isHidden() && (
                     <>
