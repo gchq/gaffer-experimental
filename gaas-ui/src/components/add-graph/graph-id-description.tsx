@@ -1,19 +1,23 @@
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
-import React from "react";
+import { ReactElement } from "react";
 
 interface IProps {
-    onChangeGraphId(graphId: string): void;
-    onChangeDescription(graphId: string): void;
+  graphIdValue: string;
+  descriptionValue: string;
+  onChangeGraphId(graphId: string): void;
+  onChangeDescription(graphId: string): void;
 }
 
-export class GraphIdDescriptionInput extends React.Component<IProps> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {};
-  }
+export function GraphIdDescriptionInput(props: IProps): ReactElement {
 
-  public render() {
+    const {
+      graphIdValue,
+      descriptionValue,
+      onChangeGraphId,
+      onChangeDescription,
+    } = props;
+
     return (
       <>
         <Grid item xs={12}>
@@ -21,16 +25,12 @@ export class GraphIdDescriptionInput extends React.Component<IProps> {
             id="graph-id"
             label="Graph Id"
             variant="outlined"
-            value={this.state.graphId}
+            value={graphIdValue}
             required
             fullWidth
             name="graph-id"
             autoComplete="graph-id"
-            onChange={(event) => {
-              this.setState({
-                graphId: event.target.value,
-              });
-            }}
+            onChange={(event) => onChangeGraphId(event.target.value)}
           />
         </Grid>
         <Grid
@@ -46,20 +46,15 @@ export class GraphIdDescriptionInput extends React.Component<IProps> {
             id="graph-description"
             style={{ width: 400 }}
             label="Graph Description"
-            value={this.state.description}
+            value={descriptionValue}
             required
             multiline
             rows={5}
             name="graph-description"
             variant="outlined"
-            onChange={(event) => {
-              this.setState({
-                description: event.target.value,
-              });
-            }}
+            onChange={(event) => onChangeDescription(event.target.value)}
           />
         </Grid>
       </>
     );
   }
-}
