@@ -1,5 +1,6 @@
 import { mount, ReactWrapper } from "enzyme";
 import GraphIdDescriptionInput from "../../../src/components/add-graph/graph-id-description";
+import React from "react";
 
 const graphIdMockCallBack = jest.fn();
 const descriptionMockCallBack = jest.fn();
