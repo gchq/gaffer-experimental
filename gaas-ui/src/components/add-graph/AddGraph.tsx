@@ -42,6 +42,7 @@ import { DropzoneArea } from "material-ui-dropzone";
 import { TransitionProps } from "@material-ui/core/transitions";
 import GraphIdDescriptionInput from "./graph-id-description";
 import SchemaInput from "./schema-inputs";
+import StoreTypeSelect from "./storetype";
 
 interface IState {
   dialogIsOpen: boolean;
@@ -446,41 +447,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                     justify="flex-end"
                     alignItems="center"
                   ></Grid>
-                  <Grid item xs={12} id={"storetype-select-grid"}>
-                    <FormControl
-                      variant="outlined"
-                      id={"storetype-formcontrol"}
-                    >
-                      <InputLabel>Store Type</InputLabel>
-
-                      <Select
-                        label="Store Type"
-                        inputProps={{
-                          name: "Store Type",
-                          id: "outlined-age-native-simple",
-                        }}
-                        labelId="storetype-select-label"
-                        id="storetype-select"
-                        value={this.state.storeType}
-                        onChange={(event) => {
-                          this.setState({
-                            storeType: event.target.value as StoreType,
-                          });
-                        }}
-                      >
-                        <MenuItem value={StoreType.MAPSTORE}>
-                          Map Store
-                        </MenuItem>
-                        <MenuItem value={StoreType.ACCUMULO}>Accumulo</MenuItem>
-                        <MenuItem value={StoreType.FEDERATED_STORE}>
-                          Federated Store
-                        </MenuItem>
-                      </Select>
-                      <FormHelperText>
-                        Set to Map Store by default
-                      </FormHelperText>
-                    </FormControl>
-                  </Grid>
+                  <StoreTypeSelect value={this.state.storeType} onChange={((storeType) => this.setState({storeType}))} />
                 </Grid>
               </form>
               <Grid
