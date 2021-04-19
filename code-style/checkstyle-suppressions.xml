@@ -25,5 +25,6 @@
   <suppress files="[\\/]src[\\/]test[\\/].*" id="missingSwitchDefault"/>
   <suppress files="[\\/]src[\\/]test[\\/].*" id="methodLengthMax"/>
   <suppress files="[\\/]src[\\/]test[\\/].*" id="parameterNumber"/>
+  <suppress files="GafferController.java" id="hideUtilityClassConstructor"/>
   <suppress files="GaaSWebApplication.java" id="hideUtilityClassConstructor"/>
 </suppressions>
