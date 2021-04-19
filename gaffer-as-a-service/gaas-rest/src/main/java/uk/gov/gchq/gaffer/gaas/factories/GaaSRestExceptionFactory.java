@@ -21,8 +21,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import io.kubernetes.client.openapi.ApiException;
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.CrdErrorResponseBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 
 public final class GaaSRestExceptionFactory {
 

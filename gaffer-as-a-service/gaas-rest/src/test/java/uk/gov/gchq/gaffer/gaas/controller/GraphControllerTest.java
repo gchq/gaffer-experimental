@@ -25,9 +25,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
@@ -238,20 +238,6 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void handleAllexception_return500() throws Exception {
-        doThrow(new NullPointerException("Something was null")).when(deleteGraphService).deleteGraph("nullgraph");
-
-        final MvcResult result = mvc.perform(delete("/graphs/nullgraph")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token))
-                .andReturn();
-
-        //verify(deleteGraphService, times(1)).deleteGraph("nonexistentgraphfortestingpurposes");
-        assertEquals(500, result.getResponse().getStatus());
-        assertEquals("{\"title\":\"NullPointerException\",\"detail\":\"Something was null\"}", result.getResponse().getContentAsString());
-    }
-
-    @Test
     public void createGraph_hasSameGraphIdAsExistingOne_shouldReturn409() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO, getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
@@ -268,7 +254,7 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
+    public void authEndpoint_shouldReturn401Status_whenValidUsernameAndPassword() throws Exception {
         final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
         doThrow(new GaaSRestApiException("Invalid Credentials", "Username is incorrect", 401))
                 .when(authService).getToken(any(JwtRequest.class));
@@ -401,6 +387,20 @@ public class GraphControllerTest extends AbstractTest {
                 "for Enum class: [PROXY_STORE, MAPSTORE, FEDERATED_STORE, ACCUMULO]\\n at [Source: (PushbackInputStream); " +
                 "line: 1, column: 65] (through reference chain: uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody[\\\"storeType\\\"])\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void exceptionHandler_catchRuntimeExceptionAndReturnGaaSApiErrorResponse() throws Exception {
+        doThrow(new NullPointerException("Something was null")).when(deleteGraphService).deleteGraph("nullgraph");
+
+        final MvcResult result = mvc.perform(delete("/graphs/nullgraph")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+
+        //verify(deleteGraphService, times(1)).deleteGraph("nonexistentgraphfortestingpurposes");
+        assertEquals(500, result.getResponse().getStatus());
+        assertEquals("{\"title\":\"NullPointerException\",\"detail\":\"Something was null\"}", result.getResponse().getContentAsString());
     }
 
     private LinkedHashMap<String, Object> getSchema() {

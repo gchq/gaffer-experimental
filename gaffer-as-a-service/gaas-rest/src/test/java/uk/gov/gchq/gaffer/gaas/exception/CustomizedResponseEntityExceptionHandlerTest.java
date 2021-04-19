@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CustomizedResponseEntityExceptionHandlerTest {
 
   @Test
-  public void testHandleException() {
+  public void handleAllExceptions_andConvertToGaaSApiErrorResponse() {
     final CustomizedResponseEntityExceptionHandler handler = new CustomizedResponseEntityExceptionHandler();
 
     final ResponseEntity<GaaSApiErrorResponse> result = handler.handleAllExceptions(new NullPointerException("something is null"), null);
