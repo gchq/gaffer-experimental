@@ -28,14 +28,10 @@ public final class GaaSRestExceptionFactory {
 
     private static final String MESSAGE_PREFIX = "Kubernetes Cluster Error: ";
 
-    public static GaaSRestApiException from(final ApiException e) throws GaaSRestApiException {
+    public static GaaSRestApiException from(final ApiException e) {
 
         if (e.getCode() == 401 && isEmpty(e.getMessage())) {
             return new GaaSRestApiException(MESSAGE_PREFIX + "Invalid authentication credentials for Kubernetes cluster", e.getCode(), e);
-        }
-
-        if (e.getCode() == 500) {
-            return new GaaSRestApiException(MESSAGE_PREFIX + "Internal server error", e.getCode(), e);
         }
 
         if (e.getResponseBody() != null && isValidJson(e.getResponseBody())) {

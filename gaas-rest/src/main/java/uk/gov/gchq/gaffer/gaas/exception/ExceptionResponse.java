@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.exception;
 
+import java.util.Objects;
+
 public class ExceptionResponse {
     private String title;
     private String detail;
@@ -31,5 +33,30 @@ public class ExceptionResponse {
 
     public String getDetail() {
         return detail;
+    }
+
+    @Override
+    public String toString() {
+        return "ExceptionResponse{" +
+                "title='" + title + '\'' +
+                ", detail='" + detail + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ExceptionResponse that = (ExceptionResponse) o;
+        return Objects.equals(title, that.title) && Objects.equals(detail, that.detail);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, detail);
     }
 }

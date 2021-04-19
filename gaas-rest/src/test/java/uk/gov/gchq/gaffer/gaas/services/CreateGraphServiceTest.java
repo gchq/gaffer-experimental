@@ -56,21 +56,6 @@ public class CreateGraphServiceTest {
         assertEquals(true, spec.getNestedObject("accumulo", "enabled"));
     }
 
-    @Test
-    public void createMapGraph_shouldCallCrdClientWithMapStoreRequest_andAccumuloConfigShouldBeNull() throws GaaSRestApiException {
-        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.MAPSTORE, getSchema()));
-
-        final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
-        verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
-
-        final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
-        assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
-        final GafferSpec spec = gafferRequestBody.getSpec();
-        assertEquals("myGraph", spec.getNestedObject("graph", "config", "graphId"));
-        assertEquals("Another description", spec.getNestedObject("graph", "config", "description"));
-        assertEquals(null, spec.getNestedObject("accumulo", "enabled"));
-    }
-
     private LinkedHashMap<String, Object> getSchema() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("entities", new Object());

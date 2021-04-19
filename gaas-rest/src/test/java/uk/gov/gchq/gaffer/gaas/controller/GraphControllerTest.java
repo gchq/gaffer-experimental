@@ -238,6 +238,20 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
+    public void handleAllexception_return500() throws Exception {
+        doThrow(new NullPointerException("Something was null")).when(deleteGraphService).deleteGraph("nullgraph");
+
+        final MvcResult result = mvc.perform(delete("/graphs/nullgraph")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+
+        //verify(deleteGraphService, times(1)).deleteGraph("nonexistentgraphfortestingpurposes");
+        assertEquals(500, result.getResponse().getStatus());
+        assertEquals("{\"title\":\"NullPointerException\",\"detail\":\"Something was null\"}", result.getResponse().getContentAsString());
+    }
+
+    @Test
     public void createGraph_hasSameGraphIdAsExistingOne_shouldReturn409() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO, getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);

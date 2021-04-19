@@ -33,7 +33,7 @@ import java.util.List;
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(GaaSRestApiException.class)
-    public final ResponseEntity<Object> handleAllException(final GaaSRestApiException ex, final WebRequest request) {
+    public final ResponseEntity<Object> handleAllGaasRestException(final GaaSRestApiException ex, final WebRequest request) {
         String title = "";
         if (ex.getCause() == null) {
             title = ex.getTitle();
@@ -45,6 +45,13 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity(exceptionResponse, HttpStatus.valueOf(ex.getStatusCode()));
     }
 
+    @ExceptionHandler(Exception.class)
+    public final ResponseEntity<ExceptionResponse> handleAllException(final Exception ex, final WebRequest request) {
+
+        final ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getClass().getSimpleName(), ex.getMessage());
+
+        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
         final ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getCause().getClass().getSimpleName(), ex.getCause().getMessage());

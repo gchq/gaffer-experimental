@@ -16,13 +16,11 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
-import io.kubernetes.client.openapi.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
 
@@ -33,13 +31,7 @@ public class CreateGraphService {
     private CRDClient crdClient;
 
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
-        try {
-            crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
-        } catch (Exception e){
-            ApiException ex = new ApiException("internal server error", null, 500, null, null);
-            throw GaaSRestExceptionFactory.from(ex);
-        }
-
+        crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
     }
 
     private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
