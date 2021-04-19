@@ -2,7 +2,6 @@ import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import SchemaInput from "../../../src/components/add-graph/schema-inputs";
 
-//Types and elements on change part of this form
 const elementsMockCallBack = jest.fn();
 let component: ReactWrapper;
 let hide = false;
