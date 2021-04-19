@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import io.kubernetes.client.openapi.ApiException;
 import org.junit.jupiter.api.Test;
-import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

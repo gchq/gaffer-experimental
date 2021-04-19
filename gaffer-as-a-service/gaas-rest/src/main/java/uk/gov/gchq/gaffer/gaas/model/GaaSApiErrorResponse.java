@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.exception;
+package uk.gov.gchq.gaffer.gaas.model;
 
 import java.util.Objects;
 
-public class ExceptionResponse {
+public class GaaSApiErrorResponse {
 
     private String title;
     private String detail;
 
-    public ExceptionResponse(final String title, final String detail) {
+    public GaaSApiErrorResponse(final String title, final String detail) {
         this.title = title;
         this.detail = detail;
     }
@@ -52,7 +52,7 @@ public class ExceptionResponse {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ExceptionResponse that = (ExceptionResponse) o;
+        GaaSApiErrorResponse that = (GaaSApiErrorResponse) o;
         return Objects.equals(title, that.title) && Objects.equals(detail, that.detail);
     }
 

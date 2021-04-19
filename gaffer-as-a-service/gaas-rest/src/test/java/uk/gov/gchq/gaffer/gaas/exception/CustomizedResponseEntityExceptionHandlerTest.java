@@ -19,15 +19,18 @@ package uk.gov.gchq.gaffer.gaas.exception;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import uk.gov.gchq.gaffer.gaas.model.GaaSApiErrorResponse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class CustomizedResponseEntityExceptionHandlerTest {
+public class CustomizedResponseEntityExceptionHandlerTest {
 
   @Test
-  void testHandleException() {
-    CustomizedResponseEntityExceptionHandler handler = new CustomizedResponseEntityExceptionHandler();
-    final ResponseEntity<ExceptionResponse> result = handler.handleAllException(new NullPointerException("something is null"), null);
+  public void testHandleException() {
+    final CustomizedResponseEntityExceptionHandler handler = new CustomizedResponseEntityExceptionHandler();
+
+    final ResponseEntity<GaaSApiErrorResponse> result = handler.handleAllExceptions(new NullPointerException("something is null"), null);
+
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-    assertEquals(new ExceptionResponse("NullPointerException", "something is null"), result.getBody());
+    assertEquals(new GaaSApiErrorResponse("NullPointerException", "something is null"), result.getBody());
   }
 }
