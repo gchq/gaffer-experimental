@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.exception;
 import java.util.Objects;
 
 public class ExceptionResponse {
+
     private String title;
     private String detail;
 

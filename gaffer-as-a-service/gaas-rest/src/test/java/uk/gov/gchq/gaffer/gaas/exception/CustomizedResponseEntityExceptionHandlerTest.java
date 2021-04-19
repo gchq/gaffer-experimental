@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas.exception;
 
+package uk.gov.gchq.gaffer.gaas.exception;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
