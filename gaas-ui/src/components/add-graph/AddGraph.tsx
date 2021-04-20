@@ -419,7 +419,9 @@ export default class AddGraph extends React.Component<{}, IState> {
                   <SchemaInput
                     hide={!federatedStoreIsNotSelected()}
                     elementsValue={this.state.elements}
-                    onChangeElementsSchema={(elements) => this.setState({ elements })}
+                    onChangeElementsSchema={(elements) =>
+                      this.setState({ elements })
+                    }
                     typesSchemaValue={this.state.types}
                     onChangeTypesSchema={(types) => this.setState({ types })}
                   />
@@ -431,7 +433,10 @@ export default class AddGraph extends React.Component<{}, IState> {
                     justify="flex-end"
                     alignItems="center"
                   ></Grid>
-                  <StoreTypeSelect value={this.state.storeType} onChange={((storeType) => this.setState({storeType}))} />
+                  <StoreTypeSelect
+                    value={this.state.storeType}
+                    onChange={(storeType) => this.setState({ storeType })}
+                  />
                 </Grid>
               </form>
               <Grid
@@ -442,21 +447,26 @@ export default class AddGraph extends React.Component<{}, IState> {
                 justify="flex-end"
                 alignItems="center"
               ></Grid>
+              <AddProxyGraphInput
+                hide={federatedStoreIsNotSelected()}
+                proxyURLValue={this.state.proxyURL}
+                onChangeProxyURL={(proxyURL) => this.setState({ proxyURL })}
+                onClickAddProxyGraph={(proxyGraph) =>
+                  this.setState({
+                    graphs: [...this.state.graphs, proxyGraph],
+                    proxyStores: [...this.state.proxyStores, proxyGraph],
+                  })
+                }
+              />
               {!federatedStoreIsNotSelected() && (
                 <>
-                  <AddProxyGraphInput
-                    hide={federatedStoreIsNotSelected()}
-                    proxyURLValue={this.state.proxyURL}
-                    onChangeProxyURL={(proxyURL) => this.setState({proxyURL})} 
-                    onClickAddProxyGraph={(proxyGraph) => this.setState({graphs: [...this.state.graphs, proxyGraph], proxyStores: [...this.state.proxyStores, proxyGraph]})} />
                   <Grid
                     item
                     xs={12}
                     container
                     direction="row"
                     justify="flex-end"
-                    alignItems="center"
-                  ></Grid>
+                    alignItems="center" />
                   <TableContainer>
                     <Table
                       size="medium"
