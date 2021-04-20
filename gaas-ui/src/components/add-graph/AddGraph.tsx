@@ -43,6 +43,7 @@ import { TransitionProps } from "@material-ui/core/transitions";
 import GraphIdDescriptionInput from "./graph-id-description";
 import SchemaInput from "./schema-inputs";
 import StoreTypeSelect from "./storetype";
+import AddProxyGraphInput from "./add-proxy-graph-input";
 
 interface IState {
   dialogIsOpen: boolean;
@@ -163,20 +164,6 @@ export default class AddGraph extends React.Component<{}, IState> {
     }
   }
 
-  private async addProxyGraph(url: string) {
-    const newGraph: Graph = new Graph(
-      url + "-graph",
-      "Proxy Graph",
-      this.state.proxyURL,
-      ""
-    );
-    this.setState({
-      graphs: [...this.state.graphs, newGraph],
-      proxyStores: [...this.state.proxyStores, newGraph],
-      proxyURL: "",
-    });
-  }
-
   private resetForm() {
     this.setState({
       graphId: "",
@@ -201,6 +188,7 @@ export default class AddGraph extends React.Component<{}, IState> {
       });
     }
   }
+
   private async uploadElementsFiles(elementsFiles: File[]) {
     this.setState({ elementsFiles: elementsFiles });
     if (elementsFiles.length > 0) {
@@ -244,10 +232,6 @@ export default class AddGraph extends React.Component<{}, IState> {
       (this.state.storeType === StoreType.FEDERATED_STORE &&
         !(this.state.proxyStores.length > 0))
     );
-  }
-
-  private disableProxyButton(): boolean {
-    return this.state.proxyURL === "";
   }
 
   private checkSelections(graph: Graph): boolean {
@@ -460,48 +444,11 @@ export default class AddGraph extends React.Component<{}, IState> {
               ></Grid>
               {!federatedStoreIsNotSelected() && (
                 <>
-                  <Grid item xs={12} id={"proxy-url-grid"}>
-                    <TextField
-                      id="proxy-url"
-                      label="Proxy URL"
-                      variant="outlined"
-                      value={this.state.proxyURL}
-                      fullWidth
-                      name="proxy-url"
-                      autoComplete="proxy-url"
-                      onChange={(event) => {
-                        this.setState({
-                          proxyURL: event.target.value,
-                        });
-                      }}
-                    />
-                    <FormHelperText>
-                      Enter URL for proxy store if not shown below
-                    </FormHelperText>
-                  </Grid>
-                  <Grid
-                    id="proxy-button-grid"
-                    container
-                    style={{ margin: 10 }}
-                    direction="row"
-                    justify="center"
-                    alignItems="center"
-                  >
-                    <Button
-                      id="add-new-proxy-button"
-                      onClick={() => {
-                        this.addProxyGraph(this.state.proxyURL);
-                      }}
-                      startIcon={<AddCircleOutlineOutlinedIcon />}
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      className={this.classes.submit}
-                      disabled={this.disableProxyButton()}
-                    >
-                      Add Proxy Graph
-                    </Button>
-                  </Grid>
+                  <AddProxyGraphInput
+                    hide={federatedStoreIsNotSelected()}
+                    proxyURLValue={this.state.proxyURL}
+                    onChangeProxyURL={(proxyURL) => this.setState({proxyURL})} 
+                    onClickAddProxyGraph={(proxyGraph) => this.setState({graphs: [...this.state.graphs, proxyGraph], proxyStores: [...this.state.proxyStores, proxyGraph]})} />
                   <Grid
                     item
                     xs={12}

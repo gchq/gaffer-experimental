@@ -6,4 +6,5 @@ export interface IGraphByIdResponse {
 }
 
 export interface IAllGraphsResponse extends Array<IGraphByIdResponse> {}
+
 export interface IAllNameSpacesResponse extends Array<string> {}

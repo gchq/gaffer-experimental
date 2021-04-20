@@ -298,6 +298,7 @@ describe("AddGraph UI component", () => {
       selectStoreType(StoreType.FEDERATED_STORE);
       await inputProxyURL("test.URL");
       await clickAddProxy();
+
       clickSubmit();
       //@ts-ignore
       await wrapper.update();
@@ -306,7 +307,9 @@ describe("AddGraph UI component", () => {
       expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
     });
   });
+
   function clickSubmit(): void {
+    expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(false);
     wrapper.find("button#add-new-graph-button").simulate("click");
   }
   function inputGraphId(graphId: string): void {
