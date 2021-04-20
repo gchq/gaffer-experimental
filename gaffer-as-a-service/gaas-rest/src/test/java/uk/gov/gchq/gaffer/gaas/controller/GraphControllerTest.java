@@ -81,7 +81,7 @@ public class GraphControllerTest extends AbstractTest {
                 .andReturn();
 
         final String expected = "[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\"," +
-                "\"url\":\"my-graph-namespace.apps.k8s.cluster\",\"status\":\"UP\"}]";
+                "\"url\":\"my-graph-namespace.apps.k8s.cluster\",\"status\":\"UP\",\"problems\":null}]";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
@@ -138,7 +138,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(graphRequest)).andReturn();
 
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits, lowercase letters or the special character _\"}", result.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits or lowercase letters\"}", result.getResponse().getContentAsString());
         assertEquals(400, result.getResponse().getStatus());
     }
 
@@ -152,21 +152,8 @@ public class GraphControllerTest extends AbstractTest {
                 .content(graphRequest)).andReturn();
 
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits, lowercase letters or the special character _\"}", result.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits or lowercase letters\"}", result.getResponse().getContentAsString());
         assertEquals(400, result.getResponse().getStatus());
-    }
-
-    @Test
-    public void createGraph_whenGraphIdHasUnderscore_isValidAndShouldReturn201() throws Exception {
-        final String graphRequest = "{\"graphId\":\"graph_with_underscore\",\"description\":\"a description\",\"storeType\":\"ACCUMULO\"}";
-
-        final MvcResult result = mvc.perform(post("/graphs")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token)
-                .content(graphRequest)).andReturn();
-
-        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-        assertEquals(201, result.getResponse().getStatus());
     }
 
     @Test
@@ -179,7 +166,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(graphRequest)).andReturn();
 
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits, lowercase letters or the special character _\"}", result.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits or lowercase letters\"}", result.getResponse().getContentAsString());
         assertEquals(400, result.getResponse().getStatus());
     }
 
@@ -193,7 +180,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(graphRequest)).andReturn();
 
         verify(createGraphService, times(0)).createGraph(any(GaaSCreateRequestBody.class));
-        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits, lowercase letters or the special character _\"}", result.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Validation failed\",\"detail\":\"Graph ID can contain only digits or lowercase letters\"}", result.getResponse().getContentAsString());
         assertEquals(400, result.getResponse().getStatus());
     }
 
