@@ -1,26 +1,13 @@
 import {
   Button,
-  Checkbox,
   Container,
   CssBaseline,
   Dialog,
   DialogContent,
-  FormControl,
-  FormHelperText,
   Grid,
   IconButton,
-  InputLabel,
   makeStyles,
-  MenuItem,
-  Select,
   Slide,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
   Toolbar,
   Tooltip,
   Typography,
@@ -44,69 +31,80 @@ import GraphIdDescriptionInput from "./graph-id-description";
 import SchemaInput from "./schema-inputs";
 import StoreTypeSelect from "./storetype";
 import AddProxyGraphInput from "./add-proxy-graph-input";
+import GraphsTable from "./graphs-table";
 
 interface IState {
-  dialogIsOpen: boolean;
   graphId: string;
   description: string;
-  proxyStores: Graph[];
-  root: string;
+  schemaJson: string;
+  elements: string;
+  elementsFiles: Array<File>;
+  elementsFieldDisabled: boolean;
+  types: string;
+  typesFiles: Array<File>;
+  typesFieldDisabled: boolean;
+  dialogIsOpen: boolean;
   storeType: StoreType;
+  graphs: Graph[];
+  proxyURL: string;
+  root: string;
+  selectedGraphs: string[];
   outcome: AlertType | undefined;
   outcomeMessage: string;
   errors: Notifications;
-  graphs: Graph[];
-  elementsFiles: Array<File>;
-  typesFiles: Array<File>;
-  typesFieldDisabled: boolean;
-  elementsFieldDisabled: boolean;
-  elements: string;
-  types: string;
-  schemaJson: string;
-  proxyURL: string;
-  selectAllGraphs: boolean;
-  tempGraph: [];
 }
+
 const Transition = React.forwardRef(
   (
     props: TransitionProps & { children?: React.ReactElement<any, any> },
     ref: React.Ref<unknown>
   ) => <Slide direction="up" ref={ref} {...props} />
 );
+
 export default class AddGraph extends React.Component<{}, IState> {
   constructor(props: object) {
     super(props);
     this.state = {
-      schemaJson: "",
-      elements: "",
-      types: "",
-      elementsFieldDisabled: false,
-      elementsFiles: [],
-      typesFieldDisabled: false,
-      typesFiles: [],
-      dialogIsOpen: false,
       graphId: "",
       description: "",
+      schemaJson: "",
+      elements: "",
+      elementsFiles: [],
+      elementsFieldDisabled: false,
+      types: "",
+      typesFiles: [],
+      typesFieldDisabled: false,
+      dialogIsOpen: false,
       storeType: StoreType.MAPSTORE,
+      proxyURL: "",
+      root: "",
+      graphs: [],
+      selectedGraphs: [],
+      errors: new Notifications(),
       outcome: undefined,
       outcomeMessage: "",
-      proxyStores: [],
-      root: "",
-      errors: new Notifications(),
-      graphs: [],
-      proxyURL: "",
-      selectAllGraphs: false,
-      tempGraph: [],
     };
   }
 
+  public async componentDidMount() {
+    this.getGraphs();
+  }
+
+  private async getGraphs() {
+    try {
+      const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
+      this.setState({ graphs, outcomeMessage: "" });
+    } catch (e) {
+      this.setState({
+        outcomeMessage: `Failed to get all graphs. ${e.toString()}`,
+      });
+    }
+  }
+
   private async submitNewGraph() {
+    const { graphId, description, storeType, graphs, selectedGraphs, root } = this.state;
     const errors: Notifications = new Notifications();
-    const graphId = this.state.graphId;
-    const description = this.state.description;
-    const storeType = this.state.storeType;
-    const proxyStores = this.state.proxyStores;
-    const root = this.state.root;
+
     if (this.state.storeType !== StoreType.FEDERATED_STORE) {
       const elements = new ElementsSchema(this.state.elements);
       const types = new TypesSchema(this.state.types);
@@ -118,7 +116,7 @@ export default class AddGraph extends React.Component<{}, IState> {
             graphId,
             description,
             storeType,
-            proxyStores,
+            graphs,
             {
               elements: elements.getElements(),
               types: types.getTypes(),
@@ -142,11 +140,12 @@ export default class AddGraph extends React.Component<{}, IState> {
     } else {
       if (errors.isEmpty()) {
         try {
+          const subGraphs: Graph[] = graphs.filter((graph) => selectedGraphs.includes(graph.getId()));
           await new CreateSimpleGraphRepo().createFederated(
             graphId,
             description,
             storeType,
-            proxyStores,
+            subGraphs,
             root
           );
           this.setState({
@@ -174,19 +173,8 @@ export default class AddGraph extends React.Component<{}, IState> {
       elements: "",
       types: "",
       proxyURL: "",
-      proxyStores: [],
+      selectedGraphs: [],
     });
-  }
-
-  private async getGraphs() {
-    try {
-      const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
-      this.setState({ graphs, outcomeMessage: "" });
-    } catch (e) {
-      this.setState({
-        outcomeMessage: `Failed to get all graphs. ${e.toString()}`,
-      });
-    }
   }
 
   private async uploadElementsFiles(elementsFiles: File[]) {
@@ -219,36 +207,24 @@ export default class AddGraph extends React.Component<{}, IState> {
     }
   }
 
-  public async componentDidMount() {
-    this.getGraphs();
-  }
-
   private disableSubmitButton(): boolean {
+    const {
+      storeType,
+      elements,
+      types,
+      graphId,
+      description,
+      selectedGraphs,
+    } = this.state;
     return (
-      (this.state.storeType !== StoreType.FEDERATED_STORE &&
-        (!this.state.elements || !this.state.types)) ||
-      !this.state.graphId ||
-      !this.state.description ||
-      (this.state.storeType === StoreType.FEDERATED_STORE &&
-        !(this.state.proxyStores.length > 0))
+      (storeType !== StoreType.FEDERATED_STORE && (!elements || !types)) ||
+      !graphId ||
+      !description ||
+      (storeType === StoreType.FEDERATED_STORE && selectedGraphs.length === 0)
     );
   }
 
-  private checkSelections(graph: Graph): boolean {
-    if (this.state.proxyStores.length === 0) {
-      return false;
-    }
-    if (this.state.proxyStores.includes(graph)) {
-      return true;
-    }
-    if (this.state.proxyStores.length === this.state.graphs.length) {
-      return true;
-    }
-    return false;
-  }
-
   public render() {
-    const { graphs } = this.state;
     const federatedStoreIsNotSelected = (): boolean =>
       this.state.storeType !== StoreType.FEDERATED_STORE;
     const openDialogBox = () => {
@@ -273,6 +249,7 @@ export default class AddGraph extends React.Component<{}, IState> {
           />
         )}
         <Toolbar />
+
         <Grid container justify="center">
           <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -307,6 +284,10 @@ export default class AddGraph extends React.Component<{}, IState> {
                     direction="row"
                     justify="flex-end"
                     alignItems="center"
+                  />
+                  <StoreTypeSelect
+                    value={this.state.storeType}
+                    onChange={(storeType) => this.setState({ storeType })}
                   />
                   {federatedStoreIsNotSelected() && (
                     <>
@@ -432,21 +413,17 @@ export default class AddGraph extends React.Component<{}, IState> {
                     direction="row"
                     justify="flex-end"
                     alignItems="center"
-                  ></Grid>
-                  <StoreTypeSelect
-                    value={this.state.storeType}
-                    onChange={(storeType) => this.setState({ storeType })}
+                  />
+                  <Grid
+                    item
+                    xs={12}
+                    container
+                    direction="row"
+                    justify="flex-end"
+                    alignItems="center"
                   />
                 </Grid>
               </form>
-              <Grid
-                item
-                xs={12}
-                container
-                direction="row"
-                justify="flex-end"
-                alignItems="center"
-              ></Grid>
               <AddProxyGraphInput
                 hide={federatedStoreIsNotSelected()}
                 proxyURLValue={this.state.proxyURL}
@@ -454,95 +431,18 @@ export default class AddGraph extends React.Component<{}, IState> {
                 onClickAddProxyGraph={(proxyGraph) =>
                   this.setState({
                     graphs: [...this.state.graphs, proxyGraph],
-                    proxyStores: [...this.state.proxyStores, proxyGraph],
+                    selectedGraphs: [...this.state.selectedGraphs, proxyGraph.getId()],
                   })
                 }
               />
-              {!federatedStoreIsNotSelected() && (
-                <>
-                  <Grid
-                    item
-                    xs={12}
-                    container
-                    direction="row"
-                    justify="flex-end"
-                    alignItems="center" />
-                  <TableContainer>
-                    <Table
-                      size="medium"
-                      className={this.classes.table}
-                      aria-label="Graphs Table"
-                    >
-                      <TableHead>
-                        <TableRow style={{ background: "#F4F2F2" }}>
-                          <TableCell component="th">Graph ID</TableCell>
-                          <TableCell align="center">Description</TableCell>
-                          <TableCell align="right">
-                            <Checkbox
-                              checked={
-                                this.state.graphs.length > 0 &&
-                                this.state.proxyStores.length ===
-                                  this.state.graphs.length
-                              }
-                              onChange={(event) => {
-                                if (event.target.checked) {
-                                  this.setState({
-                                    proxyStores: this.state.graphs,
-                                  });
-                                } else {
-                                  this.setState({ proxyStores: [] });
-                                }
-                              }}
-                            />{" "}
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-
-                      <TableBody>
-                        {graphs.map((graph: Graph) => (
-                          <TableRow key={graph.getId()} hover>
-                            <TableCell scope="row">{graph.getId()}</TableCell>
-                            <TableCell align="center">
-                              {graph.getDescription()}
-                            </TableCell>
-                            <TableCell
-                              align="right"
-                              id={`${graph.getId()}-checkbox-cell`}
-                            >
-                              <Checkbox
-                                id={`${graph.getId()}-checkbox`}
-                                required
-                                checked={this.checkSelections(graph)}
-                                onChange={(event) => {
-                                  if (
-                                    event.target.checked &&
-                                    !this.state.proxyStores.includes(graph)
-                                  ) {
-                                    this.setState({
-                                      proxyStores: [
-                                        ...this.state.proxyStores,
-                                        graph,
-                                      ],
-                                    });
-                                  } else {
-                                    const tempProxyStore = this.state.proxyStores.filter(
-                                      (obj) => obj.getId() !== graph.getId()
-                                    );
-                                    this.setState({
-                                      proxyStores: tempProxyStore,
-                                    });
-                                  }
-                                }}
-                              />
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                      {graphs.length === 0 && <caption>No Graphs.</caption>}
-                    </Table>
-                  </TableContainer>
-                </>
-              )}
+              <GraphsTable
+                hide={federatedStoreIsNotSelected()}
+                graphs={this.state.graphs}
+                selectedGraphs={this.state.selectedGraphs}
+                onClickCheckbox={(selectedGraphs) =>
+                  this.setState({ selectedGraphs })
+                }
+              />
             </div>
           </Container>
           <Grid

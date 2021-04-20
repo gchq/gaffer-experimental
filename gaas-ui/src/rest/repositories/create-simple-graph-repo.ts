@@ -5,7 +5,6 @@ import {Graph} from "../../domain/graph";
 import {IElements} from "../../domain/elements-schema";
 import {ITypesSchema} from "../../domain/types-schema";
 
-
 export class CreateSimpleGraphRepo {
     public async create(
         graphId: string,
@@ -30,6 +29,7 @@ export class CreateSimpleGraphRepo {
     
         await new RestClient().post().graphs().requestBody(httpRequestBody).execute();
     }
+
     public async createFederated(
         graphId: string,
         description: string,
