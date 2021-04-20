@@ -1,4 +1,4 @@
-import {mount, ReactWrapper} from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import AddGraph from "../../../src/components/add-graph/AddGraph";
 import { Graph } from "../../../src/domain/graph";
@@ -349,21 +349,6 @@ describe("AddGraph UI component", () => {
       expect(wrapper.find("div#notification-alert").text()).toBe(
         "OK Graph was successfully added"
       );
-    });
-    it("should display success message in the NotificationAlert when Federated store selected and no schema added", async () => {
-      mockAddGraphRepoWithFunction(() => {});
-      inputGraphId("OK Graph");
-      inputDescription("test");
-      selectStoreType(StoreType.FEDERATED_STORE);
-      await inputProxyURL("test.URL");
-      await clickAddProxy();
-
-      clickSubmit();
-      //@ts-ignore
-      await wrapper.update();
-      await wrapper.update();
-
-      expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
     });
   });
 

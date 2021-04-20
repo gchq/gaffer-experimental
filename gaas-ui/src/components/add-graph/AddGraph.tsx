@@ -55,12 +55,14 @@ interface IState {
   outcome: AlertType | undefined;
   outcomeMessage: string;
 }
+
 const Transition = React.forwardRef(
   (
     props: TransitionProps & { children?: React.ReactElement<any, any> },
     ref: React.Ref<unknown>
   ) => <Slide direction="up" ref={ref} {...props} />
 );
+
 export default class AddGraph extends React.Component<{}, IState> {
   constructor(props: object) {
     super(props);
@@ -192,19 +194,6 @@ export default class AddGraph extends React.Component<{}, IState> {
       (storeType !== StoreType.FEDERATED_STORE && !new ElementsSchema(elements).validate().isEmpty()) || 
       (storeType !== StoreType.FEDERATED_STORE && !new TypesSchema(types).validate().isEmpty())
     );
-  }
-
-  private checkSelections(graph: Graph): boolean {
-    if (this.state.proxyStores.length === 0) {
-      return false;
-    }
-    if (this.state.proxyStores.includes(graph)) {
-      return true;
-    }
-    if (this.state.proxyStores.length === this.state.graphs.length) {
-      return true;
-    }
-    return false;
   }
 
   public render() {
@@ -392,6 +381,14 @@ export default class AddGraph extends React.Component<{}, IState> {
                     }
                     typesSchemaValue={this.state.types}
                     onChangeTypesSchema={(types) => this.setState({ types })}
+                  />
+                  <Grid
+                    item
+                    xs={12}
+                    container
+                    direction="row"
+                    justify="flex-end"
+                    alignItems="center"
                   />
                   <Grid
                     item

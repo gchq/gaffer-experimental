@@ -36,7 +36,7 @@ export default function GraphsTable(props: IProps): ReactElement {
                       graphs.length > 0 &&
                       selectedGraphs.length === graphs.length
                     }
-                    onChange={(event) => onClickCheckbox(event.target.checked ? graphs.map(graph => graph.getId()) : [])} />
+                    onChange={(event) => onClickCheckbox(event.target.checked ? graphs.map((graph) => graph.getId()) : [])} />
                     {" "}
                 </TableCell>
               </TableRow>

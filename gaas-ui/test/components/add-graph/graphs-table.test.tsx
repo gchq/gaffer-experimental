@@ -12,6 +12,7 @@ const graphs = [
 ];
 const selectedGraphs = ["test-graph"];
 const onClickCheckboxMockCallback = jest.fn();
+
 beforeEach(() => {
   component = mount(
     <GraphsTable
