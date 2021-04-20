@@ -357,6 +357,7 @@ describe("AddGraph UI component", () => {
       selectStoreType(StoreType.FEDERATED_STORE);
       await inputProxyURL("test.URL");
       await clickAddProxy();
+
       clickSubmit();
       //@ts-ignore
       await wrapper.update();

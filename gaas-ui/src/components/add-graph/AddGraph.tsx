@@ -138,20 +138,6 @@ export default class AddGraph extends React.Component<{}, IState> {
       }
   }
 
-  private async addProxyGraph(url: string) {
-    const newGraph: Graph = new Graph(
-      url + "-graph",
-      "Proxy Graph",
-      this.state.proxyURL,
-      ""
-    );
-    this.setState({
-      graphs: [...this.state.graphs, newGraph],
-      proxyStores: [...this.state.proxyStores, newGraph],
-      proxyURL: "",
-    });
-  }
-
   private resetForm() {
     this.setState({
       graphId: "",
@@ -206,10 +192,6 @@ export default class AddGraph extends React.Component<{}, IState> {
       (storeType !== StoreType.FEDERATED_STORE && !new ElementsSchema(elements).validate().isEmpty()) || 
       (storeType !== StoreType.FEDERATED_STORE && !new TypesSchema(types).validate().isEmpty())
     );
-  }
-
-  private disableProxyButton(): boolean {
-    return this.state.proxyURL === "";
   }
 
   private checkSelections(graph: Graph): boolean {
