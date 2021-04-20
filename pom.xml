@@ -21,23 +21,22 @@
     <parent>
         <groupId>uk.gov.gchq.gaffer</groupId>
         <artifactId>gaffer2</artifactId>
-        <version>1.13.0</version>
+        <version>1.16.0</version>
     </parent>
 
     <artifactId>gaffer-experimental</artifactId>
-    <version>1.13.0</version>
+    <version>1.16.0</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>tinkerpop</module>
         <module>graffer-ql</module>
         <module>operation-runner</module>
-        <module>gaffer-controller</module>
-        <module>gaas-rest</module>
+        <module>gaffer-as-a-service</module>
     </modules>
 
     <properties>
-        <gaffer.version>1.13.0</gaffer.version>
+        <gaffer.version>1.16.0</gaffer.version>
         <scm.url>
             https://github.com/gchq/gaffer-experimental
         </scm.url>
