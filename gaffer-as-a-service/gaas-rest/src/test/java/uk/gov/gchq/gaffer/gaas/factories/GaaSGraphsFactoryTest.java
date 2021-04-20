@@ -90,6 +90,35 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
+    public void gafferSpecHasAllValues_andEmptyProblems_returnsOneGaaSGraphWithEmptyList() {
+        final GafferSpec graphSpec = getFullValuesGafferSpec();
+        final Map<String, Object> gafferList = makeGafferList(graphSpec);
+
+        final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
+
+        assertEquals(1, actual.size());
+        assertEquals("full-values-gaffer", actual.get(0).getGraphId());
+        assertEquals("This is a test gaffer", actual.get(0).getDescription());
+        assertEquals("http://apps.my.k8s.cluster/rest", actual.get(0).getUrl());
+        assertEquals(new ArrayList<String>(), actual.get(0).getProblems());
+    }
+
+    @Test
+    public void gafferHasProblems_returnsGaaSGraphWithProblems() {
+        List<String> problems = new ArrayList<>();
+        problems.add("There is a problem with this graph");
+        final GafferSpec graphSpec = getFullValuesGafferSpec();
+        final GafferStatus gafferStatus = new GafferStatus().problems(problems);
+        final Map<String, Object> gafferList = makeGafferList(graphSpec, gafferStatus);
+
+        final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
+
+        assertEquals(1, actual.size());
+        assertEquals("full-values-gaffer", actual.get(0).getGraphId());
+        assertEquals(problems, actual.get(0).getProblems());
+    }
+
+    @Test
     public void gafferWithNullGraphId_treatAsGraphNonExistentAndExcludeFromList() {
         final Map<String, Object> gafferList = makeGafferList(new GafferSpec());
 
