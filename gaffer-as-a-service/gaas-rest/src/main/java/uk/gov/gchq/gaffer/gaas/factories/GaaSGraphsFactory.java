@@ -21,6 +21,7 @@ import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
 import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.controller.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
@@ -44,7 +45,8 @@ public final class GaaSGraphsFactory {
                         .graphId(gaffer.getSpec().getNestedObject(GRAPH_ID_KEY).toString())
                         .description(getDescription(gaffer))
                         .url(getUrl(gaffer))
-                        .status(getStatus(gaffer)))
+                        .status(getStatus(gaffer))
+                        .problems(getProblems(gaffer)))
                 .collect(Collectors.toList());
     }
 
@@ -62,6 +64,11 @@ public final class GaaSGraphsFactory {
     private static RestApiStatus getStatus(final Gaffer gaffer) {
         return gaffer.getStatus() != null && gaffer.getStatus().getRestApiStatus() != null ? gaffer.getStatus().getRestApiStatus() : RestApiStatus.DOWN;
     }
+
+    private static List<String> getProblems(final Gaffer gaffer) {
+        return gaffer.getStatus() != null && gaffer.getStatus().getProblems() != null ? gaffer.getStatus().getProblems() : new ArrayList<String>();
+    }
+
 
     private GaaSGraphsFactory() {
         // prevents calls from subclass

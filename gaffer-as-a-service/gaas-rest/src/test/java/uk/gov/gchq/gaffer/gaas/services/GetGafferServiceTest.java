@@ -25,6 +25,7 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +44,8 @@ class GetGafferServiceTest {
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
     private static final String TEST_GRAPH_URL = "graph-namespace.k8s.my.cluster/rest";
     private static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
+    private static final List<String>  TEST_GRAPH_PROBLEMS = new ArrayList<String>(Arrays.asList("There is problem with this Graph"));
+
 
     @Test
     void testGetGraphs_whenGraphRequestIsNotEmpty() throws GaaSRestApiException {
@@ -50,7 +53,8 @@ class GetGafferServiceTest {
                 .graphId(TEST_GRAPH_ID)
                 .description(TEST_GRAPH_DESCRIPTION)
                 .url(TEST_GRAPH_URL)
-                .status(TEST_GRAPH_STATUS);
+                .status(TEST_GRAPH_STATUS)
+                .problems(TEST_GRAPH_PROBLEMS);
         final ArrayList<GaaSGraph> graphList = new ArrayList<>();
         graphList.add(graph);
         when(crdClient.listAllCRDs()).thenReturn(graphList);
@@ -61,6 +65,7 @@ class GetGafferServiceTest {
         assertEquals(TEST_GRAPH_DESCRIPTION, actual.get(0).getDescription());
         assertEquals(TEST_GRAPH_URL, actual.get(0).getUrl());
         assertEquals(TEST_GRAPH_STATUS, actual.get(0).getStatus());
+        assertEquals(TEST_GRAPH_PROBLEMS, actual.get(0).getProblems());
         assertArrayEquals(graphList.toArray(), actual.toArray());
     }
 
