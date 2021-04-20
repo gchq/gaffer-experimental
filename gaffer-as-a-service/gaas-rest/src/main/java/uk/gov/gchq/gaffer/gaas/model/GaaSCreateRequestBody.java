@@ -29,7 +29,7 @@ public class GaaSCreateRequestBody implements Serializable {
 
     @NotNull(message = "Graph id should not be null")
     @NotBlank(message = "Graph id should not be null")
-    @Pattern(regexp = "^[a-z0-9_]*$", message = "Graph ID can contain only digits, lowercase letters or the special character _")
+    @Pattern(regexp = "[a-z0-9]*$", message = "Graph ID can contain only digits or lowercase letters")
     private String graphId;
     @NotBlank(message = "Description should not be empty")
     private String description;
