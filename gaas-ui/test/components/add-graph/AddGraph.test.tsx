@@ -4,9 +4,9 @@ import AddGraph from "../../../src/components/add-graph/AddGraph";
 import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";
-import { CreateSimpleGraphRepo } from "../../../src/rest/repositories/create-simple-graph-repo";
+import { CreateGraphRepo } from "../../../src/rest/repositories/create-graph-repo";
 
-jest.mock("../../../src/rest/repositories/create-simple-graph-repo");
+jest.mock("../../../src/rest/repositories/create-graph-repo");
 let wrapper: ReactWrapper;
 
 beforeEach(() => (wrapper = mount(<AddGraph />)));
@@ -366,7 +366,7 @@ describe("AddGraph UI component", () => {
 
   function mockAddGraphRepoWithFunction(f: () => void): void {
     // @ts-ignore
-    CreateSimpleGraphRepo.mockImplementationOnce(() => ({
+    CreateGraphRepo.mockImplementationOnce(() => ({
       create: f,
       createFederated: f,
     }));

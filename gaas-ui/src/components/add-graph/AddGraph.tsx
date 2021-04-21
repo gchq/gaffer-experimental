@@ -17,7 +17,7 @@ import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOut
 import React from "react";
 import { Notifications } from "../../domain/notifications";
 import { StoreType } from "../../domain/store-type";
-import { CreateSimpleGraphRepo } from "../../rest/repositories/create-simple-graph-repo";
+import { CreateGraphRepo } from "../../rest/repositories/create-graph-repo";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../domain/graph";
@@ -112,7 +112,7 @@ export default class AddGraph extends React.Component<{}, IState> {
       errors.concat(types.validate());
       if (errors.isEmpty()) {
         try {
-          await new CreateSimpleGraphRepo().create(
+          await new CreateGraphRepo().create(
             graphId,
             description,
             storeType,
@@ -141,7 +141,7 @@ export default class AddGraph extends React.Component<{}, IState> {
       if (errors.isEmpty()) {
         try {
           const subGraphs: Graph[] = graphs.filter((graph) => selectedGraphs.includes(graph.getId()));
-          await new CreateSimpleGraphRepo().createFederated(
+          await new CreateGraphRepo().createFederated(
             graphId,
             description,
             storeType,
@@ -405,14 +405,6 @@ export default class AddGraph extends React.Component<{}, IState> {
                     }
                     typesSchemaValue={this.state.types}
                     onChangeTypesSchema={(types) => this.setState({ types })}
-                  />
-                  <Grid
-                    item
-                    xs={12}
-                    container
-                    direction="row"
-                    justify="flex-end"
-                    alignItems="center"
                   />
                   <Grid
                     item

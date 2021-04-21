@@ -1,32 +1,49 @@
-import { ElementsSchema } from "../../domain/elements-schema";
-import { TypesSchema } from "../../domain/types-schema";
-import { IApiResponse, RestClient } from "../clients/rest-client";
-import { ICreateGraphRequestBody } from "../http-message-interfaces/request-interfaces";
+import {StoreType} from "../../domain/store-type";
+import {RestClient} from "../clients/rest-client";
+import {ICreateFederatedGraphRequestBody, ICreateGraphRequestBody} from "../http-message-interfaces/request-interfaces";
+import {IElements} from "../../domain/elements-schema";
+import {ITypesSchema} from "../../domain/types-schema";
 
 export class CreateGraphRepo {
     public async create(
         graphId: string,
-        administrators: Array<string>,
-        elementsSchema: ElementsSchema,
-        typesSchema: TypesSchema
+        description: string,
+        storeType: StoreType,
+        config: ICreateGraphConfig,
     ): Promise<void> {
-        const httpRequestBody: ICreateGraphRequestBody = {
-            graphId: graphId,
-            administrators: administrators,
-            schema: {
-                elements: elementsSchema.getElements(),
-                types: typesSchema.getTypes(),
-            },
-        };
-
-        const response: IApiResponse<undefined> = await new RestClient()
-            .post()
-            .graphs()
-            .requestBody(httpRequestBody)
-            .execute();
-
-        if (response.status !== 201) {
-            throw new Error(`Expected status code 201 for Created Graph but got (${response.status})`);
+        if (storeType === StoreType.ACCUMULO || storeType === StoreType.MAPSTORE) {
+            if (config.schema === undefined) {
+                throw new Error("Schema is undefined");
+            }
+            const httpRequestBody: ICreateGraphRequestBody = {
+                graphId: graphId,
+                description: description,
+                storeType: storeType,
+                schema: config.schema,
+            };
+            await new RestClient().post().graphs().requestBody(httpRequestBody).execute();
+        }
+        else {
+            if (config.proxyStores === undefined) {
+                throw new Error("Proxy Stores is undefined");
+            }
+            const httpRequestBody: ICreateFederatedGraphRequestBody = {
+                graphId: graphId,
+                description: description,
+                storeType: StoreType.FEDERATED_STORE,
+                proxyStores: config.proxyStores
+            };
+            await new RestClient().post().graphs().requestBody(httpRequestBody).execute();
         }
     }
+}
+
+interface ICreateGraphConfig {
+    schema?: {
+        elements: IElements;
+        types: ITypesSchema;
+    };
+    proxyContextRoot?: string;
+    proxyHost?: string;
+    proxyStores?: Array<{ graphId: string, url: string }>;
 }

@@ -1,33 +1,27 @@
 import { IElements } from "../../domain/elements-schema";
 import { ITypesSchema } from "../../domain/types-schema";
 import { StoreType } from "../../domain/store-type";
-import {Graph} from "../../domain/graph";
 
-export interface ICreateGraphRequestBody {
+export interface ICreateGraphInterface {
     graphId: string;
-    administrators: Array<string>;
+    description: string;
+}
+
+export interface ICreateGraphRequestBody extends ICreateGraphInterface{
     schema: {
         elements: IElements;
         types: ITypesSchema;
     };
-}
-export interface ICreateSimpleGraphRequestBody {
-    graphId: string;
-    description: string;
-    schema: {
-        elements: IElements;
-        types: ITypesSchema;
-    };
-    storeType: StoreType;
-    proxyStores: Graph[];
-    root: string;
+    storeType: StoreType.MAPSTORE | StoreType.ACCUMULO;
 }
 
-export interface ICreateFederatedRequestBody {
-    graphId: string;
-    description: string;
-    storeType: StoreType;
-    proxyStores: Graph[];
-    root: string;
+export interface ICreateFederatedGraphRequestBody extends ICreateGraphInterface {
+    proxyStores: Array<{graphId: string, url: string}>;
+    storeType: StoreType.FEDERATED_STORE;
 }
 
+export interface ICreateProxyGraphRequestBody extends ICreateGraphInterface{
+    proxyContextRoot: string;
+    proxyHost: string;
+    storeType: StoreType.PROXY_STORE;
+}
