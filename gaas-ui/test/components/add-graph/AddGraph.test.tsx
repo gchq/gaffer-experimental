@@ -124,7 +124,7 @@ describe("AddGraph UI component", () => {
       expect(tableInputs.at(1).props().checked).toBe(false);
       expect(tableInputs.at(2).props().checked).toBe(false);
     });
-    fit("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
       const mock = jest.fn();
       mockAddGraphRepoWithFunction(mock);
       inputGraphId("OK Graph");
