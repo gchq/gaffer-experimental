@@ -62,14 +62,14 @@ app.get("/graphs", (req, res) => {
             res.send([
                 {
                     graphId: "roadTraffic",
-                    description: "DEPLOYED",
-                    url: "roadTraffic URL",
+                    description: "Road traffic graph",
+                    url: "http://road-traffic.k8s.cluster/rest",
                     status: "UP",
                 },
                 {
                     graphId: "basicGraph",
-                    description: "DEPLOYED",
-                    url: "basicGraph URL",
+                    description: "Basic graph instance",
+                    url: "http://basic-graph.k8s.cluster/rest",
                     status: "DOWN"
                 },
             ]);
