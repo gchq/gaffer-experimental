@@ -390,14 +390,6 @@ export default class AddGraph extends React.Component<{}, IState> {
                     justify="flex-end"
                     alignItems="center"
                   />
-                  <Grid
-                    item
-                    xs={12}
-                    container
-                    direction="row"
-                    justify="flex-end"
-                    alignItems="center"
-                  />
                 </Grid>
               </form>
               <AddProxyGraphInput
