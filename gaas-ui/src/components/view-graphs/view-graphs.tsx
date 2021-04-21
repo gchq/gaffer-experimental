@@ -99,7 +99,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                             </TableCell>
                                             <TableCell align="right">{graph.getDescription()}</TableCell>
                                             <TableCell align="right">{graph.getStatus()}</TableCell>
-                                            <TableCell align="right">{graph.getUrl()}</TableCell>
+                                            <TableCell align="right"><a href={graph.getUrl()} target="_blank">{graph.getUrl()}</a></TableCell>
                                             <TableCell align="right">
                                                 <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
                                                     <IconButton
