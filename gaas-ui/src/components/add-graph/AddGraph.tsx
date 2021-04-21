@@ -140,8 +140,10 @@ export default class AddGraph extends React.Component<{}, IState> {
     } else {
       if (errors.isEmpty()) {
         try {
-          const subGraphs: Graph[] = graphs.filter((graph) => selectedGraphs.includes(graph.getId()));
-          await new CreateGraphRepo().createFederated(
+          const subGraphs: Array<{graphId: string, url: string}> = graphs
+              .filter((graph) => selectedGraphs.includes(graph.getId()))
+              .map((subGraph:Graph) => ({graphId: subGraph.getId(), url: subGraph.getUrl()}) );
+          await new CreateGraphRepo().create(
             graphId,
             description,
             storeType,
