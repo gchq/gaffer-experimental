@@ -17,7 +17,10 @@ import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOut
 import React from "react";
 import { Notifications } from "../../domain/notifications";
 import { StoreType } from "../../domain/store-type";
-import { CreateGraphRepo } from "../../rest/repositories/create-graph-repo";
+import {
+  CreateGraphRepo,
+  ICreateGraphConfig,
+} from "../../rest/repositories/create-graph-repo";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../domain/graph";
@@ -102,66 +105,45 @@ export default class AddGraph extends React.Component<{}, IState> {
   }
 
   private async submitNewGraph() {
-    const { graphId, description, storeType, graphs, selectedGraphs, root } = this.state;
+    const { graphId, description, storeType, graphs, selectedGraphs } = this.state;
     const errors: Notifications = new Notifications();
 
-    if (this.state.storeType !== StoreType.FEDERATED_STORE) {
+    let config: ICreateGraphConfig;
+    if (storeType === StoreType.FEDERATED_STORE) {
+      const subGraphs: Array<{ graphId: string; url: string; }> = graphs
+        .filter((graph) => selectedGraphs.includes(graph.getId()))
+        .map((subGraph: Graph) => ({
+          graphId: subGraph.getId(),
+          url: subGraph.getUrl(),
+        }));
+      config = { proxyStores: subGraphs };
+
+    } else {
       const elements = new ElementsSchema(this.state.elements);
       const types = new TypesSchema(this.state.types);
       errors.concat(elements.validate());
       errors.concat(types.validate());
-      if (errors.isEmpty()) {
-        try {
-          await new CreateGraphRepo().create(
-            graphId,
-            description,
-            storeType,
-            graphs,
-            {
-              elements: elements.getElements(),
-              types: types.getTypes(),
-            },
-            root
-          );
-          this.setState({
-            outcome: AlertType.SUCCESS,
-            outcomeMessage: `${graphId} was successfully added`,
-          });
-          this.resetForm();
-        } catch (e) {
-          this.setState({
-            outcome: AlertType.FAILED,
-            outcomeMessage: `Failed to Add '${graphId}' Graph. ${e.toString()}`,
-          });
-        }
-      } else {
-        this.setState({ errors });
+      config = {
+        schema: { elements: elements.getElements(), types: types.getTypes() },
+      };
+    }
+
+    if (errors.isEmpty()) {
+      try {
+        await new CreateGraphRepo().create(graphId, description, storeType, config);
+        this.setState({
+          outcome: AlertType.SUCCESS,
+          outcomeMessage: `${graphId} was successfully added`,
+        });
+        this.resetForm();
+      } catch (e) {
+        this.setState({
+          outcome: AlertType.FAILED,
+          outcomeMessage: `Failed to Add '${graphId}' Graph. ${e.toString()}`,
+        });
       }
     } else {
-      if (errors.isEmpty()) {
-        try {
-          const subGraphs: Array<{graphId: string, url: string}> = graphs
-              .filter((graph) => selectedGraphs.includes(graph.getId()))
-              .map((subGraph:Graph) => ({graphId: subGraph.getId(), url: subGraph.getUrl()}) );
-          await new CreateGraphRepo().create(
-            graphId,
-            description,
-            storeType,
-            subGraphs,
-            root
-          );
-          this.setState({
-            outcome: AlertType.SUCCESS,
-            outcomeMessage: `${graphId} was successfully added`,
-          });
-          this.resetForm();
-        } catch (e) {
-          this.setState({
-            outcome: AlertType.FAILED,
-            outcomeMessage: `Failed to Add '${graphId}' Graph. ${e.toString()}`,
-          });
-        }
-      }
+      this.setState({ errors });
     }
   }
 
@@ -210,14 +192,7 @@ export default class AddGraph extends React.Component<{}, IState> {
   }
 
   private disableSubmitButton(): boolean {
-    const {
-      storeType,
-      elements,
-      types,
-      graphId,
-      description,
-      selectedGraphs,
-    } = this.state;
+    const { storeType, elements, types, graphId, description, selectedGraphs } = this.state;
     return (
       (storeType !== StoreType.FEDERATED_STORE && (!elements || !types)) ||
       !graphId ||
@@ -425,7 +400,10 @@ export default class AddGraph extends React.Component<{}, IState> {
                 onClickAddProxyGraph={(proxyGraph) =>
                   this.setState({
                     graphs: [...this.state.graphs, proxyGraph],
-                    selectedGraphs: [...this.state.selectedGraphs, proxyGraph.getId()],
+                    selectedGraphs: [
+                      ...this.state.selectedGraphs,
+                      proxyGraph.getId(),
+                    ],
                   })
                 }
               />

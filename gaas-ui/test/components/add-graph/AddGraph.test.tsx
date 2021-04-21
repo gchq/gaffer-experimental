@@ -4,7 +4,7 @@ import AddGraph from "../../../src/components/add-graph/AddGraph";
 import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";
-import { CreateGraphRepo } from "../../../src/rest/repositories/create-graph-repo";
+import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
 
 jest.mock("../../../src/rest/repositories/create-graph-repo");
 let wrapper: ReactWrapper;
@@ -124,7 +124,7 @@ describe("AddGraph UI component", () => {
       expect(tableInputs.at(1).props().checked).toBe(false);
       expect(tableInputs.at(2).props().checked).toBe(false);
     });
-    fit("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
       const mock = jest.fn();
       mockAddGraphRepoWithFunction(mock);
       inputGraphId("OK Graph");
@@ -138,23 +138,67 @@ describe("AddGraph UI component", () => {
       await wrapper.update();
       await wrapper.update();
 
+      const expectedConfig: ICreateGraphConfig = {
+        proxyStores: [{ graphId: "test.URL-graph", url: "test.URL" }]
+      }
       expect(mock).toHaveBeenLastCalledWith(
         "OK Graph",
         "test",
         StoreType.FEDERATED_STORE,
-        [
-          new Graph(
-            "test.URL-graph",
-            "Proxy Graph",
-            "test.URL",
-            "n/a",
-            GraphType.PROXY_GRAPH
-          ),
-        ],
-        ""
+        expectedConfig,
       );
       expect(wrapper.find("div#notification-alert").text()).toBe(
         "OK Graph was successfully added"
+      );
+    });
+  });
+  describe("When Map Store Is Selected", ()=>{
+    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+      const mock = jest.fn();
+      mockAddGraphRepoWithFunction(mock);
+      
+      inputGraphId("map-store-graph");
+      inputDescription("Mappy description");
+      selectStoreType(StoreType.MAPSTORE);
+      inputElements(elements);
+      inputTypes(types);
+
+      clickSubmit();
+      //@ts-ignore
+      await wrapper.update();
+      await wrapper.update();
+
+      const expectedConfig: ICreateGraphConfig = {
+        schema: { elements: elements, types: types },
+      }
+      expect(mock).toHaveBeenLastCalledWith("map-store-graph", "Mappy description", StoreType.MAPSTORE, expectedConfig);
+      expect(wrapper.find("div#notification-alert").text()).toBe(
+        "map-store-graph was successfully added"
+      );
+    });
+  });
+  describe("When Accumulp Store Is Selected", ()=>{
+    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+      const mock = jest.fn();
+      mockAddGraphRepoWithFunction(mock);
+      
+      inputGraphId("accumulo-graph");
+      inputDescription("None");
+      selectStoreType(StoreType.ACCUMULO);
+      inputElements(elements);
+      inputTypes(types);
+
+      clickSubmit();
+      //@ts-ignore
+      await wrapper.update();
+      await wrapper.update();
+
+      const expectedConfig: ICreateGraphConfig = {
+        schema: { elements: elements, types: types },
+      }
+      expect(mock).toHaveBeenLastCalledWith("accumulo-graph", "None", StoreType.ACCUMULO, expectedConfig);
+      expect(wrapper.find("div#notification-alert").text()).toBe(
+        "accumulo-graph was successfully added"
       );
     });
   });
@@ -262,14 +306,6 @@ describe("AddGraph UI component", () => {
     });
   });
 
-  describe("Add Proxy Button", () => {
-    it("should be disabled when federated is selected but no proxy url entered", () => {
-      selectStoreType(StoreType.FEDERATED_STORE);
-      expect(wrapper.find("button#add-new-proxy-button").props().disabled).toBe(
-        true
-      );
-    });
-  });
   describe("On Submit Request", () => {
     it("should display success message in the NotificationAlert", async () => {
       mockAddGraphRepoWithFunction(() => {});

@@ -38,7 +38,7 @@ export class CreateGraphRepo {
     }
 }
 
-interface ICreateGraphConfig {
+export interface ICreateGraphConfig {
     schema?: {
         elements: IElements;
         types: ITypesSchema;
