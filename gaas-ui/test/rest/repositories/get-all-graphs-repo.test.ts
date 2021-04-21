@@ -4,6 +4,7 @@ import { GetAllGraphsRepo } from "../../../src/rest/repositories/get-all-graphs-
 import { Graph } from "../../../src/domain/graph";
 import { IAllGraphsResponse } from "../../../src/rest/http-message-interfaces/response-interfaces";
 import { RestApiError } from "../../../src/rest/RestApiError";
+import { GraphType } from "../../../src/domain/graph-type";
 
 const mock = new MockAdapter(axios);
 const repo = new GetAllGraphsRepo();
@@ -30,7 +31,7 @@ describe("Get All Graphs Repo", () => {
 
         const actual: Graph[] = await repo.getAll();
 
-        const expected = [new Graph("roadTraffic", "DEPLOYED", "roadTraffic URL", "UP"), new Graph("basicGraph", "DELETION_QUEUED", "basicGraph URL", "UP")];
+        const expected = [new Graph("roadTraffic", "DEPLOYED", "roadTraffic URL", "UP", GraphType.GAAS_GRAPH), new Graph("basicGraph", "DELETION_QUEUED", "basicGraph URL", "UP", GraphType.GAAS_GRAPH)];
         expect(actual).toEqual(expected);
     });
 
@@ -47,7 +48,7 @@ describe("Get All Graphs Repo", () => {
 
         const actual: Graph[] = await repo.getAll();
 
-        const expected = [new Graph("streetTraffic", "DELETION_QUEUED", "streetTraffic URL", "UP")];
+        const expected = [new Graph("streetTraffic", "DELETION_QUEUED", "streetTraffic URL", "UP", GraphType.GAAS_GRAPH)];
         expect(actual).toEqual(expected);
     });
 

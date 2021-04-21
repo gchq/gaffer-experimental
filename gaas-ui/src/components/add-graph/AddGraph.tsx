@@ -1,27 +1,13 @@
 import {
   Button,
-  Checkbox,
   Container,
   CssBaseline,
   Dialog,
   DialogContent,
-  FormControl,
-  FormHelperText,
   Grid,
-  Hidden,
   IconButton,
-  InputLabel,
   makeStyles,
-  MenuItem,
-  Select,
   Slide,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
   Toolbar,
   Tooltip,
   Typography,
@@ -31,7 +17,10 @@ import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOut
 import React from "react";
 import { Notifications } from "../../domain/notifications";
 import { StoreType } from "../../domain/store-type";
-import { CreateSimpleGraphRepo } from "../../rest/repositories/create-simple-graph-repo";
+import {
+  CreateGraphRepo,
+  ICreateGraphConfig,
+} from "../../rest/repositories/create-graph-repo";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../domain/graph";
@@ -41,137 +30,67 @@ import AttachFileIcon from "@material-ui/icons/AttachFile";
 import ClearIcon from "@material-ui/icons/Clear";
 import { DropzoneArea } from "material-ui-dropzone";
 import { TransitionProps } from "@material-ui/core/transitions";
-import { GraphicEqSharp } from "@material-ui/icons";
+import GraphIdDescriptionInput from "./graph-id-description";
+import SchemaInput from "./schema-inputs";
+import StoreTypeSelect from "./storetype";
+import AddProxyGraphInput from "./add-proxy-graph-input";
+import GraphsTable from "./graphs-table";
 
 interface IState {
-  dialogIsOpen: boolean;
   graphId: string;
   description: string;
-  proxyStores: Graph[];
-  root: string;
+  schemaJson: string;
+  elements: string;
+  elementsFiles: Array<File>;
+  elementsFieldDisabled: boolean;
+  types: string;
+  typesFiles: Array<File>;
+  typesFieldDisabled: boolean;
+  dialogIsOpen: boolean;
   storeType: StoreType;
+  graphs: Graph[];
+  proxyURL: string;
+  root: string;
+  selectedGraphs: string[];
   outcome: AlertType | undefined;
   outcomeMessage: string;
   errors: Notifications;
-  graphs: Graph[];
-  elementsFiles: Array<File>;
-  typesFiles: Array<File>;
-  typesFieldDisabled: boolean;
-  elementsFieldDisabled: boolean;
-  elements: string;
-  types: string;
-  schemaJson: string;
-  proxyURL: string;
-  selectAllGraphs: boolean;
-  tempGraph: [];
 }
-const Transition = React.forwardRef((props: TransitionProps & { children?: React.ReactElement<any, any> }, ref: React.Ref<unknown>) => <Slide direction="up" ref={ref} {...props} />);
+
+const Transition = React.forwardRef(
+  (
+    props: TransitionProps & { children?: React.ReactElement<any, any> },
+    ref: React.Ref<unknown>
+  ) => <Slide direction="up" ref={ref} {...props} />
+);
+
 export default class AddGraph extends React.Component<{}, IState> {
   constructor(props: object) {
     super(props);
     this.state = {
-      schemaJson: "",
-      elements: "",
-      types: "",
-      elementsFieldDisabled: false,
-      elementsFiles: [],
-      typesFieldDisabled: false,
-      typesFiles: [],
-      dialogIsOpen: false,
       graphId: "",
       description: "",
+      schemaJson: "",
+      elements: "",
+      elementsFiles: [],
+      elementsFieldDisabled: false,
+      types: "",
+      typesFiles: [],
+      typesFieldDisabled: false,
+      dialogIsOpen: false,
       storeType: StoreType.MAPSTORE,
+      proxyURL: "",
+      root: "",
+      graphs: [],
+      selectedGraphs: [],
+      errors: new Notifications(),
       outcome: undefined,
       outcomeMessage: "",
-      proxyStores: [],
-      root: "",
-      errors: new Notifications(),
-      graphs: [],
-      proxyURL: "",
-      selectAllGraphs: false,
-      tempGraph: [],
     };
   }
 
-  private async submitNewGraph() {
-    const errors: Notifications = new Notifications();
-    const graphId = this.state.graphId;
-    const description = this.state.description;
-    const storeType = this.state.storeType;
-    const proxyStores = this.state.proxyStores;
-    const root = this.state.root;
-    if (this.state.storeType !== StoreType.FEDERATED_STORE) {
-      const elements = new ElementsSchema(this.state.elements);
-      const types = new TypesSchema(this.state.types);
-      errors.concat(elements.validate());
-      errors.concat(types.validate());
-      if (errors.isEmpty()) {
-        try {
-          await new CreateSimpleGraphRepo().create(
-            graphId,
-            description,
-            storeType,
-            proxyStores,
-            {
-              elements: elements.getElements(),
-              types: types.getTypes(),
-            },
-            root
-          );
-          this.setState({
-            outcome: AlertType.SUCCESS,
-            outcomeMessage: `${graphId} was successfully added`,
-          });
-          this.resetForm();
-        } catch (e) {
-          this.setState({
-            outcome: AlertType.FAILED,
-            outcomeMessage: `Failed to Add '${graphId}' Graph. ${e.toString()}`,
-          });
-        }
-      } else {
-        this.setState({ errors });
-      }
-    } else {
-      if (errors.isEmpty()) {
-        try {
-          await new CreateSimpleGraphRepo().createFederated(graphId, description, storeType, proxyStores, root);
-          this.setState({
-            outcome: AlertType.SUCCESS,
-            outcomeMessage: `${graphId} was successfully added`,
-          });
-          this.resetForm();
-        } catch (e) {
-          this.setState({
-            outcome: AlertType.FAILED,
-            outcomeMessage: `Failed to Add '${graphId}' Graph. ${e.toString()}`,
-          });
-        }
-      }
-    }
-  }
-
-  private async addProxyGraph(url: string) {
-    const newGraph:Graph = new Graph(url + "-graph", "Proxy Graph", this.state.proxyURL, "");
-    this.setState({
-      graphs: [...this.state.graphs, newGraph],
-      proxyStores: [...this.state.proxyStores, newGraph],
-      proxyURL: "",
-    });
-  }
-
-  private resetForm() {
-    this.setState({
-      graphId: "",
-      description: "",
-      elementsFiles: [],
-      typesFiles: [],
-      schemaJson: "",
-      elements: "",
-      types: "",
-      proxyURL: "",
-      proxyStores: [],
-    });
+  public async componentDidMount() {
+    this.getGraphs();
   }
 
   private async getGraphs() {
@@ -184,6 +103,64 @@ export default class AddGraph extends React.Component<{}, IState> {
       });
     }
   }
+
+  private async submitNewGraph() {
+    const { graphId, description, storeType, graphs, selectedGraphs } = this.state;
+    const errors: Notifications = new Notifications();
+
+    let config: ICreateGraphConfig;
+    if (storeType === StoreType.FEDERATED_STORE) {
+      const subGraphs: Array<{ graphId: string; url: string; }> = graphs
+        .filter((graph) => selectedGraphs.includes(graph.getId()))
+        .map((subGraph: Graph) => ({
+          graphId: subGraph.getId(),
+          url: subGraph.getUrl(),
+        }));
+      config = { proxyStores: subGraphs };
+
+    } else {
+      const elements = new ElementsSchema(this.state.elements);
+      const types = new TypesSchema(this.state.types);
+      errors.concat(elements.validate());
+      errors.concat(types.validate());
+      config = {
+        schema: { elements: elements.getElements(), types: types.getTypes() },
+      };
+    }
+
+    if (errors.isEmpty()) {
+      try {
+        await new CreateGraphRepo().create(graphId, description, storeType, config);
+        this.setState({
+          outcome: AlertType.SUCCESS,
+          outcomeMessage: `${graphId} was successfully added`,
+        });
+        this.resetForm();
+      } catch (e) {
+        this.setState({
+          outcome: AlertType.FAILED,
+          outcomeMessage: `Failed to Add '${graphId}' Graph. ${e.toString()}`,
+        });
+      }
+    } else {
+      this.setState({ errors });
+    }
+  }
+
+  private resetForm() {
+    this.setState({
+      graphId: "",
+      description: "",
+      elementsFiles: [],
+      typesFiles: [],
+      schemaJson: "",
+      elements: "",
+      types: "",
+      proxyURL: "",
+      selectedGraphs: [],
+    });
+  }
+
   private async uploadElementsFiles(elementsFiles: File[]) {
     this.setState({ elementsFiles: elementsFiles });
     if (elementsFiles.length > 0) {
@@ -214,39 +191,19 @@ export default class AddGraph extends React.Component<{}, IState> {
     }
   }
 
-  public async componentDidMount() {
-    this.getGraphs();
-  }
-
   private disableSubmitButton(): boolean {
+    const { storeType, elements, types, graphId, description, selectedGraphs } = this.state;
     return (
-      (this.state.storeType !== StoreType.FEDERATED_STORE && (!this.state.elements || !this.state.types)) ||
-      !this.state.graphId ||
-      !this.state.description ||
-      (this.state.storeType === StoreType.FEDERATED_STORE && !(this.state.proxyStores.length > 0))
+      (storeType !== StoreType.FEDERATED_STORE && (!elements || !types)) ||
+      !graphId ||
+      !description ||
+      (storeType === StoreType.FEDERATED_STORE && selectedGraphs.length === 0)
     );
   }
 
-  private disableProxyButton(): boolean {
-    return this.state.proxyURL === "";
-  }
-
-  private checkSelections(graph: Graph): boolean {
-    if (this.state.proxyStores.length === 0) {
-      return false;
-    }
-    if (this.state.proxyStores.includes(graph)) {
-      return true;
-    }
-    if (this.state.proxyStores.length === this.state.graphs.length) {
-      return true;
-    }
-    return false;
-  }
-
   public render() {
-    const { graphs } = this.state;
-    const isHidden = (): boolean => this.state.storeType !== StoreType.FEDERATED_STORE;
+    const federatedStoreIsNotSelected = (): boolean =>
+      this.state.storeType !== StoreType.FEDERATED_STORE;
     const openDialogBox = () => {
       this.setState({ dialogIsOpen: true });
     };
@@ -256,66 +213,84 @@ export default class AddGraph extends React.Component<{}, IState> {
 
     return (
       <main>
-        {this.state.outcome && <NotificationAlert alertType={this.state.outcome} message={this.state.outcomeMessage} />}
-        {!this.state.errors.isEmpty() && <NotificationAlert alertType={AlertType.FAILED} message={`Error(s): ${this.state.errors.errorMessage()}`} />}
+        {this.state.outcome && (
+          <NotificationAlert
+            alertType={this.state.outcome}
+            message={this.state.outcomeMessage}
+          />
+        )}
+        {!this.state.errors.isEmpty() && (
+          <NotificationAlert
+            alertType={AlertType.FAILED}
+            message={`Error(s): ${this.state.errors.errorMessage()}`}
+          />
+        )}
         <Toolbar />
+
         <Grid container justify="center">
           <Container component="main" maxWidth="xs">
             <CssBaseline />
             <div className={this.classes.paper}>
-              <Grid item xs={12} container direction="row" justify="center" alignItems="center" style={{ margin: 10 }}>
+              <Grid
+                item
+                xs={12}
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+                style={{ margin: 10 }}
+              >
                 <Typography variant="h4" align={"center"}>
                   Create Graph
                 </Typography>
               </Grid>
               <form className={this.classes.form} noValidate>
                 <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <TextField
-                      id="graph-id"
-                      label="Graph Id"
-                      variant="outlined"
-                      value={this.state.graphId}
-                      required
-                      fullWidth
-                      name="graph-id"
-                      autoComplete="graph-id"
-                      onChange={(event) => {
-                        this.setState({
-                          graphId: event.target.value,
-                        });
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      id="graph-description"
-                      style={{ width: 400 }}
-                      label="Graph Description"
-                      value={this.state.description}
-                      required
-                      multiline
-                      rows={5}
-                      name="graph-description"
-                      variant="outlined"
-                      onChange={(event) => {
-                        this.setState({
-                          description: event.target.value,
-                        });
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
-                  {isHidden() && (
+                  <GraphIdDescriptionInput
+                    graphIdValue={this.state.graphId}
+                    onChangeGraphId={(graphId) => this.setState({ graphId })}
+                    descriptionValue={this.state.description}
+                    onChangeDescription={(description) =>
+                      this.setState({ description })
+                    }
+                  />
+                  <Grid
+                    item
+                    xs={12}
+                    container
+                    direction="row"
+                    justify="flex-end"
+                    alignItems="center"
+                  />
+                  <StoreTypeSelect
+                    value={this.state.storeType}
+                    onChange={(storeType) => this.setState({ storeType })}
+                  />
+                  {federatedStoreIsNotSelected() && (
                     <>
-                      <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center">
-                        <Tooltip TransitionComponent={Zoom} title="Add Schema From File">
-                          <IconButton id="attach-file-button" onClick={openDialogBox}>
+                      <Grid
+                        item
+                        xs={12}
+                        container
+                        direction="row"
+                        justify="flex-end"
+                        alignItems="center"
+                      >
+                        <Tooltip
+                          TransitionComponent={Zoom}
+                          title="Add Schema From File"
+                        >
+                          <IconButton
+                            id="attach-file-button"
+                            onClick={openDialogBox}
+                          >
                             <AttachFileIcon />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip TransitionComponent={Zoom} title="Clear Schema">
+                        <Tooltip
+                          TransitionComponent={Zoom}
+                          title="Clear Schema"
+                        >
                           <IconButton
                             onClick={() =>
                               this.setState({
@@ -337,8 +312,16 @@ export default class AddGraph extends React.Component<{}, IState> {
                           aria-labelledby="alert-dialog-slide-title"
                           aria-describedby="alert-dialog-slide-description"
                         >
-                          <Grid container direction="row" justify="flex-end" alignItems="flex-start">
-                            <IconButton id="close-dropzone-button" onClick={closeDialogBox}>
+                          <Grid
+                            container
+                            direction="row"
+                            justify="flex-end"
+                            alignItems="flex-start"
+                          >
+                            <IconButton
+                              id="close-dropzone-button"
+                              onClick={closeDialogBox}
+                            >
                               <ClearIcon />
                             </IconButton>
                           </Grid>
@@ -347,7 +330,9 @@ export default class AddGraph extends React.Component<{}, IState> {
                             <Grid id="elements-drop-zone">
                               <DropzoneArea
                                 showPreviews={true}
-                                onChange={async (files) => this.uploadElementsFiles(files)}
+                                onChange={async (files) =>
+                                  this.uploadElementsFiles(files)
+                                }
                                 showPreviewsInDropzone={false}
                                 dropzoneText="Drag and drop elements.JSON"
                                 useChipsForPreview
@@ -366,7 +351,9 @@ export default class AddGraph extends React.Component<{}, IState> {
                             <Grid id="types-drop-zone">
                               <DropzoneArea
                                 showPreviews={true}
-                                onChange={async (files) => this.uploadTypesFiles(files)}
+                                onChange={async (files) =>
+                                  this.uploadTypesFiles(files)
+                                }
                                 showPreviewsInDropzone={false}
                                 dropzoneText="Drag and drop types.JSON"
                                 useChipsForPreview
@@ -385,168 +372,58 @@ export default class AddGraph extends React.Component<{}, IState> {
                           </DialogContent>
                         </Dialog>
                       </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          id="schema-elements"
-                          style={{ width: 400 }}
-                          value={this.state.elements}
-                          label="Schema Elements JSON"
-                          disabled={this.state.elementsFieldDisabled}
-                          required
-                          multiline
-                          rows={5}
-                          name="schema-elements"
-                          variant="outlined"
-                          onChange={(event) => {
-                            this.setState({
-                              elements: event.target.value,
-                            });
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          id="schema-types"
-                          style={{ width: 400 }}
-                          value={this.state.types}
-                          disabled={this.state.typesFieldDisabled}
-                          name="schema-types"
-                          label="Schema Types JSON"
-                          required
-                          multiline
-                          rows={5}
-                          variant="outlined"
-                          onChange={(event) => {
-                            this.setState({
-                              types: event.target.value,
-                            });
-                          }}
-                        />
-                      </Grid>
                     </>
                   )}
-                  <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
-                  <Grid item xs={12} id={"storetype-select-grid"}>
-                    <FormControl variant="outlined" id={"storetype-formcontrol"}>
-                      <InputLabel>Store Type</InputLabel>
-
-                      <Select
-                        label="Store Type"
-                        inputProps={{
-                          name: "Store Type",
-                          id: "outlined-age-native-simple",
-                        }}
-                        labelId="storetype-select-label"
-                        id="storetype-select"
-                        value={this.state.storeType}
-                        onChange={(event) => {
-                          this.setState({
-                            storeType: event.target.value as StoreType,
-                          });
-                        }}
-                      >
-                        <MenuItem value={StoreType.MAPSTORE}>Map Store</MenuItem>
-                        <MenuItem value={StoreType.ACCUMULO}>Accumulo</MenuItem>
-                        <MenuItem value={StoreType.FEDERATED_STORE}>Federated Store</MenuItem>
-                      </Select>
-                      <FormHelperText>Set to Map Store by default</FormHelperText>
-                    </FormControl>
-                  </Grid>
+                  <SchemaInput
+                    hide={!federatedStoreIsNotSelected()}
+                    elementsValue={this.state.elements}
+                    onChangeElementsSchema={(elements) =>
+                      this.setState({ elements })
+                    }
+                    typesSchemaValue={this.state.types}
+                    onChangeTypesSchema={(types) => this.setState({ types })}
+                  />
+                  <Grid
+                    item
+                    xs={12}
+                    container
+                    direction="row"
+                    justify="flex-end"
+                    alignItems="center"
+                  />
                 </Grid>
               </form>
-              <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
-              {!isHidden() && (
-                <>
-                  <Grid item xs={12} id={"proxy-url-grid"}>
-                    <TextField
-                      id="proxy-url"
-                      label="Proxy URL"
-                      variant="outlined"
-                      value={this.state.proxyURL}
-                      fullWidth
-                      name="proxy-url"
-                      autoComplete="proxy-url"
-                      onChange={(event) => {
-                        this.setState({
-                          proxyURL: event.target.value,
-                        });
-                      }}
-                    />
-                    <FormHelperText>Enter URL for proxy store if not shown below</FormHelperText>
-                  </Grid>
-                  <Grid id="proxy-button-grid" container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
-                    <Button
-                      id="add-new-proxy-button"
-                      onClick={() => {
-                        this.addProxyGraph(this.state.proxyURL);
-                      }}
-                      startIcon={<AddCircleOutlineOutlinedIcon />}
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      className={this.classes.submit}
-                      disabled={this.disableProxyButton()}
-                    >
-                      Add Proxy Graph
-                    </Button>
-                  </Grid>
-                  <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
-                  <TableContainer>
-                    <Table size="medium" className={this.classes.table} aria-label="Graphs Table">
-                      <TableHead>
-                        <TableRow style={{ background: "#F4F2F2" }}>
-                          <TableCell component="th">Graph ID</TableCell>
-                          <TableCell align="center">Description</TableCell>
-                          <TableCell align="right">
-                            <Checkbox
-                              checked={this.state.graphs.length > 0 && this.state.proxyStores.length === this.state.graphs.length}
-                              onChange={(event) => {
-                                if (event.target.checked) {
-                                  this.setState({ proxyStores: this.state.graphs });
-                                } else {
-                                  this.setState({ proxyStores: [] });
-                                }
-                              }}
-                            />{" "}
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-
-                      <TableBody>
-                        {graphs.map((graph: Graph) => (
-                          <TableRow key={graph.getId()} hover>
-                            <TableCell scope="row">{graph.getId()}</TableCell>
-                            <TableCell align="center">{graph.getDescription()}</TableCell>
-                            <TableCell align="right" id={`${graph.getId()}-checkbox-cell`}>
-                              <Checkbox
-                                id={`${graph.getId()}-checkbox`}
-                                required
-                                checked={this.checkSelections(graph)}
-                                onChange={(event) => {
-                                  if (event.target.checked && !this.state.proxyStores.includes(graph)) {
-                                    this.setState({
-                                      proxyStores: [...this.state.proxyStores, graph],
-                                    });
-                                  } else {
-                                    const tempProxyStore = this.state.proxyStores.filter((obj) => obj.getId() !== graph.getId());
-                                    this.setState({
-                                      proxyStores: tempProxyStore,
-                                    });
-                                  }
-                                }}
-                              />
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                      {graphs.length === 0 && <caption>No Graphs.</caption>}
-                    </Table>
-                  </TableContainer>
-                </>
-              )}
+              <AddProxyGraphInput
+                hide={federatedStoreIsNotSelected()}
+                proxyURLValue={this.state.proxyURL}
+                onChangeProxyURL={(proxyURL) => this.setState({ proxyURL })}
+                onClickAddProxyGraph={(proxyGraph) =>
+                  this.setState({
+                    graphs: [...this.state.graphs, proxyGraph],
+                    selectedGraphs: [
+                      ...this.state.selectedGraphs,
+                      proxyGraph.getId(),
+                    ],
+                  })
+                }
+              />
+              <GraphsTable
+                hide={federatedStoreIsNotSelected()}
+                graphs={this.state.graphs}
+                selectedGraphs={this.state.selectedGraphs}
+                onClickCheckbox={(selectedGraphs) =>
+                  this.setState({ selectedGraphs })
+                }
+              />
             </div>
           </Container>
-          <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
+          <Grid
+            container
+            style={{ margin: 10 }}
+            direction="row"
+            justify="center"
+            alignItems="center"
+          >
             <Button
               id="add-new-graph-button"
               onClick={() => {
