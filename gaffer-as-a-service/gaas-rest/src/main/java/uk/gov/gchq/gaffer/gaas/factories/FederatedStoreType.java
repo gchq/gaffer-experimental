@@ -40,9 +40,5 @@ public class FederatedStoreType implements StoreType {
             return this;
         }
 
-        public AbstractStoreTypeBuilder setSchema(final Object schema) {
-            gafferSpecBuilder.setSchema(schema);
-            return this;
-        }
     }
 }

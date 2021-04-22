@@ -32,6 +32,10 @@ abstract class AbstractStoreTypeBuilder {
         gafferSpecBuilder.setGraphId(graphId);
         return this;
     }
+    public AbstractStoreTypeBuilder setDescription(String description) {
+        gafferSpecBuilder.setDescription(description);
+        return this;
+    }
 
     public AbstractStoreTypeBuilder setStoreSpec(List<String> storeSpec) {
         gafferSpecBuilder.setStoreSpec(storeSpec);
@@ -39,7 +43,12 @@ abstract class AbstractStoreTypeBuilder {
     }
 
     public AbstractStoreTypeBuilder setStoreProperties(final String storeType) {
-        gafferSpecBuilder.setStoreProperties(storeType);
+        gafferSpecBuilder.setStoreType(storeType);
+        return this;
+    }
+
+    public AbstractStoreTypeBuilder setSchema(final Object schema) {
+        gafferSpecBuilder.setSchema(schema);
         return this;
     }
     // ingest etc

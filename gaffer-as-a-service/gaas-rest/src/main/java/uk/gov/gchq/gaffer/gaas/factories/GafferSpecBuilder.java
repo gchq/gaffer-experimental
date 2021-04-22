@@ -153,7 +153,7 @@ public class GafferSpecBuilder {
         this.schema = schema;
     }
 
-    public void setStoreProperties(final String storeType) {
+    public void setStoreType(final String storeType) {
         this.storeType = storeType;
     }
     // ingest, etc
@@ -162,7 +162,7 @@ public class GafferSpecBuilder {
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(this.graphId, GRAPH_ID_KEY);
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
-        storeSpec.forEach(o -> gafferSpec.putNestedObject(o, "store", "spec"));
+        //storeSpec.forEach(o -> gafferSpec.putNestedObject(o, "store", "spec"));
         // etc
         return gafferSpec;
     }

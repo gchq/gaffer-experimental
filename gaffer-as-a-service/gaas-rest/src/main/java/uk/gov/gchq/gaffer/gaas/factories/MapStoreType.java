@@ -18,7 +18,16 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
+import com.google.gson.Gson;
+import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import static uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties.CACHE_SERVICE_CLASS;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
+import static uk.gov.gchq.gaffer.store.StoreProperties.JOB_TRACKER_ENABLED;
 
 public class MapStoreType implements StoreType {
     @Override
@@ -32,7 +41,7 @@ public class MapStoreType implements StoreType {
     }
 
     private static class MapStoreSpecBuilder extends AbstractStoreTypeBuilder {
-
+        private Object schema;
         @Override
         public AbstractStoreTypeBuilder setStoreSpec(List<String> storeSpec) {
             this.gafferSpecBuilder.setStoreSpec(storeSpec);
@@ -41,7 +50,23 @@ public class MapStoreType implements StoreType {
 
         public AbstractStoreTypeBuilder setSchema(final Object schema) {
             gafferSpecBuilder.setSchema(schema);
+            this.schema=schema;
             return this;
+        }
+
+        private Map<String, Object> getDefaultMapStoreProperties() {
+            final Map<String, Object> mapStoreProperties = new HashMap<>();
+            mapStoreProperties.put(CACHE_SERVICE_CLASS, HashMapCacheService.class.getName());
+            mapStoreProperties.put(JOB_TRACKER_ENABLED, true);
+            return mapStoreProperties;
+        }
+
+        @Override
+        public GafferSpec build() {
+            final GafferSpec gafferSpec = super.build();
+            gafferSpec.putNestedObject(new Gson().toJson(schema), SCHEMA_FILE_KEY);
+            gafferSpec.putNestedObject(getDefaultMapStoreProperties(), STORE_PROPERTIES_KEY);
+            return gafferSpec;
         }
     }
 }

@@ -48,6 +48,11 @@ public class GaaSCreateRequestBody implements Serializable {
         this.storeType = storeType;
         this.schema = schema;
     }
+    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType) {
+        this.graphId = graphId;
+        this.description = description;
+        this.storeType = storeType;
+    }
 
     public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final Map<String, Object> schema, final String proxyHost, final String proxyContextRoot) {
         this.graphId = graphId;

@@ -18,8 +18,11 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
+import com.google.gson.Gson;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import java.util.List;
+import java.util.Map;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 
 public class AccumuloStoreType implements StoreType {
     @Override
@@ -33,7 +36,7 @@ public class AccumuloStoreType implements StoreType {
     }
 
     private static class AccumuloStoreSpecBuilder extends AbstractStoreTypeBuilder {
-
+        private Object schema;
         @Override
         public AbstractStoreTypeBuilder setStoreSpec(List<String> storeSpec) {
             // don't want to store so just return
@@ -42,12 +45,14 @@ public class AccumuloStoreType implements StoreType {
 
         public AbstractStoreTypeBuilder setSchema(final Object schema) {
             gafferSpecBuilder.setSchema(schema);
+            this.schema=schema;
             return this;
         }
 
         @Override
         public GafferSpec build() {
             final GafferSpec gafferSpec = super.build();
+            gafferSpec.putNestedObject(new Gson().toJson(schema),SCHEMA_FILE_KEY);
             gafferSpec.putNestedObject("true", "accumulo", "enabled");
             return gafferSpec;
         }
