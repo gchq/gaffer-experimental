@@ -22,7 +22,6 @@ import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.SpringContext;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import java.util.ArrayList;
 import java.util.List;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;

@@ -26,12 +26,12 @@ public class StoreTypeFactory {
     private final List<StoreType> storeTypeManager;
 
     @Autowired
-    public StoreTypeFactory(List<StoreType> storeTypeManager) {
+    public StoreTypeFactory(final List<StoreType> storeTypeManager) {
         this.storeTypeManager = storeTypeManager;
     }
 
-    public AbstractStoreTypeBuilder getBuilder(GaaSCreateRequestBody graph) {
-        for (StoreType storeSpecManagers : storeTypeManager) {
+    public AbstractStoreTypeBuilder getBuilder(final GaaSCreateRequestBody graph) {
+        for (final StoreType storeSpecManagers : storeTypeManager) {
             if (graph.getStoreType().equalsIgnoreCase(storeSpecManagers.getType())) {
                 return storeSpecManagers.getStoreSpecBuilder(graph);
             }

@@ -38,7 +38,7 @@ public class GafferSpecBuilder {
         this.graphId = graphId;
     }
 
-    public void setDescription(final String description){
+    public void setDescription(final String description) {
         this.description = description;
     }
 

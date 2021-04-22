@@ -1,19 +1,17 @@
 /*
+ * Copyright 2020 Crown Copyright
  *
- *  * Copyright 2021 Crown Copyright
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *     http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package uk.gov.gchq.gaffer.gaas.factories;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import java.util.List;
-import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 
 @Service
@@ -38,15 +35,15 @@ public class AccumuloStoreType implements StoreType {
         return new AccumuloStoreSpecBuilder(graph);
     }
 
-    private static class AccumuloStoreSpecBuilder extends AbstractStoreTypeBuilder {
+    private static final class AccumuloStoreSpecBuilder extends AbstractStoreTypeBuilder {
         private GaaSCreateRequestBody graph;
 
-        public AccumuloStoreSpecBuilder(GaaSCreateRequestBody graph) {
+        private AccumuloStoreSpecBuilder(final GaaSCreateRequestBody graph) {
             this.graph = graph;
         }
 
         @Override
-        public AbstractStoreTypeBuilder setStoreSpec(List<String> storeSpec) {
+        public AbstractStoreTypeBuilder setStoreSpec(final List<String> storeSpec) {
             // don't want to store so just return
             return this;
         }
