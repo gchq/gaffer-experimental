@@ -37,6 +37,7 @@ public class GaaSGraph {
         return this;
     }
 
+
     public GaaSGraph url(final String url) {
         this.url = url;
         return this;
@@ -70,5 +71,16 @@ public class GaaSGraph {
 
     public List<String> getProblems() {
         return problems;
+    }
+
+    @Override
+    public String toString() {
+        return "GaaSGraph{" +
+                "graphId='" + graphId + '\'' +
+                ", description='" + description + '\'' +
+                ", url='" + url + '\'' +
+                ", status=" + status +
+                ", problems=" + problems +
+                '}';
     }
 }

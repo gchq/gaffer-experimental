@@ -128,6 +128,11 @@ import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import java.util.List;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 public class GafferSpecBuilder {
 
@@ -149,10 +154,6 @@ public class GafferSpecBuilder {
         this.storeSpec = storeSpec;
     }
 
-    public void setSchema(final Object schema) {
-        this.schema = schema;
-    }
-
     public void setStoreType(final String storeType) {
         this.storeType = storeType;
     }
@@ -162,6 +163,9 @@ public class GafferSpecBuilder {
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(this.graphId, GRAPH_ID_KEY);
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
+        gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
+        gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
+        gafferSpec.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
         //storeSpec.forEach(o -> gafferSpec.putNestedObject(o, "store", "spec"));
         // etc
         return gafferSpec;
