@@ -19,6 +19,7 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import com.google.gson.Gson;
+import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
 import static uk.gov.gchq.gaffer.store.StoreProperties.JOB_TRACKER_ENABLED;
 
+@Service
 public class MapStoreType implements StoreType {
     @Override
     public String getType() {

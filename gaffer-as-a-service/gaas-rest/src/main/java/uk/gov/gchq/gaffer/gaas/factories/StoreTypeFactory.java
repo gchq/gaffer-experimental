@@ -26,11 +26,6 @@ public class StoreTypeFactory {
 
     @Autowired
     public StoreTypeFactory(List<StoreType> storeTypeManager) {
-        storeTypeManager.add(new AccumuloStoreType());
-        storeTypeManager.add(new FederatedStoreType());
-        storeTypeManager.add(new ProxyStoreType());
-        storeTypeManager.add(new MapStoreType());
-
         this.storeTypeManager = storeTypeManager;
     }
 

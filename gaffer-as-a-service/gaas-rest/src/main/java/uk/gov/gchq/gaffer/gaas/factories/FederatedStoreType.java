@@ -18,8 +18,10 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
+import org.springframework.stereotype.Service;
 import java.util.List;
 
+@Service
 public class FederatedStoreType implements StoreType {
     @Override
     public String getType() {

@@ -19,11 +19,13 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import com.google.gson.Gson;
+import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import java.util.List;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 
+@Service
 public class AccumuloStoreType implements StoreType {
     @Override
     public String getType() {
