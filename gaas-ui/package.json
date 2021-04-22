@@ -44,6 +44,7 @@
     "react-scripts": "^4.0.0",
     "react-testing-library": "latest",
     "react-toastify": "^6.1.0",
+    "reaviz": "^10.1.0",
     "statuses": "^2.0.1"
   },
   "devDependencies": {
