@@ -31,11 +31,17 @@ public class FederatedStoreType implements StoreType {
         return new FederatedStoreSpecBuilder();
     }
 
+
     private static class FederatedStoreSpecBuilder extends AbstractStoreTypeBuilder {
 
         @Override
         public AbstractStoreTypeBuilder setStoreSpec(List<String> storeSpec) {
             this.gafferSpecBuilder.setStoreSpec(storeSpec);
+            return this;
+        }
+
+        public AbstractStoreTypeBuilder setSchema(final Object schema) {
+            gafferSpecBuilder.setSchema(schema);
             return this;
         }
     }

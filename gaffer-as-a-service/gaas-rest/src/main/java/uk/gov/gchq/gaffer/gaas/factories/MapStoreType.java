@@ -38,5 +38,10 @@ public class MapStoreType implements StoreType {
             this.gafferSpecBuilder.setStoreSpec(storeSpec);
             return this;
         }
+
+        public AbstractStoreTypeBuilder setSchema(final Object schema) {
+            gafferSpecBuilder.setSchema(schema);
+            return this;
+        }
     }
 }

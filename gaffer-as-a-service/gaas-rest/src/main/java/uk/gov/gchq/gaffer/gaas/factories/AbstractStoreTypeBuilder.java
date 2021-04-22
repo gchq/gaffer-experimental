@@ -28,8 +28,8 @@ abstract class AbstractStoreTypeBuilder {
         this.gafferSpecBuilder = new GafferSpecBuilder();
     }
 
-    public AbstractStoreTypeBuilder setId(String id) {
-        gafferSpecBuilder.setId(id);
+    public AbstractStoreTypeBuilder setGraphId(String graphId) {
+        gafferSpecBuilder.setGraphId(graphId);
         return this;
     }
 
@@ -38,6 +38,10 @@ abstract class AbstractStoreTypeBuilder {
         return this;
     }
 
+    public AbstractStoreTypeBuilder setStoreProperties(final String storeType) {
+        gafferSpecBuilder.setStoreProperties(storeType);
+        return this;
+    }
     // ingest etc
 
     public GafferSpec build() {

@@ -40,6 +40,11 @@ public class AccumuloStoreType implements StoreType {
             return this;
         }
 
+        public AbstractStoreTypeBuilder setSchema(final Object schema) {
+            gafferSpecBuilder.setSchema(schema);
+            return this;
+        }
+
         @Override
         public GafferSpec build() {
             final GafferSpec gafferSpec = super.build();

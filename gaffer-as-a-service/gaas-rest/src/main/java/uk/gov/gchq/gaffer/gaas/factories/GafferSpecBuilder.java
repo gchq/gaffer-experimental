@@ -131,12 +131,14 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 
 public class GafferSpecBuilder {
 
-    private String id;
+    private String graphId;
     private String description;
+    private Object schema;
+    private String storeType;
     private List<String> storeSpec;
 
-    public void setId(final String id) {
-        this.id = id;
+    public void setGraphId(final String graphId) {
+        this.graphId = graphId;
     }
 
     public void setDescription(final String description){
@@ -147,13 +149,18 @@ public class GafferSpecBuilder {
         this.storeSpec = storeSpec;
     }
 
+    public void setSchema(final Object schema) {
+        this.schema = schema;
+    }
 
-
+    public void setStoreProperties(final String storeType) {
+        this.storeType = storeType;
+    }
     // ingest, etc
 
     public GafferSpec build() {
         final GafferSpec gafferSpec = new GafferSpec();
-        gafferSpec.putNestedObject(this.id, GRAPH_ID_KEY);
+        gafferSpec.putNestedObject(this.graphId, GRAPH_ID_KEY);
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
         storeSpec.forEach(o -> gafferSpec.putNestedObject(o, "store", "spec"));
         // etc
