@@ -19,7 +19,16 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.proxystore.ProxyStore;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
+import static uk.gov.gchq.gaffer.proxystore.ProxyProperties.GAFFER_CONTEXT_ROOT;
+import static uk.gov.gchq.gaffer.proxystore.ProxyProperties.GAFFER_HOST;
+import static uk.gov.gchq.gaffer.store.StoreProperties.STORE_CLASS;
 
 @Service
 public class ProxyStoreType implements StoreType {
@@ -29,11 +38,16 @@ public class ProxyStoreType implements StoreType {
     }
 
     @Override
-    public AbstractStoreTypeBuilder getStoreSpecBuilder() {
-        return new ProxyStoreSpecBuilder();
+    public AbstractStoreTypeBuilder getStoreSpecBuilder(final GaaSCreateRequestBody graph) {
+        return new ProxyStoreSpecBuilder(graph);
     }
 
     private static class ProxyStoreSpecBuilder extends AbstractStoreTypeBuilder {
+        private GaaSCreateRequestBody graph;
+
+        public ProxyStoreSpecBuilder(GaaSCreateRequestBody graph) {
+            this.graph = graph;
+        }
 
         @Override
         public AbstractStoreTypeBuilder setStoreSpec(List<String> storeSpec) {
@@ -41,9 +55,23 @@ public class ProxyStoreType implements StoreType {
             return this;
         }
 
-        public AbstractStoreTypeBuilder setSchema(final Object schema) {
-            gafferSpecBuilder.setSchema(schema);
-            return this;
+        private Map<String, Object> getDefaultProxyStoreProperties(final String host, final String contextRoot) {
+            final Map<String, Object> proxyStoreProperties = new HashMap<>();
+            proxyStoreProperties.put(STORE_CLASS, ProxyStore.class.getName());
+            proxyStoreProperties.put(GAFFER_HOST, host);
+            if (contextRoot != null) {
+                proxyStoreProperties.put(GAFFER_CONTEXT_ROOT, contextRoot);
+                // else, let Gaffer handle the default context root when not specified in GaaS REST request
+            }
+            return proxyStoreProperties;
         }
+
+        @Override
+        public GafferSpec build() {
+            final GafferSpec gafferSpec = super.build();
+            gafferSpec.putNestedObject(getDefaultProxyStoreProperties(graph.getProxyHost(),graph.getProxyContextRoot()), STORE_PROPERTIES_KEY);
+            return gafferSpec;
+        }
+
     }
 }

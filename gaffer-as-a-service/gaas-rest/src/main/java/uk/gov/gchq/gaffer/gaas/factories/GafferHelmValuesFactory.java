@@ -62,11 +62,9 @@ public final class GafferHelmValuesFactory {
         storeType.add(graph.getStoreType());
 
         StoreTypeFactory storeTypeFactory = context.getBean(StoreTypeFactory.class);
-        final AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(graph.getStoreType())
+        final AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(graph)
                 .setGraphId(graph.getGraphId())
-                .setDescription(graph.getDescription())
-                .setSchema(graph.getSchema());
-
+                .setDescription(graph.getDescription());
         return  builder.build();
 
     }

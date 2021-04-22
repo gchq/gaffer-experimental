@@ -19,7 +19,18 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
+import uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
+import static uk.gov.gchq.gaffer.jsonserialisation.JSONSerialiser.JSON_SERIALISER_MODULES;
+import static uk.gov.gchq.gaffer.store.StoreProperties.STORE_CLASS;
+import static uk.gov.gchq.gaffer.store.StoreProperties.STORE_PROPERTIES_CLASS;
 
 @Service
 public class FederatedStoreType implements StoreType {
@@ -29,12 +40,17 @@ public class FederatedStoreType implements StoreType {
     }
 
     @Override
-    public AbstractStoreTypeBuilder getStoreSpecBuilder() {
-        return new FederatedStoreSpecBuilder();
+    public AbstractStoreTypeBuilder getStoreSpecBuilder(final GaaSCreateRequestBody graph) {
+        return new FederatedStoreSpecBuilder(graph);
     }
 
 
     private static class FederatedStoreSpecBuilder extends AbstractStoreTypeBuilder {
+        private GaaSCreateRequestBody graph;
+
+        public FederatedStoreSpecBuilder(GaaSCreateRequestBody graph) {
+            this.graph = graph;
+        }
 
         @Override
         public AbstractStoreTypeBuilder setStoreSpec(List<String> storeSpec) {
@@ -42,5 +58,19 @@ public class FederatedStoreType implements StoreType {
             return this;
         }
 
+        private Map<String, Object> getDefaultFederatedStoreProperties() {
+            final Map<String, Object> federatedStoreProperties = new HashMap<>();
+            federatedStoreProperties.put(STORE_CLASS, FederatedStore.class.getName());
+            federatedStoreProperties.put(STORE_PROPERTIES_CLASS, FederatedStoreProperties.class.getName());
+            federatedStoreProperties.put(JSON_SERIALISER_MODULES, SketchesJsonModules.class.getName());
+            return federatedStoreProperties;
+        }
+
+        @Override
+        public GafferSpec build() {
+            final GafferSpec gafferSpec = super.build();
+            gafferSpec.putNestedObject(getDefaultFederatedStoreProperties(), STORE_PROPERTIES_KEY);
+            return gafferSpec;
+        }
     }
 }

@@ -21,6 +21,7 @@ package uk.gov.gchq.gaffer.gaas.factories;
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import java.util.List;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
@@ -33,28 +34,28 @@ public class AccumuloStoreType implements StoreType {
     }
 
     @Override
-    public AbstractStoreTypeBuilder getStoreSpecBuilder() {
-        return new AccumuloStoreSpecBuilder();
+    public AbstractStoreTypeBuilder getStoreSpecBuilder(final GaaSCreateRequestBody graph) {
+        return new AccumuloStoreSpecBuilder(graph);
     }
 
     private static class AccumuloStoreSpecBuilder extends AbstractStoreTypeBuilder {
-        private Object schema;
+        private GaaSCreateRequestBody graph;
+
+        public AccumuloStoreSpecBuilder(GaaSCreateRequestBody graph) {
+            this.graph = graph;
+        }
+
         @Override
         public AbstractStoreTypeBuilder setStoreSpec(List<String> storeSpec) {
             // don't want to store so just return
             return this;
         }
 
-        public AbstractStoreTypeBuilder setSchema(final Object schema) {
-            gafferSpecBuilder.setSchema(schema);
-            this.schema=schema;
-            return this;
-        }
 
         @Override
         public GafferSpec build() {
             final GafferSpec gafferSpec = super.build();
-            gafferSpec.putNestedObject(new Gson().toJson(schema),SCHEMA_FILE_KEY);
+            gafferSpec.putNestedObject(new Gson().toJson(graph.getSchema()), SCHEMA_FILE_KEY);
             gafferSpec.putNestedObject("true", "accumulo", "enabled");
             return gafferSpec;
         }

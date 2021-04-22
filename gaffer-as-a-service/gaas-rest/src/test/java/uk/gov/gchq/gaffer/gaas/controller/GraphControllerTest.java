@@ -357,7 +357,7 @@ public class GraphControllerTest extends AbstractTest {
     @Test
     public void createGraph_shouldReturn400BadRequestWhenStoreTypeIsInvalidType() throws Exception {
         final String gaaSCreateRequestBody = "{" +
-                "\"graphId\":\"invalid-store-type\"," +
+                "\"graphId\":\"invalidstoretype\"," +
                 "\"description\":\"any\"," +
                 "\"storeType\":\"INVALID\"" +
                 "}";

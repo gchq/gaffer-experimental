@@ -47,10 +47,6 @@ abstract class AbstractStoreTypeBuilder {
         return this;
     }
 
-    public AbstractStoreTypeBuilder setSchema(final Object schema) {
-        gafferSpecBuilder.setSchema(schema);
-        return this;
-    }
     // ingest etc
 
     public GafferSpec build() {

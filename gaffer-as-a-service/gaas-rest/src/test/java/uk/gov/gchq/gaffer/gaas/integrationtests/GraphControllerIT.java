@@ -87,7 +87,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
         mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)

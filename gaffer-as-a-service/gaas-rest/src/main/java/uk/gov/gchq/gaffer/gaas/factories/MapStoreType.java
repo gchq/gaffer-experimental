@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,23 +39,24 @@ public class MapStoreType implements StoreType {
     }
 
     @Override
-    public AbstractStoreTypeBuilder getStoreSpecBuilder() {
-        return new MapStoreSpecBuilder();
+    public AbstractStoreTypeBuilder getStoreSpecBuilder(final GaaSCreateRequestBody graph) {
+        return new MapStoreSpecBuilder(graph);
     }
 
     private static class MapStoreSpecBuilder extends AbstractStoreTypeBuilder {
-        private Object schema;
+        private GaaSCreateRequestBody graph;
+
+        public MapStoreSpecBuilder(GaaSCreateRequestBody graph) {
+            this.graph = graph;
+        }
+
         @Override
         public AbstractStoreTypeBuilder setStoreSpec(List<String> storeSpec) {
             this.gafferSpecBuilder.setStoreSpec(storeSpec);
             return this;
         }
 
-        public AbstractStoreTypeBuilder setSchema(final Object schema) {
-            gafferSpecBuilder.setSchema(schema);
-            this.schema=schema;
-            return this;
-        }
+
 
         private Map<String, Object> getDefaultMapStoreProperties() {
             final Map<String, Object> mapStoreProperties = new HashMap<>();
@@ -66,7 +68,7 @@ public class MapStoreType implements StoreType {
         @Override
         public GafferSpec build() {
             final GafferSpec gafferSpec = super.build();
-            gafferSpec.putNestedObject(new Gson().toJson(schema), SCHEMA_FILE_KEY);
+            gafferSpec.putNestedObject(new Gson().toJson(graph.getSchema()), SCHEMA_FILE_KEY);
             gafferSpec.putNestedObject(getDefaultMapStoreProperties(), STORE_PROPERTIES_KEY);
             return gafferSpec;
         }

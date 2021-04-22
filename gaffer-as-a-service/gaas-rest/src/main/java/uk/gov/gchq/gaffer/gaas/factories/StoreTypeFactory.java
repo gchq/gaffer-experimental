@@ -18,6 +18,7 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import java.util.List;
 
 @Service
@@ -29,10 +30,10 @@ public class StoreTypeFactory {
         this.storeTypeManager = storeTypeManager;
     }
 
-    public AbstractStoreTypeBuilder getBuilder(String type) {
+    public AbstractStoreTypeBuilder getBuilder(GaaSCreateRequestBody graph) {
         for (StoreType storeSpecManagers : storeTypeManager) {
-            if (type.equalsIgnoreCase(storeSpecManagers.getType())) {
-                return storeSpecManagers.getStoreSpecBuilder();
+            if (graph.getStoreType().equalsIgnoreCase(storeSpecManagers.getType())) {
+                return storeSpecManagers.getStoreSpecBuilder(graph);
             }
         }
         throw new RuntimeException("Fail");
