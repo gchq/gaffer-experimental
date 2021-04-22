@@ -111,6 +111,4 @@ public class CRDClientTest {
 
     assertEquals("mockNameSpac", allNameSpaces.get(0));
   }
-
-
 }

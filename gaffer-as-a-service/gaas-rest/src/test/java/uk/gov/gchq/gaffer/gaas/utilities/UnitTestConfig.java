@@ -27,6 +27,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
+import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
@@ -65,6 +66,11 @@ public class UnitTestConfig {
     @Bean
     public CreateGraphService createGraphService() {
         return new CreateGraphService();
+    }
+
+    @Bean
+    public CreateFederatedStoreGraphService createFederatedStoreGraphService() {
+        return new CreateFederatedStoreGraphService();
     }
 
     @Bean
