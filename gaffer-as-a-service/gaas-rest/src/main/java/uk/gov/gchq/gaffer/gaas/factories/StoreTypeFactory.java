@@ -36,6 +36,6 @@ public class StoreTypeFactory {
                 return storeSpecManagers.getStoreSpecBuilder(graph);
             }
         }
-        throw new RuntimeException("Fail");
+        throw new RuntimeException("Invalid Store Type");
     }
 }

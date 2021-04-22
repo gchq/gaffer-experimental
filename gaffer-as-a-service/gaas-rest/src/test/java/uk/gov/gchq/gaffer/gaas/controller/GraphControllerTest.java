@@ -357,23 +357,17 @@ public class GraphControllerTest extends AbstractTest {
 
     @Disabled
     public void createGraph_shouldReturn400BadRequestWhenStoreTypeIsInvalidType() throws Exception {
-        final String gaaSCreateRequestBody = "{" +
-                "\"graphId\":\"invalidstoretype\"," +
-                "\"description\":\"any\"," +
-                "\"storeType\":\"INVALID\"" +
-                "}";
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "invalidStore", getSchema());
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+        doThrow(new RuntimeException("Invalid Store Type")).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
-                .content(gaaSCreateRequestBody)).andReturn();
-        System.out.println(result.getResponse().getContentAsString());
+                .content(inputJson)).andReturn();
 
-        assertEquals(400, result.getResponse().getStatus());
-        final String expected = "{\"title\":\"InvalidFormatException\",\"detail\":\"Cannot deserialize value of type " +
-                "`uk.gov.gchq.gaffer.gaas.model.StoreType` from String \\\"INVALID\\\": not one of the values accepted " +
-                "for Enum class: [PROXY_STORE, MAPSTORE, FEDERATED_STORE, ACCUMULO]\\n at [Source: (PushbackInputStream); " +
-                "line: 1, column: 65] (through reference chain: uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody[\\\"storeType\\\"])\"}";
+        assertEquals(500, result.getResponse().getStatus());
+        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"Invalid Store Type\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
     }
 
