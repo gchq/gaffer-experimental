@@ -20,8 +20,8 @@ describe("When ViewGraphs mounts", () => {
         await component.update();
         await component.update();
 
-        expect(component.find("thead").text()).toBe("Graph IDDescriptionStatusURLActions");
-        expect(component.find("tbody").text()).toBe("testId1deployedUPhttp://testId-1.app");
+        expect(component.find("thead").text()).toBe("Graph IDStatusURLActions");
+        expect(component.find("tbody").text()).toBe("testId1UPhttp://testId-1.app");
         expect(component.find("caption").length).toBe(0);
     });
     it("should display No Graphs caption when ", async () => {
@@ -51,7 +51,7 @@ describe("When ViewGraphs mounts", () => {
 
         const table = component.find("table");
         expect(table).toHaveLength(1);
-        expect(table.find("tbody").text()).toBe("roadTrafficDEPLOYEDUPhttp://roadTraffic.graph");
+        expect(table.find("tbody").text()).toBe("roadTrafficUPhttp://roadTraffic.graph");
         expect(component.find("div#notification-alert").length).toBe(0);
     });
 });
@@ -62,12 +62,12 @@ describe("Refresh Button", () => {
 
         const component = mount(<ViewGraph />);
         await component.update();
-        expect(component.find("tbody").text()).toBe("roadTrafficDEPLOYINGUPhttp://roadtraffic.graph");
+        expect(component.find("tbody").text()).toBe("roadTrafficUPhttp://roadtraffic.graph");
 
         mockGetGraphsToReturn([new Graph("roadTraffic", "FINISHED DEPLOYMENT", "http://roadTraffic.app", "UP", GraphType.GAAS_GRAPH)]);
         await clickRefreshButton(component);
 
-        expect(component.find("tbody").text()).toBe("roadTrafficFINISHED DEPLOYMENTUPhttp://roadTraffic.app");
+        expect(component.find("tbody").text()).toBe("roadTrafficUPhttp://roadTraffic.app");
     });
     it("should reset an existing error message when refresh button is clicked", async () => {
         mockGetAllGraphsThrowsError(() => {
@@ -94,7 +94,7 @@ describe("Delete Button", () => {
         const component = mount(<ViewGraph />);
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("peachesACTIVEUPhttp://peaches.graph");
+        expect(component.find("tbody").text()).toBe("peachesUPhttp://peaches.graph");
 
         mockGetGraphsToReturn([new Graph("peaches", "DELETED", "peaches URL", "UP", GraphType.GAAS_GRAPH)]);
         component.find("tbody").find("button#view-graphs-delete-button-0").simulate("click");
@@ -110,7 +110,7 @@ describe("Delete Button", () => {
         const component = mount(<ViewGraph />);
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("applesACTIVEUPapples URLpearsINACTIVEUPpears URL");
+        expect(component.find("tbody").text()).toBe("applesUPapples URLpearsUPpears URL");
 
         mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL", "UP", GraphType.GAAS_GRAPH), new Graph("pears", "DELETED", "pears URL", "UP", GraphType.GAAS_GRAPH)]);
         component.find("tbody").find("button#view-graphs-delete-button-1").simulate("click");
@@ -126,7 +126,7 @@ describe("Delete Button", () => {
         const component = mount(<ViewGraph />);
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("applesACTIVEUPapples URLpearsINACTIVEUPpears URL");
+        expect(component.find("tbody").text()).toBe("applesUPapples URLpearsUPpears URL");
 
         mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "http://apples.graph", "UP", GraphType.GAAS_GRAPH), new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", GraphType.GAAS_GRAPH)]);
         component.find("tbody").find("button#view-graphs-delete-button-1").simulate("click");
@@ -134,7 +134,7 @@ describe("Delete Button", () => {
         await component.update();
         await component.update();
 
-        expect(component.find("tbody").text()).toBe("applesACTIVEUPhttp://apples.graphpearsDELETION IN PROGRESSUPhttp://pears.graph");
+        expect(component.find("tbody").text()).toBe("applesUPhttp://apples.graphpearsUPhttp://pears.graph");
     });
     it("should notify error and not refresh graphs when delete request returns server error", async () => {
         mockDeleteGraphRepoToThrowError(() => {
@@ -145,7 +145,7 @@ describe("Delete Button", () => {
         const component = mount(<ViewGraph />);
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("bananasINACTIVEUPbananas URL");
+        expect(component.find("tbody").text()).toBe("bananasUPbananas URL");
 
         component.find("tbody").find("button#view-graphs-delete-button-0").simulate("click");
         await component.update();
