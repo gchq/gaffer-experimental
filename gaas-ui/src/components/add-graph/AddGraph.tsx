@@ -14,8 +14,8 @@ import {
   Zoom,
 } from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
+import AddRoundedIcon from "@material-ui/icons/AddRounded";
 import React from "react";
-import { Notifications } from "../../domain/notifications";
 import { StoreType } from "../../domain/store-type";
 import {
   CreateGraphRepo,
@@ -267,7 +267,17 @@ export default class AddGraph extends React.Component<{}, IState> {
                       >
                         <Tooltip
                           TransitionComponent={Zoom}
-                          title="Add Schema From File"
+                          title="Add Empty Elements and Types Schema Templates"
+                        >
+                          <IconButton
+                            onClick={()=>{this.setState({elements: "{\"entities\":{}, \"edges\":{}}", types: "{\"types\":{}}"})}}
+                          >
+                            <AddRoundedIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip
+                          TransitionComponent={Zoom}
+                          title="Add Elements and Types Schemas From File"
                         >
                           <IconButton
                             id="attach-file-button"
@@ -278,12 +288,12 @@ export default class AddGraph extends React.Component<{}, IState> {
                         </Tooltip>
                         <Tooltip
                           TransitionComponent={Zoom}
-                          title="Clear Schema"
+                          title="Clear All Schemas"
                         >
                           <IconButton
                             onClick={() =>
                               this.setState({
-                                schemaJson: "",
+                                elements: "", elementsFiles: [], types: "", typesFiles: []
                               })
                             }
                           >
