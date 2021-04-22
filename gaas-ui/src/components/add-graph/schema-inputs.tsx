@@ -1,6 +1,8 @@
 import React, { ReactElement } from "react";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
+import { TypesSchema } from "../../domain/types-schema";
+import { ElementsSchema } from "../../domain/elements-schema";
 
 interface IProps {
   hide: boolean;
@@ -36,6 +38,8 @@ export default function SchemaInput(props: IProps): ReactElement {
               name="schema-elements"
               variant="outlined"
               onChange={(event) => onChangeElementsSchema(event.target.value)}
+              error={elementsValue !== "" && !new ElementsSchema(elementsValue).validate().isEmpty()}
+              helperText={elementsValue !== "" ? new ElementsSchema(elementsValue).validate().errorMessage() : ""}
             />
           </Grid>
           <Grid item xs={12}>
@@ -50,6 +54,8 @@ export default function SchemaInput(props: IProps): ReactElement {
               rows={5}
               variant="outlined"
               onChange={(event) => onChangeTypesSchema(event.target.value)}
+              error={typesSchemaValue !== "" && !new TypesSchema(typesSchemaValue).validate().isEmpty()}
+              helperText={typesSchemaValue !== "" ? new TypesSchema(typesSchemaValue).validate().errorMessage() : ""}
             />
           </Grid>
         </>

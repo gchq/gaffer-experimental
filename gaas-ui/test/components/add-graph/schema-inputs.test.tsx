@@ -66,6 +66,45 @@ describe("Types Schema", () => {
   });
 });
 
+describe("Elements Schema Error Handling", ()=>{
+  it("should not display errors when input is empty",()=>{
+    const component = mount(
+      <SchemaInput
+        hide={hide}
+        elementsValue={""}
+        onChangeElementsSchema={elementsMockCallBack}
+        typesSchemaValue={""}
+        onChangeTypesSchema={elementsMockCallBack}
+      />
+    );
+
+    expect(component.find("label#schema-elements-label").props().className).not.toContain("Mui-error");
+    expect(component.find("p#schema-elements-helper-text").length).toBe(0);
+
+    expect(component.find("label#schema-types-label").props().className).not.toContain("Mui-error");
+    expect(component.find("p#schema-types-helper-text").length).toBe(0);
+  });
+  it("should display errors when invalid JSON",()=>{
+    const component = mount(
+      <SchemaInput
+        hide={hide}
+        elementsValue={"Not json"}
+        onChangeElementsSchema={elementsMockCallBack}
+        typesSchemaValue={JSON.stringify({ invalid : {} })}
+        onChangeTypesSchema={elementsMockCallBack}
+      />
+    );
+
+    expect(component.find("label#schema-elements-label").props().className).toContain("Mui-error");
+    expect(component.find("p#schema-elements-helper-text").props().className).toContain("Mui-error");
+    expect(component.find("p#schema-elements-helper-text").text()).toBe("Elements Schema is not valid JSON");
+
+    expect(component.find("label#schema-types-label").props().className).toContain("Mui-error");
+    expect(component.find("p#schema-types-helper-text").props().className).toContain("Mui-error");
+    expect(component.find("p#schema-types-helper-text").text()).toBe("Types Schema does not contain property types, [\"invalid\"] are invalid Types schema root properties");
+  });
+})
+
 function inputElementsJson(elementsObject: object): void {
   component.find("textarea#schema-elements").simulate("change", {
     target: { value: JSON.stringify(elementsObject) },
