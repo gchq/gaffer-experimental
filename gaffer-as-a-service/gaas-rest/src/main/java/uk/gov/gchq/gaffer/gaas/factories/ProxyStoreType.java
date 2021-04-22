@@ -20,18 +20,18 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import java.util.List;
 
-public class FederatedStoreType implements StoreType {
+public class ProxyStoreType implements StoreType {
     @Override
     public String getType() {
-        return "federatedStore";
+        return "proxyStore";
     }
 
     @Override
     public AbstractStoreTypeBuilder getStoreSpecBuilder() {
-        return new FederatedStoreSpecBuilder();
+        return new ProxyStoreSpecBuilder();
     }
 
-    private static class FederatedStoreSpecBuilder extends AbstractStoreTypeBuilder {
+    private static class ProxyStoreSpecBuilder extends AbstractStoreTypeBuilder {
 
         @Override
         public AbstractStoreTypeBuilder setStoreSpec(List<String> storeSpec) {
