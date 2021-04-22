@@ -76,7 +76,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testAddGraphNotNullShouldReturn400() throws Exception {
-        final String jsonRequest = "{\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
+        final String jsonRequest = "{\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -118,7 +118,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testGraphIdWithSpacesShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -130,7 +130,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -141,7 +141,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testGraphIdWitCapitalLettersShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
