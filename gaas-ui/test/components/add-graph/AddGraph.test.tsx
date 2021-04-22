@@ -214,26 +214,7 @@ describe("AddGraph UI component", () => {
       expect(dropZone.props().accept).toBe("application/json");
     });
   });
-  describe("Schema validation integration", () => {
-    it("should display validation errors as an Alert Notification", async () => {
-      inputGraphId("OK Graph");
-      inputDescription("description");
-      inputElements({ blah: "blahhhhh" });
-      inputTypes({ blah: "blahhhhh" });
 
-      await clickSubmit();
-
-      const expectedMessage =
-        "Error(s): Elements Schema does not contain property entities, " +
-        "Elements Schema does not contain property edges, " +
-        '["blah"] are invalid Elements schema root properties, ' +
-        "Types Schema does not contain property types, " +
-        '["blah"] are invalid Types schema root properties';
-      expect(wrapper.find("div#notification-alert").text()).toBe(
-        expectedMessage
-      );
-    });
-  });
   describe("Add Graph Button", () => {
     it("should be disabled when Graph Name and Graph Description fields are empty", () => {
       expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
@@ -299,6 +280,52 @@ describe("AddGraph UI component", () => {
       inputGraphId("G");
       inputDescription("test");
       inputTypes(types);
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when MAP STORE selected and elements schema has error", () => {
+      inputGraphId("G");
+      inputDescription("test");
+      selectStoreType(StoreType.MAPSTORE);
+      inputElements({ invalid: "json" });
+      inputTypes(types);
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when MAP STORE selectedand types schema has error", () => {
+      inputGraphId("G");
+      inputDescription("test");
+      selectStoreType(StoreType.MAPSTORE);
+      inputElements(elements);
+      inputTypes({ invalid: "json" });
+      
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when the elements schema has error", () => {
+      inputGraphId("G");
+      inputDescription("test");
+      selectStoreType(StoreType.ACCUMULO);
+      inputElements({ invalid: "json" });
+      inputTypes(types);
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when the types schema has error", () => {
+      inputGraphId("G");
+      inputDescription("test");
+      selectStoreType(StoreType.ACCUMULO);
+      inputElements(elements);
+      inputTypes({ invalid: "json" });
+      
 
       expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
         true

@@ -14,8 +14,8 @@ import {
   Zoom,
 } from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
+import AddRoundedIcon from "@material-ui/icons/AddRounded";
 import React from "react";
-import { Notifications } from "../../domain/notifications";
 import { StoreType } from "../../domain/store-type";
 import {
   CreateGraphRepo,
@@ -54,7 +54,6 @@ interface IState {
   selectedGraphs: string[];
   outcome: AlertType | undefined;
   outcomeMessage: string;
-  errors: Notifications;
 }
 
 const Transition = React.forwardRef(
@@ -83,7 +82,6 @@ export default class AddGraph extends React.Component<{}, IState> {
       root: "",
       graphs: [],
       selectedGraphs: [],
-      errors: new Notifications(),
       outcome: undefined,
       outcomeMessage: "",
     };
@@ -106,7 +104,6 @@ export default class AddGraph extends React.Component<{}, IState> {
 
   private async submitNewGraph() {
     const { graphId, description, storeType, graphs, selectedGraphs } = this.state;
-    const errors: Notifications = new Notifications();
 
     let config: ICreateGraphConfig;
     if (storeType === StoreType.FEDERATED_STORE) {
@@ -121,14 +118,13 @@ export default class AddGraph extends React.Component<{}, IState> {
     } else {
       const elements = new ElementsSchema(this.state.elements);
       const types = new TypesSchema(this.state.types);
-      errors.concat(elements.validate());
-      errors.concat(types.validate());
+      elements.validate();
+      types.validate();
       config = {
         schema: { elements: elements.getElements(), types: types.getTypes() },
       };
     }
 
-    if (errors.isEmpty()) {
       try {
         await new CreateGraphRepo().create(graphId, description, storeType, config);
         this.setState({
@@ -142,9 +138,6 @@ export default class AddGraph extends React.Component<{}, IState> {
           outcomeMessage: `Failed to Add '${graphId}' Graph. ${e.toString()}`,
         });
       }
-    } else {
-      this.setState({ errors });
-    }
   }
 
   private resetForm() {
@@ -197,7 +190,9 @@ export default class AddGraph extends React.Component<{}, IState> {
       (storeType !== StoreType.FEDERATED_STORE && (!elements || !types)) ||
       !graphId ||
       !description ||
-      (storeType === StoreType.FEDERATED_STORE && selectedGraphs.length === 0)
+      (storeType === StoreType.FEDERATED_STORE && selectedGraphs.length === 0) ||
+      (storeType !== StoreType.FEDERATED_STORE && !new ElementsSchema(elements).validate().isEmpty()) || 
+      (storeType !== StoreType.FEDERATED_STORE && !new TypesSchema(types).validate().isEmpty())
     );
   }
 
@@ -217,12 +212,6 @@ export default class AddGraph extends React.Component<{}, IState> {
           <NotificationAlert
             alertType={this.state.outcome}
             message={this.state.outcomeMessage}
-          />
-        )}
-        {!this.state.errors.isEmpty() && (
-          <NotificationAlert
-            alertType={AlertType.FAILED}
-            message={`Error(s): ${this.state.errors.errorMessage()}`}
           />
         )}
         <Toolbar />
@@ -278,7 +267,17 @@ export default class AddGraph extends React.Component<{}, IState> {
                       >
                         <Tooltip
                           TransitionComponent={Zoom}
-                          title="Add Schema From File"
+                          title="Add Empty Elements and Types Schema Templates"
+                        >
+                          <IconButton
+                            onClick={()=>{this.setState({elements: "{\"entities\":{}, \"edges\":{}}", types: "{\"types\":{}}"})}}
+                          >
+                            <AddRoundedIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip
+                          TransitionComponent={Zoom}
+                          title="Add Elements and Types Schemas From File"
                         >
                           <IconButton
                             id="attach-file-button"
@@ -289,12 +288,12 @@ export default class AddGraph extends React.Component<{}, IState> {
                         </Tooltip>
                         <Tooltip
                           TransitionComponent={Zoom}
-                          title="Clear Schema"
+                          title="Clear All Schemas"
                         >
                           <IconButton
                             onClick={() =>
                               this.setState({
-                                schemaJson: "",
+                                elements: "", elementsFiles: [], types: "", typesFiles: []
                               })
                             }
                           >
