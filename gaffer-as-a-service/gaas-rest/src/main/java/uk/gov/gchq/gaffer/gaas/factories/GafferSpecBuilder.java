@@ -147,6 +147,8 @@ public class GafferSpecBuilder {
         this.storeSpec = storeSpec;
     }
 
+
+
     // ingest, etc
 
     public GafferSpec build() {

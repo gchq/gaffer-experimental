@@ -61,7 +61,7 @@ public class CRDClientIT {
 
     private static final String TEST_GRAPH_ID = "test-graph-id";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
-    private static final StoreType ACCUMULO_ENABLED = StoreType.ACCUMULO;
+    private static final String ACCUMULO_ENABLED = "accumuloStore";
 
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {

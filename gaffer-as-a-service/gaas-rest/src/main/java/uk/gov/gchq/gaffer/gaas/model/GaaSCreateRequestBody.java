@@ -34,7 +34,7 @@ public class GaaSCreateRequestBody implements Serializable {
     @NotBlank(message = "Description should not be empty")
     private String description;
     @NotNull(message = "\"storeType\" must be defined. Valid Store Types supported are MAPSTORE, ACCUMULO, FEDERATED_STORE or PROXY_STORE")
-    private StoreType storeType;
+    private String storeType;
     private String proxyHost;
     private String proxyContextRoot;
     private Map<String, Object> schema;
@@ -42,14 +42,14 @@ public class GaaSCreateRequestBody implements Serializable {
     public GaaSCreateRequestBody() {
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType, final Map<String, Object> schema) {
+    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final Map<String, Object> schema) {
         this.graphId = graphId;
         this.description = description;
         this.storeType = storeType;
         this.schema = schema;
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final StoreType storeType, final Map<String, Object> schema, final String proxyHost, final String proxyContextRoot) {
+    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final Map<String, Object> schema, final String proxyHost, final String proxyContextRoot) {
         this.graphId = graphId;
         this.description = description;
         this.storeType = storeType;
@@ -70,7 +70,7 @@ public class GaaSCreateRequestBody implements Serializable {
         return schema;
     }
 
-    public StoreType getStoreType() {
+    public String getStoreType() {
         return storeType;
     }
 

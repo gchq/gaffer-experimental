@@ -17,8 +17,10 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
+@Service
 public class StoreTypeFactory {
     private final List<StoreType> storeTypeManager;
 
