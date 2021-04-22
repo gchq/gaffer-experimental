@@ -115,7 +115,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdIsNull_shouldReturn400() throws Exception {
-        final String graphRequest = "{\"description\":\"password\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"description\":\"password\",\"storeType\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -129,7 +129,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdHasSpaces_isInvalidAndShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -143,7 +143,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdHasDashes_isValidAndShouldReturn201() throws Exception {
-        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -157,7 +157,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_graphIdWithSpecialCharacters_isInvalidAndShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"a description\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"a description\",\"storeType\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -171,7 +171,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdHasCapitalLetters_shouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -185,7 +185,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenDescriptionIsEmptyOnly_return400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"storeType\":\"accumuloStore\"}";
 
         final MvcResult response = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
