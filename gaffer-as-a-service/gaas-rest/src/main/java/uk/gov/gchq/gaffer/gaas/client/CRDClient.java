@@ -62,10 +62,10 @@ public class CRDClient {
             throw from(e);
         }
     }
-    public GaaSGraph getCRD(final String graphId) throws ApiException {
-
-        return customObjectsApi.getNamespacedCustomObject(GROUP, VERSION,NAMESPACE, PLURAL,graphId);
-    }
+//    public GaaSGraph getCRD(final String graphId) throws ApiException {
+//
+//        return customObjectsApi.getNamespacedCustomObject(GROUP, VERSION,NAMESPACE, PLURAL,graphId);
+//    }
 
     public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
         try {

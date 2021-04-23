@@ -49,6 +49,15 @@ public final class GaaSGraphsFactory {
                         .problems(getProblems(gaffer)))
                 .collect(Collectors.toList());
     }
+    public static GaaSGraph fromGaffer (final Object response) {
+        final Gaffer gaffer = CommonUtil.convertToCustomObject(response,Gaffer.class);
+        return new GaaSGraph()
+                .graphId(gaffer.getSpec().getNestedObject(GRAPH_ID_KEY).toString())
+                .description(getDescription(gaffer))
+                .url(getUrl(gaffer))
+                .status(getStatus(gaffer))
+                .problems(getProblems(gaffer));
+    }
 
     private static String getDescription(final Gaffer gaffer) {
         return gaffer.getSpec().getNestedObject(DESCRIPTION_KEY) != null ? gaffer.getSpec().getNestedObject(DESCRIPTION_KEY).toString() : DEFAULT_VALUE;

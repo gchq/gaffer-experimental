@@ -35,6 +35,19 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 public class GaaSGraphsFactoryTest {
 
     @Test
+    public void shouldGetGraphWhenGraphIdIsGivenToIt() {
+        final GafferSpec gafferSpec = getFullValuesGafferSpec();
+        final GafferStatus gafferStatus = new GafferStatus().restApiStatus(RestApiStatus.UP);
+        final Gaffer gaffer = new Gaffer().spec(gafferSpec).status(gafferStatus);
+
+        final GaaSGraph actual = GaaSGraphsFactory.fromGaffer(gaffer);
+
+        assertEquals(new GaaSGraph().graphId("full-values-gaffer").description("This is a test gaffer"), actual);
+
+        
+    }
+
+    @Test
     public void gafferHasValidUpStatus_returnsGaaSGraphWithUpStatus() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferStatus gafferStatus = new GafferStatus().restApiStatus(RestApiStatus.UP);
@@ -144,6 +157,7 @@ public class GaaSGraphsFactoryTest {
 
         assertEquals(0, GaaSGraphsFactory.from(gafferList).size());
     }
+
 
     private GafferSpec getFullValuesGafferSpec() {
         final GafferSpec graphSpec = new GafferSpec();
