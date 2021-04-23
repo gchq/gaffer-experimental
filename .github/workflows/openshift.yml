@@ -52,7 +52,7 @@ env:
   OPENSHIFT_NAMESPACE: "kai-dev"
 
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
-  APP_NAME: ""
+  APP_NAME: "gaas-rest-pipeline-build"
   TAG: "latest"
 
 on:
