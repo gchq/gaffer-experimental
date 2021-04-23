@@ -57,18 +57,10 @@ export function MainGraphTableRow(props: IProps) {
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box margin={1}>
-                <Typography variant="h6" gutterBottom component="div">
-                  Details
-                </Typography>
                 <Table size="small" aria-label="grapg-details">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Description</TableCell>
-                    </TableRow>
-                </TableHead>
                 <TableBody>
                     <TableRow>
-                        <TableCell component="th" scope="row">{row.getDescription()}</TableCell>
+                        <TableCell component="th" scope="row">Description: {row.getDescription()}</TableCell>
                     </TableRow>
                 </TableBody>
               </Table>
