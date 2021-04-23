@@ -8,6 +8,7 @@ import {
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import {Graph} from "../../domain/graph";
 import { GraphType } from "../../domain/graph-type";
+import { StoreType } from "../../domain/store-type";
 
 interface IProps {
     hide: boolean;
@@ -25,7 +26,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
     }= props;
 
     function makeProxyGraph(url: string): Graph {
-        return new Graph(url + "-graph", "Proxy Graph", url, "n/a", GraphType.PROXY_GRAPH);
+        return new Graph(url + "-graph", "Proxy Graph", url, "n/a", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
     }
 
     return (

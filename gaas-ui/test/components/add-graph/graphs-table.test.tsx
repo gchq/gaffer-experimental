@@ -3,12 +3,13 @@ import React from "react";
 import GraphsTable from "../../../src/components/add-graph/graphs-table";
 import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
+import { StoreType } from "../../../src/domain/store-type";
 
 let component: ReactWrapper;
 const graphs = [
-  new Graph("test-graph", "A description", "", "", GraphType.GAAS_GRAPH),
-  new Graph("test-graph2", "Another description", "", "", GraphType.GAAS_GRAPH),
-  new Graph("another-graph3", "Some description", "", "", GraphType.GAAS_GRAPH),
+  new Graph("test-graph", "A description", "", "", StoreType.MAPSTORE, GraphType.GAAS_GRAPH),
+  new Graph("test-graph2", "Another description", "", "", StoreType.FEDERATED_STORE, GraphType.GAAS_GRAPH),
+  new Graph("another-graph3", "Some description", "", "", StoreType.ACCUMULO, GraphType.GAAS_GRAPH),
 ];
 const selectedGraphs = ["test-graph"];
 const onClickCheckboxMockCallback = jest.fn();
