@@ -2,7 +2,8 @@ export interface IGraphByIdResponse {
     graphId: string;
     description: string;
     url: string;
-    status: string;
+    status: "UP" | "DOWN";
+    storeType: "FEDERATED_STORE" | "MAPSTORE" | "ACCUMULO";
 }
 
 export interface IAllGraphsResponse extends Array<IGraphByIdResponse> {}

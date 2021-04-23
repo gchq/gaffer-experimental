@@ -15,13 +15,14 @@ describe("Get Graph By Id Repo", () => {
             graphId: "graph-1",
             description: "DEPLOYED",
             url: "graph-1 URL",
+            storeType: "MAPSTORE",
             status: "UP"
         };
         mock.onGet("/graphs/graph-1").reply(200, apiResponse);
 
         const actual: Graph = await repo.get("graph-1");
 
-        const expected: Graph = new Graph("graph-1", "DEPLOYED", "graph-1 URL", "UP", GraphType.GAAS_GRAPH);
+        const expected: Graph = new Graph("graph-1", "DEPLOYED", "graph-1 URL", "UP", StoreType.MAPSTORE, GraphType.GAAS_GRAPH);
         expect(actual).toEqual(expected);
     });
 

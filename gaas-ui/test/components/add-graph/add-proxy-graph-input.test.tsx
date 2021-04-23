@@ -3,6 +3,7 @@ import React from "react";
 import AddProxyGraphInput from "../../../src/components/add-graph/add-proxy-graph-input";
 import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
+import { StoreType } from "../../../src/domain/store-type";
 
 let component: ReactWrapper;
 const onChangeProxyURLMockCallback = jest.fn();
@@ -47,6 +48,7 @@ describe("GraphsTable UI Component", () => {
       "Proxy Graph",
       "http://url.value",
       "n/a",
+      StoreType.PROXY_STORE,
       GraphType.PROXY_GRAPH
     );
     expect(onClickAddProxyMockCallback).toHaveBeenCalledWith(expected);
