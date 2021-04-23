@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
 import uk.gov.gchq.gaffer.controller.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
@@ -64,10 +65,10 @@ public class CRDClient {
             throw from(e);
         }
     }
-//    public GaaSGraph getCRD(final String graphId) throws ApiException {
-//
-//        return customObjectsApi.getNamespacedCustomObject(GROUP, VERSION,NAMESPACE, PLURAL,graphId);
-//    }
+    public GaaSGraph getCRD(final String graphId) throws ApiException {
+
+        return from(CommonUtil.convertToCustomObject( customObjectsApi.getNamespacedCustomObject(GROUP, VERSION,NAMESPACE, PLURAL,graphId), Gaffer.class));
+    }
 
     public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
         try {

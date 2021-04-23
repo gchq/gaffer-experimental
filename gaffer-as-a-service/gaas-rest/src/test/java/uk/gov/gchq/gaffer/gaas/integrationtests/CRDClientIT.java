@@ -17,6 +17,7 @@
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -106,6 +107,13 @@ public class CRDClientIT {
         assertEquals("Bad Request", exception.getTitle());
         final String expected = "Kubernetes Cluster Error: (BadRequest) Gaffer in version \"v1\" cannot be handled as a Gaffer: unmarshalerDecoder: Object 'Kind' is missing in '{}', error found in #2 byte of ...|{}|..., bigger context ...|{}|...";
         assertEquals(expected, exception.getMessage());
+    }
+
+    @Test
+    public void getCRD_WhenGraphIdIsGiven_GraphExists() throws ApiException, GaaSRestApiException {
+        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema()));
+        crdClient.createCRD(gafferRequest);
+        assertEquals("test-graph-id",crdClient.getCRD("test-graph-id").getGraphId());
     }
 
     @Test

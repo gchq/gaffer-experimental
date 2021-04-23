@@ -15,20 +15,27 @@
  */
 package uk.gov.gchq.gaffer.gaas.services;
 
+import io.kubernetes.client.openapi.ApiException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @UnitTest
@@ -39,6 +46,13 @@ class CreateFederatedStoreGraphServiceTest {
 
     @MockBean
     private CRDClient crdClient;
+
+    private static final String TEST_GRAPH_ID = "testgraphid";
+    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
+    private static final String TEST_GRAPH_URL = "graph-namespace.k8s.my.cluster/rest";
+    private static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
+    private static final List<String> TEST_GRAPH_PROBLEMS = new ArrayList<String>(Arrays.asList("There is problem with this Graph"));
+
     /*TODO: Take in a request,
        Create a federated graph
        Get the URL
@@ -46,22 +60,30 @@ class CreateFederatedStoreGraphServiceTest {
     *  */
     @Test
     public void shouldSendTheCorrectRequestToTheCRDClientWhenCreatingAFederatedGraph() throws GaaSRestApiException {
-        service.createFederatedStore(new GaaSCreateRequestBody("federatedGraph", "federated-graph-description", StoreType.FEDERATED_STORE));
+        service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.FEDERATED_STORE));
 
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
         final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
-        assertEquals("federatedGraph", gafferRequestBody.getMetadata().getName());
+        assertEquals(TEST_GRAPH_ID, gafferRequestBody.getMetadata().getName());
 
         final GafferSpec spec = gafferRequestBody.getSpec();
-        assertEquals("federatedGraph", spec.getNestedObject("graph", "config", "graphId"));
-        assertEquals("federated-graph-description", spec.getNestedObject("graph", "config", "description"));
+        assertEquals(TEST_GRAPH_ID, spec.getNestedObject("graph", "config", "graphId"));
+        assertEquals(TEST_GRAPH_DESCRIPTION, spec.getNestedObject("graph", "config", "description"));
     }
 
     @Test
-    public void shouldGetTheURLOfTheCreatedFederatedStoreGraph() throws GaaSRestApiException {
-        service.createFederatedStore(new GaaSCreateRequestBody("federatedGraph", "federated-graph-description", StoreType.FEDERATED_STORE));
+    public void shouldGetTheURLOfTheCreatedFederatedStoreGraph() throws GaaSRestApiException, ApiException {
+        final GaaSGraph graph = new GaaSGraph()
+                .graphId(TEST_GRAPH_ID)
+                .description(TEST_GRAPH_DESCRIPTION)
+                .url(TEST_GRAPH_URL)
+                .status(TEST_GRAPH_STATUS)
+                .problems(TEST_GRAPH_PROBLEMS);
+        when(crdClient.getCRD(TEST_GRAPH_ID)).thenReturn(graph);
 
+        final String federatedGraphURL = service.getFederatedGraphURL(TEST_GRAPH_ID);
 
+        assertEquals(TEST_GRAPH_URL, federatedGraphURL);
     }
 }

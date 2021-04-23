@@ -15,6 +15,7 @@
  */
 package uk.gov.gchq.gaffer.gaas.services;
 
+import io.kubernetes.client.openapi.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
@@ -31,6 +32,9 @@ public class CreateFederatedStoreGraphService {
 
     public void createFederatedStore(GaaSCreateRequestBody federatedGraph) throws GaaSRestApiException {
         crdClient.createCRD(makeGafferHelmValues(federatedGraph));
+    }
+    public String getFederatedGraphURL(String graphId) throws ApiException {
+        return crdClient.getCRD(graphId).getUrl();
     }
 
     private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
