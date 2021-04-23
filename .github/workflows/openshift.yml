@@ -35,27 +35,31 @@ name: OpenShift
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
 env:
   # ⬇️ EDIT with your registry and registry path.
-  REGISTRY: docker.io/kitkat520
+  REGISTRY: quay.io/<username>
   # ⬇️ EDIT with your registry username.
-  REGISTRY_USER: kitkat520
+  REGISTRY_USER: <username>
   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
   # ⬇️ EDIT to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-  CLUSTER_URL: ${{ secrets.CLUSTER_URL }}
+
   # ⬇️ EDIT with the port your application should be accessible on.
   APP_PORT: 8080
 
   # ⬇️ EDIT if you wish to set the kube context's namespace after login. Leave blank to use the default namespace.
-  OPENSHIFT_NAMESPACE: "kai-dev"
+  OPENSHIFT_NAMESPACE: ""
 
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
   APP_NAME: ""
   TAG: ""
 
-on: [push, pull_request]
+on:
+  # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
+  push:
+    # Edit to the branch(es) you want to build and deploy on each push.
+    branches: [ master ]
 
 jobs:
   openshift-ci-cd:
@@ -68,13 +72,6 @@ jobs:
         SELECTOR: ${{ steps.deploy-and-expose.outputs.selector }}
 
     steps:
-    - name: Extract branch name
-      shell: bash
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      id: extract_branch
-    - name: Add mask
-      run: |
-        echo "::add-mask::$CLUSTER_URL" 
     - name: Check if secrets exists
       uses: actions/github-script@v3
       with:
@@ -116,20 +113,20 @@ jobs:
     - name: Determine tag
       if: env.TAG == ''
       run: |
-        echo "TAG=${{ steps.extract_branch.outputs.branch }}" | tee -a $GITHUB_ENV
+        echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
 
     # https://github.com/redhat-actions/buildah-build#readme
     - name: Build from Dockerfile
       id: image-build
       uses: redhat-actions/buildah-build@v2
       with:
-        image: ${{ steps.extract_branch.outputs.branch }}-rest
-        tags: latest
+        image: ${{ env.APP_NAME }}
+        tags: ${{ env.TAG }}
         # If you don't have a dockerfile, see:
         # https://github.com/redhat-actions/buildah-build#scratch-build-inputs
         # Otherwise, point this to your Dockerfile relative to the repository root.
         dockerfiles: |
-          ./Dockerfile.gaas-rest
+          ./Dockerfile
 
     # https://github.com/redhat-actions/push-to-registry#readme
     - name: Push to registry
@@ -159,6 +156,23 @@ jobs:
 
     # This step should create a deployment, service, and route to run your app and expose it to the internet.
     # https://github.com/redhat-actions/oc-new-app#readme
-    - name: Helm install
+    - name: Create and expose app
+      id: deploy-and-expose
+      uses: redhat-actions/oc-new-app@v1
+      with:
+        app_name: ${{ env.APP_NAME }}
+        image: ${{ steps.push-to-registry.outputs.registry-path }}
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+        port: ${{ env.APP_PORT }}
+
+    - name: View application route
       run: |
-        helm upgrade --install ${{ steps.extract_branch.outputs.branch }}-rest gaffer-as-a-service/gaas-rest/deploy/helm --set image.repository=${{ env.REGISTRY }}/${{ steps.extract_branch.outputs.branch }}-rest --namespace ${OPENSHIFT_NAMESPACE}
+        [[ -n ${{ env.ROUTE }} ]] || (echo "Determining application route failed in previous step"; exit 1)
+        echo "======================== Your application is available at: ========================"
+        echo ${{ env.ROUTE }}
+        echo "==================================================================================="
+        echo
+        echo "Your app can be taken down with: \"oc delete all --selector='${{ env.SELECTOR }}'\""
+      env:
+        ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
+        SELECTOR: ${{ steps.deploy-and-expose.outputs.selector }}
