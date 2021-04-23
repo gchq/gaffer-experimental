@@ -44,7 +44,7 @@ env:
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-
+  CLUSTER_URL: ${{ secrets.CLUSTER_URL }}
   # ⬇️ EDIT with the port your application should be accessible on.
   APP_PORT: 8080
 
