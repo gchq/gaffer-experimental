@@ -35,27 +35,31 @@ name: OpenShift
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
 env:
   # ⬇️ EDIT with your registry and registry path.
-  REGISTRY: docker.io/kitkat520
+  REGISTRY: quay.io/<username>
   # ⬇️ EDIT with your registry username.
-  REGISTRY_USER: kitkat520
+  REGISTRY_USER: <username>
   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
   # ⬇️ EDIT to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-  CLUSTER_URL: ${{ secrets.CLUSTER_URL }}
+
   # ⬇️ EDIT with the port your application should be accessible on.
   APP_PORT: 8080
 
   # ⬇️ EDIT if you wish to set the kube context's namespace after login. Leave blank to use the default namespace.
-  OPENSHIFT_NAMESPACE: "kai-dev"
+  OPENSHIFT_NAMESPACE: ""
 
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
   APP_NAME: ""
   TAG: ""
 
-on: [push, pull_request]
+on:
+  # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
+  push:
+    # Edit to the branch(es) you want to build and deploy on each push.
+    branches: [ master ]
 
 jobs:
   openshift-ci-cd:
@@ -68,9 +72,6 @@ jobs:
         SELECTOR: ${{ steps.deploy-and-expose.outputs.selector }}
 
     steps:
-    - name: Add mask
-      run: |
-        echo "::add-mask::$CLUSTER_URL" 
     - name: Check if secrets exists
       uses: actions/github-script@v3
       with:
@@ -125,7 +126,7 @@ jobs:
         # https://github.com/redhat-actions/buildah-build#scratch-build-inputs
         # Otherwise, point this to your Dockerfile relative to the repository root.
         dockerfiles: |
-          ./Dockerfile.gaas-rest
+          ./Dockerfile
 
     # https://github.com/redhat-actions/push-to-registry#readme
     - name: Push to registry
