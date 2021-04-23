@@ -49,7 +49,7 @@ env:
   APP_PORT: 8080
 
   # ⬇️ EDIT if you wish to set the kube context's namespace after login. Leave blank to use the default namespace.
-  OPENSHIFT_NAMESPACE: ""
+  OPENSHIFT_NAMESPACE: "kai-dev"
 
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
   APP_NAME: ""
