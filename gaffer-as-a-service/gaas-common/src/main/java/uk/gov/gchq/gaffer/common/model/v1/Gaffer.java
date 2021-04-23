@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.controller.model.v1;
+package uk.gov.gchq.gaffer.common.model.v1;
 
 import com.google.gson.annotations.SerializedName;
 import io.kubernetes.client.common.KubernetesObject;
@@ -22,34 +22,29 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_API_VERSION;
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_KIND;
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_METADATA;
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_SPEC;
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_STATUS;
+import uk.gov.gchq.gaffer.common.util.Constants;
 
 /**
  * Value object for Gaffer
  */
 public class Gaffer implements KubernetesObject {
 
-    @SerializedName(SERIALISED_NAME_API_VERSION)
+    @SerializedName(Constants.SERIALISED_NAME_API_VERSION)
     private String apiVersion;
 
 
-    @SerializedName(SERIALISED_NAME_KIND)
+    @SerializedName(Constants.SERIALISED_NAME_KIND)
     private String kind;
 
-    @SerializedName(SERIALISED_NAME_METADATA)
+    @SerializedName(Constants.SERIALISED_NAME_METADATA)
     private V1ObjectMeta metadata;
 
 
-    @SerializedName(SERIALISED_NAME_SPEC)
+    @SerializedName(Constants.SERIALISED_NAME_SPEC)
     private GafferSpec spec;
 
 
-    @SerializedName(SERIALISED_NAME_STATUS)
+    @SerializedName(Constants.SERIALISED_NAME_STATUS)
     private GafferStatus status;
 
 

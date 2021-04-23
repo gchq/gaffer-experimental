@@ -19,7 +19,7 @@ package uk.gov.gchq.gaffer.gaas.factories;
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import java.util.HashMap;
 import java.util.Map;

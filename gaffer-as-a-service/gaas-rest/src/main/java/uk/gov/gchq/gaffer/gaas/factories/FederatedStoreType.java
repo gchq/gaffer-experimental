@@ -17,7 +17,7 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;

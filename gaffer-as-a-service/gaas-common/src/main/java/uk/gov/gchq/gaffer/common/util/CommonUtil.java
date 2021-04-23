@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.controller.util;
+package uk.gov.gchq.gaffer.common.util;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;

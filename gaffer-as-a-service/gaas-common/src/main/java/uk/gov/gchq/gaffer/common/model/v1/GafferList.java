@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.controller.model.v1;
+package uk.gov.gchq.gaffer.common.model.v1;
 
 import com.google.gson.annotations.SerializedName;
 import io.kubernetes.client.common.KubernetesListObject;
@@ -23,26 +23,22 @@ import io.kubernetes.client.openapi.models.V1ListMeta;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import uk.gov.gchq.gaffer.common.util.Constants;
 
 import java.util.List;
 
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_API_VERSION;
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_ITEMS;
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_KIND;
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_METADATA;
-
 public class GafferList implements KubernetesListObject {
 
-    @SerializedName(SERIALISED_NAME_METADATA)
+    @SerializedName(Constants.SERIALISED_NAME_METADATA)
     private V1ListMeta metadata;
 
-    @SerializedName(SERIALISED_NAME_ITEMS)
+    @SerializedName(Constants.SERIALISED_NAME_ITEMS)
     private List<Gaffer> items;
 
-    @SerializedName(SERIALISED_NAME_API_VERSION)
+    @SerializedName(Constants.SERIALISED_NAME_API_VERSION)
     private String apiVersion;
 
-    @SerializedName(SERIALISED_NAME_KIND)
+    @SerializedName(Constants.SERIALISED_NAME_KIND)
     private String kind;
 
     public V1ListMeta getMetadata() {
