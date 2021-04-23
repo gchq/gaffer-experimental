@@ -35,11 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
+import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 import static uk.gov.gchq.gaffer.gaas.utilities.GafferKubernetesObjectFactory.from;
-import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
-import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
 
 @SpringBootTest
 public class CRDClientIT {

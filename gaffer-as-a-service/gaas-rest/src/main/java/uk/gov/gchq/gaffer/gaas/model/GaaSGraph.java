@@ -16,7 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
-import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
+import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import java.util.List;
 
 public class GaaSGraph {

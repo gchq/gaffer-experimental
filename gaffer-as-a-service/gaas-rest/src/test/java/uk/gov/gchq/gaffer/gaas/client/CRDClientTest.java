@@ -33,8 +33,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_loggedOutOfCluster;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_timeout;
 

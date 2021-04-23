@@ -17,10 +17,10 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferStatus;
-import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.common.model.v1.GafferStatus;
+import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
