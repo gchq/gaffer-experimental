@@ -53,7 +53,7 @@ env:
 
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
   APP_NAME: ""
-  TAG: ""
+  TAG: "latest"
 
 on:
   # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
@@ -164,7 +164,7 @@ jobs:
       uses: redhat-actions/oc-new-app@v1
       with:
         app_name: ${{ env.APP_NAME }}
-        image: ${{ steps.push-to-registry.outputs.registry-path }}
+        image: ${{ steps.push-to-registry.outputs.registry-path }}:${{ env.TAG }}
         namespace: ${{ env.OPENSHIFT_NAMESPACE }}
         port: ${{ env.APP_PORT }}
 
