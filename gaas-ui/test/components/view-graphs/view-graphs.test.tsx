@@ -129,7 +129,7 @@ describe("Delete Button", () => {
         await component.update();
         expect(component.find("tbody").text()).toBe("applesUPapples URLpearsUPpears URL");
 
-        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "http://apples.graph", StoreType.MAPSTORE, "UP", GraphType.GAAS_GRAPH), new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", StoreType.MAPSTORE, GraphType.GAAS_GRAPH)]);
+        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "http://apples.graph", "UP", StoreType.MAPSTORE, GraphType.GAAS_GRAPH), new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", StoreType.MAPSTORE, GraphType.GAAS_GRAPH)]);
         component.find("tbody").find("button#view-graphs-delete-button-1").simulate("click");
         await component.update();
         await component.update();
