@@ -18,9 +18,11 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferStatus;
 import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
+import uk.gov.gchq.gaffer.controller.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,18 +42,16 @@ public class GaaSGraphsFactoryTest {
         final GafferStatus gafferStatus = new GafferStatus().restApiStatus(RestApiStatus.UP);
         final Gaffer gaffer = new Gaffer().spec(gafferSpec).status(gafferStatus);
 
-        final GaaSGraph actual = GaaSGraphsFactory.fromGaffer(gaffer);
+        final GaaSGraph actual = GaaSGraphsFactory.from(gaffer);
 
-        assertEquals(new GaaSGraph().graphId("full-values-gaffer").description("This is a test gaffer"), actual);
-
-        
+        assertEquals("full-values-gaffer", actual.getGraphId());
     }
 
     @Test
     public void gafferHasValidUpStatus_returnsGaaSGraphWithUpStatus() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferStatus gafferStatus = new GafferStatus().restApiStatus(RestApiStatus.UP);
-        final Map<String, Object> gafferList = makeGafferList(graphSpec, gafferStatus);
+        final GafferList gafferList = makeGafferList(graphSpec, gafferStatus);
 
         final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
 
@@ -64,7 +64,7 @@ public class GaaSGraphsFactoryTest {
     public void gafferHasEmptyStatus_returnsGaaSGraphWithDownStatus() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferStatus gafferStatus = new GafferStatus();
-        final Map<String, Object> gafferList = makeGafferList(graphSpec, gafferStatus);
+        final GafferList gafferList = makeGafferList(graphSpec, gafferStatus);
 
         final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
 
@@ -76,7 +76,7 @@ public class GaaSGraphsFactoryTest {
     @Test
     public void gafferSpecHasAllValues_andNullStatus_returnsOneGaaSGraphWithDownStatus() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
-        final Map<String, Object> gafferList = makeGafferList(graphSpec);
+        final GafferList gafferList = makeGafferList(graphSpec);
 
         final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
 
@@ -91,7 +91,7 @@ public class GaaSGraphsFactoryTest {
     public void gafferWithGraphIdOnly_fillWithDefaultValues_andDownStatus() {
         final GafferSpec graphSpec = new GafferSpec();
         graphSpec.putNestedObject("hello-gaffer", GRAPH_ID_KEY);
-        final Map<String, Object> gafferList = makeGafferList(graphSpec);
+        final GafferList gafferList = makeGafferList(graphSpec);
 
         final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
 
@@ -105,7 +105,7 @@ public class GaaSGraphsFactoryTest {
     @Test
     public void gafferSpecHasAllValues_andEmptyProblems_returnsOneGaaSGraphWithEmptyList() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
-        final Map<String, Object> gafferList = makeGafferList(graphSpec);
+        final GafferList gafferList = makeGafferList(graphSpec);
 
         final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
 
@@ -122,7 +122,7 @@ public class GaaSGraphsFactoryTest {
         problems.add("There is a problem with this graph");
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferStatus gafferStatus = new GafferStatus().problems(problems);
-        final Map<String, Object> gafferList = makeGafferList(graphSpec, gafferStatus);
+        final GafferList gafferList = makeGafferList(graphSpec, gafferStatus);
 
         final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
 
@@ -133,7 +133,7 @@ public class GaaSGraphsFactoryTest {
 
     @Test
     public void gafferWithNullGraphId_treatAsGraphNonExistentAndExcludeFromList() {
-        final Map<String, Object> gafferList = makeGafferList(new GafferSpec());
+        final GafferList gafferList = makeGafferList(new GafferSpec());
 
         final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
 
@@ -142,7 +142,7 @@ public class GaaSGraphsFactoryTest {
 
     @Test
     public void gafferWithNullGafferSpec_treatAsGraphNonExistentAndExcludeFromList() {
-        final Map<String, Object> gafferList = makeGafferList(null);
+        final GafferList gafferList = makeGafferList(null);
 
         final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
 
@@ -151,9 +151,10 @@ public class GaaSGraphsFactoryTest {
 
     @Test
     public void emptyGafferList_returnsZeroGaaSGraphs() {
-        final Map<String, Object> gafferList = new LinkedHashMap<>();
+        final Map<String, Object> gafferListMap = new LinkedHashMap<>();
         final List<Gaffer> gaffers = new ArrayList<>();
-        gafferList.put("items", gaffers);
+        gafferListMap.put("items", gaffers);
+        final GafferList gafferList = CommonUtil.convertToCustomObject(gafferListMap, GafferList.class);
 
         assertEquals(0, GaaSGraphsFactory.from(gafferList).size());
     }
@@ -168,19 +169,19 @@ public class GaaSGraphsFactoryTest {
         return graphSpec;
     }
 
-    private Map<String, Object> makeGafferList(final GafferSpec graphSpec) {
+    private GafferList makeGafferList(final GafferSpec graphSpec) {
         final Map<String, Object> gafferList = new LinkedHashMap<>();
         final List<Gaffer> gaffers = new ArrayList<>();
         gaffers.add(new Gaffer().spec(graphSpec));
         gafferList.put("items", gaffers);
-        return gafferList;
+        return CommonUtil.convertToCustomObject(gafferList, GafferList.class);
     }
 
-    private Map<String, Object> makeGafferList(final GafferSpec graphSpec, final GafferStatus gafferStatus) {
+    private GafferList makeGafferList(final GafferSpec graphSpec, final GafferStatus gafferStatus) {
         final Map<String, Object> gafferList = new LinkedHashMap<>();
         final List<Gaffer> gaffers = new ArrayList<>();
         gaffers.add(new Gaffer().spec(graphSpec).status(gafferStatus));
         gafferList.put("items", gaffers);
-        return gafferList;
+        return CommonUtil.convertToCustomObject(gafferList, GafferList.class);
     }
 }

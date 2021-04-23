@@ -19,7 +19,6 @@ package uk.gov.gchq.gaffer.gaas.factories;
 import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
 import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
-import uk.gov.gchq.gaffer.controller.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,23 +33,21 @@ public final class GaaSGraphsFactory {
     private static final String URL_PROTOCOL = "http://";
     private static final String DEFAULT_VALUE = "n/a";
 
-    public static List<GaaSGraph> from(final Object response) {
-        final GafferList gafferList = CommonUtil.convertToCustomObject(response, GafferList.class);
+    public static List<GaaSGraph> from(final GafferList gafferList) {
 
         final List<Gaffer> gaffers = (List<Gaffer>) gafferList.getItems();
 
         return gaffers.stream()
                 .filter(gaffer -> gaffer.getSpec() != null && gaffer.getSpec().getNestedObject(GRAPH_ID_KEY) != null)
-                .map(gaffer -> new GaaSGraph()
-                        .graphId(gaffer.getSpec().getNestedObject(GRAPH_ID_KEY).toString())
-                        .description(getDescription(gaffer))
-                        .url(getUrl(gaffer))
-                        .status(getStatus(gaffer))
-                        .problems(getProblems(gaffer)))
+                .map(GaaSGraphsFactory::getGaaSGraph)
                 .collect(Collectors.toList());
     }
-    public static GaaSGraph fromGaffer (final Object response) {
-        final Gaffer gaffer = CommonUtil.convertToCustomObject(response,Gaffer.class);
+
+    public static GaaSGraph from(final Gaffer gaffer) {
+        return getGaaSGraph(gaffer);
+    }
+
+    private static GaaSGraph getGaaSGraph(Gaffer gaffer) {
         return new GaaSGraph()
                 .graphId(gaffer.getSpec().getNestedObject(GRAPH_ID_KEY).toString())
                 .description(getDescription(gaffer))

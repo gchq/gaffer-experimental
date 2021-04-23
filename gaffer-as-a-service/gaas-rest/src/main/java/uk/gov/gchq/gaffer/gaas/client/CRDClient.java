@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
+import uk.gov.gchq.gaffer.controller.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import java.util.List;
@@ -70,7 +72,7 @@ public class CRDClient {
     public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
         try {
             final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null);
-            return from(customObject);
+            return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));
         } catch (ApiException e) {
             LOGGER.debug("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);

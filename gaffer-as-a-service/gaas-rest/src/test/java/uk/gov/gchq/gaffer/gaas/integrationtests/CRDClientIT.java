@@ -141,12 +141,6 @@ public class CRDClientIT {
         assertTrue(allNameSpaces.contains(NAMESPACE));
     }
 
-//    @Test
-//    void testGetCRDReturnsSuccessResponseWithTheGraph() throws ApiException {
-//        final GaaSGraph crd = crdClient.getCRD("ashgraph4");
-//        assertEquals(new GaaSGraph().graphId("ashgraph4").description("Test Graph Description").url("ashgraph4-kai-dev.apps.my.kubernetes.cluster"), crd);
-//    }
-
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
