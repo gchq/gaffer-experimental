@@ -196,6 +196,21 @@ public class GraphControllerIT extends AbstractTest {
         assertTrue(namespacesResponse.getResponse().getContentAsString().contains(namespace));
     }
 
+    @Test
+    public void createGraph_shouldReturn500BadRequestWhenStoreTypeIsInvalidType() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "invalidStore", getSchema());
+        final String inputJson = mapToJson(gaaSCreateRequestBody);
+
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(inputJson)).andReturn();
+
+        assertEquals(500, result.getResponse().getStatus());
+        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore\"}";
+        assertEquals(expected, result.getResponse().getContentAsString());
+    }
+
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);

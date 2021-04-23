@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.controller;
 
 import io.kubernetes.client.openapi.ApiClient;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -351,15 +350,15 @@ public class GraphControllerTest extends AbstractTest {
 
         assertEquals(400, result.getResponse().getStatus());
         final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. " +
-                "Valid Store Types supported are MAPSTORE, ACCUMULO, FEDERATED_STORE or PROXY_STORE\"}";
+                "Valid Store Types supported are federatedStore, accumuloStore, proxyStore or mapStore\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
     }
 
-    @Disabled
-    public void createGraph_shouldReturn400BadRequestWhenStoreTypeIsInvalidType() throws Exception {
+    @Test
+    public void createGraph_shouldReturn500BadRequestWhenStoreTypeIsInvalidType() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "invalidStore", getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
-        doThrow(new RuntimeException("Invalid Store Type")).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
+        doThrow(new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore")).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -367,7 +366,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(inputJson)).andReturn();
 
         assertEquals(500, result.getResponse().getStatus());
-        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"Invalid Store Type\"}";
+        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
     }
 

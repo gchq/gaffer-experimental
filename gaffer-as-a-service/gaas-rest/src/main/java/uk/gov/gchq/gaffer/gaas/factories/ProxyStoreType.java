@@ -29,6 +29,7 @@ import static uk.gov.gchq.gaffer.store.StoreProperties.STORE_CLASS;
 
 @Service
 public class ProxyStoreType implements StoreType {
+
     @Override
     public String getType() {
         return "proxyStore";
@@ -40,7 +41,6 @@ public class ProxyStoreType implements StoreType {
     }
 
     private static class ProxyStoreSpecBuilder extends AbstractStoreTypeBuilder {
-        private GaaSCreateRequestBody graph;
 
         ProxyStoreSpecBuilder(final GaaSCreateRequestBody graph) {
             this.graph = graph;

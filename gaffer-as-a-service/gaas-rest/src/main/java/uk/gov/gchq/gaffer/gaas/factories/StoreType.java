@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.factories;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 
 public interface StoreType {
+
     String getType();
 
     AbstractStoreTypeBuilder getStoreSpecBuilder(GaaSCreateRequestBody graph);

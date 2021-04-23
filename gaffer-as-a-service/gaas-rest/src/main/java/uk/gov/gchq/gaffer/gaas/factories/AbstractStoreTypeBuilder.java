@@ -17,10 +17,12 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
-import java.util.List;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 
 abstract class AbstractStoreTypeBuilder {
+
   protected final GafferSpecBuilder gafferSpecBuilder;
+  protected GaaSCreateRequestBody graph;
 
   AbstractStoreTypeBuilder() {
     this.gafferSpecBuilder = new GafferSpecBuilder();
@@ -35,18 +37,6 @@ abstract class AbstractStoreTypeBuilder {
     gafferSpecBuilder.setDescription(description);
     return this;
   }
-
-  public AbstractStoreTypeBuilder setStoreSpec(final List<String> storeSpec) {
-    // don't want to store so just return
-    return this;
-  }
-
-  public AbstractStoreTypeBuilder setStoreProperties(final String storeType) {
-    gafferSpecBuilder.setStoreType(storeType);
-    return this;
-  }
-
-  // ingest etc
 
   public GafferSpec build() {
     return gafferSpecBuilder.build();

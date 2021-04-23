@@ -23,6 +23,7 @@ import java.util.List;
 
 @Service
 public class StoreTypeFactory {
+
     private final List<StoreType> storeTypeManager;
 
     @Autowired
@@ -36,6 +37,6 @@ public class StoreTypeFactory {
                 return storeSpecManagers.getStoreSpecBuilder(graph);
             }
         }
-        throw new RuntimeException("Invalid Store Type");
+        throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore");
     }
 }

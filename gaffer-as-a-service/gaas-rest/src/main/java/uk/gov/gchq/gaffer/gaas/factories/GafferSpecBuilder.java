@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
-import java.util.List;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
@@ -30,9 +29,6 @@ public class GafferSpecBuilder {
 
     private String graphId;
     private String description;
-    private Object schema;
-    private String storeType;
-    private List<String> storeSpec;
 
     public void setGraphId(final String graphId) {
         this.graphId = graphId;
@@ -40,14 +36,6 @@ public class GafferSpecBuilder {
 
     public void setDescription(final String description) {
         this.description = description;
-    }
-
-    public void setStoreSpec(final List<String> storeSpec) {
-        this.storeSpec = storeSpec;
-    }
-
-    public void setStoreType(final String storeType) {
-        this.storeType = storeType;
     }
 
     public GafferSpec build() {

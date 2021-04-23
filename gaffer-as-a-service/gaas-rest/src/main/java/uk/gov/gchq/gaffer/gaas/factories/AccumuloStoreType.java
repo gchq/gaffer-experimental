@@ -24,6 +24,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 
 @Service
 public class AccumuloStoreType implements StoreType {
+
     @Override
     public String getType() {
         return "accumuloStore";
@@ -35,7 +36,6 @@ public class AccumuloStoreType implements StoreType {
     }
 
     private static final class AccumuloStoreSpecBuilder extends AbstractStoreTypeBuilder {
-        private GaaSCreateRequestBody graph;
 
         private AccumuloStoreSpecBuilder(final GaaSCreateRequestBody graph) {
             this.graph = graph;

@@ -31,6 +31,7 @@ import static uk.gov.gchq.gaffer.store.StoreProperties.STORE_PROPERTIES_CLASS;
 
 @Service
 public class FederatedStoreType implements StoreType {
+
     @Override
     public String getType() {
         return "federatedStore";
@@ -41,9 +42,7 @@ public class FederatedStoreType implements StoreType {
         return new FederatedStoreSpecBuilder(graph);
     }
 
-
     private static final class FederatedStoreSpecBuilder extends AbstractStoreTypeBuilder {
-        private GaaSCreateRequestBody graph;
 
         private FederatedStoreSpecBuilder(final GaaSCreateRequestBody graph) {
             this.graph = graph;

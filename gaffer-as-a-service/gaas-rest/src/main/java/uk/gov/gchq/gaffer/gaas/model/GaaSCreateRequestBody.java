@@ -33,7 +33,7 @@ public class GaaSCreateRequestBody implements Serializable {
     private String graphId;
     @NotBlank(message = "Description should not be empty")
     private String description;
-    @NotNull(message = "\"storeType\" must be defined. Valid Store Types supported are MAPSTORE, ACCUMULO, FEDERATED_STORE or PROXY_STORE")
+    @NotNull(message = "\"storeType\" must be defined. Valid Store Types supported are federatedStore, accumuloStore, proxyStore or mapStore")
     private String storeType;
     private String proxyHost;
     private String proxyContextRoot;

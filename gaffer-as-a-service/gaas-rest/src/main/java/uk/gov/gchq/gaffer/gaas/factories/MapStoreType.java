@@ -30,6 +30,7 @@ import static uk.gov.gchq.gaffer.store.StoreProperties.JOB_TRACKER_ENABLED;
 
 @Service
 public class MapStoreType implements StoreType {
+
     @Override
     public String getType() {
         return "mapStore";
@@ -41,7 +42,7 @@ public class MapStoreType implements StoreType {
     }
 
     private static final class MapStoreSpecBuilder extends AbstractStoreTypeBuilder {
-        private GaaSCreateRequestBody graph;
+
         private MapStoreSpecBuilder(final GaaSCreateRequestBody graph) {
             this.graph = graph;
         }
