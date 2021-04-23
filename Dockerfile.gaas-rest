@@ -23,5 +23,5 @@ RUN mkdir -p /usr/share/man/man1 && \
 
 USER ${USER}
 WORKDIR /spring
-COPY --from=builder /workspace/gaas-rest/target/gaas-rest-*-exec.jar ./gaas-rest.jar
+COPY --from=builder /workspace/gaffer-as-a-service/gaas-rest/target/gaas-rest-*-exec.jar ./gaas-rest.jar
 ENTRYPOINT [ "java", "-jar", "./gaas-rest.jar"]
