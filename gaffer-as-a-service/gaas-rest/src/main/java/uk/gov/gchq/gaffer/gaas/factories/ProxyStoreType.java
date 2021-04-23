@@ -21,7 +21,6 @@ import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.proxystore.ProxyStore;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
 import static uk.gov.gchq.gaffer.proxystore.ProxyProperties.GAFFER_CONTEXT_ROOT;
@@ -45,12 +44,6 @@ public class ProxyStoreType implements StoreType {
 
         ProxyStoreSpecBuilder(final GaaSCreateRequestBody graph) {
             this.graph = graph;
-        }
-
-        @Override
-        public AbstractStoreTypeBuilder setStoreSpec(final List<String> storeSpec) {
-            this.gafferSpecBuilder.setStoreSpec(storeSpec);
-            return this;
         }
 
         private Map<String, Object> getDefaultProxyStoreProperties(final String host, final String contextRoot) {

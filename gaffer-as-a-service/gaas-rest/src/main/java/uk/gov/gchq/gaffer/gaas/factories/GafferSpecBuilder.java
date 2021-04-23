@@ -49,7 +49,6 @@ public class GafferSpecBuilder {
     public void setStoreType(final String storeType) {
         this.storeType = storeType;
     }
-    // ingest, etc
 
     public GafferSpec build() {
         final GafferSpec gafferSpec = new GafferSpec();
@@ -58,8 +57,6 @@ public class GafferSpecBuilder {
         gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
         gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
         gafferSpec.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
-        //storeSpec.forEach(o -> gafferSpec.putNestedObject(o, "store", "spec"));
-        // etc
         return gafferSpec;
     }
 }

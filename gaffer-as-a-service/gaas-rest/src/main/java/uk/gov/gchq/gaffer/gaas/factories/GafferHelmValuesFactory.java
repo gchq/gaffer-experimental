@@ -22,8 +22,6 @@ import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.SpringContext;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import java.util.ArrayList;
-import java.util.List;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
 
@@ -54,13 +52,12 @@ public final class GafferHelmValuesFactory {
     }
 
     private static GafferSpec createGafferSpecFrom(final GaaSCreateRequestBody graph) {
+
         AnnotationConfigApplicationContext context =
                 new AnnotationConfigApplicationContext(SpringContext.class);
 
-        List<String> storeType = new ArrayList<>();
-        storeType.add(graph.getStoreType());
-
         StoreTypeFactory storeTypeFactory = context.getBean(StoreTypeFactory.class);
+
         final AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(graph)
                 .setGraphId(graph.getGraphId())
                 .setDescription(graph.getDescription());

@@ -23,7 +23,6 @@ import uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
 import static uk.gov.gchq.gaffer.jsonserialisation.JSONSerialiser.JSON_SERIALISER_MODULES;
@@ -48,12 +47,6 @@ public class FederatedStoreType implements StoreType {
 
         private FederatedStoreSpecBuilder(final GaaSCreateRequestBody graph) {
             this.graph = graph;
-        }
-
-        @Override
-        public AbstractStoreTypeBuilder setStoreSpec(final List<String> storeSpec) {
-            this.gafferSpecBuilder.setStoreSpec(storeSpec);
-            return this;
         }
 
         private Map<String, Object> getDefaultFederatedStoreProperties() {

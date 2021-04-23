@@ -20,7 +20,6 @@ import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import java.util.List;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 
 @Service
@@ -41,13 +40,6 @@ public class AccumuloStoreType implements StoreType {
         private AccumuloStoreSpecBuilder(final GaaSCreateRequestBody graph) {
             this.graph = graph;
         }
-
-        @Override
-        public AbstractStoreTypeBuilder setStoreSpec(final List<String> storeSpec) {
-            // don't want to store so just return
-            return this;
-        }
-
 
         @Override
         public GafferSpec build() {

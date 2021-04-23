@@ -20,34 +20,35 @@ import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import java.util.List;
 
 abstract class AbstractStoreTypeBuilder {
-    protected final GafferSpecBuilder gafferSpecBuilder;
+  protected final GafferSpecBuilder gafferSpecBuilder;
 
-     AbstractStoreTypeBuilder() {
-        this.gafferSpecBuilder = new GafferSpecBuilder();
-    }
+  AbstractStoreTypeBuilder() {
+    this.gafferSpecBuilder = new GafferSpecBuilder();
+  }
 
-    public AbstractStoreTypeBuilder setGraphId(final String graphId) {
-        gafferSpecBuilder.setGraphId(graphId);
-        return this;
-    }
-    public AbstractStoreTypeBuilder setDescription(final String description) {
-        gafferSpecBuilder.setDescription(description);
-        return this;
-    }
+  public AbstractStoreTypeBuilder setGraphId(final String graphId) {
+    gafferSpecBuilder.setGraphId(graphId);
+    return this;
+  }
 
-    public AbstractStoreTypeBuilder setStoreSpec(final List<String> storeSpec) {
-        gafferSpecBuilder.setStoreSpec(storeSpec);
-        return this;
-    }
+  public AbstractStoreTypeBuilder setDescription(final String description) {
+    gafferSpecBuilder.setDescription(description);
+    return this;
+  }
 
-    public AbstractStoreTypeBuilder setStoreProperties(final String storeType) {
-        gafferSpecBuilder.setStoreType(storeType);
-        return this;
-    }
+  public AbstractStoreTypeBuilder setStoreSpec(final List<String> storeSpec) {
+    // don't want to store so just return
+    return this;
+  }
 
-    // ingest etc
+  public AbstractStoreTypeBuilder setStoreProperties(final String storeType) {
+    gafferSpecBuilder.setStoreType(storeType);
+    return this;
+  }
 
-    public GafferSpec build() {
-        return gafferSpecBuilder.build();
-    }
+  // ingest etc
+
+  public GafferSpec build() {
+    return gafferSpecBuilder.build();
+  }
 }

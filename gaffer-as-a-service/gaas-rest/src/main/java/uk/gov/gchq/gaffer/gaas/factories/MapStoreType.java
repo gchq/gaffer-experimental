@@ -22,7 +22,6 @@ import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
 import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties.CACHE_SERVICE_CLASS;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
@@ -43,18 +42,9 @@ public class MapStoreType implements StoreType {
 
     private static final class MapStoreSpecBuilder extends AbstractStoreTypeBuilder {
         private GaaSCreateRequestBody graph;
-
         private MapStoreSpecBuilder(final GaaSCreateRequestBody graph) {
             this.graph = graph;
         }
-
-        @Override
-        public AbstractStoreTypeBuilder setStoreSpec(final List<String> storeSpec) {
-            this.gafferSpecBuilder.setStoreSpec(storeSpec);
-            return this;
-        }
-
-
 
         private Map<String, Object> getDefaultMapStoreProperties() {
             final Map<String, Object> mapStoreProperties = new HashMap<>();
