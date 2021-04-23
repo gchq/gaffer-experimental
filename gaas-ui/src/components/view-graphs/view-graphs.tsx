@@ -76,7 +76,6 @@ export default class ViewGraph extends React.Component<{}, IState> {
 
     public render() {
         const { graphs, errorMessage } = this.state;
-        console.log(graphs.filter((graph) => graph.getStoreType() === StoreType.FEDERATED_STORE).filter((graph) => graph.getStatus() === "UP").length)
 
         return (
             <main>
