@@ -35,9 +35,9 @@ name: OpenShift
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
 env:
   # ⬇️ EDIT with your registry and registry path.
-  REGISTRY: quay.io/<username>
+  REGISTRY: docker.io/kitkat520
   # ⬇️ EDIT with your registry username.
-  REGISTRY_USER: <username>
+  REGISTRY_USER: kitkat520
   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
   # ⬇️ EDIT to log into your OpenShift cluster and set up the context.
