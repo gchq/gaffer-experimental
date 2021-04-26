@@ -62,6 +62,13 @@ public class GaaSCreateRequestBody implements Serializable {
         this.proxyHost = proxyHost;
         this.proxyContextRoot = proxyContextRoot;
     }
+    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final String proxyHost, final String proxyContextRoot) {
+        this.graphId = graphId;
+        this.description = description;
+        this.storeType = storeType;
+        this.proxyHost = proxyHost;
+        this.proxyContextRoot = proxyContextRoot;
+    }
 
     public String getGraphId() {
         return graphId;

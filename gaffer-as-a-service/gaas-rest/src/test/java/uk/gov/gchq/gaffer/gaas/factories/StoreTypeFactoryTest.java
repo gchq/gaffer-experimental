@@ -47,7 +47,7 @@ class StoreTypeFactoryTest {
     assertEquals(expected, build.toString());
   }
 
-  private void setStoreList(List<StoreType> storeTypeManager) {
+  private void setStoreList(final List<StoreType> storeTypeManager) {
     MapStoreType mapStore = new MapStoreType();
     ProxyStoreType proxyStoreType = new ProxyStoreType();
     storeTypeManager.add(mapStore);
@@ -65,7 +65,7 @@ class StoreTypeFactoryTest {
 
     StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
     AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(gaaSCreateRequestBody);
-    final String expected ="{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
+    final String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
 
     GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").build();
     assertEquals(expected, build.toString());
@@ -81,7 +81,7 @@ class StoreTypeFactoryTest {
     StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
     final RuntimeException exception = assertThrows(RuntimeException.class, () -> storeTypeFactory.getBuilder(gaaSCreateRequestBody));
 
-    final String expected ="java.lang.RuntimeException: StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore";
+    final String expected = "java.lang.RuntimeException: StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore";
 
     assertEquals(expected, exception.toString());
   }
