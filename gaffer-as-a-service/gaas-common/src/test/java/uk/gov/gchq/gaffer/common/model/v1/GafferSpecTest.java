@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.controller.model.v1;
+
+package uk.gov.gchq.gaffer.common.model.v1;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 
 import java.util.Map;
 
