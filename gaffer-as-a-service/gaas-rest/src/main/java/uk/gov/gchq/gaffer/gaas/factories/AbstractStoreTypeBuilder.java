@@ -16,7 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
-import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 
 abstract class AbstractStoreTypeBuilder {

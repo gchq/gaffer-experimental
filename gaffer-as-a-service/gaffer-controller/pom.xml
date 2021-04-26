@@ -55,6 +55,10 @@
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>graph</artifactId>
         </dependency>
+        <dependency>
+            <groupId>uk.gov.gchq.gaffer</groupId>
+            <artifactId>gaas-common</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

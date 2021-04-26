@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.LinkedHashMap;

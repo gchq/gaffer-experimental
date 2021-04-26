@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.controller.util;
+package uk.gov.gchq.gaffer.common.util;
 
 public final class Constants {
 

@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.controller.model.v1;
+package uk.gov.gchq.gaffer.common.model.v1;
 
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import uk.gov.gchq.gaffer.common.util.Constants;
 
 import java.util.List;
-
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_PROBLEMS;
-import static uk.gov.gchq.gaffer.controller.util.Constants.SERIALISED_NAME_REST_API_STATUS;
 
 /**
  * Value object for the Gaffer Status
  */
 public class GafferStatus {
 
-    @SerializedName(SERIALISED_NAME_PROBLEMS)
+    @SerializedName(Constants.SERIALISED_NAME_PROBLEMS)
     private List<String> problems;
 
-    @SerializedName(SERIALISED_NAME_REST_API_STATUS)
+    @SerializedName(Constants.SERIALISED_NAME_REST_API_STATUS)
     private RestApiStatus restApiStatus;
 
     public List<String> getProblems() {

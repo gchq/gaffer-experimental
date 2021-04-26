@@ -18,12 +18,12 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.SpringContext;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 
 /**
  * GafferHelmValuesFactory is a factory class that creates a Gaffer Helm Values Object that can be passed to the
