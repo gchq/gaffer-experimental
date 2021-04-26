@@ -55,11 +55,7 @@ env:
   APP_NAME: "gaas-rest-pipeline-build"
   TAG: "latest"
 
-on:
-  # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
-  push:
-    # Edit to the branch(es) you want to build and deploy on each push.
-    branches: [ master ]
+on: [push, pull_request]
 
 jobs:
   openshift-ci-cd:
