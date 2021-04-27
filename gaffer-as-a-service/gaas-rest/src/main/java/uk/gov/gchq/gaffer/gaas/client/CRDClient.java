@@ -65,9 +65,13 @@ public class CRDClient {
             throw from(e);
         }
     }
-    public GaaSGraph getCRD(final String graphId) throws ApiException {
 
-        return from(CommonUtil.convertToCustomObject( customObjectsApi.getNamespacedCustomObject(GROUP, VERSION,NAMESPACE, PLURAL,graphId), Gaffer.class));
+    public GaaSGraph getCRDByGraphId(final String graphId) throws GaaSRestApiException {
+        try {
+            return from(CommonUtil.convertToCustomObject(customObjectsApi.getNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, graphId), Gaffer.class));
+        } catch (ApiException e) {
+            throw from(e);
+        }
     }
 
     public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {

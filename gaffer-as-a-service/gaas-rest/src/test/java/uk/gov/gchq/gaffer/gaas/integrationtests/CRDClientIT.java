@@ -17,19 +17,18 @@
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
-import uk.gov.gchq.gaffer.graph.GraphConfig;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.controller.util.Constants.PLURAL;
 import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
-import static uk.gov.gchq.gaffer.gaas.utilities.GafferKubernetesObjectFactory.from;
 
 @SpringBootTest
 public class CRDClientIT {
@@ -52,13 +51,6 @@ public class CRDClientIT {
     private CRDClient crdClient;
     @Autowired
     private ApiClient apiClient;
-
-//    @Value("${gaffer.namespace}")
-//    private String namespace;
-//    @Value("${group}")
-//    private String group;
-//    @Value("${version}")
-//    private String version;
 
     private static final String TEST_GRAPH_ID = "test-graph-id";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
@@ -110,22 +102,23 @@ public class CRDClientIT {
     }
 
     @Test
-    public void getCRD_WhenGraphIdIsGiven_GraphExists() throws ApiException, GaaSRestApiException {
+    public void getCRD_WhenGraphIdIsGiven_GraphExists() throws GaaSRestApiException {
         final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema()));
         crdClient.createCRD(gafferRequest);
-        assertEquals("test-graph-id",crdClient.getCRD("test-graph-id").getGraphId());
+
+        assertEquals("test-graph-id", crdClient.getCRDByGraphId("test-graph-id").getGraphId());
     }
 
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
         crdClient.createCRD(from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema())));
+
         assertTrue(crdClient.listAllCRDs().toString().contains("test-graph-id"));
     }
 
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
-        final List<GraphConfig> list = new ArrayList<>();
-        assertEquals(list, crdClient.listAllCRDs());
+        assertEquals(new ArrayList<>(), crdClient.listAllCRDs().isEmpty());
     }
 
     @Test
@@ -161,10 +154,14 @@ public class CRDClientIT {
     }
 
     private LinkedHashMap<String, Object> getSchema() {
+        final GafferSpec types = new GafferSpec();
+        types.putNestedObject("java.lang.String", "types", "aatika");
+
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("entities", new Object());
         elementsSchema.put("edges", new Object());
-        elementsSchema.put("types", new Object());
+//        elementsSchema.put("types", new Object());
+        elementsSchema.put("types", types);
         return elementsSchema;
     }
 }
