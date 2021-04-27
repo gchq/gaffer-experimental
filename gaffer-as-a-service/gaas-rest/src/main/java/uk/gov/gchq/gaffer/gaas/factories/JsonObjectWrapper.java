@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.services;
+package uk.gov.gchq.gaffer.gaas.factories;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 
-@Service
-public class GetGafferService {
+public final class JsonObjectWrapper {
+    private JsonObjectWrapper() {
+    }
 
-    @Autowired
-    private CRDClient crdClient;
-
-    public Map<String, List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
-        return crdClient.listAllCRDs();
+    public static <Gaffer> Map<String, Gaffer> withLabel(final String label, final Gaffer wrappedObject) {
+        return Collections.singletonMap(label, wrappedObject);
     }
 }

@@ -40,11 +40,11 @@ public class GaaSGraphsFactoryTest {
         final GafferStatus gafferStatus = new GafferStatus().restApiStatus(RestApiStatus.UP);
         final Map<String, Object> gafferList = makeGafferList(graphSpec, gafferStatus);
 
-        final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
-
-        assertEquals(1, actual.size());
-        assertEquals("full-values-gaffer", actual.get(0).getGraphId());
-        assertEquals(RestApiStatus.UP, actual.get(0).getStatus());
+        final Map<String, List<GaaSGraph>> actual = GaaSGraphsFactory.from(gafferList);
+        actual.get("graphs");
+        assertEquals(1, actual.get("graphs").size());
+        assertEquals("full-values-gaffer", actual.get("graphs").get(0).getGraphId());
+        assertEquals(RestApiStatus.UP, actual.get("graphs").get(0).getStatus());
     }
 
     @Test
@@ -53,11 +53,11 @@ public class GaaSGraphsFactoryTest {
         final GafferStatus gafferStatus = new GafferStatus();
         final Map<String, Object> gafferList = makeGafferList(graphSpec, gafferStatus);
 
-        final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
+        final Map<String, List<GaaSGraph>> actual = GaaSGraphsFactory.from(gafferList);
 
-        assertEquals(1, actual.size());
-        assertEquals("full-values-gaffer", actual.get(0).getGraphId());
-        assertEquals(RestApiStatus.DOWN, actual.get(0).getStatus());
+        assertEquals(1, actual.get("graphs").size());
+        assertEquals("full-values-gaffer", actual.get("graphs").get(0).getGraphId());
+        assertEquals(RestApiStatus.DOWN, actual.get("graphs").get(0).getStatus());
     }
 
     @Test
@@ -65,13 +65,13 @@ public class GaaSGraphsFactoryTest {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final Map<String, Object> gafferList = makeGafferList(graphSpec);
 
-        final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
+        final Map<String, List<GaaSGraph>> actual = GaaSGraphsFactory.from(gafferList);
 
-        assertEquals(1, actual.size());
-        assertEquals("full-values-gaffer", actual.get(0).getGraphId());
-        assertEquals("This is a test gaffer", actual.get(0).getDescription());
-        assertEquals("http://apps.my.k8s.cluster/rest", actual.get(0).getUrl());
-        assertEquals(RestApiStatus.DOWN, actual.get(0).getStatus());
+        assertEquals(1, actual.get("graphs").size());
+        assertEquals("full-values-gaffer", actual.get("graphs").get(0).getGraphId());
+        assertEquals("This is a test gaffer", actual.get("graphs").get(0).getDescription());
+        assertEquals("http://apps.my.k8s.cluster/rest", actual.get("graphs").get(0).getUrl());
+        assertEquals(RestApiStatus.DOWN, actual.get("graphs").get(0).getStatus());
     }
 
     @Test
@@ -80,13 +80,13 @@ public class GaaSGraphsFactoryTest {
         graphSpec.putNestedObject("hello-gaffer", GRAPH_ID_KEY);
         final Map<String, Object> gafferList = makeGafferList(graphSpec);
 
-        final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
+        final Map<String, List<GaaSGraph>> actual = GaaSGraphsFactory.from(gafferList);
 
-        assertEquals(1, actual.size());
-        assertEquals("hello-gaffer", actual.get(0).getGraphId());
-        assertEquals("n/a", actual.get(0).getDescription());
-        assertEquals("n/a", actual.get(0).getUrl());
-        assertEquals(RestApiStatus.DOWN, actual.get(0).getStatus());
+        assertEquals(1, actual.get("graphs").size());
+        assertEquals("hello-gaffer", actual.get("graphs").get(0).getGraphId());
+        assertEquals("n/a", actual.get("graphs").get(0).getDescription());
+        assertEquals("n/a", actual.get("graphs").get(0).getUrl());
+        assertEquals(RestApiStatus.DOWN, actual.get("graphs").get(0).getStatus());
     }
 
     @Test
@@ -94,13 +94,13 @@ public class GaaSGraphsFactoryTest {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final Map<String, Object> gafferList = makeGafferList(graphSpec);
 
-        final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
+        final Map<String, List<GaaSGraph>> actual = GaaSGraphsFactory.from(gafferList);
 
-        assertEquals(1, actual.size());
-        assertEquals("full-values-gaffer", actual.get(0).getGraphId());
-        assertEquals("This is a test gaffer", actual.get(0).getDescription());
-        assertEquals("http://apps.my.k8s.cluster/rest", actual.get(0).getUrl());
-        assertEquals(new ArrayList<String>(), actual.get(0).getProblems());
+        assertEquals(1, actual.get("graphs").size());
+        assertEquals("full-values-gaffer", actual.get("graphs").get(0).getGraphId());
+        assertEquals("This is a test gaffer", actual.get("graphs").get(0).getDescription());
+        assertEquals("http://apps.my.k8s.cluster/rest", actual.get("graphs").get(0).getUrl());
+        assertEquals(RestApiStatus.DOWN, actual.get("graphs").get(0).getStatus());
     }
 
     @Test
@@ -111,36 +111,36 @@ public class GaaSGraphsFactoryTest {
         final GafferStatus gafferStatus = new GafferStatus().problems(problems);
         final Map<String, Object> gafferList = makeGafferList(graphSpec, gafferStatus);
 
-        final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
+        final Map<String, List<GaaSGraph>> actual = GaaSGraphsFactory.from(gafferList);
 
-        assertEquals(1, actual.size());
-        assertEquals("full-values-gaffer", actual.get(0).getGraphId());
-        assertEquals(problems, actual.get(0).getProblems());
+        assertEquals(1, actual.get("graphs").size());
+        assertEquals("full-values-gaffer", actual.get("graphs").get(0).getGraphId());
+        assertEquals(problems, actual.get("graphs").get(0).getProblems());
     }
 
     @Test
     public void gafferWithNullGraphId_treatAsGraphNonExistentAndExcludeFromList() {
         final Map<String, Object> gafferList = makeGafferList(new GafferSpec());
 
-        final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
+        final Map<String, List<GaaSGraph>> actual = GaaSGraphsFactory.from(gafferList);
 
-        assertEquals(0, actual.size());
+        assertEquals(0, actual.get("graphs").size());
     }
 
     @Test
     public void gafferWithNullGafferSpec_treatAsGraphNonExistentAndExcludeFromList() {
         final Map<String, Object> gafferList = makeGafferList(null);
 
-        final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
+        final Map<String, List<GaaSGraph>> actual = GaaSGraphsFactory.from(gafferList);
 
-        assertEquals(0, actual.size());
+        assertEquals(0, actual.get("graphs").size());
     }
 
     @Test
     public void emptyGafferList_returnsZeroGaaSGraphs() {
         final Map<String, Object> gafferList = new LinkedHashMap<>();
         final List<Gaffer> gaffers = new ArrayList<>();
-        gafferList.put("items", gaffers);
+        gafferList.put("graphs", gaffers);
 
         assertEquals(0, GaaSGraphsFactory.from(gafferList).size());
     }
