@@ -40,7 +40,7 @@ public final class GaaSGraphsFactory {
         final GafferList gafferList = CommonUtil.convertToCustomObject(response, GafferList.class);
 
         final List<Gaffer> gaffers = (List<Gaffer>) gafferList.getItems();
-        if (gaffers!=null) {
+        if (gaffers != null) {
             List<GaaSGraph> collect = gaffers.stream()
                     .filter(gaffer -> gaffer.getSpec() != null && gaffer.getSpec().getNestedObject(GRAPH_ID_KEY) != null)
                     .map(gaffer -> new GaaSGraph()

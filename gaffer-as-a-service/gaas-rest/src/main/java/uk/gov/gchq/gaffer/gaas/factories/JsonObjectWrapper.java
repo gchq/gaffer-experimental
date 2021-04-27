@@ -23,7 +23,7 @@ public final class JsonObjectWrapper {
     private JsonObjectWrapper() {
     }
 
-    public static <Gaffer> Map<String, Gaffer> withLabel(String label, Gaffer wrappedObject) {
+    public static <Gaffer> Map<String, Gaffer> withLabel(final String label, final Gaffer wrappedObject) {
         return Collections.singletonMap(label, wrappedObject);
     }
 }

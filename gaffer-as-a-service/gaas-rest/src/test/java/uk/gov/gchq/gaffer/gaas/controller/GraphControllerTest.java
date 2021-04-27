@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.controller;
 
 import io.kubernetes.client.openapi.ApiClient;
-import org.apache.commons.collections.map.HashedMap;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -74,7 +73,7 @@ public class GraphControllerTest extends AbstractTest {
                 .description(TEST_GRAPH_DESCRIPTION)
                 .url("my-graph-namespace.apps.k8s.cluster")
                 .status(RestApiStatus.UP);
-        final List<GaaSGraph> gaaSGraphs= new ArrayList<>();
+        final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
         gaaSGraphs.add(graph);
         Map<String, List<GaaSGraph>> graphList = new HashMap<>();
         graphList.put("graphs", gaaSGraphs);
