@@ -51,7 +51,7 @@ public class AddGraphsOperationChainCommand implements Command {
                     .body(Mono.just(getRequestBody()), OperationChain.class)
                     .retrieve()
                     .toBodilessEntity()
-                    .block().getStatusCodeValue();
+                    .block();
 
             return "Successfully added all subgraph(s)";
 
@@ -69,7 +69,7 @@ public class AddGraphsOperationChainCommand implements Command {
 
     private List<AddGraph> getAddGraphOperations() {
 
-        final List<AddGraph> addGraphStream = graphs.stream().map(subGraph -> {
+        return graphs.stream().map(subGraph -> {
 
             final ProxyProperties storeProperties = new ProxyProperties();
             storeProperties.setStoreClass(ProxyStore.class);
@@ -84,7 +84,5 @@ public class AddGraphsOperationChainCommand implements Command {
                     .schema(new Schema())
                     .build();
         }).collect(Collectors.toList());
-
-        return addGraphStream;
     }
 }
