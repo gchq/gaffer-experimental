@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.model;
+package uk.gov.gchq.gaffer.gaas.exception;
 
 public class GaaSRestApiException extends Exception {
 
