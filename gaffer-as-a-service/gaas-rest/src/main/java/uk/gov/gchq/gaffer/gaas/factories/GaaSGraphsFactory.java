@@ -22,7 +22,9 @@ import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
@@ -34,20 +36,23 @@ public final class GaaSGraphsFactory {
     private static final String URL_PROTOCOL = "http://";
     private static final String DEFAULT_VALUE = "n/a";
 
-    public static List<GaaSGraph> from(final Object response) {
+    public static Map<String, List<GaaSGraph>> from(final Object response) {
         final GafferList gafferList = CommonUtil.convertToCustomObject(response, GafferList.class);
 
         final List<Gaffer> gaffers = (List<Gaffer>) gafferList.getItems();
-
-        return gaffers.stream()
-                .filter(gaffer -> gaffer.getSpec() != null && gaffer.getSpec().getNestedObject(GRAPH_ID_KEY) != null)
-                .map(gaffer -> new GaaSGraph()
-                        .graphId(gaffer.getSpec().getNestedObject(GRAPH_ID_KEY).toString())
-                        .description(getDescription(gaffer))
-                        .url(getUrl(gaffer))
-                        .status(getStatus(gaffer))
-                        .problems(getProblems(gaffer)))
-                .collect(Collectors.toList());
+        if (gaffers!=null) {
+            List<GaaSGraph> collect = gaffers.stream()
+                    .filter(gaffer -> gaffer.getSpec() != null && gaffer.getSpec().getNestedObject(GRAPH_ID_KEY) != null)
+                    .map(gaffer -> new GaaSGraph()
+                            .graphId(gaffer.getSpec().getNestedObject(GRAPH_ID_KEY).toString())
+                            .description(getDescription(gaffer))
+                            .url(getUrl(gaffer))
+                            .status(getStatus(gaffer))
+                            .problems(getProblems(gaffer)))
+                    .collect(Collectors.toList());
+            return JsonObjectWrapper.withLabel("graphs", collect);
+        }
+        return new HashMap<>();
     }
 
     private static String getDescription(final Gaffer gaffer) {

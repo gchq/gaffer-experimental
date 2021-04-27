@@ -17,6 +17,7 @@
 package uk.gov.gchq.gaffer.gaas.controller;
 
 import io.kubernetes.client.openapi.ApiClient;
+import org.apache.commons.collections.map.HashedMap;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,7 +36,10 @@ import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -70,8 +74,10 @@ public class GraphControllerTest extends AbstractTest {
                 .description(TEST_GRAPH_DESCRIPTION)
                 .url("my-graph-namespace.apps.k8s.cluster")
                 .status(RestApiStatus.UP);
-        ArrayList<GaaSGraph> graphList = new ArrayList<>();
-        graphList.add(graph);
+        final List<GaaSGraph> gaaSGraphs= new ArrayList<>();
+        gaaSGraphs.add(graph);
+        Map<String, List<GaaSGraph>> graphList = new HashMap<>();
+        graphList.put("graphs", gaaSGraphs);
         when(getGafferService.getAllGraphs()).thenReturn(graphList);
 
         final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
@@ -79,8 +85,7 @@ public class GraphControllerTest extends AbstractTest {
                 .header("Authorization", token))
                 .andReturn();
 
-        final String expected = "[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\"," +
-                "\"url\":\"my-graph-namespace.apps.k8s.cluster\",\"status\":\"UP\",\"problems\":null}]";
+        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster\",\"status\":\"UP\",\"problems\":null}]}";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
