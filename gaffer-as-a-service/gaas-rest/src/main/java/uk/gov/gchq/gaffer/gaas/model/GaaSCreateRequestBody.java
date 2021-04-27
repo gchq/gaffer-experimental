@@ -20,6 +20,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +39,7 @@ public class GaaSCreateRequestBody implements Serializable {
     private String proxyHost;
     private String proxyContextRoot;
     private Map<String, Object> schema;
+    private List<ProxySubGraph> proxySubGraphs;
 
     public GaaSCreateRequestBody() {
     }
@@ -87,4 +89,7 @@ public class GaaSCreateRequestBody implements Serializable {
         return proxyContextRoot;
     }
 
+    public List<ProxySubGraph> getProxySubGraphs() {
+        return proxySubGraphs;
+    }
 }

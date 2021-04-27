@@ -16,16 +16,18 @@
 
 package uk.gov.gchq.gaffer.gaas.client;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+public class GraphCommandExecutor {
 
-class RestClientTest {
+//    private final List<Command> commandHistory = new ArrayList<>();
 
-    @Autowired
-    private RestClient restClient;
+    public GraphCommandExecutor() {
+    }
 
-    @Test
-    public void shouldSendAAddGraphRequestToAFederatedURL() {
-        
+    public void execute(final Command command) {
+        try {
+//            commandHistory.add(command);
+            command.execute();
+        } catch (Exception e) {
+        }
     }
 }

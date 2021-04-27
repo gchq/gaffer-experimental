@@ -16,6 +16,10 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class GaaSRestApiException extends Exception {
 
     private String title;
@@ -39,5 +43,38 @@ public class GaaSRestApiException extends Exception {
 
     public int getStatusCode() {
         return code;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final GaaSRestApiException that = (GaaSRestApiException) o;
+
+        return new EqualsBuilder().append(code, that.code).append(title, that.title).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(title)
+                .append(getMessage())
+                .append(code)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("title", title)
+                .append("message", getMessage())
+                .append("code", code)
+                .toString();
     }
 }

@@ -18,7 +18,6 @@ package uk.gov.gchq.gaffer.gaas.model;
 
 import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
 import java.util.List;
-import java.util.Objects;
 
 public class GaaSGraph {
 
@@ -71,22 +70,5 @@ public class GaaSGraph {
 
     public List<String> getProblems() {
         return problems;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        GaaSGraph gaaSGraph = (GaaSGraph) o;
-        return Objects.equals(graphId, gaaSGraph.graphId) && Objects.equals(description, gaaSGraph.description) && Objects.equals(url, gaaSGraph.url) && status == gaaSGraph.status && Objects.equals(problems, gaaSGraph.problems);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(graphId, description, url, status, problems);
     }
 }

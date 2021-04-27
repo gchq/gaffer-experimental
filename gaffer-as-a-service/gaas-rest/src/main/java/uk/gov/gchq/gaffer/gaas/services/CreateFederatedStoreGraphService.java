@@ -15,11 +15,13 @@
  */
 package uk.gov.gchq.gaffer.gaas.services;
 
-import io.kubernetes.client.openapi.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
+import org.springframework.web.reactive.function.client.WebClient;
+import uk.gov.gchq.gaffer.gaas.client.AddGraphsOperationChainCommand;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GraphCommandExecutor;
+import uk.gov.gchq.gaffer.gaas.client.PingGraphStatusCommand;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
@@ -30,15 +32,28 @@ public class CreateFederatedStoreGraphService {
     @Autowired
     private CRDClient crdClient;
 
-    public void createFederatedStore(GaaSCreateRequestBody federatedGraph) throws GaaSRestApiException {
-        crdClient.createCRD(makeGafferHelmValues(federatedGraph));
-    }
-    public String getFederatedGraphURL(String graphId) throws ApiException {
-        return crdClient.getCRD(graphId).getUrl();
-    }
+    @Autowired
+    private WebClient.Builder webClientBuilder;
 
-    private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
-        return from(graph);
-    }
+    public void createFederatedStore(final GaaSCreateRequestBody federatedGraph) throws GaaSRestApiException {
+        // Create Graph
+        crdClient.createCRD(from(federatedGraph));
 
+        // Send operations to Graph
+        final String url = crdClient.getCRDByGraphId(federatedGraph.getGraphId()).getUrl();
+
+        final GraphCommandExecutor graphCommandExecutor = new GraphCommandExecutor();
+        final WebClient webClient = webClientBuilder.baseUrl(url).build();
+
+        // Check if Graph is up
+        graphCommandExecutor.execute(new PingGraphStatusCommand(webClient));
+
+        // Add Graphs to federated store graph
+//        federatedGraph.getProxySubGraphs().stream().forEach(proxySubGraph -> {
+        graphCommandExecutor.execute(new AddGraphsOperationChainCommand(webClient, federatedGraph.getProxySubGraphs()));
+//        });
+
+        // Disable AddGraph operation on graph
+//        graphCommandExecutor.execute(new DisableAddGraphOperationCommand(webClient));
+    }
 }
