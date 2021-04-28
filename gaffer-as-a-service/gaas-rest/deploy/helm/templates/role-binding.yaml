@@ -20,7 +20,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ include "helm.fullname" . }}-service-account
-    namespace: kai-helm-3
+    namespace: {{ .Values.namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

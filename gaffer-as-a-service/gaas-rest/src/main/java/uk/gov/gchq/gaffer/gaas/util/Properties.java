@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.exception;
+package uk.gov.gchq.gaffer.gaas.util;
 
-public class ExceptionResponse {
-    private String title;
-    private String detail;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-    public ExceptionResponse(final String title, final String detail) {
-        this.title = title;
-        this.detail = detail;
+@Component
+public class Properties {
+
+    public static String INGRESS_SUFFIX;
+    public static String NAMESPACE;
+
+    @Value("${ingress.suffix}")
+    public void setIngressSuffix(final String ingressSuffix) {
+        Properties.INGRESS_SUFFIX = ingressSuffix;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDetail() {
-        return detail;
+    @Value("${gaffer.namespace}")
+    public void setNamespace(final String namespace) {
+        Properties.NAMESPACE = namespace;
     }
 }

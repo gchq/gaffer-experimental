@@ -58,7 +58,9 @@
         <module name="MemberName"/>
         <module name="PackageName"/>
         <module name="ParameterName"/>
-        <module name="StaticVariableName"/>
+        <module name="StaticVariableName">
+            <property name="applyToPublic" value="false"/>
+        </module>
         <module name="TypeName"/>
 
         <module name="AvoidStarImport"/>

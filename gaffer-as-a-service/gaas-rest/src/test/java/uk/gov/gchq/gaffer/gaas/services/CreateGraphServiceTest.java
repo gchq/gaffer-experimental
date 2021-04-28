@@ -20,11 +20,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
+import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,15 +42,25 @@ public class CreateGraphServiceTest {
     private CRDClient crdClient;
 
     @Test
-    public void createGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfig() throws GaaSRestApiException {
-        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description"));
+    public void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
+        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.ACCUMULO, getSchema()));
 
-        final ArgumentCaptor<CRDCreateRequestBody> argumentCaptor = ArgumentCaptor.forClass(CRDCreateRequestBody.class);
+        final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
-
-        final CRDCreateRequestBody gafferRequestBody = argumentCaptor.<CRDCreateRequestBody>getValue();
-        assertEquals("myGraph", gafferRequestBody.getSpec().getGraph().getConfig().getGraphId());
-        assertEquals("Another description", gafferRequestBody.getSpec().getGraph().getConfig().getDescription());
+        final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
+
+        final GafferSpec spec = gafferRequestBody.getSpec();
+        assertEquals("myGraph", spec.getNestedObject("graph", "config", "graphId"));
+        assertEquals("Another description", spec.getNestedObject("graph", "config", "description"));
+        assertEquals(true, spec.getNestedObject("accumulo", "enabled"));
+    }
+
+    private LinkedHashMap<String, Object> getSchema() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("entities", new Object());
+        elementsSchema.put("edges", new Object());
+        elementsSchema.put("types", new Object());
+        return elementsSchema;
     }
 }

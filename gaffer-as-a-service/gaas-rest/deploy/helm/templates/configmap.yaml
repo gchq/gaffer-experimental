@@ -11,18 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-apiVersion: route.openshift.io/v1
-kind: Route
+apiVersion: v1
+kind: ConfigMap
 metadata:
   name: {{ include "helm.fullname" . }}
-  labels:
-  {{- include "helm.labels" . | nindent 4 }}
-spec:
-  to:
-    kind: Service
-    name: {{ include "helm.fullname" . }}
-    weight: 100
-  port:
-    targetPort: {{ .Values.service.targetPort }}-tcp
-  wildcardPolicy: None
+data:
+  GAFFER_NAMESPACE: {{ .Values.namespace}}

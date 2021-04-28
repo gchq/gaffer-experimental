@@ -16,8 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,12 +45,11 @@ public abstract class AbstractTest {
     protected static final String TEST_GRAPH_ID = "testgraphid";
     protected static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
 
-    @Value("${namespace}")
+    @Value("${gaffer.namespace}")
     protected String namespace;
 
-    protected String mapToJson(final Object obj) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(obj);
+    protected String mapToJson(final Object obj) {
+        return new Gson().toJson(obj);
     }
 
     @BeforeEach

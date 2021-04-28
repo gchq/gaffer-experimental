@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.model;
 
-import uk.gov.gchq.gaffer.graph.GraphConfig;
-
-public class NewGraph {
-
-    private GraphConfig config;
-
-    public NewGraph config(final GraphConfig config) {
-        this.config = config;
-        return this;
-    }
-
-    public GraphConfig getConfig() {
-        return config;
-    }
+public enum StoreType {
+    // TODO: rename to ACCUMULO_STORE & MAP_STORE
+    ACCUMULO,
+    FEDERATED_STORE,
+    MAPSTORE,
+    PROXY_STORE;
 }

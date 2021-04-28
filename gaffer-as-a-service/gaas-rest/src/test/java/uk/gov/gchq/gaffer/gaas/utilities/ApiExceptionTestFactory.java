@@ -40,7 +40,9 @@ public final class ApiExceptionTestFactory {
     public static ApiException makeApiException_duplicateGraph() {
         final Map<String, List<String>> responseHeaders = new TreeMap<>();
         responseHeaders.put("content-type", Arrays.asList("application/json"));
-        final String detail = "{\"kind\":\"Status\",\"apiVersion\":\"v1\",\"metadata\":{},\"status\":\"Failure\",\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"reason\":\"AlreadyExists\",\"details\":{\"name\":\"testgraphid\",\"group\":\"gchq.gov.uk\",\"kind\":\"gaffers\"},\"code\":409}\n";
+        final String detail = "{\"kind\":\"Status\",\"apiVersion\":\"v1\",\"metadata\":{},\"status\":\"Failure\"," +
+                "\"message\":\"gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\",\"reason\":\"AlreadyExists\"," +
+                "\"details\":{\"name\":\"testgraphid\",\"group\":\"gchq.gov.uk\",\"kind\":\"gaffers\"},\"code\":409}\n";
 
         return new ApiException("Conflict", 409, responseHeaders, detail);
     }

@@ -33,6 +33,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_loggedOutOfCluster;
 import static uk.gov.gchq.gaffer.gaas.utilities.ApiExceptionTestFactory.makeApiException_timeout;
 
@@ -48,11 +50,7 @@ public class CRDClientTest {
   @MockBean
   private CustomObjectsApi customObjectsApi;
 
-  @Value("${group}")
-  private String group;
-  @Value("${version}")
-  private String version;
-  @Value("${namespace}")
+  @Value("${gaffer.namespace}")
   private String namespace;
   private final String plural = "gaffers";
   private final String pretty = null;
@@ -72,7 +70,7 @@ public class CRDClientTest {
   @Test
   public void getGraphCRDs_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsTimeoutEx() throws ApiException {
     final ApiException apiException = makeApiException_timeout();
-    when(customObjectsApi.listNamespacedCustomObject(group, this.version, this.namespace, this.plural, this.pretty, null, null, null, null, null, null, null))
+    when(customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, this.namespace, this.plural, this.pretty, null, null, null, null, null, null, null))
             .thenThrow(apiException);
     final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.listAllCRDs());
 
@@ -82,7 +80,7 @@ public class CRDClientTest {
   @Test
   public void getGraphCRDs_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsApiEx() throws ApiException {
     final ApiException apiException = makeApiException_loggedOutOfCluster();
-    when(customObjectsApi.listNamespacedCustomObject(group, this.version, this.namespace, this.plural, this.pretty, null, null, null, null, null, null, null))
+    when(customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, this.namespace, this.plural, this.pretty, null, null, null, null, null, null, null))
             .thenThrow(apiException);
 
     final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.listAllCRDs());

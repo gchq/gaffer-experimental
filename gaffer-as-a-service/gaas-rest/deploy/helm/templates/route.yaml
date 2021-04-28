@@ -1,5 +1,4 @@
-#
-# Copyright 2016-2020 Crown Copyright
+# Copyright 2020 Crown Copyright
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,11 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-jwt.secret=javainuse
-gaffer.namespace=kai-dev
-ingress.suffix=apps.k8s.example.com
-admin.username=javainuse
-admin.password=$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6
-management.endpoints.web.exposure.include=env
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+  {{- include "helm.labels" . | nindent 4 }}
+spec:
+  to:
+    kind: Service
+    name: {{ include "helm.fullname" . }}
+    weight: 100
+  port:
+    targetPort: {{ .Values.service.targetPort }}-tcp
+  wildcardPolicy: None
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

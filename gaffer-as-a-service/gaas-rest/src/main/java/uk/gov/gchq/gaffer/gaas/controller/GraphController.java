@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.controller;
 
 import io.kubernetes.client.openapi.ApiClient;
@@ -30,12 +31,12 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-import uk.gov.gchq.gaffer.graph.GraphConfig;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -70,8 +71,8 @@ public class GraphController {
     }
 
     @GetMapping(path = "/graphs", produces = "application/json")
-    public ResponseEntity<List<GraphConfig>> getAllGraphs() throws GaaSRestApiException {
-        final List<GraphConfig> list = gafferService.getAllGraphs();
+    public ResponseEntity<List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
+        final List<GaaSGraph> list = gafferService.getAllGraphs();
         return new ResponseEntity(list, HttpStatus.OK);
     }
 

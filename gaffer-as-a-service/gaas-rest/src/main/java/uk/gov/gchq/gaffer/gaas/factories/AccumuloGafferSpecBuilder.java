@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.gchq.gaffer.gaas.model;
 
-public class GraphSpec {
+package uk.gov.gchq.gaffer.gaas.factories;
 
-    private NewGraph graph;
+import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.ACCUMULO_ENABLED_KEY;
 
-    public GraphSpec graph(final NewGraph graph) {
-        this.graph = graph;
-        return this;
-    }
+public class AccumuloGafferSpecBuilder extends GafferSpecBuilder {
 
-    public NewGraph getGraph() {
-        return graph;
+    @Override
+    public GafferSpec build() {
+        gafferSpec.putNestedObject(true, ACCUMULO_ENABLED_KEY);
+        return gafferSpec;
     }
 }

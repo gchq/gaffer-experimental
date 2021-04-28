@@ -16,51 +16,25 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CRDCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.GraphSpec;
-import uk.gov.gchq.gaffer.gaas.model.NewGraph;
-import uk.gov.gchq.gaffer.graph.GraphConfig;
+import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
 
 @Service
 public class CreateGraphService {
 
     @Autowired
-    private ApiClient apiClient;
-
-    @Autowired
     private CRDClient crdClient;
-    @Value("${group}")
-    private String group;
-    @Value("${version}")
-    private String version;
-    @Value("${kind}")
-    private String kind;
 
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
-        crdClient.createCRD(buildCreateCRDRequestBody(gaaSCreateRequestBodyInput));
+        crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
     }
 
-    private CRDCreateRequestBody buildCreateCRDRequestBody(final GaaSCreateRequestBody graph) {
-        final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
-
-        return new CRDCreateRequestBody()
-                .apiVersion(group + "/" + version)
-                .kind(kind)
-                .metaData(metadata)
-                .spec(new GraphSpec()
-                        .graph(new NewGraph()
-                                .config(new GraphConfig.Builder()
-                                        .graphId(graph.getGraphId())
-                                        .description(graph.getDescription())
-                                        .library(null)
-                                        .build())));
+    private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
+        return from(graph);
     }
 }
