@@ -50,8 +50,12 @@ class StoreTypeFactoryTest {
   private void setStoreList(final List<StoreType> storeTypeManager) {
     MapStoreType mapStore = new MapStoreType();
     ProxyStoreType proxyStoreType = new ProxyStoreType();
-    storeTypeManager.add(mapStore);
+    AccumuloStoreType accumuloStoreType = new AccumuloStoreType();
+    FederatedStoreType federatedStoreType = new FederatedStoreType();
+    storeTypeManager.add(federatedStoreType);
+    storeTypeManager.add(accumuloStoreType);
     storeTypeManager.add(proxyStoreType);
+    storeTypeManager.add(mapStore);
   }
 
 
@@ -81,7 +85,7 @@ class StoreTypeFactoryTest {
     StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
     final RuntimeException exception = assertThrows(RuntimeException.class, () -> storeTypeFactory.getBuilder(gaaSCreateRequestBody));
 
-    final String expected = "java.lang.RuntimeException: StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore";
+    final String expected = "java.lang.RuntimeException: StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore, mapStore";
 
     assertEquals(expected, exception.toString());
   }

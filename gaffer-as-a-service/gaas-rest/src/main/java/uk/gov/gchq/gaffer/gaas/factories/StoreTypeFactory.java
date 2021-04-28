@@ -20,23 +20,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StoreTypeFactory {
 
-    private final List<StoreType> storeTypeManager;
+    private final List<StoreType> storeTypes;
 
     @Autowired
-    public StoreTypeFactory(final List<StoreType> storeTypeManager) {
-        this.storeTypeManager = storeTypeManager;
+    public StoreTypeFactory(final List<StoreType> storeTypes) {
+        this.storeTypes = storeTypes;
     }
 
     public AbstractStoreTypeBuilder getBuilder(final GaaSCreateRequestBody graph) {
-        for (final StoreType storeSpecManagers : storeTypeManager) {
+        for (final StoreType storeSpecManagers : storeTypes) {
             if (graph.getStoreType().equalsIgnoreCase(storeSpecManagers.getType())) {
                 return storeSpecManagers.getStoreSpecBuilder(graph);
             }
         }
-        throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore");
-    }
+        final String storeTypesString = storeTypes.stream()
+                .map(StoreType::getType).collect(Collectors.joining(", "));
+        throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + storeTypesString);
+        }
 }
