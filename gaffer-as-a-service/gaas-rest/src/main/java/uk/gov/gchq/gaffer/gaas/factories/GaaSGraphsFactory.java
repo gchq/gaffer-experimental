@@ -21,6 +21,7 @@ import uk.gov.gchq.gaffer.common.model.v1.GafferList;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.util.JsonObjectWrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

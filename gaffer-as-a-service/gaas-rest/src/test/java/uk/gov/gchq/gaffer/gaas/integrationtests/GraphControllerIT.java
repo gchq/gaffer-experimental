@@ -207,7 +207,7 @@ public class GraphControllerIT extends AbstractTest {
                 .content(inputJson)).andReturn();
 
         assertEquals(500, result.getResponse().getStatus());
-        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore\"}";
+        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: accumuloStore, federatedStore, mapStore, proxyStore\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
     }
 

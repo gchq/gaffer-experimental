@@ -20,5 +20,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan("uk.gov.gchq.gaffer.gaas.factories")
+@ComponentScan("uk.gov.gchq.gaffer.gaas.stores")
 public class SpringContext {
 }

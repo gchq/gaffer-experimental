@@ -20,6 +20,8 @@ package uk.gov.gchq.gaffer.gaas.factories;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
+import uk.gov.gchq.gaffer.gaas.stores.FederatedStoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
