@@ -21,6 +21,7 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
+import uk.gov.gchq.gaffer.federatedstore.operation.FederatedOperationChain;
 import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.operation.OperationChain;
@@ -30,13 +31,15 @@ import uk.gov.gchq.gaffer.store.schema.Schema;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AddGraphsOperationChainCommand implements Command {
+public class AddGraphsCommand implements Command {
 
     public static final String EXECUTE_OPERATION_URI = "/graph/operations/execute";
+    public static final int GAFFER_PORT = 80;
+    public static final String SUCCESS_MESSAGE = "Successfully added all subgraph(s)";
     private final WebClient webClient;
     private final List<ProxySubGraph> graphs;
 
-    public AddGraphsOperationChainCommand(final WebClient webClient, final List<ProxySubGraph> graphs) {
+    public AddGraphsCommand(final WebClient webClient, final List<ProxySubGraph> graphs) {
         this.webClient = webClient;
         this.graphs = graphs;
     }
@@ -48,12 +51,12 @@ public class AddGraphsOperationChainCommand implements Command {
             this.webClient
                     .post()
                     .uri(EXECUTE_OPERATION_URI)
-                    .body(Mono.just(getRequestBody()), OperationChain.class)
+                    .body(Mono.just(getRequestBody()), FederatedOperationChain.class)
                     .retrieve()
                     .toBodilessEntity()
                     .block();
 
-            return "Successfully added all subgraph(s)";
+            return SUCCESS_MESSAGE;
 
         } catch (WebClientRequestException e) {
             throw new GaaSRestApiException(e.getMessage(), 0, e.getCause());
@@ -63,8 +66,8 @@ public class AddGraphsOperationChainCommand implements Command {
         }
     }
 
-    private OperationChain getRequestBody() {
-        return new OperationChain(getAddGraphOperations());
+    private FederatedOperationChain getRequestBody() {
+        return new FederatedOperationChain(new OperationChain(getAddGraphOperations()));
     }
 
     private List<AddGraph> getAddGraphOperations() {
@@ -75,7 +78,7 @@ public class AddGraphsOperationChainCommand implements Command {
             storeProperties.setStoreClass(ProxyStore.class);
             storeProperties.setGafferHost(subGraph.getHost());
             // TODO: Port number needs to match where the subgraph is hosted, needs to mitigate risk of breaking
-            storeProperties.setGafferPort(80);
+            storeProperties.setGafferPort(GAFFER_PORT);
             storeProperties.setGafferContextRoot(subGraph.getRoot());
 
             return new AddGraph.Builder()

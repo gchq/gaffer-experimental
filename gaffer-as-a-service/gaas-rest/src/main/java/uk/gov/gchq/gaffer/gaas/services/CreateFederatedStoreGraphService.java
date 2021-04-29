@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.gaas.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import uk.gov.gchq.gaffer.gaas.client.AddGraphsOperationChainCommand;
+import uk.gov.gchq.gaffer.gaas.client.AddGraphsCommand;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.client.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.client.PingGraphStatusCommand;
@@ -49,9 +49,7 @@ public class CreateFederatedStoreGraphService {
         graphCommandExecutor.execute(new PingGraphStatusCommand(webClient));
 
         // Add Graphs to federated store graph
-//        federatedGraph.getProxySubGraphs().stream().forEach(proxySubGraph -> {
-        graphCommandExecutor.execute(new AddGraphsOperationChainCommand(webClient, federatedGraph.getProxySubGraphs()));
-//        });
+        graphCommandExecutor.execute(new AddGraphsCommand(webClient, federatedGraph.getProxySubGraphs()));
 
         // Disable AddGraph operation on graph
 //        graphCommandExecutor.execute(new DisableAddGraphOperationCommand(webClient));

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @UnitTest
-public class AddGraphsOperationChainCommandTest {
+public class AddGraphsCommandTest {
 
     @Autowired
     private WebClient.Builder webClientBuilder;
@@ -42,7 +42,7 @@ public class AddGraphsOperationChainCommandTest {
     public void invalidRequestBody_() {
         final WebClient webClient = webClientBuilder.baseUrl("http://localhost:8080/notfound").build();
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsOperationChainCommand(webClient, SUB_GRAPHS).execute());
+        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(webClient, SUB_GRAPHS).execute());
 
         assertEquals(404, actual.getStatusCode());
         assertEquals("404 Not Found from GET http://localhost:8080/notfound/v2/graph/status", actual.getMessage());
@@ -54,7 +54,7 @@ public class AddGraphsOperationChainCommandTest {
     public void invalidURIPath_() {
         final WebClient webClient = webClientBuilder.baseUrl("http://localhost:8080/notfound").build();
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsOperationChainCommand(webClient, SUB_GRAPHS).execute());
+        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(webClient, SUB_GRAPHS).execute());
 
         assertEquals(404, actual.getStatusCode());
         assertEquals("404 Not Found from GET http://localhost:8080/notfound/v2/graph/status", actual.getMessage());
@@ -66,7 +66,7 @@ public class AddGraphsOperationChainCommandTest {
     public void invalidHost_() {
         final WebClient webClient = webClientBuilder.baseUrl("http://localhost:404/rest").build();
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsOperationChainCommand(webClient, SUB_GRAPHS).execute());
+        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(webClient, SUB_GRAPHS).execute());
 
         final String expected = "Connection refused: localhost/127.0.0.1:404; " +
                 "nested exception is io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: localhost/127.0.0.1:404";
@@ -78,7 +78,7 @@ public class AddGraphsOperationChainCommandTest {
     public void validHostAndURIPathAndAddGraphRequest_returnsSuccessString() throws GaaSRestApiException {
         final WebClient webClient = webClientBuilder.baseUrl("http://aatikafederatedpm-kai-dev.apps.ocp1.purplesky.cloud/rest").build();
 
-        final String actual = new AddGraphsOperationChainCommand(webClient, SUB_GRAPHS).execute();
+        final String actual = new AddGraphsCommand(webClient, SUB_GRAPHS).execute();
 
         assertEquals("Successfully added all subgraph(s)", actual);
     }
