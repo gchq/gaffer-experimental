@@ -22,6 +22,7 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
 import uk.gov.gchq.gaffer.gaas.stores.ProxyStoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
+import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
@@ -35,11 +36,18 @@ public class ProxyStoreTypeTest {
     @Test
     void testGetStoreSpecBuilder() {
         ProxyStoreType type = new ProxyStoreType();
-        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "proxyStore", "http://my.graph.co.uk", "/rest");
+        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "proxyStore",  getStoreProperties());
 
         AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder(gaaSCreateRequestBody);
         String expected = "{graph={storeProperties={gaffer.host=http://my.graph.co.uk, gaffer.context-root=/rest, gaffer.store.class=uk.gov.gchq.gaffer.proxystore.ProxyStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
-        GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").build();
+        GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setProperties(getStoreProperties()).build();
         assertEquals(expected, build.toString());
     }
+    private LinkedHashMap<String, Object> getStoreProperties() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("proxyHost", "http://my.graph.co.uk");
+        elementsSchema.put("proxyContextRoot", "/rest");
+        return elementsSchema;
+    }
+
 }

@@ -20,6 +20,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -38,36 +39,34 @@ public class GaaSCreateRequestBody implements Serializable {
     private String proxyHost;
     private String proxyContextRoot;
     private Map<String, Object> schema;
+    private Map<String, Object> storeProperties = new HashMap<>();
+
+    public Map<String, Object> getStoreProperties() {
+        return storeProperties;
+    }
+
 
     public GaaSCreateRequestBody() {
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final Map<String, Object> schema) {
-        this.graphId = graphId;
-        this.description = description;
-        this.storeType = storeType;
-        this.schema = schema;
-    }
     public GaaSCreateRequestBody(final String graphId, final String description, final String storeType) {
         this.graphId = graphId;
         this.description = description;
         this.storeType = storeType;
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final Map<String, Object> schema, final String proxyHost, final String proxyContextRoot) {
+    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final Map<String, Object> schema, final Map<String, Object> storeProperties) {
         this.graphId = graphId;
         this.description = description;
         this.storeType = storeType;
         this.schema = schema;
-        this.proxyHost = proxyHost;
-        this.proxyContextRoot = proxyContextRoot;
+        this.storeProperties = storeProperties;
     }
-    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final String proxyHost, final String proxyContextRoot) {
+    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final Map<String, Object> storeProperties) {
         this.graphId = graphId;
         this.description = description;
         this.storeType = storeType;
-        this.proxyHost = proxyHost;
-        this.proxyContextRoot = proxyContextRoot;
+        this.storeProperties = storeProperties;
     }
 
     public String getGraphId() {

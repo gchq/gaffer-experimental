@@ -48,12 +48,13 @@ public class ProxyStoreType implements StoreType {
             this.graph = graph;
         }
 
-        private Map<String, Object> getDefaultProxyStoreProperties(final String host, final String contextRoot) {
+        private Map<String, Object> getDefaultProxyStoreProperties() {
+            final Map<String, Object> graphStoreProperties = getProperties();
             final Map<String, Object> proxyStoreProperties = new HashMap<>();
             proxyStoreProperties.put(STORE_CLASS, ProxyStore.class.getName());
-            proxyStoreProperties.put(GAFFER_HOST, host);
-            if (contextRoot != null) {
-                proxyStoreProperties.put(GAFFER_CONTEXT_ROOT, contextRoot);
+            proxyStoreProperties.put(GAFFER_HOST, graphStoreProperties.get("proxyHost"));
+            if (graphStoreProperties.containsKey("proxyContextRoot")) {
+                proxyStoreProperties.put(GAFFER_CONTEXT_ROOT, graphStoreProperties.get("proxyContextRoot"));
                 // else, let Gaffer handle the default context root when not specified in GaaS REST request
             }
             return proxyStoreProperties;
@@ -62,7 +63,7 @@ public class ProxyStoreType implements StoreType {
         @Override
         public GafferSpec build() {
             final GafferSpec gafferSpec = super.build();
-            gafferSpec.putNestedObject(getDefaultProxyStoreProperties(graph.getProxyHost(), graph.getProxyContextRoot()), STORE_PROPERTIES_KEY);
+            gafferSpec.putNestedObject(getDefaultProxyStoreProperties(), STORE_PROPERTIES_KEY);
             return gafferSpec;
         }
 

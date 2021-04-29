@@ -19,29 +19,70 @@
 package uk.gov.gchq.gaffer.gaas.stores;
 
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.factories.GafferSpecBuilder;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import java.util.Map;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 public abstract class AbstractStoreTypeBuilder {
 
-  protected final GafferSpecBuilder gafferSpecBuilder;
-  protected GaaSCreateRequestBody graph;
+    protected GaaSCreateRequestBody graph;
+    private String graphId;
+    private String description;
+    private Map<String, Object> schema;
 
-  AbstractStoreTypeBuilder() {
-    this.gafferSpecBuilder = new GafferSpecBuilder();
-  }
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
 
-  public AbstractStoreTypeBuilder setGraphId(final String graphId) {
-    gafferSpecBuilder.setGraphId(graphId);
-    return this;
-  }
+    private Map<String, Object> properties;
 
-  public AbstractStoreTypeBuilder setDescription(final String description) {
-    gafferSpecBuilder.setDescription(description);
-    return this;
-  }
+    public Map<String, Object> getSchema() {
+        return schema;
+    }
 
-  public GafferSpec build() {
-    return gafferSpecBuilder.build();
-  }
+
+    public String getGraphId() {
+        return graphId;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public AbstractStoreTypeBuilder setGraphId(final String graphId) {
+        this.graphId = graphId;
+        return this;
+    }
+
+    public AbstractStoreTypeBuilder setDescription(final String description) {
+        this.description = description;
+        return this;
+    }
+
+    public AbstractStoreTypeBuilder setSchema(final Map<String, Object> schema) {
+        this.schema = schema;
+        return this;
+    }
+
+    public AbstractStoreTypeBuilder setProperties(final Map<String, Object> properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    public GafferSpec build() {
+        final GafferSpec gafferSpec = new GafferSpec();
+        gafferSpec.putNestedObject(graphId, GRAPH_ID_KEY);
+        gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
+        gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
+        gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
+        gafferSpec.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
+        return gafferSpec;
+    }
 }

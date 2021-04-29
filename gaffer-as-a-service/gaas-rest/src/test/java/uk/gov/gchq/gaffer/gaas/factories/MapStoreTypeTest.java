@@ -40,7 +40,7 @@ public class MapStoreTypeTest {
 
         AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder(gaaSCreateRequestBody);
         String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
-        GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").build();
+        GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
         assertEquals(expected, build.toString());
     }
     private LinkedHashMap<String, Object> getSchema() {

@@ -41,7 +41,7 @@ class StoreTypeFactoryTest {
 
     setStoreList(storeTypeManager);
 
-    GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "proxyStore", null, "http://my.graph.co.uk", null);
+    GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "proxyStore", getStoreProperties());
 
 
     StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
@@ -49,7 +49,7 @@ class StoreTypeFactoryTest {
     final String expected =
             "{graph={storeProperties={gaffer.host=http://my.graph.co.uk, gaffer.store.class=uk.gov.gchq.gaffer.proxystore.ProxyStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
 
-    GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").build();
+    GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setProperties(getStoreProperties()).build();
     assertEquals(expected, build.toString());
   }
 
@@ -64,6 +64,11 @@ class StoreTypeFactoryTest {
     storeTypeManager.add(mapStore);
   }
 
+  private LinkedHashMap<String, Object> getStoreProperties() {
+    final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+    elementsSchema.put("proxyHost", "http://my.graph.co.uk");
+    return elementsSchema;
+  }
 
   @Test
   void testGetMapStoreBuilder() {
@@ -77,7 +82,7 @@ class StoreTypeFactoryTest {
     AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(gaaSCreateRequestBody);
     final String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
 
-    GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").build();
+    GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
     assertEquals(expected, build.toString());
   }
 
