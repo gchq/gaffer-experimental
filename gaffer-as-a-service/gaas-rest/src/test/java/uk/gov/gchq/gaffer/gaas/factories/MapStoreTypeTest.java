@@ -18,7 +18,6 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
 import uk.gov.gchq.gaffer.gaas.stores.MapStoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
@@ -36,9 +35,7 @@ public class MapStoreTypeTest {
     @Test
     void testGetStoreSpecBuilder() {
         MapStoreType type = new MapStoreType();
-        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "mapStore", getSchema());
-
-        AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder(gaaSCreateRequestBody);
+        AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
         String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
         GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
         assertEquals(expected, build.toString());

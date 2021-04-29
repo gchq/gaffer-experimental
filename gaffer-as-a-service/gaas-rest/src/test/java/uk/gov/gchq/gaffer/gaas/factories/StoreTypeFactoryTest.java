@@ -45,7 +45,7 @@ class StoreTypeFactoryTest {
 
 
     StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-    AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(gaaSCreateRequestBody);
+    AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder("proxystore");
     final String expected =
             "{graph={storeProperties={gaffer.host=http://my.graph.co.uk, gaffer.store.class=uk.gov.gchq.gaffer.proxystore.ProxyStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
 
@@ -79,7 +79,7 @@ class StoreTypeFactoryTest {
     GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "mapStore", getSchema());
 
     StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-    AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(gaaSCreateRequestBody);
+    AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder("mapstore");
     final String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
 
     GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
@@ -91,10 +91,8 @@ class StoreTypeFactoryTest {
     List<StoreType> storeTypeManager = new ArrayList<>();
 
     setStoreList(storeTypeManager);
-
-    GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "invalidStore", getSchema());
-    StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-    final RuntimeException exception = assertThrows(RuntimeException.class, () -> storeTypeFactory.getBuilder(gaaSCreateRequestBody));
+  StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+    final RuntimeException exception = assertThrows(RuntimeException.class, () -> storeTypeFactory.getBuilder("invalidStore"));
 
     final String expected = "java.lang.RuntimeException: StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore, mapStore";
 

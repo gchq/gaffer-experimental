@@ -18,7 +18,6 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
 import uk.gov.gchq.gaffer.gaas.stores.AccumuloStoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
@@ -37,9 +36,7 @@ class AccumuloStoreTypeTest {
   @Test
   void testGetStoreSpecBuilder() {
     AccumuloStoreType type = new AccumuloStoreType();
-    GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "accumuloStore", getSchema(), null);
-
-    AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder(gaaSCreateRequestBody);
+    AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
    String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}, accumulo={enabled=true}}";
     GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
     assertEquals(expected, build.toString());

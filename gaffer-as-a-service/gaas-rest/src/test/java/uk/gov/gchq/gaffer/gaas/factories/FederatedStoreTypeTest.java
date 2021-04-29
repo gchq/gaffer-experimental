@@ -19,7 +19,6 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
 import uk.gov.gchq.gaffer.gaas.stores.FederatedStoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
@@ -36,9 +35,7 @@ public class FederatedStoreTypeTest {
     @Test
     void testGetStoreSpecBuilder() {
         FederatedStoreType type = new FederatedStoreType();
-        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "federatedStore");
-
-        AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder(gaaSCreateRequestBody);
+        AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
         String expected = "{graph={storeProperties={gaffer.serialiser.json.modules=uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules, gaffer.store.properties.class=uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties, gaffer.store.class=uk.gov.gchq.gaffer.federatedstore.FederatedStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
         GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").build();
         assertEquals(expected, build.toString());
