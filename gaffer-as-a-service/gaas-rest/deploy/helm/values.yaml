@@ -15,7 +15,7 @@
 replicaCount: 1
 image:
   #Set the repository value below to your own
-  repository: go159lab/gaas-rest-23
+  repository: dockerhub/repo
   pullPolicy: Always
   tag: latest
   containerPort: 8080
