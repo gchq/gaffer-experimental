@@ -14,37 +14,35 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.factories;
+package uk.gov.gchq.gaffer.gaas.stores;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
-import uk.gov.gchq.gaffer.gaas.stores.MapStoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
-public class MapStoreTypeTest {
+public class ProxyStoreTypeTest {
     @Test
     void testGetType() {
-        MapStoreType type = new MapStoreType();
-        assertEquals("mapStore", type.getType());
+        ProxyStoreType type = new ProxyStoreType();
+        assertEquals("proxyStore", type.getType());
     }
 
     @Test
     void testGetStoreSpecBuilder() {
-        MapStoreType type = new MapStoreType();
+        ProxyStoreType type = new ProxyStoreType();
         AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
-        String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
-        GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
+        String expected = "{graph={storeProperties={gaffer.host=http://my.graph.co.uk, gaffer.context-root=/rest, gaffer.store.class=uk.gov.gchq.gaffer.proxystore.ProxyStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
+        GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setProperties(getStoreProperties()).build();
         assertEquals(expected, build.toString());
     }
-    private LinkedHashMap<String, Object> getSchema() {
+    private LinkedHashMap<String, Object> getStoreProperties() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
-        elementsSchema.put("entities", new Object());
-        elementsSchema.put("edges", new Object());
-        elementsSchema.put("types", new Object());
+        elementsSchema.put("proxyHost", "http://my.graph.co.uk");
+        elementsSchema.put("proxyContextRoot", "/rest");
         return elementsSchema;
     }
+
 }
