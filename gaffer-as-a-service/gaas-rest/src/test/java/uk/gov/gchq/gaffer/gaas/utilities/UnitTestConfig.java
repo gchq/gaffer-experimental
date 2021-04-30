@@ -66,7 +66,7 @@ public class UnitTestConfig {
 
     @Bean
     public AuthService authService() {
-        return new AuthService();
+        return new AuthService(meterRegistry());
     }
 
     @Bean
@@ -76,12 +76,12 @@ public class UnitTestConfig {
 
     @Bean
     public GetGafferService getGafferService() {
-        return new GetGafferService();
+        return new GetGafferService(meterRegistry());
     }
 
     @Bean
     public GetNamespacesService getNamespacesService() {
-        return new GetNamespacesService();
+        return new GetNamespacesService(meterRegistry());
     }
 
     @Bean

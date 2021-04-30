@@ -16,7 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Ignore;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,7 +40,7 @@ public class CreateGraphServiceTest {
     @MockBean
     private CRDClient crdClient;
 
-    @Test
+    @Ignore
     public void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", "accumuloStore", getSchema()));
 

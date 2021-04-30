@@ -24,7 +24,6 @@ import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import java.io.IOException;
 
 @Configuration
@@ -45,13 +44,8 @@ public class AppConfig {
         return new CoreV1Api(apiClient());
     }
 
-    /**
-     * This is required so that we can use the @Timed annotation
-     * on methods that we want to time.
-     * See: https://micrometer.io/docs/concepts#_the_timed_annotation
-     */
     @Bean
-    public TimedAspect timedAspect(MeterRegistry registry) {
+    public TimedAspect timedAspect(final MeterRegistry registry) {
         return new TimedAspect(registry);
     }
 
