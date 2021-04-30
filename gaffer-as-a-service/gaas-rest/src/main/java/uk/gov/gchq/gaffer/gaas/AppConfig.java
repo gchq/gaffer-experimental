@@ -20,8 +20,11 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.util.ClientBuilder;
+import io.micrometer.core.aop.TimedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import java.io.IOException;
 
 @Configuration
@@ -41,5 +44,16 @@ public class AppConfig {
     public CoreV1Api coreV1Api() throws IOException {
         return new CoreV1Api(apiClient());
     }
+
+    /**
+     * This is required so that we can use the @Timed annotation
+     * on methods that we want to time.
+     * See: https://micrometer.io/docs/concepts#_the_timed_annotation
+     */
+    @Bean
+    public TimedAspect timedAspect(MeterRegistry registry) {
+        return new TimedAspect(registry);
+    }
+
 
 }
