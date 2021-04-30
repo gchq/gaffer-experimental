@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.utilities;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -43,6 +44,12 @@ public class UnitTestConfig {
     }
 
     @Bean
+    @Primary
+    public MeterRegistry meterRegistry() {
+        return mock(MeterRegistry.class);
+    }
+
+    @Bean
     public CRDClient crdClient() {
         return new CRDClient();
     }
@@ -64,7 +71,7 @@ public class UnitTestConfig {
 
     @Bean
     public CreateGraphService createGraphService() {
-        return new CreateGraphService();
+        return new CreateGraphService(meterRegistry());
     }
 
     @Bean
