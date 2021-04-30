@@ -68,6 +68,10 @@ jobs:
         SELECTOR: ${{ steps.deploy-and-expose.outputs.selector }}
 
     steps:
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
     - name: Add mask
       run: |
         echo "::add-mask::$CLUSTER_URL" 
@@ -119,7 +123,7 @@ jobs:
       id: image-build
       uses: redhat-actions/buildah-build@v2
       with:
-        image: ${{ env.APP_NAME }}
+        image: $${{ steps.extract_branch.outputs.branch }}-rest
         tags: ${{ env.TAG }}
         # If you don't have a dockerfile, see:
         # https://github.com/redhat-actions/buildah-build#scratch-build-inputs
@@ -159,7 +163,7 @@ jobs:
       id: deploy-and-expose
       uses: redhat-actions/oc-new-app@v1
       with:
-        app_name: ${{ env.APP_NAME }}
+        app_name: ${{ steps.extract_branch.outputs.branch }}-rest
         image: ${{ steps.push-to-registry.outputs.registry-path }}
         namespace: ${{ env.OPENSHIFT_NAMESPACE }}
         port: ${{ env.APP_PORT }}
