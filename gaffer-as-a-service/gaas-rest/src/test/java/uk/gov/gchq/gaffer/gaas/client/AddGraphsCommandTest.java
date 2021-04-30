@@ -37,7 +37,7 @@ public class AddGraphsCommandTest {
 
     private static List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "host only -DO NOT INCLUDE protocol", "/rest"));
 
-    @Disabled
+
     @Test
     public void invalidRequestBody_() {
         final WebClient webClient = webClientBuilder.baseUrl("http://localhost:8080/notfound").build();
@@ -45,11 +45,10 @@ public class AddGraphsCommandTest {
         final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(webClient, SUB_GRAPHS).execute());
 
         assertEquals(404, actual.getStatusCode());
-        assertEquals("404 Not Found from GET http://localhost:8080/notfound/v2/graph/status", actual.getMessage());
-        assertTrue(actual.getCause() instanceof WebClientResponseException);
+        assertEquals("404 Not Found from POST http://localhost:8080/notfound/graph/operations/execute", actual.getMessage());
     }
 
-    @Disabled
+
     @Test
     public void invalidURIPath_() {
         final WebClient webClient = webClientBuilder.baseUrl("http://localhost:8080/notfound").build();
@@ -57,11 +56,9 @@ public class AddGraphsCommandTest {
         final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(webClient, SUB_GRAPHS).execute());
 
         assertEquals(404, actual.getStatusCode());
-        assertEquals("404 Not Found from GET http://localhost:8080/notfound/v2/graph/status", actual.getMessage());
-        assertTrue(actual.getCause() instanceof WebClientResponseException);
+        assertEquals("404 Not Found from POST http://localhost:8080/notfound/graph/operations/execute", actual.getMessage());
     }
 
-    @Disabled
     @Test
     public void invalidHost_() {
         final WebClient webClient = webClientBuilder.baseUrl("http://localhost:404/rest").build();
@@ -71,7 +68,6 @@ public class AddGraphsCommandTest {
         final String expected = "Connection refused: localhost/127.0.0.1:404; " +
                 "nested exception is io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: localhost/127.0.0.1:404";
         assertEquals(expected, actual.getMessage());
-        assertTrue(actual.getCause() instanceof WebClientRequestException);
     }
 
     @Test
