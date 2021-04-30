@@ -16,23 +16,31 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-@UnitTest
+@SpringBootTest
 class GetGafferServiceTest {
 
     @Autowired
@@ -47,6 +55,21 @@ class GetGafferServiceTest {
     private static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
     private static final List<String>  TEST_GRAPH_PROBLEMS = new ArrayList<String>(Arrays.asList("There is problem with this Graph"));
 
+    private static Counter mockCounter;
+
+
+    @BeforeEach
+    void beforeEach() {
+       reset(mockCounter);
+    }
+
+    @BeforeAll
+    public static void beforeAll() {
+        mockCounter = mock(Counter.class);
+        MeterRegistry meterRegistry = mock(MeterRegistry.class);
+        // We can reuse the same mock in our use case
+        when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
+    }
 
     @Test
     void testGetGraphs_whenGraphRequestIsNotEmpty() throws GaaSRestApiException {
