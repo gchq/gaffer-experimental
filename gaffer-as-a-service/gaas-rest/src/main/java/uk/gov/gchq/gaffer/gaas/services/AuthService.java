@@ -16,6 +16,9 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,7 +40,15 @@ public class AuthService {
     @Autowired
     private JwtUserDetailsService userDetailsService;
 
+    private final Counter authCounter;
+
+    public AuthService(@Autowired final MeterRegistry meterRegistry) {
+        authCounter = meterRegistry.counter("AuthService", "action", "get");
+    }
+
+    @Timed(value = "getToken.time", description = "Time taken to get token", percentiles = 0)
     public String getToken(final JwtRequest authenticationRequest) throws GaaSRestApiException {
+        authCounter.increment();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch (AuthenticationException e) {
