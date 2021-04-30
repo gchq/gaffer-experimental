@@ -17,12 +17,14 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.SpringContext;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.StoreType;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
+import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
+import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 
 /**
  * GafferHelmValuesFactory is a factory class that creates a Gaffer Helm Values Object that can be passed to the
@@ -51,36 +53,19 @@ public final class GafferHelmValuesFactory {
     }
 
     private static GafferSpec createGafferSpecFrom(final GaaSCreateRequestBody graph) {
-        final StoreType storeType = graph.getStoreType();
 
-        switch (storeType) {
-            case ACCUMULO:
-                return new AccumuloGafferSpecBuilder()
-                        .graphId(graph.getGraphId())
-                        .description(graph.getDescription())
-                        .schema(graph.getSchema())
-                        .ingress(graph.getGraphId())
-                        .build();
-            case FEDERATED_STORE:
-            case MAPSTORE:
-                return new GafferSpecBuilder()
-                        .graphId(graph.getGraphId())
-                        .description(graph.getDescription())
-                        .schema(graph.getSchema())
-                        .storeProperties(storeType)
-                        .ingress(graph.getGraphId())
-                        .build();
-            case PROXY_STORE:
-                return new GafferSpecBuilder()
-                        .graphId(graph.getGraphId())
-                        .description(graph.getDescription())
-                        .schema(graph.getSchema())
-                        .storeProperties(storeType, graph.getProxyHost(), graph.getProxyContextRoot())
-                        .ingress(graph.getGraphId())
-                        .build();
-            default:
-                throw new IllegalArgumentException("Unsupported store type");
-        }
+        AnnotationConfigApplicationContext context =
+                new AnnotationConfigApplicationContext(SpringContext.class);
+
+        StoreTypeFactory storeTypeFactory = context.getBean(StoreTypeFactory.class);
+
+        final AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(graph.getStoreType())
+                .setGraphId(graph.getGraphId())
+                .setDescription(graph.getDescription())
+                .setSchema(graph.getSchema())
+                .setProperties(graph.getStoreProperties());
+        return  builder.build();
+
     }
 
     private GafferHelmValuesFactory() {

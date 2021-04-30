@@ -25,10 +25,9 @@ import io.kubernetes.client.openapi.models.V1Deployment;
 import io.kubernetes.client.openapi.models.V1DeploymentStatus;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.junit.jupiter.api.Test;
-
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferStatus;
-import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferStatus;
+import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -44,11 +43,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_API_K8S_COMPONENT_LABEL_VALUE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_K8S_NAME_LABEL_VALUE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_COMPONENT_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_NAME_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_API_K8S_COMPONENT_LABEL_VALUE;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_K8S_NAME_LABEL_VALUE;
+import static uk.gov.gchq.gaffer.common.util.Constants.K8S_COMPONENT_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.K8S_INSTANCE_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.K8S_NAME_LABEL;
 
 public class StateHandlerTest {
 

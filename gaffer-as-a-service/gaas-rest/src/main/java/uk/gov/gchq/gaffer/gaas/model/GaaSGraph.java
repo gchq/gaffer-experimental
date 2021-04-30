@@ -16,7 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
-import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
+import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import java.util.List;
 
 public class GaaSGraph {
@@ -36,6 +36,7 @@ public class GaaSGraph {
         this.description = description;
         return this;
     }
+
 
     public GaaSGraph url(final String url) {
         this.url = url;
@@ -70,5 +71,16 @@ public class GaaSGraph {
 
     public List<String> getProblems() {
         return problems;
+    }
+
+    @Override
+    public String toString() {
+        return "GaaSGraph{" +
+                "graphId='" + graphId + '\'' +
+                ", description='" + description + '\'' +
+                ", url='" + url + '\'' +
+                ", status=" + status +
+                ", problems=" + problems +
+                '}';
     }
 }

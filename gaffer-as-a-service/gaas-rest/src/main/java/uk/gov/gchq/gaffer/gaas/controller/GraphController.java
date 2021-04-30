@@ -39,6 +39,7 @@ import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @CrossOrigin
@@ -72,7 +73,7 @@ public class GraphController {
 
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
-        final List<GaaSGraph> list = gafferService.getAllGraphs();
+        final Map<String, List<GaaSGraph>> list = gafferService.getAllGraphs();
         return new ResponseEntity(list, HttpStatus.OK);
     }
 

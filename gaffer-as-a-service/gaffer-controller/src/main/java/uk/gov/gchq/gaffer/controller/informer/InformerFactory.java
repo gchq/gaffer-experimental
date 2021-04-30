@@ -30,12 +30,10 @@ import io.kubernetes.client.spring.extended.controller.annotation.KubernetesInfo
 import io.kubernetes.client.util.generic.GenericKubernetesApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
-
-import static uk.gov.gchq.gaffer.controller.util.Constants.CONTROLLER_CLUSTER_SCOPE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferList;
+import static uk.gov.gchq.gaffer.common.util.Constants.CONTROLLER_CLUSTER_SCOPE;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_NAMESPACE;
 
 @KubernetesInformers({
         @KubernetesInformer(
