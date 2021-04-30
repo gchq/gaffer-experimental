@@ -1,4 +1,4 @@
-package uk.gov.gchq.gaffer.gaas.client;/*
+/*
  * Copyright 2020 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,10 @@ package uk.gov.gchq.gaffer.gaas.client;/*
  * limitations under the License.
  */
 
-import org.junit.jupiter.api.Disabled;
+package uk.gov.gchq.gaffer.gaas.client;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
@@ -27,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @UnitTest
 public class AddGraphsCommandTest {
@@ -70,12 +67,5 @@ public class AddGraphsCommandTest {
         assertEquals(expected, actual.getMessage());
     }
 
-    @Test
-    public void validHostAndURIPathAndAddGraphRequest_returnsSuccessString() throws GaaSRestApiException {
-        final WebClient webClient = webClientBuilder.baseUrl("http://aatikafederatedpm-kai-dev.apps.ocp1.purplesky.cloud/rest").build();
 
-        final String actual = new AddGraphsCommand(webClient, SUB_GRAPHS).execute();
-
-        assertEquals("Successfully added all subgraph(s)", actual);
-    }
 }

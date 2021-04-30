@@ -66,8 +66,8 @@ public class AddGraphsCommand implements Command {
         }
     }
 
-    private FederatedOperationChain getRequestBody() {
-        return new FederatedOperationChain(new OperationChain(getAddGraphOperations()));
+    private OperationChain getRequestBody() {
+        return new OperationChain(new OperationChain(getAddGraphOperations()));
     }
 
     private List<AddGraph> getAddGraphOperations() {

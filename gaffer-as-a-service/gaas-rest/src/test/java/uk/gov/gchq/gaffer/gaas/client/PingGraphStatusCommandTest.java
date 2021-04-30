@@ -54,12 +54,4 @@ public class PingGraphStatusCommandTest {
         assertTrue(actual.getCause() instanceof WebClientRequestException);
     }
 
-    @Test
-    public void validHostAndURIPath_returnsEvent() throws GaaSRestApiException {
-        final WebClient webClient = webClientBuilder.baseUrl("http://localhost:8080/rest").build();
-
-        final String event = new PingGraphStatusCommand(webClient).execute();
-
-        assertEquals("Graph status is UP", event);
-    }
 }
