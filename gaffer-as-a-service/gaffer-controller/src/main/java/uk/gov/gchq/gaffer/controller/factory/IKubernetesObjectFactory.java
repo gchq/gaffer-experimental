@@ -19,8 +19,8 @@ package uk.gov.gchq.gaffer.controller.factory;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.HelmCommand;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
 
 public interface IKubernetesObjectFactory {
 

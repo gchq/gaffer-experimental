@@ -52,12 +52,12 @@
             <version>${gaffer.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
+       <dependency>
             <groupId>uk.gov.gchq.gaffer</groupId>
-            <artifactId>gaffer-controller</artifactId>
+            <artifactId>gaas-common</artifactId>
             <version>${gaffer.version}</version>
             <scope>compile</scope>
-        </dependency>
+       </dependency>
         <dependency>
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>proxy-store</artifactId>

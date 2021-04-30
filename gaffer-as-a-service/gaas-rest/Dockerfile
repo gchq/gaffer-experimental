@@ -9,7 +9,7 @@ WORKDIR /workspace
 
 COPY ./target ./gaffer-experimental/target
 
-RUN if [ ! -f ./gaffer-experimental/target/gaas-rest-0.0.1-SNAPSHOT-exec.jar ]; then \
+RUN if [ ! -f ./gaffer-experimental/target/gaas-rest-1.16.0-exec.jar ]; then \
         rm -rf ./gaffer-experimental && \
         git clone https://github.com/gchq/gaffer-experimental.git && \
         cd gaffer-experimental && \
@@ -28,5 +28,5 @@ RUN mkdir -p /usr/share/man/man1 && \
 
 USER ${USER}
 WORKDIR /spring
-COPY --from=builder /workspace/gaffer-experimental/target/gaas-rest-0.0.1-SNAPSHOT-exec.jar ./gaas-rest.jar
+COPY --from=builder /workspace/gaffer-experimental/target/gaas-rest-1.16.0-exec.jar ./gaas-rest.jar
 ENTRYPOINT [ "java", "-jar", "./gaas-rest.jar"]

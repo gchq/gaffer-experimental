@@ -32,14 +32,11 @@ import io.kubernetes.client.openapi.models.V1Volume;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
-
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.controller.HelmCommand;
 import uk.gov.gchq.gaffer.controller.factory.KubernetesObjectFactory;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-
 import java.lang.reflect.Type;
 import java.util.HashMap;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -50,16 +47,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAAS_LABEL_VALUE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAMESPACE_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAME_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE_PULL_POLICY;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAAS_LABEL_VALUE;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAMESPACE_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAME_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.K8S_INSTANCE_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_HELM_REPO;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_IMAGE;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_IMAGE_PULL_POLICY;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_NAMESPACE;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_RESTART_POLICY;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
 class DeploymentHandlerTest {
 

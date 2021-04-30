@@ -41,29 +41,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferStatus;
+import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.controller.HelmCommand;
 import uk.gov.gchq.gaffer.controller.callback.SimpleApiCallback;
 import uk.gov.gchq.gaffer.controller.factory.IKubernetesObjectFactory;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferStatus;
-import uk.gov.gchq.gaffer.controller.util.CommonUtil;
-import uk.gov.gchq.gaffer.controller.util.Constants;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static uk.gov.gchq.gaffer.common.util.Constants.GAAS_LABEL_VALUE;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAMESPACE_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAME_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.GOAL_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.common.util.Constants.K8S_INSTANCE_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
+import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.controller.HelmCommand.UNINSTALL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAAS_LABEL_VALUE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAMESPACE_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAME_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GOAL_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.PLURAL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_NAMESPACE;
-
 /**
  * Responds to changes in Gaffer objects and manages Gaffer Helm deployments
  */
@@ -265,7 +263,7 @@ public class DeploymentHandler implements Reconciler {
             if (SUCCEEDED.equals(phase)) {
                 Map<String, String> labels = metadata.getLabels();
                 if (labels != null &&
-                        UNINSTALL.getCommand().equals(labels.get(Constants.GOAL_LABEL))) {
+                        UNINSTALL.getCommand().equals(labels.get(GOAL_LABEL))) {
                     cleanUpGafferDeploymentAfterTearDown(labels.get(GAFFER_NAME_LABEL), labels.get(GAFFER_NAMESPACE_LABEL));
                 } else {
                     tearDownWorker(newPod);

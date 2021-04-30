@@ -22,11 +22,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
 import java.util.ArrayList;
@@ -36,9 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.controller.util.Constants.PLURAL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
+import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 import static uk.gov.gchq.gaffer.gaas.utilities.GafferKubernetesObjectFactory.from;
 
@@ -59,9 +58,9 @@ public class CRDClientIT {
 //    @Value("${version}")
 //    private String version;
 
-    private static final String TEST_GRAPH_ID = "test-graph-id";
+    private static final String TEST_GRAPH_ID = "testgraphid";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
-    private static final StoreType ACCUMULO_ENABLED = StoreType.ACCUMULO;
+    private static final String ACCUMULO_ENABLED = "accumuloStore";
 
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {
@@ -111,7 +110,8 @@ public class CRDClientIT {
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
         crdClient.createCRD(from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema())));
-        assertTrue(crdClient.listAllCRDs().toString().contains("test-graph-id"));
+        System.out.println(crdClient.listAllCRDs().toString());
+        assertTrue(crdClient.listAllCRDs().toString().contains("testgraphid"));
     }
 
     @Test
