@@ -24,7 +24,7 @@ import uk.gov.gchq.gaffer.rest.SystemStatus;
 
 public class PingGraphStatusCommand implements Command {
 
-    public static final String GRAPH_STATUS_URI = "/v2/graph/status";
+    public static final String GRAPH_STATUS_URI = "/graph/status";
     private final WebClient webClient;
 
     public PingGraphStatusCommand(final WebClient webClient) {

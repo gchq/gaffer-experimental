@@ -1,4 +1,4 @@
-package uk.gov.gchq.gaffer.gaas.client;/*
+/*
  * Copyright 2020 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,8 @@ package uk.gov.gchq.gaffer.gaas.client;/*
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package uk.gov.gchq.gaffer.gaas.client;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,12 +56,4 @@ public class PingGraphStatusCommandTest {
         assertTrue(actual.getCause() instanceof WebClientRequestException);
     }
 
-    @Test
-    public void validHostAndURIPath_returnsEvent() throws GaaSRestApiException {
-        final WebClient webClient = webClientBuilder.baseUrl("http://localhost:8080/rest").build();
-
-        final String event = new PingGraphStatusCommand(webClient).execute();
-
-        assertEquals("Graph status is UP", event);
-    }
 }

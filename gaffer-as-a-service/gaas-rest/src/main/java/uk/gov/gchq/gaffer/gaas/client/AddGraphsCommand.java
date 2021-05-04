@@ -61,7 +61,7 @@ public class AddGraphsCommand implements Command {
             throw new GaaSRestApiException(e.getMessage(), 0, e.getCause());
 
         } catch (WebClientResponseException e) {
-            throw new GaaSRestApiException(e.getMessage(), e.getResponseBodyAsString(), e.getRawStatusCode());
+            throw new GaaSRestApiException(e.getMessage(), e.getMessage(), e.getRawStatusCode());
         }
     }
 
