@@ -35,9 +35,15 @@ public class CreateFederatedStoreGraphService {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
-    public void createFederatedStore(final GaaSCreateRequestBody federatedGraph) throws GaaSRestApiException {
-        // Create Graph
-        crdClient.createCRD(from(federatedGraph));
+    public void createFederatedStore(final GaaSCreateRequestBody parentFederatedGraph) throws GaaSRestApiException {
+        // check if there are actually sub graphs to add if not throw error
+        // check if child graphs to add all are valid (URLs)
+        // 1) Create parentFedGraph
+        // 1) Get the URL of the parentFedGraph
+        crdClient.createCRD(from(parentFederatedGraph));
+        // 1) Check if parentFedGraph URL is valid
+        // 1) send a request to parentFedGraph containing child-graph URLs to add
+        // 1) check if child-graph got added to fed store correctly
 
         // Send operations to Graph
 //        final String url = crdClient.getCRDByGraphId(federatedGraph.getGraphId()).getUrl();
@@ -49,7 +55,7 @@ public class CreateFederatedStoreGraphService {
         graphCommandExecutor.execute(new PingGraphStatusCommand(webClient));
 
         // Add Graphs to federated store graph
-        graphCommandExecutor.execute(new AddGraphsCommand(webClient, federatedGraph.getProxySubGraphs()));
+        graphCommandExecutor.execute(new AddGraphsCommand(webClient, parentFederatedGraph.getProxySubGraphs()));
 
         // Disable AddGraph operation on graph
 //        graphCommandExecutor.execute(new DisableAddGraphOperationCommand(webClient));

@@ -26,13 +26,16 @@ import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -50,12 +53,20 @@ class CreateFederatedStoreGraphServiceTest {
     private static final String TEST_GRAPH_URL = "graph-namespace.k8s.my.cluster/rest";
     private static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
     private static final List<String> TEST_GRAPH_PROBLEMS = new ArrayList<String>(Arrays.asList("There is problem with this Graph"));
+    private List<ProxySubGraph> proxySubGraphs;
+
 
     /*TODO: Take in a request,
-       Create a federated graph
-       Get the URL
-       Add proxy stores by sending requests to the url
-    *  */
+           Create a federated graph
+           Get the URL
+           Add proxy stores by sending requests to the url
+        *  */
+
+    @Test
+    void shouldThrowErrorWhenSubGraphsEmpty() {
+        assertThrows(GaaSRestApiException.class,()-> service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphs)));
+    }
+
     @Disabled
     @Test
     public void shouldSendTheCorrectRequestToTheCRDClientWhenCreatingAFederatedGraph() throws GaaSRestApiException {

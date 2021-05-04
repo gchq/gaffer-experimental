@@ -22,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClient;
 import uk.gov.gchq.gaffer.gaas.client.AddGraphsCommand;
 import uk.gov.gchq.gaffer.gaas.client.PingGraphStatusCommand;
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import java.util.Arrays;
 import java.util.List;

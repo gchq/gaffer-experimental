@@ -41,7 +41,6 @@ public class GaaSCreateRequestBody implements Serializable {
     private String proxyContextRoot;
     private Map<String, Object> schema;
     private Map<String, Object> storeProperties = new HashMap<>();
-    private List<ProxySubGraph> proxySubGraphs;
 
     public Map<String, Object> getStoreProperties() {
         return storeProperties;
@@ -95,7 +94,4 @@ public class GaaSCreateRequestBody implements Serializable {
         return proxyContextRoot;
     }
 
-    public List<ProxySubGraph> getProxySubGraphs() {
-        return proxySubGraphs;
-    }
 }
