@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   gaas-rest:
-    image: "gaas-rest-metrics:latest"
+    image: "kitkat520/api"
     ports:
       - "8080:8080"
     container_name: gaas-rest
