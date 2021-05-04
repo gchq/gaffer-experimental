@@ -71,12 +71,12 @@ public class UnitTestConfig {
 
     @Bean
     public CreateGraphService createGraphService() {
-        return new CreateGraphService(meterRegistry());
+        return new CreateGraphService();
     }
 
     @Bean
     public GetGafferService getGafferService() {
-        return new GetGafferService(meterRegistry());
+        return new GetGafferService();
     }
 
     @Bean
