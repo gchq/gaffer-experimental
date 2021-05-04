@@ -33,17 +33,12 @@ public class CreateGraphService {
     @Autowired
     private CRDClient crdClient;
 
-
-    private final Counter createCounter;
-
-
-    public CreateGraphService(@Autowired final MeterRegistry meterRegistry) {
-        createCounter = meterRegistry.counter("CreateGraphService", "action", "create");
-    }
+    @Autowired
+    private MeterRegistry meterRegistry;
 
     @Timed(value = "createGraph.time", description = "Time taken to create graph", percentiles = 0)
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
-        createCounter.increment();
+        meterRegistry.counter("CreateGraphService", "action", "create").increment();
         crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
     }
 
