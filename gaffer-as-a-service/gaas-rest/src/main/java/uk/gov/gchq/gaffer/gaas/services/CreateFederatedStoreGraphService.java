@@ -22,8 +22,8 @@ import uk.gov.gchq.gaffer.gaas.client.AddGraphsCommand;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.client.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.client.PingGraphStatusCommand;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
 
 @Service
@@ -40,10 +40,10 @@ public class CreateFederatedStoreGraphService {
         crdClient.createCRD(from(federatedGraph));
 
         // Send operations to Graph
-        final String url = crdClient.getCRDByGraphId(federatedGraph.getGraphId()).getUrl();
+//        final String url = crdClient.getCRDByGraphId(federatedGraph.getGraphId()).getUrl();
 
         final GraphCommandExecutor graphCommandExecutor = new GraphCommandExecutor();
-        final WebClient webClient = webClientBuilder.baseUrl(url).build();
+        final WebClient webClient = webClientBuilder.baseUrl("").build();
 
         // Check if Graph is up
         graphCommandExecutor.execute(new PingGraphStatusCommand(webClient));

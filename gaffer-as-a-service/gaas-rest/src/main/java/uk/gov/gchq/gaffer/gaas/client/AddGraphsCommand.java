@@ -21,8 +21,7 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
-import uk.gov.gchq.gaffer.federatedstore.operation.FederatedOperationChain;
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.proxystore.ProxyProperties;
@@ -51,7 +50,7 @@ public class AddGraphsCommand implements Command {
             this.webClient
                     .post()
                     .uri(EXECUTE_OPERATION_URI)
-                    .body(Mono.just(getRequestBody()), FederatedOperationChain.class)
+                    .body(Mono.just(makeRequestBody()), OperationChain.class)
                     .retrieve()
                     .toBodilessEntity()
                     .block();
@@ -66,8 +65,8 @@ public class AddGraphsCommand implements Command {
         }
     }
 
-    private FederatedOperationChain getRequestBody() {
-        return new FederatedOperationChain(new OperationChain(getAddGraphOperations()));
+    private OperationChain makeRequestBody() {
+        return new OperationChain(new OperationChain(getAddGraphOperations()));
     }
 
     private List<AddGraph> getAddGraphOperations() {

@@ -16,7 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.client;
 
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 
 @FunctionalInterface
 public interface Command {

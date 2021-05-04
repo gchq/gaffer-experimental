@@ -29,25 +29,25 @@ import io.kubernetes.client.openapi.models.V1VolumeMount;
 import io.kubernetes.client.util.Yaml;
 import org.springframework.core.env.Environment;
 
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.controller.HelmCommand;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
 
 import java.util.List;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAAS_LABEL_VALUE;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAMESPACE_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAME_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_WORKER_CONTAINER_NAME;
+import static uk.gov.gchq.gaffer.common.util.Constants.GOAL_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.K8S_COMPONENT_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.K8S_INSTANCE_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_HELM_REPO;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_IMAGE;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_IMAGE_PULL_POLICY;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_LABEL_VALUE;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_RESTART_POLICY;
+import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAAS_LABEL_VALUE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAMESPACE_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_NAME_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_WORKER_CONTAINER_NAME;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GOAL_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_COMPONENT_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_HELM_REPO;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_IMAGE_PULL_POLICY;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_LABEL_VALUE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_RESTART_POLICY;
-import static uk.gov.gchq.gaffer.controller.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
 /**
  * Factory class used to create Kubernetes objects

@@ -32,24 +32,24 @@ import io.kubernetes.client.spring.extended.controller.annotation.UpdateWatchEve
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferStatus;
+import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
+import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.controller.callback.SimpleApiCallback;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferStatus;
-import uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus;
-import uk.gov.gchq.gaffer.controller.util.CommonUtil;
 
 import java.util.Map;
 
-import static uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus.DOWN;
-import static uk.gov.gchq.gaffer.controller.model.v1.RestApiStatus.UP;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_API_K8S_COMPONENT_LABEL_VALUE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GAFFER_K8S_NAME_LABEL_VALUE;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_COMPONENT_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_INSTANCE_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.K8S_NAME_LABEL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.PLURAL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.common.model.v1.RestApiStatus.DOWN;
+import static uk.gov.gchq.gaffer.common.model.v1.RestApiStatus.UP;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_API_K8S_COMPONENT_LABEL_VALUE;
+import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_K8S_NAME_LABEL_VALUE;
+import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.common.util.Constants.K8S_COMPONENT_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.K8S_INSTANCE_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.K8S_NAME_LABEL;
+import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
+import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 
 /**
  * Monitors Gaffer deployments and updates the status of Gaffer objects.

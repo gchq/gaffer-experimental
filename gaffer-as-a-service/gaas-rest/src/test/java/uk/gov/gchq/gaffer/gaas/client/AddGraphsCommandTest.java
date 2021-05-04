@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class AddGraphsCommandTest {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
-    private static List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "host only -DO NOT INCLUDE protocol", "/rest"));
+    private static List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("mygraph", "ashsubgraphpm-kai-dev.apps.ocp1.purplesky.cloud", "/rest"));
 
     @Disabled
     @Test

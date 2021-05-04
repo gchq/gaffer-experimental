@@ -25,16 +25,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferList;
-import uk.gov.gchq.gaffer.controller.util.CommonUtil;
+import uk.gov.gchq.gaffer.common.model.v1.GafferList;
+import uk.gov.gchq.gaffer.common.util.CommonUtil;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import static uk.gov.gchq.gaffer.controller.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.controller.util.Constants.PLURAL;
-import static uk.gov.gchq.gaffer.controller.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
+import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
+import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.factories.GaaSGraphsFactory.from;
 import static uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory.from;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
@@ -66,15 +66,15 @@ public class CRDClient {
         }
     }
 
-    public GaaSGraph getCRDByGraphId(final String graphId) throws GaaSRestApiException {
-        try {
-            return from(CommonUtil.convertToCustomObject(customObjectsApi.getNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, graphId), Gaffer.class));
-        } catch (ApiException e) {
-            throw from(e);
-        }
-    }
+//    public Map<String, List<GaaSGraph>> getCRDByGraphId(final String graphId) throws GaaSRestApiException {
+//        try {
+//            return from(CommonUtil.convertToCustomObject(customObjectsApi.getNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, graphId), Gaffer.class));
+//        } catch (ApiException e) {
+//            throw from(e);
+//        }
+//    }
 
-    public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
+    public Map<String, List<GaaSGraph>> listAllCRDs() throws GaaSRestApiException {
         try {
             final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null);
             return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));

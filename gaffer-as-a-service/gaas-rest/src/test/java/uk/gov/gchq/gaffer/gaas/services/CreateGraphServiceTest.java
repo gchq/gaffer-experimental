@@ -20,12 +20,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import uk.gov.gchq.gaffer.controller.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.controller.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +42,7 @@ public class CreateGraphServiceTest {
 
     @Test
     public void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
-        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", StoreType.ACCUMULO, getSchema()));
+        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", "accumuloStore", getSchema()));
 
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
