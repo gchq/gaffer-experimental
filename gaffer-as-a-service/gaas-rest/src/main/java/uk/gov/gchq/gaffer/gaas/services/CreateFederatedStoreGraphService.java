@@ -18,12 +18,16 @@ package uk.gov.gchq.gaffer.gaas.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.gov.gchq.gaffer.commonutil.ToStringBuilder;
 import uk.gov.gchq.gaffer.gaas.client.AddGraphsCommand;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.client.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.client.PingGraphStatusCommand;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import java.util.ArrayList;
+import java.util.List;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
 
 @Service
@@ -35,11 +39,29 @@ public class CreateFederatedStoreGraphService {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
-    public void createFederatedStore(final GaaSCreateRequestBody parentFederatedGraph) throws GaaSRestApiException {
-        // check if there are actually sub graphs to add if not throw error
+    public void createFederatedStore(final FederatedRequestBody parentFederatedGraph) throws GaaSRestApiException {
+
+        if (parentFederatedGraph.getProxySubGraphs().isEmpty()) {
+            throw new GaaSRestApiException("Bad Request", "There are no sub-graphs to add", 400);
+        }
         // check if child graphs to add all are valid (URLs)
+        final GraphCommandExecutor graphCommandExecutor = new GraphCommandExecutor();
+        final StringBuilder exceptionList = new StringBuilder();
+        parentFederatedGraph.getProxySubGraphs().stream()
+                .forEach((proxySubGraph) -> {
+                    final WebClient webClient = webClientBuilder.baseUrl(proxySubGraph.getHost()).build();
+                    try {
+                        graphCommandExecutor.execute(new PingGraphStatusCommand(webClient));
+                    } catch (GaaSRestApiException e) {
+                        exceptionList.append(proxySubGraph.getGraphId());
+                    }
+                });
+        if (exceptionList.length() > 0) {
+            throw new GaaSRestApiException("Bad Request", "The following graphs have invalid URLs: " + exceptionList.toString(), 400);
+        }
         // 1) Create parentFedGraph
         // 1) Get the URL of the parentFedGraph
+
         crdClient.createCRD(from(parentFederatedGraph));
         // 1) Check if parentFedGraph URL is valid
         // 1) send a request to parentFedGraph containing child-graph URLs to add
@@ -48,14 +70,11 @@ public class CreateFederatedStoreGraphService {
         // Send operations to Graph
 //        final String url = crdClient.getCRDByGraphId(federatedGraph.getGraphId()).getUrl();
 
-        final GraphCommandExecutor graphCommandExecutor = new GraphCommandExecutor();
-        final WebClient webClient = webClientBuilder.baseUrl("").build();
 
         // Check if Graph is up
-        graphCommandExecutor.execute(new PingGraphStatusCommand(webClient));
 
         // Add Graphs to federated store graph
-        graphCommandExecutor.execute(new AddGraphsCommand(webClient, parentFederatedGraph.getProxySubGraphs()));
+//        graphCommandExecutor.execute(new AddGraphsCommand(webClient, parentFederatedGraph.getProxySubGraphs()));
 
         // Disable AddGraph operation on graph
 //        graphCommandExecutor.execute(new DisableAddGraphOperationCommand(webClient));

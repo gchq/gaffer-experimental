@@ -25,4 +25,8 @@ public class FederatedRequestBody extends GaaSCreateRequestBody {
         super(testGraphId,testGraphDescription,federatedStore);
         this.proxySubGraphs = proxySubGraphs;
     }
+
+    public List<ProxySubGraph> getProxySubGraphs() {
+        return proxySubGraphs;
+    }
 }

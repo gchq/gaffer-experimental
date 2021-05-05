@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.client;
 
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+
 public class GraphCommandExecutor {
 
 //    private final List<Command> commandHistory = new ArrayList<>();
@@ -23,11 +25,8 @@ public class GraphCommandExecutor {
     public GraphCommandExecutor() {
     }
 
-    public void execute(final Command command) {
-        try {
+    public void execute(final Command command) throws GaaSRestApiException {
 //            commandHistory.add(command);
-            command.execute();
-        } catch (Exception e) {
-        }
+        command.execute();
     }
 }
