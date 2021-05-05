@@ -159,14 +159,13 @@ jobs:
 
     # This step should create a deployment, service, and route to run your app and expose it to the internet.
     # https://github.com/redhat-actions/oc-new-app#readme
-    - name: Create and expose app
-      id: deploy-and-expose
-      uses: redhat-actions/oc-new-app@v1
-      with:
-        app_name: ${{ steps.extract_branch.outputs.branch }}-rest
-        image: ${{ steps.push-to-registry.outputs.registry-path }}
-        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
-        port: ${{ env.APP_PORT }}
+    - name: Helm install
+      run: |
+        helm upgrade --install \
+          --set image.tag= ${{ steps.extract_branch.outputs.branch }}-rest} \
+          --set fullnameOverride= ${{ steps.extract_branch.outputs.branch }}-rest \
+          --namespace ${OPENSHIFT_NAMESPACE} \
+          ${{ steps.extract_branch.outputs.branch }}-rest helm/myapp
 
     - name: View application route
       run: |
