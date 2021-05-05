@@ -116,7 +116,7 @@ jobs:
     - name: Determine tag
       if: env.TAG == ''
       run: |
-        echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
+        echo "TAG=${{ steps.extract_branch.outputs.branch }}" | tee -a $GITHUB_ENV
 
     # https://github.com/redhat-actions/buildah-build#readme
     - name: Build from Dockerfile
@@ -165,7 +165,7 @@ jobs:
           --set image.tag=${{ steps.extract_branch.outputs.branch }}-rest \
           --set fullnameOverride=${{ steps.extract_branch.outputs.branch }}-rest \
           --namespace ${OPENSHIFT_NAMESPACE} \
-          ${{ steps.extract_branch.outputs.branch }}-rest helm/myapp
+          ${{ steps.extract_branch.outputs.branch }}-rest gaffer-as-a-service/gaas-rest/deploy/helm
 
     - name: View application route
       run: |
