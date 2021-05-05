@@ -1,19 +1,14 @@
 version: '3.3'
 services:
   gaas-rest:
-    image: "kitkat520/api"
+    image: "gaas-prom:latest"
     ports:
       - "8080:8080"
-    container_name: gaas-rest
+    container_name: gaas-prom
   prometheus:
     image: "prom/prometheus"
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml
+      - $PWD/prometheus.yaml:/etc/prometheus/prometheus.yml
     container_name: prometheus
-  grafana:
-    image: "grafana/grafana"
-    ports:
-      - "3000:3000"
-    container_name: grafana
