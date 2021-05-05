@@ -162,8 +162,8 @@ jobs:
     - name: Helm install
       run: |
         helm upgrade --install \
-          --set image.tag= ${{ steps.extract_branch.outputs.branch }}-rest \
-          --set fullnameOverride= ${{ steps.extract_branch.outputs.branch }}-rest \
+          --set image.tag=${{ steps.extract_branch.outputs.branch }}-rest \
+          --set fullnameOverride=${{ steps.extract_branch.outputs.branch }}-rest \
           --namespace ${OPENSHIFT_NAMESPACE} \
           ${{ steps.extract_branch.outputs.branch }}-rest helm/myapp
 
