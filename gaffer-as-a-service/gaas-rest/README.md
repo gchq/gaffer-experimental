@@ -70,7 +70,7 @@ all test classes whose name starts or ends with <i>IT</i>.
 
 1. Ensure prerequisites are met
 2. Login to the oc client using the `oc login` command via terminal
-2. deploy prometheus and config with kubernetes service discovery
+2. Add the available OpenShift namespace name to /application.properties for the value `namespace`
 3. Run `mvn clean install -pl :gaas-rest -Popenshift-deploy`
 
 ## Deploying Prometheus to OpenShift
