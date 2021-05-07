@@ -55,7 +55,7 @@ public class CreateFederatedStoreGraphService {
         proxySubGraphs.stream()
                 .forEach((proxySubGraph) -> {
                     try {
-                        graphCommandExecutor.execute(new ValidateGraphHostCommand(proxySubGraph.getGraphId(), proxySubGraph.getHost()));
+                        graphCommandExecutor.execute(new ValidateGraphHostCommand(proxySubGraph));
                     } catch (final GraphOperationException e) {
                         errorNotifications.add(proxySubGraph.getGraphId() + ": " + e.getMessage());
                     }

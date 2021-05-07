@@ -23,17 +23,18 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import uk.gov.gchq.gaffer.gaas.client.graph.Command;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
+import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.rest.SystemStatus;
 
 public class ValidateGraphHostCommand implements Command {
 
     public static final String GRAPH_STATUS_URI = "/graph/status";
-    private String graphId;
+    private final ProxySubGraph proxySubGraph;
     private final WebClient webClient;
 
-    public ValidateGraphHostCommand(final String graphId, final String graphUrl) {
-        this.graphId = graphId;
-        this.webClient = WebClient.create(graphUrl);
+    public ValidateGraphHostCommand(final ProxySubGraph proxySubGraph) {
+        this.proxySubGraph = proxySubGraph;
+        this.webClient = WebClient.create(proxySubGraph.getHost());
     }
 
     @Override
@@ -47,14 +48,14 @@ public class ValidateGraphHostCommand implements Command {
                     .block();
 
             if (response == SystemStatus.DOWN) {
-                throw new GraphOperationException(graphId + " is down");
+                throw new GraphOperationException(proxySubGraph.getGraphId() + " is down");
             }
 
         } catch (final WebClientRequestException e) {
-            throw new GraphOperationException(graphId + " host is invalid. Reason: " + e.getMostSpecificCause().getMessage(), e);
+            throw new GraphOperationException(proxySubGraph.getGraphId() + " has invalid host. Reason: " + e.getMostSpecificCause().getMessage() + " at " + proxySubGraph.getHost() + proxySubGraph.getRoot(), e);
 
         } catch (final WebClientResponseException e) {
-            throw new GraphOperationException(graphId + " request returned status " + e.getRawStatusCode(), e);
+            throw new GraphOperationException("The request to " + proxySubGraph.getGraphId() + " returned: " + e.getRawStatusCode() + " " +  e.getStatusText(), e);
         }
     }
 }

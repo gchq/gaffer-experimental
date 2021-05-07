@@ -27,7 +27,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import uk.gov.gchq.gaffer.gaas.client.GraphCommandExecutor;
+import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;

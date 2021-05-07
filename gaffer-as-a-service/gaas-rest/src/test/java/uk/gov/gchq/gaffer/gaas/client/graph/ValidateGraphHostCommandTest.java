@@ -18,6 +18,10 @@
 
 package uk.gov.gchq.gaffer.gaas.client.graph;
 
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,7 +29,10 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostCommand;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
+import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
+import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,30 +40,52 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @UnitTest
 public class ValidateGraphHostCommandTest {
 
-    @Autowired
-    private WebClient.Builder webClientBuilder;
+    public static MockWebServer mockBackEnd;
+
+    @BeforeAll
+    static void setUp() throws IOException {
+        mockBackEnd = new MockWebServer();
+        mockBackEnd.start();
+    }
+
+    @AfterAll
+    static void tearDown() throws IOException {
+        mockBackEnd.shutdown();
+    }
 
     @Test
-    public void invalidURIPath_() {
-        final String url = "http://localhost:8080/notfound";
+    public void shouldThrow404Exception_WhenGraphReturns404() {
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(404));
+        final String url = mockBackEnd.url("").toString();
+        final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/notfound");
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new ValidateGraphHostCommand("", url).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostCommand(proxySubGraph).execute());
 
-        assertEquals(404, actual.getStatusCode());
-        assertEquals("404 Not Found from GET http://localhost:8080/notfound/v2/graph/status", actual.getMessage());
+        assertEquals("The request to testGraph returned: 404 Not Found", actual.getMessage());
         assertTrue(actual.getCause() instanceof WebClientResponseException);
     }
 
     @Test
-    public void invalidHost_() {
-        final String url = "http://localhost:404/rest";
+    public void shouldThrowException_WhenAttemptToConnectToInvalidHost() {
+        final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", "http://localhost:404", "/rest");
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new ValidateGraphHostCommand("", url).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostCommand(proxySubGraph).execute());
 
-        final String expected = "Connection refused: localhost/127.0.0.1:404; " +
-                "nested exception is io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: localhost/127.0.0.1:404";
+        final String expected = "testGraph has invalid host. Reason: Connection refused at http://localhost:404/rest";
         assertEquals(expected, actual.getMessage());
         assertTrue(actual.getCause() instanceof WebClientRequestException);
+    }
+
+    @Test
+    public void shouldThrow500Exception_WhenGraphReturns500() {
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(500));
+        final String url = mockBackEnd.url("").toString();
+        final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/internalerror");
+
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostCommand(proxySubGraph).execute());
+
+        assertEquals("The request to testGraph returned: 500 Internal Server Error", actual.getMessage());
+        assertTrue(actual.getCause() instanceof WebClientResponseException);
     }
 
 }
