@@ -161,7 +161,7 @@ jobs:
     # https://github.com/redhat-actions/oc-new-app#readme
     - name: Helm install
       run: |
-        helm upgrade --install ${{ steps.extract_branch.outputs.branch }}-rest gaffer-as-a-service/gaas-rest/deploy/helm --set image.repository=${{ env.REGISTRY }}:${{ env.TAG }}:/${{ steps.extract_branch.outputs.branch }}-rest --namespace ${OPENSHIFT_NAMESPACE}
+        helm upgrade --install ${{ steps.extract_branch.outputs.branch }}-rest gaffer-as-a-service/gaas-rest/deploy/helm --set image.repository=${{ env.REGISTRY }}:/${{ steps.extract_branch.outputs.branch }}-rest:${{ env.TAG }} --namespace ${OPENSHIFT_NAMESPACE}
 
     - name: View application route
       run: |
