@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.gchq.gaffer.gaas.client.AddGraphsCommand;
+import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsCommand;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import java.util.Arrays;

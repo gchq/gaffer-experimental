@@ -18,10 +18,10 @@ package uk.gov.gchq.gaffer.gaas.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.client.AddGraphsCommand;
+import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsCommand;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import uk.gov.gchq.gaffer.gaas.client.GraphCommandExecutor;
-import uk.gov.gchq.gaffer.gaas.client.ValidateGraphHostCommand;
+import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
+import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostCommand;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
