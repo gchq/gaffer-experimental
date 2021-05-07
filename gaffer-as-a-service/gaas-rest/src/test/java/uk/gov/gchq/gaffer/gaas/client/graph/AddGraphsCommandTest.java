@@ -18,12 +18,17 @@
 
 package uk.gov.gchq.gaffer.gaas.client.graph;
 
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsCommand;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,11 +38,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AddGraphsCommandTest {
 
     private static List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "host only -DO NOT INCLUDE protocol", "/rest"));
+    public static MockWebServer mockBackEnd;
 
+    @BeforeAll
+    static void setUp() throws IOException {
+        mockBackEnd = new MockWebServer();
+        mockBackEnd.start();
+    }
+
+    @AfterAll
+    static void tearDown() throws IOException {
+        mockBackEnd.shutdown();
+    }
 
     @Test
-    public void invalidRequestBody_() {
-        final String url = "http://localhost:8080/notfound";
+    public void invalidRequestBody_ShouldReturn400Exception() {
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(400));
+        final String url = mockBackEnd.url("").toString();
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
@@ -47,7 +64,8 @@ public class AddGraphsCommandTest {
 
     @Test
     public void invalidURIPath_() {
-        final String url = "http://localhost:8080/notfound";
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(404));
+        final String url = mockBackEnd.url("").toString();
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
@@ -56,7 +74,8 @@ public class AddGraphsCommandTest {
 
     @Test
     public void invalidHost_() {
-        final String url = "http://localhost:404/rest";
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(404));
+        final String url = mockBackEnd.url("").toString();
 
         final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 

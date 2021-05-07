@@ -24,6 +24,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
+import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.proxystore.ProxyProperties;
@@ -31,6 +32,8 @@ import uk.gov.gchq.gaffer.proxystore.ProxyStore;
 import uk.gov.gchq.gaffer.store.schema.Schema;
 import java.util.List;
 import java.util.stream.Collectors;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 public class AddGraphsCommand implements Command {
 
@@ -38,10 +41,18 @@ public class AddGraphsCommand implements Command {
     public static final int GAFFER_PORT = 80;
     private final WebClient webClient;
     private final List<ProxySubGraph> graphs;
+    private final FederatedRequestBody graph;
 
-    public AddGraphsCommand(final String graphUrl, final List<ProxySubGraph> graphs) {
-        this.webClient = WebClient.create(graphUrl);
+    public AddGraphsCommand(final FederatedRequestBody graph, final List<ProxySubGraph> graphs) {
+        final String url = makeURL(graph);
+        this.webClient = WebClient.create(url);
+        this.graph=graph;
         this.graphs = graphs;
+    }
+
+    public String makeURL(final FederatedRequestBody graph) {
+        final String url = "http://" + graph.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX;
+        return url;
     }
 
     @Override
@@ -56,11 +67,11 @@ public class AddGraphsCommand implements Command {
                     .toBodilessEntity()
                     .block();
 
-        } catch (WebClientRequestException e) {
-            throw new GraphOperationException(e.getMessage(), e.getCause());
+        } catch (final WebClientRequestException e) {
+            throw new GraphOperationException(graph.getGraphId() + " has invalid host. Reason: " + e.getMostSpecificCause().getMessage() + " at " + makeURL(graph), e);
 
-        } catch (WebClientResponseException e) {
-            throw new GraphOperationException(e.getMessage(), e);
+        } catch (final WebClientResponseException e) {
+            throw new GraphOperationException("The request to " + graph.getGraphId() + " returned: " + e.getRawStatusCode() + " " +  e.getStatusText(), e);
         }
     }
 
