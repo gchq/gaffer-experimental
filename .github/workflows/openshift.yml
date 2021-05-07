@@ -124,7 +124,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: ${{ steps.extract_branch.outputs.branch }}-rest
-        tags: ${{ env.TAG }}
+        tags: latest
         # If you don't have a dockerfile, see:
         # https://github.com/redhat-actions/buildah-build#scratch-build-inputs
         # Otherwise, point this to your Dockerfile relative to the repository root.
@@ -161,7 +161,7 @@ jobs:
     # https://github.com/redhat-actions/oc-new-app#readme
     - name: Helm install
       run: |
-        helm upgrade --install ${{ steps.extract_branch.outputs.branch }}-rest gaffer-as-a-service/gaas-rest/deploy/helm --set image.repository=${{ env.REGISTRY }}/${{ steps.extract_branch.outputs.branch }}-rest:${{ env.TAG }} --namespace ${OPENSHIFT_NAMESPACE}
+        helm upgrade --install ${{ steps.extract_branch.outputs.branch }}-rest gaffer-as-a-service/gaas-rest/deploy/helm --set image.repository=${{ env.REGISTRY }}/${{ steps.extract_branch.outputs.branch }}-rest --namespace ${OPENSHIFT_NAMESPACE}
 
     - name: View application route
       run: |
