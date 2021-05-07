@@ -162,15 +162,3 @@ jobs:
     - name: Helm install
       run: |
         helm upgrade --install ${{ steps.extract_branch.outputs.branch }}-rest gaffer-as-a-service/gaas-rest/deploy/helm --set image.repository=${{ env.REGISTRY }}/${{ steps.extract_branch.outputs.branch }}-rest --namespace ${OPENSHIFT_NAMESPACE}
-
-    - name: View application route
-      run: |
-        [[ -n ${{ env.ROUTE }} ]] || (echo "Determining application route failed in previous step"; exit 1)
-        echo "======================== Your application is available at: ========================"
-        echo ${{ env.ROUTE }}
-        echo "==================================================================================="
-        echo
-        echo "Your app can be taken down with: \"oc delete all --selector='${{ env.SELECTOR }}'\""
-      env:
-        ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
-        SELECTOR: ${{ steps.deploy-and-expose.outputs.selector }}
