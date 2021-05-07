@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.gchq.gaffer.gaas.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class CreateFederatedStoreGraphService {
                     try {
                         graphCommandExecutor.execute(new ValidateGraphHostCommand(proxySubGraph.getGraphId(), proxySubGraph.getHost()));
                     } catch (final GraphOperationException e) {
-                        errorNotifications.add(e.getMessage());
+                        errorNotifications.add(proxySubGraph.getGraphId() + ": " + e.getMessage());
                     }
                 });
         if (errorNotifications.size() > 0) {
