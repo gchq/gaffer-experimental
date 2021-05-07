@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Crown Copyright
+ * Copyright 2020 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.client;
+package uk.gov.gchq.gaffer.gaas.exception;
 
-import org.springframework.stereotype.Component;
-import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
+public class GraphOperationException extends Exception {
 
-@Component
-public class GraphCommandExecutor {
-
-    public GraphCommandExecutor() {
+    public GraphOperationException(final String message) {
+        super(message);
     }
-
-    public void execute(final Command command) throws GraphOperationException {
-        command.execute();
+    public GraphOperationException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

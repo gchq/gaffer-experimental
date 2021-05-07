@@ -66,13 +66,14 @@ public class CRDClient {
         }
     }
 
-//    public Map<String, List<GaaSGraph>> getCRDByGraphId(final String graphId) throws GaaSRestApiException {
+    public GaaSGraph getCRDByGraphId(final String graphId) throws GaaSRestApiException {
 //        try {
+            return new GaaSGraph();
 //            return from(CommonUtil.convertToCustomObject(customObjectsApi.getNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, graphId), Gaffer.class));
 //        } catch (ApiException e) {
 //            throw from(e);
 //        }
-//    }
+    }
 
     public Map<String, List<GaaSGraph>> listAllCRDs() throws GaaSRestApiException {
         try {

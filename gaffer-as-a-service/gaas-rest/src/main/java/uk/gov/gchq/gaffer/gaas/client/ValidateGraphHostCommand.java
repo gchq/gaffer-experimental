@@ -19,20 +19,22 @@ package uk.gov.gchq.gaffer.gaas.client;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.rest.SystemStatus;
 
-public class PingGraphStatusCommand implements Command {
+public class ValidateGraphHostCommand implements Command {
 
     public static final String GRAPH_STATUS_URI = "/graph/status";
+    private String graphId;
     private final WebClient webClient;
 
-    public PingGraphStatusCommand(final WebClient webClient) {
-        this.webClient = webClient;
+    public ValidateGraphHostCommand(final String graphId, final String graphUrl) {
+        this.graphId = graphId;
+        this.webClient = WebClient.create(graphUrl);
     }
 
     @Override
-    public String execute() throws GaaSRestApiException {
+    public void execute() throws GraphOperationException {
         try {
             final SystemStatus response = this.webClient
                     .get()
@@ -40,13 +42,16 @@ public class PingGraphStatusCommand implements Command {
                     .retrieve()
                     .bodyToMono(SystemStatus.class)
                     .block();
-            return "Graph status is " + response.getStatus().getCode();
 
-        } catch (WebClientRequestException e) {
-            throw new GaaSRestApiException(e.getLocalizedMessage(), 0, e);
+            if (response == SystemStatus.DOWN) {
+                throw new GraphOperationException(graphId + " is down");
+            }
 
-        } catch (WebClientResponseException e) {
-            throw new GaaSRestApiException(e.getLocalizedMessage(), e.getRawStatusCode(), e);
+        } catch (final WebClientRequestException e) {
+            throw new GraphOperationException(graphId + " host is invalid. Reason: " + e.getMostSpecificCause().getMessage(), e);
+
+        } catch (final WebClientResponseException e) {
+            throw new GraphOperationException(graphId + " request returned status " + e.getRawStatusCode(), e);
         }
     }
 }

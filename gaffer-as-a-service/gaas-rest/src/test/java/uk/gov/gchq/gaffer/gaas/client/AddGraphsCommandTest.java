@@ -15,10 +15,10 @@
  */
 
 package uk.gov.gchq.gaffer.gaas.client;
+
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.reactive.function.client.WebClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.Arrays;
@@ -29,38 +29,33 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @UnitTest
 public class AddGraphsCommandTest {
 
-    @Autowired
-    private WebClient.Builder webClientBuilder;
-
     private static List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "host only -DO NOT INCLUDE protocol", "/rest"));
 
 
     @Test
     public void invalidRequestBody_() {
-        final WebClient webClient = webClientBuilder.baseUrl("http://localhost:8080/notfound").build();
+        final String url = "http://localhost:8080/notfound";
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(webClient, SUB_GRAPHS).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
-        assertEquals(404, actual.getStatusCode());
         assertEquals("404 Not Found from POST http://localhost:8080/notfound/graph/operations/execute", actual.getMessage());
     }
 
 
     @Test
     public void invalidURIPath_() {
-        final WebClient webClient = webClientBuilder.baseUrl("http://localhost:8080/notfound").build();
+        final String url = "http://localhost:8080/notfound";
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(webClient, SUB_GRAPHS).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
-        assertEquals(404, actual.getStatusCode());
         assertEquals("404 Not Found from POST http://localhost:8080/notfound/graph/operations/execute", actual.getMessage());
     }
 
     @Test
     public void invalidHost_() {
-        final WebClient webClient = webClientBuilder.baseUrl("http://localhost:404/rest").build();
+        final String url = "http://localhost:404/rest";
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(webClient, SUB_GRAPHS).execute());
+        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
         final String expected = "Connection refused: localhost/127.0.0.1:404; " +
                 "nested exception is io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: localhost/127.0.0.1:404";

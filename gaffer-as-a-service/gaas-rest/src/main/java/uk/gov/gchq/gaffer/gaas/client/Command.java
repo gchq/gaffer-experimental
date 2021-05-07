@@ -16,9 +16,9 @@
 
 package uk.gov.gchq.gaffer.gaas.client;
 
-import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 
 @FunctionalInterface
 public interface Command {
-    String execute() throws GaaSRestApiException;
+    void execute() throws GraphOperationException;
 }

@@ -28,16 +28,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @UnitTest
-public class PingGraphStatusCommandTest {
+public class ValidateGraphHostCommandTest {
 
     @Autowired
     private WebClient.Builder webClientBuilder;
 
     @Test
     public void invalidURIPath_() {
-        final WebClient webClient = webClientBuilder.baseUrl("http://localhost:8080/notfound").build();
+        final String url = "http://localhost:8080/notfound";
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new PingGraphStatusCommand(webClient).execute());
+        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new ValidateGraphHostCommand("", url).execute());
 
         assertEquals(404, actual.getStatusCode());
         assertEquals("404 Not Found from GET http://localhost:8080/notfound/v2/graph/status", actual.getMessage());
@@ -46,9 +46,9 @@ public class PingGraphStatusCommandTest {
 
     @Test
     public void invalidHost_() {
-        final WebClient webClient = webClientBuilder.baseUrl("http://localhost:404/rest").build();
+        final String url = "http://localhost:404/rest";
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new PingGraphStatusCommand(webClient).execute());
+        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new ValidateGraphHostCommand("", url).execute());
 
         final String expected = "Connection refused: localhost/127.0.0.1:404; " +
                 "nested exception is io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: localhost/127.0.0.1:404";

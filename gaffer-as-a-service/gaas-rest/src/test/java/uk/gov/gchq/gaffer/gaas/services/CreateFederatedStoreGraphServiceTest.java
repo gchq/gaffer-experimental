@@ -16,19 +16,19 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
+import io.kubernetes.client.common.KubernetesObject;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GraphCommandExecutor;
+import uk.gov.gchq.gaffer.gaas.client.ValidateGraphHostCommand;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
@@ -37,6 +37,9 @@ import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -49,11 +52,17 @@ class CreateFederatedStoreGraphServiceTest {
     @MockBean
     private CRDClient crdClient;
 
+    @MockBean
+    private GraphCommandExecutor graphCommandExecutor;
+
     private static final String TEST_GRAPH_ID = "testgraphid";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
     private static final String TEST_GRAPH_URL = "graph-namespace.k8s.my.cluster/rest";
     private static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
     private static final List<String> TEST_GRAPH_PROBLEMS = new ArrayList<String>(Arrays.asList("There is problem with this Graph"));
+
+    private final ProxySubGraph proxySubGraph = new ProxySubGraph("TestGraph", "invalid", "invalid");
+    private final ProxySubGraph proxySubGraph2 = new ProxySubGraph("TestGraph2", "invalid2", "invalid2");
 
 
     /*TODO: Take in a request,
@@ -63,7 +72,7 @@ class CreateFederatedStoreGraphServiceTest {
         *  */
 
     @Test
-    void shouldThrowErrorWhenSubGraphsEmpty() {
+    void shouldThrowError_WhenSubGraphsListIsEmpty() {
         final List<ProxySubGraph> proxySubGraphs = new ArrayList<>();
         GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphs)));
 
@@ -72,29 +81,56 @@ class CreateFederatedStoreGraphServiceTest {
     }
 
     @Test
-    void shouldThrowSingleInvalidURLException_WhenASingleSubGraphHasInvalidURL() {
-        ProxySubGraph proxySubGraph = new ProxySubGraph("TestGraph","invalid","invalid");
-        final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph);
+    void shouldThrowInvalidUrlMessageForSingleUrl_WhenASingleSubGraphHasInvalidURL() {
+        final ProxySubGraph invalidUrl = new ProxySubGraph("TestGraph", "invalid", "invalid");
+        final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(invalidUrl);
 
-        GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphsList)));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphsList)));
 
-        assertEquals("The following graphs have invalid URLs: TestGraph", exception.getMessage());
+        final String expected = "Invalid Proxy Graph URL(s): [TestGraph host is invalid. Reason: failed to resolve " +
+                "'invalid' after 3 queries ]";
+        assertEquals(expected, exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatusCode());
     }
 
     @Test
-    void shouldThrowExceptionListingSubGraphsWithInvalidURLs_WhenMultipleSubGraphsHaveInvalidURLs() {
-        ProxySubGraph proxySubGraph = new ProxySubGraph("TestGraph","invalid","invalid");
-        ProxySubGraph proxySubGraph2 = new ProxySubGraph("TestGraph2","invalid","invalid");
-        final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph,proxySubGraph2);
+    void shouldThrowInvalidURLExceptionForAllUrls_WhenAllSubGraphsHaveInvalidURLs() throws GraphOperationException {
+        doThrow(new GraphOperationException(proxySubGraph.getGraphId() + " is an invalid URL")).when(graphCommandExecutor).execute(new ValidateGraphHostCommand(proxySubGraph.getGraphId(), proxySubGraph.getHost()));
+        doThrow(new GraphOperationException(proxySubGraph2.getGraphId() + " returned a 404")).when(graphCommandExecutor).execute(new ValidateGraphHostCommand(proxySubGraph2.getGraphId(), proxySubGraph2.getHost()));
 
-        GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphsList)));
+        final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph, proxySubGraph2);
 
-        assertEquals("The following graphs have invalid URLs: TestGraphTestGraph2", exception.getMessage());
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphsList)));
+
+        final String expected = "Invalid Proxy Graph URL(s): [TestGraph host is invalid. Reason: failed to resolve " +
+                "'invalid' after 3 queries , TestGraph2 host is invalid. Reason: failed to resolve 'invalid' after 3 queries ]";
+        assertEquals(expected, exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatusCode());
     }
 
-//    @Disabled
+    @Test
+    public void shouldCreateAFedStoreGraph_whenAllURLsAreValid() throws GraphOperationException, GaaSRestApiException {
+        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
+        final ProxySubGraph subGraph = new ProxySubGraph("TestGraph2", "invalid", "invalid");
+        final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(subGraph);
+
+        service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphsList));
+
+        verify(crdClient, times(1)).createCRD(any(KubernetesObject.class));
+    }
+
+    @Test
+    public void shouldThrowGaaSException_whenCreateCRDThrowsGaaSException() throws GaaSRestApiException, GraphOperationException {
+        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
+        doThrow(GaaSRestApiException.class).when(crdClient).createCRD(any(KubernetesObject.class));
+        final ProxySubGraph subGraph = new ProxySubGraph("TestGraph2", "invalid", "invalid");
+        final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(subGraph);
+
+        assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphsList)));
+    }
+
+
+    //    @Disabled
 //    @Test
 //    public void shouldSendTheCorrectRequestToTheCRDClientWhenCreatingAFederatedGraph() throws GaaSRestApiException {
 //        service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphs));
