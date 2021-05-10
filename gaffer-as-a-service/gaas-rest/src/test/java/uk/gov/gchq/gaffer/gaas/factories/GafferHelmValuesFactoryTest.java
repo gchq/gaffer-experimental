@@ -29,6 +29,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 public class GafferHelmValuesFactoryTest {
 
     private final Gson gson = new Gson();
+
     private LinkedHashMap<String, Object> getProxyHostStoreProperties() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("proxyHost", "http://my.graph.co.uk");

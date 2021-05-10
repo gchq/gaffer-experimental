@@ -30,9 +30,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
+import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
@@ -51,6 +53,8 @@ public class GraphController {
     @Autowired
     private CreateGraphService createGraphService;
     @Autowired
+    private CreateFederatedStoreGraphService createFederatedStoreGraphService;
+    @Autowired
     private AuthService authService;
     @Autowired
     private DeleteGraphService deleteGraphService;
@@ -68,6 +72,12 @@ public class GraphController {
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> addGraph(@Valid @RequestBody final GaaSCreateRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
         createGraphService.createGraph(gaaSCreateRequestBody);
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PostMapping(path = "/graphs/federated", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> createGraph(@Valid @RequestBody final FederatedRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
+        createFederatedStoreGraphService.createFederatedStore(gaaSCreateRequestBody);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 

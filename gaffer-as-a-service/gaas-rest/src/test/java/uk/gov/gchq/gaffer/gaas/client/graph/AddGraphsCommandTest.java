@@ -1,19 +1,17 @@
 /*
+ * Copyright 2020 Crown Copyright
  *
- *  * Copyright 2021 Crown Copyright
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *     http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package uk.gov.gchq.gaffer.gaas.client.graph;
@@ -36,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @UnitTest
 public class AddGraphsCommandTest {
 
-    private static List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "host only -DO NOT INCLUDE protocol", "/rest"));
+    private static final List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "host only -DO NOT INCLUDE protocol", "/rest"));
     public static MockWebServer mockBackEnd;
 
     @BeforeAll
@@ -68,7 +66,7 @@ public class AddGraphsCommandTest {
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
-        assertEquals("The request to http://localhost  :" + mockBackEnd.getPort() + "/ returned: 404 Not Found", actual.getMessage());
+        assertEquals("The request to http://localhost:" + mockBackEnd.getPort() + "/ returned: 404 Not Found", actual.getMessage());
     }
 
     @Test
@@ -77,7 +75,7 @@ public class AddGraphsCommandTest {
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
-        final String expected = "Invalid host. Reason: failed to resolve 'something' after 4 queries at something";
+        final String expected = "Invalid host. Reason: failed to resolve 'something' after 3 queries at something";
         assertEquals(expected, actual.getMessage());
     }
 

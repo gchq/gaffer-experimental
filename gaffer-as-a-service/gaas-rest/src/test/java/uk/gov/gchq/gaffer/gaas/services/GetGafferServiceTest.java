@@ -45,7 +45,7 @@ class GetGafferServiceTest {
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
     private static final String TEST_GRAPH_URL = "graph-namespace.k8s.my.cluster/rest";
     private static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
-    private static final List<String>  TEST_GRAPH_PROBLEMS = new ArrayList<String>(Arrays.asList("There is problem with this Graph"));
+    private static final List<String> TEST_GRAPH_PROBLEMS = new ArrayList<String>(Arrays.asList("There is problem with this Graph"));
 
 
     @Test

@@ -32,24 +32,24 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @SpringBootTest
 public class GraphControllerAuthTest {
 
-  protected MockMvc mvc;
+    protected MockMvc mvc;
 
-  @MockBean
-  private ApiClient apiClient;
+    @MockBean
+    private ApiClient apiClient;
 
-  @Autowired
-  private WebApplicationContext webApplicationContext;
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
-  @Test
-  public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
-    this.mvc = webAppContextSetup(webApplicationContext).build();
-    final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
+    @Test
+    public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
+        this.mvc = webAppContextSetup(webApplicationContext).build();
+        final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
 
-    final MvcResult tokenResponse = mvc.perform(post("/auth")
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(authRequest)).andReturn();
+        final MvcResult tokenResponse = mvc.perform(post("/auth")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(authRequest)).andReturn();
 
-    assertEquals(401, tokenResponse.getResponse().getStatus());
-    assertEquals("Bad credentials", tokenResponse.getResolvedException().getMessage());
-  }
+        assertEquals(401, tokenResponse.getResponse().getStatus());
+        assertEquals("Bad credentials", tokenResponse.getResolvedException().getMessage());
+    }
 }

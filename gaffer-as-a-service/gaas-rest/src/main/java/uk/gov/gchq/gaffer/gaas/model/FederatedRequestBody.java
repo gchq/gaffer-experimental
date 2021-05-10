@@ -19,10 +19,14 @@ package uk.gov.gchq.gaffer.gaas.model;
 import java.util.List;
 
 public class FederatedRequestBody extends GaaSCreateRequestBody {
+
     private List<ProxySubGraph> proxySubGraphs;
 
-    public FederatedRequestBody(String testGraphId, String testGraphDescription, String federatedStore, List<ProxySubGraph> proxySubGraphs) {
-        super(testGraphId,testGraphDescription,federatedStore);
+    public FederatedRequestBody() {
+    }
+
+    public FederatedRequestBody(final String testGraphId, final String testGraphDescription, final List<ProxySubGraph> proxySubGraphs) {
+        super(testGraphId, testGraphDescription, "federatedStore");
         this.proxySubGraphs = proxySubGraphs;
     }
 

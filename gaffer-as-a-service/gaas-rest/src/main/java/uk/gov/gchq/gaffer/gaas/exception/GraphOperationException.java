@@ -21,6 +21,7 @@ public class GraphOperationException extends Exception {
     public GraphOperationException(final String message) {
         super(message);
     }
+
     public GraphOperationException(final String message, final Throwable cause) {
         super(message, cause);
     }

@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.controller;
 
+import io.kubernetes.client.common.KubernetesObject;
 import io.kubernetes.client.openapi.ApiClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,9 +26,16 @@ import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
+import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsCommand;
+import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
+import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostCommand;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
+import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
@@ -61,6 +69,10 @@ public class GraphControllerTest extends AbstractTest {
     private AuthService authService;
     @MockBean
     private CreateGraphService createGraphService;
+    @MockBean
+    private GraphCommandExecutor graphCommandExecutor;
+    @MockBean
+    private CRDClient crdClient;
     @MockBean
     private DeleteGraphService deleteGraphService;
     @MockBean
@@ -383,9 +395,75 @@ public class GraphControllerTest extends AbstractTest {
                 .header("Authorization", token))
                 .andReturn();
 
-        //verify(deleteGraphService, times(1)).deleteGraph("nonexistentgraphfortestingpurposes");
         assertEquals(500, result.getResponse().getStatus());
         assertEquals("{\"title\":\"NullPointerException\",\"detail\":\"Something was null\"}", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void createFedGraph_shouldReturnBadRequest_whenEmptyProxyStoresRequested() throws Exception {
+        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList());
+
+        final MvcResult result = mvc.perform(post("/graphs/federated")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        assertEquals("{\"title\":\"Bad Request\",\"detail\":\"There are no sub-graphs to add\"}", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void createFedGraph_shouldReturnBadRequest_whenProxyStoreUrlIsInvalid() throws Exception {
+        doThrow(new GraphOperationException("The request to proxygraph returned: 404 Not Found"))
+                .when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
+        final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
+        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
+
+        final MvcResult result = mvc.perform(post("/graphs/federated")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        assertEquals("{\"title\":\"Bad Request\",\"detail\":\"Invalid Proxy Graph URL(s): [proxygraph: The request to proxygraph returned: 404 Not Found]\"}", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void createFedGraph_shouldReturnBadRequest_whenKubernetesClientReturnsErrorResponse() throws Exception {
+        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
+        doThrow(new GaaSRestApiException("Kubernetes Error", "Invalid values", 400)).when(crdClient).createCRD(any(KubernetesObject.class));
+        final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
+        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
+
+        final MvcResult result = mvc.perform(post("/graphs/federated")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        assertEquals("{\"title\":\"Kubernetes Error\",\"detail\":\"Invalid values\"}", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void createFedGraph_shouldReturn502BadGateway_whenFedStoreUnableToAddGraphs() throws Exception {
+        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
+        doNothing().when(crdClient).createCRD(any(KubernetesObject.class));
+        doThrow(new GraphOperationException("Graph: Internal Server Error, cause...")).when(graphCommandExecutor).execute(any(AddGraphsCommand.class));
+
+        final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
+        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
+
+        final MvcResult result = mvc.perform(post("/graphs/federated")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        assertEquals(502, result.getResponse().getStatus());
+        assertEquals("{\"title\":\"Failed to Add Graph(s) to \\\"fedgraph\\\"\",\"detail\":\"Graph: Internal Server Error, cause...\"}", result.getResponse().getContentAsString());
     }
 
     private LinkedHashMap<String, Object> getSchema() {

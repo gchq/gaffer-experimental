@@ -38,6 +38,7 @@ public class ProxyStoreTypeTest {
         GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setProperties(getStoreProperties()).build();
         assertEquals(expected, build.toString());
     }
+
     private LinkedHashMap<String, Object> getStoreProperties() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("proxyHost", "http://my.graph.co.uk");

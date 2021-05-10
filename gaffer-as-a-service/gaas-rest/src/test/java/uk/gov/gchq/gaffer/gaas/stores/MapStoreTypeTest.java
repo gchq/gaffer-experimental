@@ -38,6 +38,7 @@ public class MapStoreTypeTest {
         GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
         assertEquals(expected, build.toString());
     }
+
     private LinkedHashMap<String, Object> getSchema() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("entities", new Object());

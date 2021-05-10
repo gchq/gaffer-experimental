@@ -64,7 +64,7 @@ public final class GafferHelmValuesFactory {
                 .setDescription(graph.getDescription())
                 .setSchema(graph.getSchema())
                 .setProperties(graph.getStoreProperties());
-        return  builder.build();
+        return builder.build();
 
     }
 

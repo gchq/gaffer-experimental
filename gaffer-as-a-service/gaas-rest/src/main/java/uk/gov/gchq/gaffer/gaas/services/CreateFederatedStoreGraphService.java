@@ -67,7 +67,7 @@ public class CreateFederatedStoreGraphService {
         try {
             graphCommandExecutor.execute(new AddGraphsCommand(request.getProxyHost(), request.getProxySubGraphs()));
         } catch (final GraphOperationException e) {
-            throw new GaaSRestApiException("Bad Request", e.getMessage(), 400);
+            throw new GaaSRestApiException("Failed to Add Graph(s) to \"" + request.getGraphId() + "\"", e.getMessage(), 502);
         }
     }
 }

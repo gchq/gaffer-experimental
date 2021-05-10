@@ -22,7 +22,10 @@ public class ProxySubGraph {
     private String host;
     private String root;
 
-    public ProxySubGraph(String graphId, String host, String root) {
+    public ProxySubGraph() {
+    }
+
+    public ProxySubGraph(final String graphId, final String host, final String root) {
         this.graphId = graphId;
         this.host = host;
         this.root = root;

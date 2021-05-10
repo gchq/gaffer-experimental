@@ -27,7 +27,7 @@ import java.util.List;
 @SpringBootTest
 public class GraphCommandsIT {
 
-    private static List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "ashsubgraphpm-kai-dev.apps.ocp1.purplesky.cloud", "/rest"));
+    private static final List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "ashsubgraphpm-kai-dev.apps.ocp1.purplesky.cloud", "/rest"));
 
     @Test
     public void validHostAndURIPathAndAddGraphRequest_returnsSuccessString() throws GraphOperationException {

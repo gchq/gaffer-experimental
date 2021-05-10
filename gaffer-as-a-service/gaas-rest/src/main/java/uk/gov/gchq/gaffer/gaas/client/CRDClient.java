@@ -68,7 +68,7 @@ public class CRDClient {
 
     public GaaSGraph getCRDByGraphId(final String graphId) throws GaaSRestApiException {
 //        try {
-            return new GaaSGraph();
+        throw new IllegalArgumentException("Not Implemented");
 //            return from(CommonUtil.convertToCustomObject(customObjectsApi.getNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, graphId), Gaffer.class));
 //        } catch (ApiException e) {
 //            throw from(e);

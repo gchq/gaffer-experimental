@@ -42,5 +42,5 @@ public class StoreTypeFactory {
         final String storeTypesString = storeTypes.stream()
                 .map(StoreType::getType).collect(Collectors.joining(", "));
         throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + storeTypesString);
-        }
+    }
 }
