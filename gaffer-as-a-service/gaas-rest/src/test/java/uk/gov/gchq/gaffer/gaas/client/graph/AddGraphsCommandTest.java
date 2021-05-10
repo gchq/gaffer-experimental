@@ -75,7 +75,7 @@ public class AddGraphsCommandTest {
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
-        final String expected = "Invalid host. Reason: failed to resolve 'something' after 3 queries at something";
+        final String expected = "Invalid host. Reason: failed to resolve 'something' after 4 queries at something";
         assertEquals(expected, actual.getMessage());
     }
 
