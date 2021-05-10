@@ -41,19 +41,14 @@ public class AddGraphsCommand implements Command {
     public static final int GAFFER_PORT = 80;
     private final WebClient webClient;
     private final List<ProxySubGraph> graphs;
-    private final FederatedRequestBody graph;
+    private final String url;
 
-    public AddGraphsCommand(final FederatedRequestBody graph, final List<ProxySubGraph> graphs) {
-        final String url = makeURL(graph);
+    public AddGraphsCommand(final String url, final List<ProxySubGraph> graphs) {
+        this.url = url;
         this.webClient = WebClient.create(url);
-        this.graph=graph;
         this.graphs = graphs;
     }
 
-    public String makeURL(final FederatedRequestBody graph) {
-        final String url = "http://" + graph.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX;
-        return url;
-    }
 
     @Override
     public void execute() throws GraphOperationException {
@@ -68,10 +63,10 @@ public class AddGraphsCommand implements Command {
                     .block();
 
         } catch (final WebClientRequestException e) {
-            throw new GraphOperationException(graph.getGraphId() + " has invalid host. Reason: " + e.getMostSpecificCause().getMessage() + " at " + makeURL(graph), e);
+            throw new GraphOperationException("Invalid host. Reason: " + e.getMostSpecificCause().getMessage() + " at " + url, e);
 
         } catch (final WebClientResponseException e) {
-            throw new GraphOperationException("The request to " + graph.getGraphId() + " returned: " + e.getRawStatusCode() + " " +  e.getStatusText(), e);
+            throw new GraphOperationException("The request to " + url + " returned: " + e.getRawStatusCode() + " " + e.getStatusText(), e);
         }
     }
 

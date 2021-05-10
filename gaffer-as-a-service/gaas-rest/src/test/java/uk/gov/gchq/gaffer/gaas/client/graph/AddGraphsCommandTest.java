@@ -58,7 +58,7 @@ public class AddGraphsCommandTest {
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
-        assertEquals("404 Not Found from POST http://localhost:8080/notfound/graph/operations/execute", actual.getMessage());
+        assertEquals("The request to http://localhost:" + mockBackEnd.getPort() + "/ returned: 400 Bad Request", actual.getMessage());
     }
 
 
@@ -69,7 +69,7 @@ public class AddGraphsCommandTest {
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
-        assertEquals("404 Not Found from POST http://localhost:8080/notfound/graph/operations/execute", actual.getMessage());
+        assertEquals("The request to http://localhost:" + mockBackEnd.getPort() + "/ returned: 404 Not Found", actual.getMessage());
     }
 
     @Test
@@ -77,10 +77,9 @@ public class AddGraphsCommandTest {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(404));
         final String url = mockBackEnd.url("").toString();
 
-        final GaaSRestApiException actual = assertThrows(GaaSRestApiException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
-        final String expected = "Connection refused: localhost/127.0.0.1:404; " +
-                "nested exception is io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: localhost/127.0.0.1:404";
+        final String expected = "The request to http://localhost:" + mockBackEnd.getPort() + "/ returned: 404 Not Found";
         assertEquals(expected, actual.getMessage());
     }
 

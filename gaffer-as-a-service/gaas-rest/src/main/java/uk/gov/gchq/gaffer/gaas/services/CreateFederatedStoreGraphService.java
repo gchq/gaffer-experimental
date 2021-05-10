@@ -65,7 +65,7 @@ public class CreateFederatedStoreGraphService {
 
     private void addSubgraphsToFederatedStore(final FederatedRequestBody request) throws GaaSRestApiException {
         try {
-            graphCommandExecutor.execute(new AddGraphsCommand(request, request.getProxySubGraphs()));
+            graphCommandExecutor.execute(new AddGraphsCommand(request.getProxyHost(), request.getProxySubGraphs()));
         } catch (final GraphOperationException e) {
             throw new GaaSRestApiException("Bad Request", e.getMessage(), 400);
         }
