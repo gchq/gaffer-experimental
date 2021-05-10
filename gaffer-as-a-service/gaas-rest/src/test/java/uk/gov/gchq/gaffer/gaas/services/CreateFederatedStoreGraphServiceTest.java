@@ -42,6 +42,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @UnitTest
 class CreateFederatedStoreGraphServiceTest {
@@ -85,12 +86,14 @@ class CreateFederatedStoreGraphServiceTest {
 
     @Test
     void shouldThrowInvalidURLExceptionForAllUrls_WhenAllSubGraphsHaveInvalidURLs() throws GraphOperationException {
-        doThrow(new GraphOperationException("Invalid Proxy Graph URL")).when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
+        doThrow(new GraphOperationException("The request to testGraph returned: 500 Internal Server Error"))
+                .doThrow(new GraphOperationException("TestGraph2 has invalid host. Reason: connection refused at TestGraph2"))
+                .when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph, proxySubGraph2);
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphsList)));
 
-        final String expected = "Invalid Proxy Graph URL(s): [TestGraph: Invalid Proxy Graph URL, TestGraph2: Invalid Proxy Graph URL]";
+        final String expected = "Invalid Proxy Graph URL(s): [TestGraph: The request to testGraph returned: 500 Internal Server Error, TestGraph2: TestGraph2 has invalid host. Reason: connection refused at TestGraph2]";
         assertEquals(expected, exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatusCode());
     }
