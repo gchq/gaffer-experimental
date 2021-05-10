@@ -63,7 +63,7 @@ public class AddGraphsCommand implements Command {
                     .block();
 
         } catch (final WebClientRequestException e) {
-            throw new GraphOperationException("Invalid host. Reason: " + e.getMostSpecificCause().getMessage() + " at " + url, e);
+            throw new GraphOperationException("Invalid host. Reason: " + e.getMostSpecificCause().getMessage() + "at " + url, e);
 
         } catch (final WebClientResponseException e) {
             throw new GraphOperationException("The request to " + url + " returned: " + e.getRawStatusCode() + " " + e.getStatusText(), e);

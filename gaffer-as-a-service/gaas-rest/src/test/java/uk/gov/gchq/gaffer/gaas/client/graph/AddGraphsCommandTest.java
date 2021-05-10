@@ -23,14 +23,13 @@ import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsCommand;
-import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -52,7 +51,7 @@ public class AddGraphsCommandTest {
     }
 
     @Test
-    public void invalidRequestBody_ShouldReturn400Exception() {
+    public void whenGafferAPIReturns400_ShouldThrow400BadRequest() {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(400));
         final String url = mockBackEnd.url("").toString();
 
@@ -63,25 +62,30 @@ public class AddGraphsCommandTest {
 
 
     @Test
-    public void invalidURIPath_() {
+    public void whenGafferAPIReturns404_ShouldThrow404NotFound() {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(404));
         final String url = mockBackEnd.url("").toString();
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
-        assertEquals("The request to http://localhost:" + mockBackEnd.getPort() + "/ returned: 404 Not Found", actual.getMessage());
+        assertEquals("The request to http://localhost  :" + mockBackEnd.getPort() + "/ returned: 404 Not Found", actual.getMessage());
     }
 
     @Test
-    public void invalidHost_() {
-        mockBackEnd.enqueue(new MockResponse().setResponseCode(404));
-        final String url = mockBackEnd.url("").toString();
+    public void invalidHost_ShouldThrowInvalidRequestException() {
+        final String url = "something";
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
 
-        final String expected = "The request to http://localhost:" + mockBackEnd.getPort() + "/ returned: 404 Not Found";
+        final String expected = "Invalid host. Reason: failed to resolve 'something' after 4 queries at something";
         assertEquals(expected, actual.getMessage());
     }
 
+    @Test
+    public void whenValidInputs_ShouldNotThrowException() {
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(200));
+        final String url = mockBackEnd.url("").toString();
 
+        assertDoesNotThrow(() -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
+    }
 }

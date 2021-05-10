@@ -33,6 +33,7 @@ import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -88,4 +89,12 @@ public class ValidateGraphHostCommandTest {
         assertTrue(actual.getCause() instanceof WebClientResponseException);
     }
 
+    @Test
+    public void whenValidInputs_ShouldNotThrowException() {
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(200));
+        final String url = mockBackEnd.url("").toString();
+        final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/valid");
+
+        assertDoesNotThrow(() -> new ValidateGraphHostCommand(proxySubGraph).execute());
+    }
 }
