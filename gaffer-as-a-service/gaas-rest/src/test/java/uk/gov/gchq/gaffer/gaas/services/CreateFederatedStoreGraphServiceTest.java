@@ -134,4 +134,18 @@ class CreateFederatedStoreGraphServiceTest {
         assertEquals(TEST_GRAPH_DESCRIPTION, spec.getNestedObject("graph", "config", "description"));
     }
 
+    @Test
+    void shouldThrowInvalidURLExceptionForUrl_WhenOneOfMultipleSubGraphsHasInvalidURL() throws GraphOperationException {
+        doThrow(new GraphOperationException("The request to testGraph returned: 500 Internal Server Error"))
+                .doNothing()
+                .when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
+        final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph, proxySubGraph2);
+
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federatedStore", proxySubGraphsList)));
+
+        final String expected = "Invalid Proxy Graph URL(s): [TestGraph: The request to testGraph returned: 500 Internal Server Error]";
+        assertEquals(expected, exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatusCode());
+    }
+
 }
