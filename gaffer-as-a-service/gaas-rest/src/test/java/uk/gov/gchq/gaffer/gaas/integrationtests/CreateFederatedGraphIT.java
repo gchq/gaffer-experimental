@@ -63,7 +63,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
                 .content(mapToJson(federatedRequestBody))).andReturn();
 
         assertEquals(400, mvcResult.getResponse().getStatus());
-        assertEquals("{\"title\":\"Bad Request\",\"detail\":\"Invalid Proxy Graph URL(s): [TestGraph: TestGraph has invalid host. Reason: failed to resolve 'invalid' after 4 queries  at http://invalid/rest]\"}", mvcResult.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Bad Request\",\"detail\":\"Invalid Proxy Graph URL(s): [TestGraph: TestGraph has invalid host. Reason: failed to resolve 'http' after 4 queries  at http://invalid/rest]\"}", mvcResult.getResponse().getContentAsString());
     }
 
     @AfterEach
