@@ -2,7 +2,6 @@ import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
-import { Theme } from "@material-ui/core/styles";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -41,7 +40,7 @@ export function MainGraphTableRow(props: IProps) {
             </TableCell>
             <TableCell component="th" scope="row">{row.getId()}</TableCell>
             <TableCell><StatusChip status={row.getStatus()} /></TableCell>
-            <TableCell><a href={row.getUrl()} target="_blank">{row.getUrl()}</a></TableCell>
+            <TableCell><a href={row.getUrl()} target="_blank" rel="noreferrer">{row.getUrl()}</a></TableCell>
             <TableCell>
                 <Tooltip TransitionComponent={Zoom} title={`Delete ${row.getId()}`}>
                     <IconButton

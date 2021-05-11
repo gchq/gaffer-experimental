@@ -16,7 +16,6 @@ import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import RefreshOutlinedIcon from "@material-ui/icons/RefreshOutlined";
 import React from "react";
 import { RadialGauge, RadialGaugeSeries } from "reaviz";

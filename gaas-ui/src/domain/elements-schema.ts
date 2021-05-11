@@ -19,8 +19,7 @@ export class ElementsSchema {
         if (!this.elementsIsValidJson(notes)) {
             return notes;
         }
-        this.validateEntities(notes);
-        this.validateEdges(notes);
+        this.validateElements(notes);
         this.validateInvalidProperties(notes);
         return notes;
     }
@@ -33,6 +32,23 @@ export class ElementsSchema {
             notes.addError("Elements Schema is not valid JSON");
             return false;
         }
+    }
+
+    private validateElements(notes: Notifications): void {
+        if(this.elements.edges !== undefined){
+            this.validateEdges(notes);
+        }
+        if(this.elements.entities !== undefined){
+            this.validateEntities(notes);
+        }
+        if(this.elements.entities !== undefined && this.elements.edges !== undefined){
+            this.validateEntities(notes);
+            this.validateEdges(notes);
+        }
+        if(this.elements.entities === undefined && this.elements.edges === undefined){
+            notes.addError("Elements Schema must contain entities or edges");
+        }
+
     }
 
     private validateEntities(notes: Notifications): void {
