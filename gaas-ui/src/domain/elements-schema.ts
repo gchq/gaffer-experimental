@@ -35,15 +35,15 @@ export class ElementsSchema {
     }
 
     private validateElements(notes: Notifications): void {
+        // if(this.elements.entities !== undefined && this.elements.edges !== undefined){
+        //     this.validateEntities(notes);
+        //     this.validateEdges(notes);
+        // }
         if(this.elements.edges !== undefined){
             this.validateEdges(notes);
         }
         if(this.elements.entities !== undefined){
             this.validateEntities(notes);
-        }
-        if(this.elements.entities !== undefined && this.elements.edges !== undefined){
-            this.validateEntities(notes);
-            this.validateEdges(notes);
         }
         if(this.elements.entities === undefined && this.elements.edges === undefined){
             notes.addError("Elements Schema must contain entities or edges");
