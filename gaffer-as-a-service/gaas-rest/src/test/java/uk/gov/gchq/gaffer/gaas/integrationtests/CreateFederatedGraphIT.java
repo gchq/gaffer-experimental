@@ -49,7 +49,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(mapToJson(federatedRequestBody))).andReturn();
 
-        assertEquals(201, mvcResult.getResponse().getStatus());
+        assertEquals("", mvcResult.getResponse().getStatus() + " " + mvcResult.getResponse().getContentAsString());
     }
 
     @Test
