@@ -20,6 +20,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
@@ -27,7 +28,9 @@ import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.proxystore.ProxyProperties;
 import uk.gov.gchq.gaffer.proxystore.ProxyStore;
 import uk.gov.gchq.gaffer.store.schema.Schema;
+import java.time.Duration;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class AddGraphsCommand implements Command {
@@ -55,6 +58,7 @@ public class AddGraphsCommand implements Command {
                     .body(Mono.just(makeRequestBody()), OperationChain.class)
                     .retrieve()
                     .toBodilessEntity()
+                    .retryWhen(Retry.fixedDelay(18, Duration.ofSeconds(5)).filter((e) -> is503ServiceUnavailable(e)))
                     .block();
 
         } catch (final WebClientRequestException e) {
@@ -63,6 +67,13 @@ public class AddGraphsCommand implements Command {
         } catch (final WebClientResponseException e) {
             throw new GraphOperationException("The request to " + url + " returned: " + e.getRawStatusCode() + " " + e.getStatusText(), e);
         }
+    }
+
+    private boolean is503ServiceUnavailable(Throwable e) {
+        if (e instanceof WebClientResponseException) {
+            return ((WebClientResponseException) e).getRawStatusCode() == 503;
+        }
+        return false;
     }
 
     private OperationChain makeRequestBody() {
