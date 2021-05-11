@@ -1,230 +1,493 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import AddGraph from "../../../src/components/add-graph/AddGraph";
-import { CreateGraphRepo } from "../../../src/rest/repositories/create-graph-repo";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import { Graph } from "../../../src/domain/graph";
+import { GraphType } from "../../../src/domain/graph-type";
+import { StoreType } from "../../../src/domain/store-type";
+import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
 
 jest.mock("../../../src/rest/repositories/create-graph-repo");
-
 let wrapper: ReactWrapper;
+
 beforeEach(() => (wrapper = mount(<AddGraph />)));
-afterEach(() => wrapper.unmount());
+
+afterEach(() => {
+  wrapper.unmount();
+  jest.resetAllMocks();
+});
+
+describe("AddGraph UI component", () => {
+  describe("Layout On Render", () => {
+    it("Should have a Graph Id, Description, Store Type dropdown inputs", () => {
+      const textfield = wrapper.find("input");
+      expect(textfield.at(0).props().name).toBe("graph-id");
+      const descriptionTextArea = wrapper.find("textarea#graph-description");
+      expect(descriptionTextArea.props().name).toBe("graph-description");
+      const select = wrapper.find("div#storetype-select-grid");
+      expect(select.text()).toBe(
+        "Store TypeMap StoreStore TypeSet to Map Store by default"
+      );
+    });
+    it("should have icon button", () => {
+      const fileButton = wrapper.find("button").at(0).find("svg");
+      expect(fileButton).toHaveLength(1);
+    });
+    it("should have an elements text area", () => {
+      const elementsTextfield = wrapper.find("textarea#schema-elements");
+      expect(elementsTextfield.props().name).toBe("schema-elements");
+    });
+    it("should have a types text area", () => {
+      const typesTextfield = wrapper.find("textarea#schema-types");
+      expect(typesTextfield.props().name).toBe("schema-types");
+    });
+    it("should have a Submit button", () => {
+      const submitButton = wrapper.find("button#add-new-graph-button").text();
+      expect(submitButton).toBe("Add Graph");
+    });
+  });
+  describe("When Federated StoreType Is Selected", () => {
+    it("Should have a URL Input, Add Button & Graph Table when federated store is selected", () => {
+      selectStoreType(StoreType.FEDERATED_STORE);
+
+      const urlInput = wrapper.find("input#proxy-url");
+      expect(urlInput.props().name).toBe("proxy-url");
+      const addButton = wrapper.find("button#add-new-proxy-button");
+      expect(addButton.text()).toBe("Add Proxy Graph");
+      const graphTable = wrapper.find("table");
+      expect(graphTable.text()).toBe("Graph IDDescriptionType No Graphs.");
+    });
+    it("Should disable the add proxy graph button when the proxy graph URL textfield is empty", () => {
+      selectStoreType(StoreType.FEDERATED_STORE);
+
+      const button = wrapper.find("button#add-new-proxy-button");
+      expect(button.props().disabled).toEqual(true);
+    });
+    it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", () => {
+      selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("http://test.graph.url");
+
+      clickAddProxy();
+
+      const graphTable = wrapper.find("table");
+      expect(graphTable.text()).toEqual(
+        "Graph IDDescriptionType http://test.graph.url-graphProxy GraphProxy Graph"
+      );
+    });
+    it("Should select a graph in table", async () => {
+      selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("test.URL");
+      await clickAddProxy();
+      inputProxyURL("test2.URL");
+      await clickAddProxy();
+
+      clickTableBodyCheckBox(0, false);
+
+      expect(wrapper.find("table").find("input").at(1).props().checked).toBe(
+        false
+      );
+    });
+    it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async () => {
+      selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("test.URL");
+      await clickAddProxy();
+      inputProxyURL("test2.URL");
+      await clickAddProxy();
+
+      clickTableHeaderCheckBox(true);
+
+      const tableInputs = wrapper.find("table").find("input");
+      expect(tableInputs.at(0).props().checked).toBe(true);
+      expect(tableInputs.at(1).props().checked).toBe(true);
+      expect(tableInputs.at(2).props().checked).toBe(true);
+    });
+    it("Should disable the submit graph button when no proxy stores are selected", () => {
+      inputGraphId("test");
+      inputDescription("test");
+      selectStoreType(StoreType.FEDERATED_STORE);
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("Should uncheck all graphs in the table when the uncheck all button is clicked", async () => {
+      selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("test.URL");
+      await clickAddProxy();
+      inputProxyURL("test2.URL");
+      await clickAddProxy();
+
+      clickTableHeaderCheckBox(true);
+      clickTableHeaderCheckBox(false);
+
+      const tableInputs = wrapper.find("table").find("input");
+      expect(tableInputs.at(0).props().checked).toBe(false);
+      expect(tableInputs.at(1).props().checked).toBe(false);
+      expect(tableInputs.at(2).props().checked).toBe(false);
+    });
+    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+      const mock = jest.fn();
+      mockAddGraphRepoWithFunction(mock);
+      inputGraphId("OK Graph");
+      inputDescription("test");
+      selectStoreType(StoreType.FEDERATED_STORE);
+      await inputProxyURL("test.URL");
+      await clickAddProxy();
+
+      clickSubmit();
+      //@ts-ignore
+      await wrapper.update();
+      await wrapper.update();
+
+      const expectedConfig: ICreateGraphConfig = {
+        proxyStores: [{ graphId: "test.URL-graph", url: "test.URL" }]
+      }
+      expect(mock).toHaveBeenLastCalledWith(
+        "OK Graph",
+        "test",
+        StoreType.FEDERATED_STORE,
+        expectedConfig,
+      );
+      expect(wrapper.find("div#notification-alert").text()).toBe(
+        "OK Graph was successfully added"
+      );
+    });
+  });
+  describe("When Map Store Is Selected", ()=>{
+    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+      const mock = jest.fn();
+      mockAddGraphRepoWithFunction(mock);
+      
+      inputGraphId("map-store-graph");
+      inputDescription("Mappy description");
+      selectStoreType(StoreType.MAPSTORE);
+      inputElements(elements);
+      inputTypes(types);
+
+      clickSubmit();
+      //@ts-ignore
+      await wrapper.update();
+      await wrapper.update();
+
+      const expectedConfig: ICreateGraphConfig = {
+        schema: { elements: elements, types: types },
+      }
+      expect(mock).toHaveBeenLastCalledWith("map-store-graph", "Mappy description", StoreType.MAPSTORE, expectedConfig);
+      expect(wrapper.find("div#notification-alert").text()).toBe(
+        "map-store-graph was successfully added"
+      );
+    });
+  });
+  describe("When Accumulp Store Is Selected", ()=>{
+    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+      const mock = jest.fn();
+      mockAddGraphRepoWithFunction(mock);
+      
+      inputGraphId("accumulo-graph");
+      inputDescription("None");
+      selectStoreType(StoreType.ACCUMULO);
+      inputElements(elements);
+      inputTypes(types);
+
+      clickSubmit();
+      //@ts-ignore
+      await wrapper.update();
+      await wrapper.update();
+
+      const expectedConfig: ICreateGraphConfig = {
+        schema: { elements: elements, types: types },
+      }
+      expect(mock).toHaveBeenLastCalledWith("accumulo-graph", "None", StoreType.ACCUMULO, expectedConfig);
+      expect(wrapper.find("div#notification-alert").text()).toBe(
+        "accumulo-graph was successfully added"
+      );
+    });
+  });
+  describe("Dropzone behaviour", () => {
+    it("should have an elements drop zone that accepts JSON files", () => {
+      const dropZone = wrapper.find("div#elements-drop-zone").find("input");
+      expect(dropZone.props().type).toBe("file");
+      expect(dropZone.props().accept).toBe("application/json");
+    });
+    it("should have a types drop zone that accepts JSON files", () => {
+      const dropZone = wrapper.find("div#types-drop-zone").find("input");
+      expect(dropZone.props().type).toBe("file");
+      expect(dropZone.props().accept).toBe("application/json");
+    });
+  });
+
+  describe("Add Graph Button", () => {
+    it("should be disabled when Graph Name and Graph Description fields are empty", () => {
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when Graph Name field is empty", () => {
+      inputDescription("test");
+      inputElements(elements);
+      inputTypes(types);
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when Graph Description field is empty", () => {
+      inputGraphId("test");
+      inputElements(elements);
+      inputTypes(types);
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("Should be enabled when Graph Name and Graph Description is not empty", () => {
+      inputGraphId("test");
+      inputDescription("test");
+      inputElements(elements);
+      inputTypes(types);
+      selectStoreType(StoreType.MAPSTORE);
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        false
+      );
+    });
+    it("Should be enabled when Graph Name and Graph Description is not empty and Accumulo selected", () => {
+      inputGraphId("test");
+      inputDescription("test");
+      inputElements(elements);
+      inputTypes(types);
+      selectStoreType(StoreType.ACCUMULO);
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        false
+      );
+    });
+    it("Should be disabled when federated selected and no proxy stores added", () => {
+      inputGraphId("test");
+      inputDescription("test");
+      inputElements(elements);
+      inputTypes(types);
+      selectStoreType(StoreType.FEDERATED_STORE);
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when the elements field is empty", () => {
+      inputGraphId("G");
+      inputDescription("test");
+      inputElements(elements);
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when the types field is empty", () => {
+      inputGraphId("G");
+      inputDescription("test");
+      inputTypes(types);
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when MAP STORE selected and elements schema has error", () => {
+      inputGraphId("G");
+      inputDescription("test");
+      selectStoreType(StoreType.MAPSTORE);
+      inputElements({ invalid: "json" });
+      inputTypes(types);
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when MAP STORE selectedand types schema has error", () => {
+      inputGraphId("G");
+      inputDescription("test");
+      selectStoreType(StoreType.MAPSTORE);
+      inputElements(elements);
+      inputTypes({ invalid: "json" });
+      
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when the elements schema has error", () => {
+      inputGraphId("G");
+      inputDescription("test");
+      selectStoreType(StoreType.ACCUMULO);
+      inputElements({ invalid: "json" });
+      inputTypes(types);
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+    it("should be disabled when the types schema has error", () => {
+      inputGraphId("G");
+      inputDescription("test");
+      selectStoreType(StoreType.ACCUMULO);
+      inputElements(elements);
+      inputTypes({ invalid: "json" });
+      
+
+      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+        true
+      );
+    });
+  });
+
+  describe("On Submit Request", () => {
+    it("should display success message in the NotificationAlert", async () => {
+      mockAddGraphRepoWithFunction(() => {});
+      inputGraphId("OK Graph");
+      inputDescription("test");
+      inputElements(elements);
+      inputTypes(types);
+
+      clickSubmit();
+      //@ts-ignore
+      await wrapper.update();
+      await wrapper.update();
+
+      expect(wrapper.find("div#notification-alert").text()).toBe(
+        "OK Graph was successfully added"
+      );
+    });
+  });
+
+  function clickSubmit(): void {
+    expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      false
+    );
+    wrapper.find("button#add-new-graph-button").simulate("click");
+  }
+  function inputGraphId(graphId: string): void {
+    wrapper.find("input#graph-id").simulate("change", {
+      target: { value: graphId },
+    });
+  }
+  function selectStoreType(storeType: StoreType) {
+    wrapper
+      .find("div#storetype-formcontrol")
+      .find("input")
+      .simulate("change", {
+        target: { value: storeType },
+      });
+  }
+  function inputProxyURL(url: string) {
+    wrapper
+      .find("div#proxy-url-grid")
+      .find("input")
+      .simulate("change", {
+        target: { value: url },
+      });
+  }
+  function clickAddProxy() {
+    wrapper.find("button#add-new-proxy-button").simulate("click");
+  }
+  function clickTableBodyCheckBox(row: number, check: boolean) {
+    wrapper
+      .find("table")
+      .find("tbody")
+      .find("input")
+      .at(row)
+      .simulate("change", {
+        target: { checked: check },
+      });
+  }
+  function clickTableHeaderCheckBox(check: boolean) {
+    wrapper
+      .find("table")
+      .find("thead")
+      .find("input")
+      .simulate("change", {
+        target: { checked: check },
+      });
+  }
+  function inputDescription(description: string): void {
+    wrapper.find("textarea#graph-description").simulate("change", {
+      target: { value: description },
+    });
+    expect(wrapper.find("textarea#graph-description").props().value).toBe(
+      description
+    );
+  }
+  function inputElements(elementsObject: object): void {
+    wrapper.find("textarea#schema-elements").simulate("change", {
+      target: { value: JSON.stringify(elementsObject) },
+    });
+    expect(wrapper.find("textarea#schema-elements").props().value).toBe(
+      JSON.stringify(elementsObject)
+    );
+  }
+
+  function inputTypes(typesObject: object): void {
+    wrapper.find("textarea#schema-types").simulate("change", {
+      target: { value: JSON.stringify(typesObject) },
+    });
+    expect(wrapper.find("textarea#schema-types").props().value).toBe(
+      JSON.stringify(typesObject)
+    );
+  }
+
+  function mockAddGraphRepoWithFunction(f: () => void): void {
+    // @ts-ignore
+    CreateGraphRepo.mockImplementationOnce(() => ({
+      create: f,
+    }));
+  }
+});
 
 const elements = {
-    entities: {
-        Cardinality: {
-            description: "An entity that is added to every vertex representing the connectivity of the vertex.",
-            vertex: "anyVertex",
-            properties: {
-                edgeGroup: "set",
-                hllp: "hllp",
-                count: "count.long",
-            },
-            groupBy: ["edgeGroup"],
-        },
+  entities: {
+    Cardinality: {
+      description:
+        "An entity that is added to every vertex representing the connectivity of the vertex.",
+      vertex: "anyVertex",
+      properties: {
+        edgeGroup: "set",
+        hllp: "hllp",
+        count: "count.long",
+      },
+      groupBy: ["edgeGroup"],
     },
-    edges: {
-        RoadUse: {
-            description: "A directed edge representing vehicles moving from junction A to junction B.",
-            source: "junction",
-            destination: "junction",
-            directed: "true",
-            properties: {
-                startDate: "date.earliest",
-                endDate: "date.latest",
-                count: "count.long",
-                countByVehicleType: "counts.freqmap",
-            },
-        },
-        groupBy: ["startDate", "endDate"],
+  },
+  edges: {
+    RoadUse: {
+      description:
+        "A directed edge representing vehicles moving from junction A to junction B.",
+      source: "junction",
+      destination: "junction",
+      directed: "true",
+      properties: {
+        startDate: "date.earliest",
+        endDate: "date.latest",
+        count: "count.long",
+        countByVehicleType: "counts.freqmap",
+      },
     },
+    groupBy: ["startDate", "endDate"],
+  },
 };
 
 const types = {
-    types: {
-        "count.long": {
-            description: "A long count that must be greater than or equal to 0.",
-            class: "java.lang.Long",
-            validateFunctions: [
-                {
-                    class: "uk.gov.gchq.koryphe.impl.predicate.IsMoreThan",
-                    orEqualTo: true,
-                    value: {
-                        "java.lang.Long": 0,
-                    },
-                },
-            ],
-            aggregateFunction: {
-                class: "uk.gov.gchq.koryphe.impl.binaryoperator.Sum",
-            },
-            serialiser: {
-                class: "uk.gov.gchq.gaffer.sketches.clearspring.cardinality.serialisation.HyperLogLogPlusSerialiser",
-            },
+  types: {
+    "count.long": {
+      description: "A long count that must be greater than or equal to 0.",
+      class: "java.lang.Long",
+      validateFunctions: [
+        {
+          class: "uk.gov.gchq.koryphe.impl.predicate.IsMoreThan",
+          orEqualTo: true,
+          value: {
+            "java.lang.Long": 0,
+          },
         },
+      ],
+      aggregateFunction: {
+        class: "uk.gov.gchq.koryphe.impl.binaryoperator.Sum",
+      },
+      serialiser: {
+        class:
+          "uk.gov.gchq.gaffer.sketches.clearspring.cardinality.serialisation.HyperLogLogPlusSerialiser",
+      },
     },
+  },
 };
-
-describe("On Render", () => {
-    it("should have a Graph Id text field", () => {
-        const textfield = wrapper.find("input");
-        expect(textfield.at(0).props().name).toBe("graphName");
-    });
-    it("should have an elements text area", () => {
-        const elementsTextfield = wrapper.find("textarea#schema-elements");
-        expect(elementsTextfield.props().name).toBe("schema-elements");
-    });
-    it("should have a types text area", () => {
-        const typesTextfield = wrapper.find("textarea#schema-types");
-        expect(typesTextfield.props().name).toBe("schema-types");
-    });
-    it("should have icon button", () => {
-        const fileButton = wrapper.find("button").at(0).find("svg");
-        expect(fileButton).toHaveLength(1);
-    });
-    it("should have a Submit button", () => {
-        const submitButton = wrapper.find("button").at(3).text();
-        expect(submitButton).toBe("Add Graph");
-    });
-});
-describe("Add Graph Button", () => {
-    it("should be disabled when Graph Name and Schema fields are empty", () => {
-        expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(true);
-    });
-    it("should be disabled when Graph Name field is empty", () => {
-        inputElements(elements);
-        inputTypes(types);
-
-        expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(true);
-    });
-    it("should be disabled when the elements field is empty", () => {
-        inputGraphName("G");
-        inputElements(elements);
-
-        expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(true);
-    });
-    it("should be disabled when the types field is empty", () => {
-        inputGraphName("G");
-        inputTypes(types);
-
-        expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(true);
-    });
-    it("should be enabled when the Graph Name, Elements and Types is inputted", () => {
-        inputGraphName("My Graph");
-        inputElements(elements);
-        inputTypes(types);
-
-        expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(false);
-    });
-});
-describe("Dropzone behaviour", () => {
-    it("should have an elements drop zone that accepts JSON files", () => {
-        const dropZone = wrapper.find("div#elements-drop-zone").find("input");
-        expect(dropZone.props().type).toBe("file");
-        expect(dropZone.props().accept).toBe("application/json");
-    });
-    it("should have a types drop zone that accepts JSON files", () => {
-        const dropZone = wrapper.find("div#types-drop-zone").find("input");
-        expect(dropZone.props().type).toBe("file");
-        expect(dropZone.props().accept).toBe("application/json");
-    });
-    it("should show and hide when AttachFile icon is clicked", () => {
-        const component = mount(<AddGraph />);
-        expect(component.find("div#dropzone").props().style?.visibility).toBe("hidden");
-
-        clickAttachFile(component);
-
-        expect(component.find("div#dropzone").props().style?.visibility).toBe(undefined);
-
-        clickCloseDropzone(component);
-
-        // TODO: Fix the expection, dropzone should hide
-        // expect(component.find('div#dropzone').props()).toBe({});
-    });
-});
-describe("Schema validation integration", () => {
-    it("should display validation errors as an Alert Notification", () => {
-        inputGraphName("OK Graph");
-        inputElements({ blah: "blahhhhh" });
-        inputTypes({ blah: "blahhhhh" });
-
-        clickSubmit();
-
-        const expectedMessage =
-            "Error(s): Elements Schema does not contain property entities, " +
-            "Elements Schema does not contain property edges, " +
-            '["blah"] are invalid Elements schema root properties, ' +
-            "Types Schema does not contain property types, " +
-            '["blah"] are invalid Types schema root properties';
-        expect(wrapper.find("div#notification-alert").text()).toBe(expectedMessage);
-    });
-});
-describe("On Submit Request", () => {
-    it("should display success message in the NotificationAlert", async () => {
-        mockAddGraphRepoWithFunction(() => {});
-
-        inputGraphName("OK Graph");
-        inputElements(elements);
-        inputTypes(types);
-
-        clickSubmit();
-        //@ts-ignore
-        await wrapper.update();
-        await wrapper.update();
-
-        expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
-    });
-    it("should display an error message with server error in the NotificationAlert when Request fails", async () => {
-        mockAddGraphRepoWithFunction(() => {
-            throw new RestApiError("Validation Error", "Can't have spaces");
-        });
-
-        inputGraphName("Break Server");
-        inputElements(elements);
-        inputTypes(types);
-
-        clickSubmit();
-
-        expect(wrapper.find("div#notification-alert").text()).toBe(
-            "Failed to Add 'Break Server' Graph. Validation Error: Can't have spaces"
-        );
-    });
-});
-
-function inputGraphName(graphName: string): void {
-    wrapper.find("input#graph-name").simulate("change", {
-        target: { value: graphName },
-    });
-}
-
-function inputElements(elementsObject: object): void {
-    wrapper.find("textarea#schema-elements").simulate("change", {
-        target: { value: JSON.stringify(elementsObject) },
-    });
-    expect(wrapper.find("textarea#schema-elements").props().value).toBe(JSON.stringify(elementsObject));
-}
-
-function inputTypes(typesObject: object): void {
-    wrapper.find("textarea#schema-types").simulate("change", {
-        target: { value: JSON.stringify(typesObject) },
-    });
-    expect(wrapper.find("textarea#schema-types").props().value).toBe(JSON.stringify(typesObject));
-}
-
-function clickAttachFile(reactWrapper: ReactWrapper): void {
-    reactWrapper.find("button#attach-file-button").simulate("click");
-}
-
-function clickCloseDropzone(reactWrapper: ReactWrapper): void {
-    reactWrapper.find("button#close-dropzone-button").simulate("click");
-}
-
-function clickSubmit(): void {
-    wrapper.find("button#add-new-graph-button").simulate("click");
-}
-
-function mockAddGraphRepoWithFunction(f: () => void): void {
-    // @ts-ignore
-    CreateGraphRepo.mockImplementationOnce(() => ({
-        create: f,
-    }));
-}
