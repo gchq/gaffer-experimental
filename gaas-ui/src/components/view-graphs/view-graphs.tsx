@@ -2,7 +2,6 @@ import {
     Button,
     Container,
     Grid,
-    IconButton,
     Table,
     TableBody,
     TableCell,
@@ -10,17 +9,22 @@ import {
     TableHead,
     TableRow,
     Toolbar,
-    Tooltip,
-    Zoom,
 } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import CardHeader from "@material-ui/core/CardHeader";
+import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
-import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
 import RefreshOutlinedIcon from "@material-ui/icons/RefreshOutlined";
 import React from "react";
+import { RadialGauge, RadialGaugeSeries } from "reaviz";
 import { Graph } from "../../domain/graph";
 import { DeleteGraphRepo } from "../../rest/repositories/delete-graph-repo";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
+import { Copyright } from "../copyright/copyright";
+import { MainGraphTableRow } from "./main-graph-table-row";
 
 interface IState {
     graphs: Graph[];
@@ -77,58 +81,81 @@ export default class ViewGraph extends React.Component<{}, IState> {
             <main>
                 {errorMessage && <NotificationAlert alertType={AlertType.FAILED} message={errorMessage} />}
                 <Toolbar />
-                <Grid container justify="center">
-                    <Container component="main" maxWidth="sm">
-                        <TableContainer>
-                            <Table size="medium" className={this.classes.table} aria-label="Graphs Table">
-                                <TableHead>
-                                    <TableRow style={{ background: "#F4F2F2" }}>
-                                        <TableCell>Graph ID</TableCell>
-                                        <TableCell align="right">Description</TableCell>
-                                        <TableCell align="right">Actions</TableCell>
-                                    </TableRow>
-                                </TableHead>
+                    {/* <Grid container justify="center"> */}
+                    <Container component="main" maxWidth="md">
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} >
+                                <Paper>
+                                    <Card>
+                                        <CardHeader
+                                            title={"Available Gaffers"}
+                                            subheader={"Number of graphs with status 'UP'"}
+                                            titleTypographyProps={{ align: "center" }}
+                                            subheaderTypographyProps={{ align: "center" }}
+                                        />
+                                        <CardContent >
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", }}>
+                                            <RadialGauge
+                                                height={175}
+                                                width={175}
+                                                minValue={0}
+                                                maxValue={graphs.length}
+                                                data={[{ key: "", data: graphs.filter((graph) => graph.getStatus() === "UP").length }]}
+                                                series={
+                                                    <RadialGaugeSeries arcWidth={12} />
+                                                }
+                                            />
+                                        </div>
+                                        </CardContent>
+                                    </Card>
+                                </Paper>
+                            </Grid>
 
-                                <TableBody>
-                                    {graphs.map((graph: Graph, index) => (
-                                        <TableRow key={graph.getId()} hover>
-                                            <TableCell component="th" scope="row">
-                                                {graph.getId()}
-                                            </TableCell>
-                                            <TableCell align="right">{graph.getStatus()}</TableCell>
-                                            <TableCell align="right">
-                                                <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
-                                                    <IconButton
-                                                        id={"view-graphs-delete-button-" + index}
-                                                        onClick={async () => {
-                                                            await this.deleteGraph(graph.getId());
-                                                        }}
-                                                    >
-                                                        <DeleteOutlineOutlinedIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </TableCell>
+                            <Grid item xs={12}>
+                            <TableContainer component={Paper}>
+                                <Table size="medium" className={this.classes.table} aria-label="Graphs Table">
+                                    <TableHead>
+                                        <TableRow style={{ background: "#F4F2F2" }}>
+                                            <TableCell />
+                                            <TableCell>Graph ID</TableCell>
+                                            <TableCell>Status</TableCell>
+                                            <TableCell>URL</TableCell>
+                                            <TableCell>Actions</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                                {graphs.length === 0 && <caption>No Graphs.</caption>}
-                            </Table>
-                        </TableContainer>
-                        <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
-                            <Button
-                                id="view-graphs-refresh-button"
-                                onClick={async () => await this.getGraphs()}
-                                startIcon={<RefreshOutlinedIcon />}
-                                variant="contained"
-                                color="primary"
-                                className={this.classes.submit}
-                            >
-                                Refresh Table
-                            </Button>
+                                    </TableHead>
+
+                                    <TableBody>
+                                        {graphs.map((graph: Graph, index) => (
+                                            <MainGraphTableRow 
+                                                key={graph.getId()} 
+                                                index={index} row={graph} 
+                                                onClickDelete={(graphId: string) => this.deleteGraph(graphId)} />
+                                        ))}
+                                    </TableBody>
+                                    {graphs.length === 0 && <caption>No Graphs.</caption>}
+                                </Table>
+                            </TableContainer>
+                        
+                            <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
+                                <Button
+                                    id="view-graphs-refresh-button"
+                                    onClick={async () => await this.getGraphs()}
+                                    startIcon={<RefreshOutlinedIcon />}
+                                    variant="contained"
+                                    color="primary"
+                                    className={this.classes.submit}
+                                >
+                                    Refresh Table
+                                </Button>
+                            </Grid>
                         </Grid>
-                    </Container>
-                </Grid>
+                    </Grid>
+                    <Box pt={4}>
+                        <Copyright />
+                    </Box>
+                </Container>
             </main>
         );
     }
 }
+  

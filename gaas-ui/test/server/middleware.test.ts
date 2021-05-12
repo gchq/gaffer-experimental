@@ -79,11 +79,27 @@ describe("Graph API", () => {
                 expect(response.body).toStrictEqual([
                     {
                         graphId: "roadTraffic",
-                        description: "DEPLOYED",
+                        description: "Road traffic graph",
+                        url: "http://road-traffic.k8s.cluster/rest",
+                        status: "UP",
                     },
                     {
                         graphId: "basicGraph",
-                        description: "DEPLOYED",
+                        description: "Basic graph instance",
+                        url: "http://basic-graph.k8s.cluster/rest",
+                        status: "UP"
+                    },
+                    {
+                        graphId: "devGraph",
+                        description: "Development mode graph",
+                        url: "http://dev-environment.k8s.cluster/rest",
+                        status: "DOWN"
+                    },
+                    {
+                        graphId: "testGaffer",
+                        description: "Test instance of Gaffer",
+                        url: "http://test-gaffer.k8s.cluster/rest",
+                        status: "UP"
                     },
                 ]);
             });

@@ -1,7 +1,7 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const users = require('./users');
-var cors = require('cors');
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const users = require("./users");
+var cors = require("cors");
 
 // app
 const app = express();
@@ -11,23 +11,23 @@ const server = app.listen(port, () => console.log(`Listening on port ${port}`));
 app.use(express.json());
 
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    res.header('Access-Control-Allow-Methods', 'OPTIONS,POST,GET');
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Methods", "OPTIONS,POST,GET");
     next();
 });
 
 // Token
-const jwtSecret = 'my-dev-secret';
+const jwtSecret = "my-dev-secret";
 let token;
 
-app.options('*', cors());
+app.options("*", cors());
 // Sign in
-app.post('/auth', (req, res) => {
+app.post("/auth", (req, res) => {
     const username = String(req.body.username).toLowerCase();
 
     if (users.has(username) && users.get(username) === req.body.password) {
-        token = jwt.sign({ data: username }, jwtSecret, { expiresIn: '1 week' });
+        token = jwt.sign({ data: username }, jwtSecret, { expiresIn: "1 week" });
         res.status(200).send(token);
     } else {
         res.status(403).end();
@@ -35,16 +35,16 @@ app.post('/auth', (req, res) => {
 });
 
 // Sign out
-app.post('/auth/signout', (req, res) => {
-    token = '';
+app.post("/auth/signout", (req, res) => {
+    token = "";
     res.status(204).end();
 });
 
 // Create Graph
-app.post('/graphs', (req, res) => {
+app.post("/graphs", (req, res) => {
     try {
-        jwt.verify(req.get('Authorization'), jwtSecret, () => {
-            if (req.body.graphId === 'fail') {
+        jwt.verify(req.get("Authorization"), jwtSecret, () => {
+            if (req.body.graphId === "fail") {
                 res.status(500).send({ title: "Server Error", detail: "Failed to delete graph" });
             } else {
                 res.status(201).end();
@@ -56,17 +56,33 @@ app.post('/graphs', (req, res) => {
 });
 
 // Get all graphs
-app.get('/graphs', (req, res) => {
+app.get("/graphs", (req, res) => {
     try {
-        jwt.verify(req.get('Authorization'), jwtSecret, () => {
+        jwt.verify(req.get("Authorization"), jwtSecret, () => {
             res.send([
                 {
-                    graphId: 'roadTraffic',
-                    description: 'DEPLOYED',
+                    graphId: "roadTraffic",
+                    description: "Road traffic graph",
+                    url: "http://road-traffic.k8s.cluster/rest",
+                    status: "UP",
                 },
                 {
-                    graphId: 'basicGraph',
-                    description: 'DEPLOYED',
+                    graphId: "basicGraph",
+                    description: "Basic graph instance",
+                    url: "http://basic-graph.k8s.cluster/rest",
+                    status: "UP"
+                },
+                {
+                    graphId: "devGraph",
+                    description: "Development mode graph",
+                    url: "http://dev-environment.k8s.cluster/rest",
+                    status: "DOWN"
+                },
+                {
+                    graphId: "testGaffer",
+                    description: "Test instance of Gaffer",
+                    url: "http://test-gaffer.k8s.cluster/rest",
+                    status: "UP"
                 },
             ]);
         });
@@ -76,12 +92,12 @@ app.get('/graphs', (req, res) => {
 });
 
 // Get graph by ID
-app.get('/graphs/:graphId', (req, res) => {
+app.get("/graphs/:graphId", (req, res) => {
     try {
-        jwt.verify(req.get('Authorization'), jwtSecret, () => {
+        jwt.verify(req.get("Authorization"), jwtSecret, () => {
             res.status(200).send({
                 graphId: req.params.graphId,
-                description: 'DEPLOYED',
+                description: "DEPLOYED",
             });
         });
     } catch (e) {
@@ -90,19 +106,19 @@ app.get('/graphs/:graphId', (req, res) => {
 });
 
 // Delete graph by ID
-app.delete('/graphs/:graphId', (req, res) => {
+app.delete("/graphs/:graphId", (req, res) => {
     try {
-        jwt.verify(req.get('Authorization'), jwtSecret, () => {
+        jwt.verify(req.get("Authorization"), jwtSecret, () => {
             res.status(204).end();
         });
     } catch (e) {
         res.status(403).end();
     }
 });
-app.get('/namespaces', (req, res) => {
+app.get("/namespaces", (req, res) => {
     try {
-        jwt.verify(req.get('Authorization'), jwtSecret, () => {
-            res.status(200).send(['namespace1', 'namespace2', 'namespace3']);
+        jwt.verify(req.get("Authorization"), jwtSecret, () => {
+            res.status(200).send(["namespace1", "namespace2", "namespace3"]);
         });
     } catch (e) {
         res.status(403).end();
