@@ -71,9 +71,6 @@ public class AddGraphsCommand implements Command {
     }
 
     private boolean is503ServiceUnavailable(final Throwable e) {
-//        if (e instanceof WebClientRequestException) {
-//            return ((WebClientRequestException) e).getMostSpecificCause() instanceof ConnectException;
-//        }
         if (e instanceof WebClientResponseException) {
             return ((WebClientResponseException) e).getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE;
         }
