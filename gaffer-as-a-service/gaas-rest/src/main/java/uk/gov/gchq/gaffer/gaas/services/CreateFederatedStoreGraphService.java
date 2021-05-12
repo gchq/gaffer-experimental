@@ -25,6 +25,7 @@ import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostCommand;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class CreateFederatedStoreGraphService {
             throw new GaaSRestApiException("Bad Request", "There are no sub-graphs to add", 400);
         }
         validateProxyGraphURLs(request.getProxySubGraphs());
-        crdClient.createCRD(from(request));
+        crdClient.createCRD(from(new GaaSCreateRequestBody(request.getGraphId(), request.getDescription(), "federatedStore")));
         addSubgraphsToFederatedStore(request);
     }
 

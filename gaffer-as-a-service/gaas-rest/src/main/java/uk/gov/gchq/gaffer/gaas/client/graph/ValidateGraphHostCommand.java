@@ -31,7 +31,7 @@ public class ValidateGraphHostCommand implements Command {
 
     public ValidateGraphHostCommand(final ProxySubGraph proxySubGraph) {
         this.proxySubGraph = proxySubGraph;
-        this.webClient = WebClient.create("http://" + proxySubGraph.getHost() + proxySubGraph.getRoot());
+        this.webClient = WebClient.create(proxySubGraph.getHost() + proxySubGraph.getRoot());
     }
 
     @Override
