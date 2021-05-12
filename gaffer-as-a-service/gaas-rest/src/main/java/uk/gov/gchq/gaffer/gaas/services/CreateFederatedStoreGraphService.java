@@ -29,6 +29,8 @@ import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import java.util.ArrayList;
 import java.util.List;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 @Service
 public class CreateFederatedStoreGraphService {
@@ -64,8 +66,9 @@ public class CreateFederatedStoreGraphService {
     }
 
     private void addSubgraphsToFederatedStore(final FederatedRequestBody request) throws GaaSRestApiException {
+        final String url = "http://" + request.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/rest";
         try {
-            graphCommandExecutor.execute(new AddGraphsCommand(request.getProxyHost(), request.getProxySubGraphs()));
+            graphCommandExecutor.execute(new AddGraphsCommand(url, request.getProxySubGraphs()));
         } catch (final GraphOperationException e) {
             throw new GaaSRestApiException("Failed to Add Graph(s) to \"" + request.getGraphId() + "\"", e.getMessage(), 502);
         }

@@ -18,12 +18,11 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.mock.web.MockHttpServletResponse;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
@@ -34,39 +33,48 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 public class CreateFederatedGraphIT extends AbstractTest {
+
+    private static final String VALID_GRAPH_HOST = "testproxygraph-kai-dev.apps.ocp1.purplesky.cloud";
+    private static final String VALID_ROOT = "/rest";
+
     @Autowired
     private ApiClient apiClient;
 
-    private static final String VALID_GRAPH_HOST = "testproxygraph-kai-dev.apps.ocp1.purplesky.cloud";
-
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
-        final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("testproxy", VALID_GRAPH_HOST, "/rest"));
-        final FederatedRequestBody federatedRequestBody = new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, subGraphs);
+        final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("bgraph", VALID_GRAPH_HOST, VALID_ROOT));
+        final FederatedRequestBody federatedRequestBody = new FederatedRequestBody("igraph", TEST_GRAPH_DESCRIPTION, subGraphs);
 
-        final MvcResult mvcResult = mvc.perform(post("/graphs/federated")
+        final MockHttpServletResponse response = mvc.perform(post("/graphs/federated")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
-                .content(mapToJson(federatedRequestBody))).andReturn();
+                .content(mapToJson(federatedRequestBody)))
+                .andReturn()
+                .getResponse();
 
-        assertEquals(201, mvcResult.getResponse().getStatus());
+        assertEquals("", response.getContentAsString());
+        assertEquals(201, response.getStatus());
     }
 
     @Test
     public void whenSubGraphURLIsInvalid_shouldReturnBadRequest() throws Exception {
-        final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("TestGraph", "http://invalid", "/rest"));
+        final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("TestGraph", "http://invalid.url", "/rest"));
         final FederatedRequestBody federatedRequestBody = new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, subGraphs);
 
-        final MvcResult mvcResult = mvc.perform(post("/graphs/federated")
+        final MockHttpServletResponse result = mvc.perform(post("/graphs/federated")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
-                .content(mapToJson(federatedRequestBody))).andReturn();
+                .content(mapToJson(federatedRequestBody)))
+                .andReturn()
+                .getResponse();
 
-        assertEquals(400, mvcResult.getResponse().getStatus());
-        assertEquals("{\"title\":\"Bad Request\",\"detail\":\"Invalid Proxy Graph URL(s): [TestGraph: TestGraph has invalid host. Reason: failed to resolve 'http' after 4 queries  at http://invalid/rest]\"}", mvcResult.getResponse().getContentAsString());
+        final String expected = "{\"title\":\"Bad Request\",\"detail\":\"Invalid Proxy Graph URL(s): " +
+                "[TestGraph: TestGraph has invalid host. Reason: failed to resolve 'http' after 4 queries  at http://invalid/rest]\"}";
+        assertEquals(expected, result.getContentAsString());
+        assertEquals(400, result.getStatus());
     }
 
-    @AfterEach
+    @Test
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
         final String group = "gchq.gov.uk"; // String | the custom resource's group

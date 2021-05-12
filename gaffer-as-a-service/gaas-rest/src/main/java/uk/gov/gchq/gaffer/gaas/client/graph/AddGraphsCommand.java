@@ -16,10 +16,12 @@
 
 package uk.gov.gchq.gaffer.gaas.client.graph;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
@@ -27,6 +29,7 @@ import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.proxystore.ProxyProperties;
 import uk.gov.gchq.gaffer.proxystore.ProxyStore;
 import uk.gov.gchq.gaffer.store.schema.Schema;
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,14 +58,26 @@ public class AddGraphsCommand implements Command {
                     .body(Mono.just(makeRequestBody()), OperationChain.class)
                     .retrieve()
                     .toBodilessEntity()
+                    .retryWhen(Retry.fixedDelay(40, Duration.ofSeconds(3))
+                            .filter(e -> is503ServiceUnavailable(e)))
                     .block();
 
         } catch (final WebClientRequestException e) {
-            throw new GraphOperationException("Invalid host. Reason: " + e.getMostSpecificCause().getMessage() + "at " + url, e);
+            throw new GraphOperationException("Invalid host. Reason: " + e.getMostSpecificCause().getMessage() + " at " + url, e);
 
         } catch (final WebClientResponseException e) {
             throw new GraphOperationException("The request to " + url + " returned: " + e.getRawStatusCode() + " " + e.getStatusText(), e);
         }
+    }
+
+    private boolean is503ServiceUnavailable(final Throwable e) {
+//        if (e instanceof WebClientRequestException) {
+//            return ((WebClientRequestException) e).getMostSpecificCause() instanceof ConnectException;
+//        }
+        if (e instanceof WebClientResponseException) {
+            return ((WebClientResponseException) e).getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE;
+        }
+        return false;
     }
 
     private OperationChain makeRequestBody() {
