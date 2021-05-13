@@ -22,7 +22,6 @@ public class FederatedRequestBody {
 
     private String graphId;
     private String description;
-
     private List<ProxySubGraph> proxySubGraphs;
 
     public FederatedRequestBody() {
