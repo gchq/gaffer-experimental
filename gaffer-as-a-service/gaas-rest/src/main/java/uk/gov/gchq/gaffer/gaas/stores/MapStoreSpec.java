@@ -13,34 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.gov.gchq.gaffer.gaas.stores;
 
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
+import java.util.HashMap;
+import java.util.Map;
+import static uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties.CACHE_SERVICE_CLASS;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
+import static uk.gov.gchq.gaffer.store.StoreProperties.JOB_TRACKER_ENABLED;
 
 @Service
-public class AccumuloStoreType implements StoreType {
+public class MapStoreSpec implements StoreSpec {
 
     @Override
-    public String getType() {
-        return "accumuloStore";
+    public StoreType getType() {
+        return StoreType.MAP_STORE;
     }
 
     @Override
     public AbstractStoreTypeBuilder getStoreSpecBuilder() {
-        return new AccumuloStoreSpecBuilder();
+        return new MapStoreSpecBuilder();
     }
 
-    private static final class AccumuloStoreSpecBuilder extends AbstractStoreTypeBuilder {
+    private static final class MapStoreSpecBuilder extends AbstractStoreTypeBuilder {
+
+        private Map<String, Object> getDefaultMapStoreProperties() {
+            final Map<String, Object> mapStoreProperties = new HashMap<>();
+            mapStoreProperties.put(CACHE_SERVICE_CLASS, HashMapCacheService.class.getName());
+            mapStoreProperties.put(JOB_TRACKER_ENABLED, true);
+            return mapStoreProperties;
+        }
 
         @Override
         public GafferSpec build() {
             final GafferSpec gafferSpec = super.build();
             gafferSpec.putNestedObject(new Gson().toJson(getSchema()), SCHEMA_FILE_KEY);
-            gafferSpec.putNestedObject(true, "accumulo", "enabled");
+            gafferSpec.putNestedObject(getDefaultMapStoreProperties(), STORE_PROPERTIES_KEY);
             return gafferSpec;
         }
     }

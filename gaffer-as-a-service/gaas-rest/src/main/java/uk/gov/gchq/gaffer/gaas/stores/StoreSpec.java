@@ -16,9 +16,11 @@
 
 package uk.gov.gchq.gaffer.gaas.stores;
 
-public interface StoreType {
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 
-    String getType();
+public interface StoreSpec {
+
+    StoreType getType();
 
     AbstractStoreTypeBuilder getStoreSpecBuilder();
 }

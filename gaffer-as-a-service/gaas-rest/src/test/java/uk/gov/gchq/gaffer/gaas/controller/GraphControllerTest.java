@@ -28,6 +28,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
@@ -104,7 +105,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenSuccessful_shouldReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumuloStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO_STORE, getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -113,8 +114,8 @@ public class GraphControllerTest extends AbstractTest {
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
 
-        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
         assertEquals(201, result.getResponse().getStatus());
+        verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
     }
 
     @Test
@@ -229,7 +230,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_hasSameGraphIdAsExistingOne_shouldReturn409() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumuloStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO_STORE, getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
@@ -297,7 +298,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_shouldRequestAnAccumuloStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumuloStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.ACCUMULO_STORE, getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -312,7 +313,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_shouldRequestAMapStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "mapStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.MAP_STORE, getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -327,7 +328,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_shouldRequestAProxyStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "proxyStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, StoreType.PROXY_STORE, getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -341,10 +342,30 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void createGraph_shouldReturn400BadRequestWhenStoreTypeIsNull() throws Exception {
+    public void createGraph_shouldReturn400BadRequest_WhenStoreTypeIsInvalidType() throws Exception {
+        final String requestBody = "{" +
+                "\"graphId\":\"invalidstoregraph\"," +
+                "\"description\":\"Something\"," +
+                "\"storeType\":\"invalid\"" +
+                "}";
+
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(requestBody)).andReturn();
+
+        final String expected = "{\"title\":\"InvalidFormatException\",\"detail\":\"Cannot deserialize value of type " +
+                "`uk.gov.gchq.gaffer.gaas.model.StoreType` from String \\\"invalid\\\": not one of the values " +
+                "accepted for Enum class: [accumuloStore, proxyStore, mapStore, federatedStore]\\n at [Source: (PushbackInputStream); line: 1, column: 70] (through reference chain: uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody[\\\"storeType\\\"])\"}";
+        assertEquals(expected, result.getResponse().getContentAsString());
+        assertEquals(400, result.getResponse().getStatus());
+    }
+
+    @Test
+    public void createGraph_shouldReturn400BadRequest_WhenStoreTypeIsNull() throws Exception {
         final String gaaSCreateRequestBody = "{" +
                 "\"graphId\":\"invalidstoretype\"," +
-                "\"description\":\"any\"" +
+                "\"description\":\"Has null store type\"" +
                 "}";
 
         final MvcResult result = mvc.perform(post("/graphs")
@@ -355,22 +376,6 @@ public class GraphControllerTest extends AbstractTest {
         assertEquals(400, result.getResponse().getStatus());
         final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. " +
                 "Valid Store Types supported are federatedStore, accumuloStore, proxyStore or mapStore\"}";
-        assertEquals(expected, result.getResponse().getContentAsString());
-    }
-
-    @Test
-    public void createGraph_shouldReturn500BadRequestWhenStoreTypeIsInvalidType() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "invalidStore", getSchema());
-        final String inputJson = mapToJson(gaaSCreateRequestBody);
-        doThrow(new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore")).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
-
-        final MvcResult result = mvc.perform(post("/graphs")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token)
-                .content(inputJson)).andReturn();
-
-        assertEquals(500, result.getResponse().getStatus());
-        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
     }
 

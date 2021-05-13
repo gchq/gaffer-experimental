@@ -18,29 +18,31 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
-import uk.gov.gchq.gaffer.gaas.stores.StoreType;
+import uk.gov.gchq.gaffer.gaas.stores.StoreSpec;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class StoreTypeFactory {
 
-    private final List<StoreType> storeTypes;
+    private final List<StoreSpec> storeTypes;
 
     @Autowired
-    public StoreTypeFactory(final List<StoreType> storeTypes) {
+    public StoreTypeFactory(final List<StoreSpec> storeTypes) {
         this.storeTypes = storeTypes;
     }
 
-    public AbstractStoreTypeBuilder getBuilder(final String type) {
-        for (final StoreType storeTypes : storeTypes) {
-            if (type.equalsIgnoreCase(storeTypes.getType())) {
+    public AbstractStoreTypeBuilder getBuilder(final StoreType type) {
+        for (final StoreSpec storeTypes : storeTypes) {
+
+            if (type == storeTypes.getType()) {
                 return storeTypes.getStoreSpecBuilder();
             }
         }
         final String storeTypesString = storeTypes.stream()
-                .map(StoreType::getType).collect(Collectors.joining(", "));
+                .map((storeType) -> storeType.getType().toString()).collect(Collectors.joining(", "));
         throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + storeTypesString);
-        }
+    }
 }

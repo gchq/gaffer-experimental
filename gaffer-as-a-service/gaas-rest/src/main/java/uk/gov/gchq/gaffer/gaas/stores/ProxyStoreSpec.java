@@ -18,6 +18,7 @@ package uk.gov.gchq.gaffer.gaas.stores;
 
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.proxystore.ProxyStore;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,11 +28,11 @@ import static uk.gov.gchq.gaffer.proxystore.ProxyProperties.GAFFER_HOST;
 import static uk.gov.gchq.gaffer.store.StoreProperties.STORE_CLASS;
 
 @Service
-public class ProxyStoreType implements StoreType {
+public class ProxyStoreSpec implements StoreSpec {
 
     @Override
-    public String getType() {
-        return "proxyStore";
+    public StoreType getType() {
+        return StoreType.PROXY_STORE;
     }
 
     @Override

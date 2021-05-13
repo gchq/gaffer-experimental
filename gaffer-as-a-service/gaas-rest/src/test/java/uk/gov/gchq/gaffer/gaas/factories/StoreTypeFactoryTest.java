@@ -18,13 +18,13 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
-import uk.gov.gchq.gaffer.gaas.stores.AccumuloStoreType;
-import uk.gov.gchq.gaffer.gaas.stores.FederatedStoreType;
-import uk.gov.gchq.gaffer.gaas.stores.MapStoreType;
-import uk.gov.gchq.gaffer.gaas.stores.ProxyStoreType;
-import uk.gov.gchq.gaffer.gaas.stores.StoreType;
+import uk.gov.gchq.gaffer.gaas.stores.AccumuloStoreSpec;
+import uk.gov.gchq.gaffer.gaas.stores.FederatedStoreSpec;
+import uk.gov.gchq.gaffer.gaas.stores.MapStoreSpec;
+import uk.gov.gchq.gaffer.gaas.stores.ProxyStoreSpec;
+import uk.gov.gchq.gaffer.gaas.stores.StoreSpec;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -35,75 +35,71 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @UnitTest
 class StoreTypeFactoryTest {
 
-  @Test
-  void testGetProxyStoreBuilder() {
-    List<StoreType> storeTypeManager = new ArrayList<>();
+    @Test
+    void testGetProxyStoreBuilder() {
+        final List<StoreSpec> storeTypeManager = makeStoreList();
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+        AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(StoreType.PROXY_STORE);
 
-    setStoreList(storeTypeManager);
+        GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setProperties(getStoreProperties()).build();
 
-    GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "proxyStore", getStoreProperties());
+        final String expected =
+                "{graph={storeProperties={gaffer.host=http://my.graph.co.uk, gaffer.store.class=uk.gov.gchq.gaffer" +
+                        ".proxystore.ProxyStore}, config={description=Another description, graphId=mygraph}}, ingress" +
+                        "={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
+        assertEquals(expected, build.toString());
+    }
 
+    @Test
+    void testGetMapStoreBuilder() {
+        final List<StoreSpec> storeTypeManager = makeStoreList();
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+        AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(StoreType.MAP_STORE);
 
-    StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-    AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder("proxystore");
-    final String expected =
-            "{graph={storeProperties={gaffer.host=http://my.graph.co.uk, gaffer.store.class=uk.gov.gchq.gaffer.proxystore.ProxyStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
+        GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
 
-    GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setProperties(getStoreProperties()).build();
-    assertEquals(expected, build.toString());
-  }
+        final String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties" +
+                "={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl" +
+                ".HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
+        assertEquals(expected, build.toString());
+    }
 
-  private void setStoreList(final List<StoreType> storeTypeManager) {
-    MapStoreType mapStore = new MapStoreType();
-    ProxyStoreType proxyStoreType = new ProxyStoreType();
-    AccumuloStoreType accumuloStoreType = new AccumuloStoreType();
-    FederatedStoreType federatedStoreType = new FederatedStoreType();
-    storeTypeManager.add(federatedStoreType);
-    storeTypeManager.add(accumuloStoreType);
-    storeTypeManager.add(proxyStoreType);
-    storeTypeManager.add(mapStore);
-  }
+    @Test
+    void testGetInvalidStoreBuilder() {
+        final List<StoreSpec> storeTypeManager = makeStoreList();
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
 
-  private LinkedHashMap<String, Object> getStoreProperties() {
-    final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
-    elementsSchema.put("proxyHost", "http://my.graph.co.uk");
-    return elementsSchema;
-  }
+        final RuntimeException exception = assertThrows(RuntimeException.class, () -> storeTypeFactory.getBuilder(StoreType.valueOf("invalidStore")));
 
-  @Test
-  void testGetMapStoreBuilder() {
-    List<StoreType> storeTypeManager = new ArrayList<>();
+        final String expected = "java.lang.IllegalArgumentException: No enum constant uk.gov.gchq.gaffer.gaas.model.StoreType.invalidStore";
+        assertEquals(expected, exception.toString());
+    }
 
-    setStoreList(storeTypeManager);
+    private LinkedHashMap<String, Object> getSchema() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("entities", new Object());
+        elementsSchema.put("edges", new Object());
+        elementsSchema.put("types", new Object());
+        return elementsSchema;
+    }
 
-    GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "mapStore", getSchema());
+    private List<StoreSpec> makeStoreList() {
+        final List<StoreSpec> storeTypeManager = new ArrayList<>();
+        MapStoreSpec mapStore = new MapStoreSpec();
+        ProxyStoreSpec proxyStoreSpec = new ProxyStoreSpec();
+        AccumuloStoreSpec accumuloStoreSpec = new AccumuloStoreSpec();
+        FederatedStoreSpec federatedStoreType = new FederatedStoreSpec();
+        storeTypeManager.add(federatedStoreType);
+        storeTypeManager.add(accumuloStoreSpec);
+        storeTypeManager.add(proxyStoreSpec);
+        storeTypeManager.add(mapStore);
 
-    StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-    AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder("mapstore");
-    final String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
+        return storeTypeManager;
+    }
 
-    GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
-    assertEquals(expected, build.toString());
-  }
-
-  @Test
-  void testGetInvalidStoreBuilder() {
-    List<StoreType> storeTypeManager = new ArrayList<>();
-
-    setStoreList(storeTypeManager);
-  StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-    final RuntimeException exception = assertThrows(RuntimeException.class, () -> storeTypeFactory.getBuilder("invalidStore"));
-
-    final String expected = "java.lang.RuntimeException: StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore, mapStore";
-
-    assertEquals(expected, exception.toString());
-  }
-
-  private LinkedHashMap<String, Object> getSchema() {
-    final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
-    elementsSchema.put("entities", new Object());
-    elementsSchema.put("edges", new Object());
-    elementsSchema.put("types", new Object());
-    return elementsSchema;
-  }
+    private LinkedHashMap<String, Object> getStoreProperties() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("proxyHost", "http://my.graph.co.uk");
+        return elementsSchema;
+    }
 }

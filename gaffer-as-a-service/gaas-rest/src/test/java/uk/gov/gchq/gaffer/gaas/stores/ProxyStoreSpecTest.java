@@ -18,31 +18,36 @@ package uk.gov.gchq.gaffer.gaas.stores;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
-public class ProxyStoreTypeTest {
+public class ProxyStoreSpecTest {
+
     @Test
     void testGetType() {
-        ProxyStoreType type = new ProxyStoreType();
-        assertEquals("proxyStore", type.getType());
+        final ProxyStoreSpec type = new ProxyStoreSpec();
+
+        assertEquals(StoreType.PROXY_STORE, type.getType());
     }
 
     @Test
     void testGetStoreSpecBuilder() {
-        ProxyStoreType type = new ProxyStoreType();
+        ProxyStoreSpec type = new ProxyStoreSpec();
         AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
-        String expected = "{graph={storeProperties={gaffer.host=http://my.graph.co.uk, gaffer.context-root=/rest, gaffer.store.class=uk.gov.gchq.gaffer.proxystore.ProxyStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
-        GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setProperties(getStoreProperties()).build();
+
+        final GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setProperties(getStoreProperties()).build();
+
+        final String expected = "{graph={storeProperties={gaffer.host=http://my.graph.co.uk, gaffer.context-root=/rest, gaffer.store.class=uk.gov.gchq.gaffer.proxystore.ProxyStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
         assertEquals(expected, build.toString());
     }
+
     private LinkedHashMap<String, Object> getStoreProperties() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("proxyHost", "http://my.graph.co.uk");
         elementsSchema.put("proxyContextRoot", "/rest");
         return elementsSchema;
     }
-
 }

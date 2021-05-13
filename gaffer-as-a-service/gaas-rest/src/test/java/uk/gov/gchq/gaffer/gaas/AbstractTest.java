@@ -16,7 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import java.io.IOException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -48,8 +50,10 @@ public abstract class AbstractTest {
     @Value("${gaffer.namespace}")
     protected String namespace;
 
-    protected String mapToJson(final Object obj) {
-        return new Gson().toJson(obj);
+    protected String mapToJson(final Object obj) throws IOException {
+        ObjectMapper om = new ObjectMapper();
+        om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        return om.writeValueAsString(obj);
     }
 
     @BeforeEach

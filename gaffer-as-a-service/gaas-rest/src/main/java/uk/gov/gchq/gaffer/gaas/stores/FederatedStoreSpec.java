@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties;
+import uk.gov.gchq.gaffer.gaas.model.StoreType;
 import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,11 +30,11 @@ import static uk.gov.gchq.gaffer.store.StoreProperties.STORE_CLASS;
 import static uk.gov.gchq.gaffer.store.StoreProperties.STORE_PROPERTIES_CLASS;
 
 @Service
-public class FederatedStoreType implements StoreType {
+public class FederatedStoreSpec implements StoreSpec {
 
     @Override
-    public String getType() {
-        return "federatedStore";
+    public StoreType getType() {
+        return StoreType.FEDERATED_STORE;
     }
 
     @Override
