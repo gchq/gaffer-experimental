@@ -4,6 +4,18 @@ GaaS REST
 The Gaffer-as-a-Service REST API services requests to create, get and delete graphs.
 
 
+## Using jib plugin to build and push images
+The docker image built by Jib plugin you can change the default image using configuration
+
+#To build docker image locally
+
+mvn clean install jib:dockerBuild  -Pdocker-build -Dimage=${image name}
+
+
+# To build docker image and push to docker repository
+mvn clean install jib:build -Pdocker-build -Dimage=${image name}
+
+
 ## Swagger UI
 
 Run the Spring Boot app locally and access the Swagger dashboard at 

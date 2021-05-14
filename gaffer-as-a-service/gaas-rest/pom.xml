@@ -302,78 +302,32 @@
             </activation>
             <build>
             <plugins>
-            <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <configuration>
-                    <verbose>true</verbose>
-                    <images>
-                        <image>
-                            <build>
-                                <assembly>
-                                    <descriptorRef>artifact</descriptorRef>
-                                </assembly>
-                                <dockerFileDir>${project.basedir}</dockerFileDir>
-                                <tags>
-                                    <tag>${project.version}</tag>
-                                </tags>
-                                <labels>
-                                    <maven.project.groupId>${project.groupId}</maven.project.groupId>
-                                    <maven.project.artifactId>${project.artifactId}</maven.project.artifactId>
-                                    <maven.project.version>${project.version}</maven.project.version>
-                                </labels>
-                            </build>
-                            <name>go159lab/${project.artifactId}:${project.version}</name>
-                            <run>
-                                <ports>
-                                    <port>example.port:8080</port>
-                                </ports>
-                            </run>
-                        </image>
-                    </images>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>docker-clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>remove</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>docker-build</id>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>docker-source</id>
-                        <goals>
-                            <goal>source</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>docker-push</id>
-                        <goals>
-                            <goal>push</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <from>
+                            <image>adoptopenjdk/openjdk8:jdk8u172-b11</image>
+                        </from>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.0.0-M5</version>
+                    <configuration>
+                        <skipTests>true</skipTests>
+                        <rerunFailingTestsCount>3</rerunFailingTestsCount>
+                        <includes>
+                            <include>**/*IT.java</include>
+                        </includes>
+                    </configuration>
                     <executions>
                         <execution>
-                            <id>integration-test</id>
                             <goals>
-                                <goal>integration-test</goal>
+                                <goal>verify</goal>
                             </goals>
-                            <configuration>
-                                <includes>
-                                    <include>**/*IT.java</include>
-                                </includes>
-                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
