@@ -16,10 +16,17 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ProxySubGraph {
 
+    @JsonProperty("graphId")
     private String graphId;
+
+    @JsonProperty("host")
     private String host;
+
+    @JsonProperty("root")
     private String root;
 
     public ProxySubGraph() {

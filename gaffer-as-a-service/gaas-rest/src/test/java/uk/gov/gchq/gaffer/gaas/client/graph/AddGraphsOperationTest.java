@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @UnitTest
-public class AddGraphsCommandTest {
+public class AddGraphsOperationTest {
 
     private static final List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "host only -DO NOT INCLUDE protocol", "/rest"));
     public static MockWebServer mockBackEnd;
@@ -53,7 +53,7 @@ public class AddGraphsCommandTest {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(400));
         final String url = mockBackEnd.url("").toString();
 
-        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
 
         assertEquals("The request to http://localhost:" + mockBackEnd.getPort() + "/ returned: 400 Bad Request", actual.getMessage());
     }
@@ -64,7 +64,7 @@ public class AddGraphsCommandTest {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(404));
         final String url = mockBackEnd.url("").toString();
 
-        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
 
         assertEquals("The request to http://localhost:" + mockBackEnd.getPort() + "/ returned: 404 Not Found", actual.getMessage());
     }
@@ -73,7 +73,7 @@ public class AddGraphsCommandTest {
     public void invalidHost_ShouldThrowInvalidRequestException() {
         final String url = "something";
 
-        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
 
         final String expected = "Invalid host. Reason: failed to resolve 'something' after 4 queries at something";
         assertEquals(expected, actual.getMessage());
@@ -84,6 +84,6 @@ public class AddGraphsCommandTest {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(200));
         final String url = mockBackEnd.url("").toString();
 
-        assertDoesNotThrow(() -> new AddGraphsCommand(url, SUB_GRAPHS).execute());
+        assertDoesNotThrow(() -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
     }
 }

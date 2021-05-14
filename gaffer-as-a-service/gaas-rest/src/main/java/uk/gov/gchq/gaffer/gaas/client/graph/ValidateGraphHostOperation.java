@@ -23,13 +23,14 @@ import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.rest.SystemStatus;
 
-public class ValidateGraphHostCommand implements Command {
+public class ValidateGraphHostOperation implements Command {
 
     public static final String GRAPH_STATUS_URI = "/graph/status";
+
     private final ProxySubGraph proxySubGraph;
     private final WebClient webClient;
 
-    public ValidateGraphHostCommand(final ProxySubGraph proxySubGraph) {
+    public ValidateGraphHostOperation(final ProxySubGraph proxySubGraph) {
         this.proxySubGraph = proxySubGraph;
         this.webClient = WebClient.create(proxySubGraph.getHost() + proxySubGraph.getRoot());
     }

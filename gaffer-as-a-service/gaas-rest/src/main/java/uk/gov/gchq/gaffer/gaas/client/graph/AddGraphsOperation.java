@@ -33,25 +33,24 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AddGraphsCommand implements Command {
+public class AddGraphsOperation implements Command {
 
     public static final String EXECUTE_OPERATION_URI = "/graph/operations/execute";
     public static final int GAFFER_PORT = 80;
+
     private final WebClient webClient;
     private final List<ProxySubGraph> graphs;
     private final String url;
 
-    public AddGraphsCommand(final String url, final List<ProxySubGraph> graphs) {
+    public AddGraphsOperation(final String url, final List<ProxySubGraph> graphs) {
         this.url = url;
         this.webClient = WebClient.create(url);
         this.graphs = graphs;
     }
 
-
     @Override
     public void execute() throws GraphOperationException {
         try {
-            // Gaffer returns an empty body for successful AddGraph operations
             this.webClient
                     .post()
                     .uri(EXECUTE_OPERATION_URI)

@@ -27,9 +27,9 @@ import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsCommand;
+import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsOperation;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
-import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostCommand;
+import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
@@ -416,7 +416,7 @@ public class GraphControllerTest extends AbstractTest {
     @Test
     public void createFedGraph_shouldReturnBadRequest_whenProxyStoreUrlIsInvalid() throws Exception {
         doThrow(new GraphOperationException("The request to proxygraph returned: 404 Not Found"))
-                .when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
+                .when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
         final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
 
@@ -432,7 +432,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createFedGraph_shouldReturnBadRequest_whenKubernetesClientReturnsErrorResponse() throws Exception {
-        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
+        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
         doThrow(new GaaSRestApiException("Kubernetes Error", "Invalid values", 400)).when(crdClient).createCRD(any(KubernetesObject.class));
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
         final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
@@ -449,9 +449,9 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createFedGraph_shouldReturn502BadGateway_whenFedStoreUnableToAddGraphs() throws Exception {
-        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostCommand.class));
+        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
         doNothing().when(crdClient).createCRD(any(KubernetesObject.class));
-        doThrow(new GraphOperationException("Graph: Internal Server Error, cause...")).when(graphCommandExecutor).execute(any(AddGraphsCommand.class));
+        doThrow(new GraphOperationException("Graph: Internal Server Error, cause...")).when(graphCommandExecutor).execute(any(AddGraphsOperation.class));
 
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
         final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));

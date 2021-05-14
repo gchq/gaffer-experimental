@@ -19,9 +19,9 @@ package uk.gov.gchq.gaffer.gaas.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsCommand;
+import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsOperation;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
-import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostCommand;
+import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
@@ -56,7 +56,7 @@ public class CreateFederatedStoreGraphService {
         proxySubGraphs.stream()
                 .forEach((proxySubGraph) -> {
                     try {
-                        graphCommandExecutor.execute(new ValidateGraphHostCommand(proxySubGraph));
+                        graphCommandExecutor.execute(new ValidateGraphHostOperation(proxySubGraph));
                     } catch (final GraphOperationException e) {
                         errorNotifications.add(proxySubGraph.getGraphId() + ": " + e.getMessage());
                     }
@@ -69,7 +69,7 @@ public class CreateFederatedStoreGraphService {
     private void addSubgraphsToFederatedStore(final FederatedRequestBody request) throws GaaSRestApiException {
         final String url = "http://" + request.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/rest";
         try {
-            graphCommandExecutor.execute(new AddGraphsCommand(url, request.getProxySubGraphs()));
+            graphCommandExecutor.execute(new AddGraphsOperation(url, request.getProxySubGraphs()));
         } catch (final GraphOperationException e) {
             throw new GaaSRestApiException("Failed to Add Graph(s) to \"" + request.getGraphId() + "\"", e.getMessage(), 502);
         }

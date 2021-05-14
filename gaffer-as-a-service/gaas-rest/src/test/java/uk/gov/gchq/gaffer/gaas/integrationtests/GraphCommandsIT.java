@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsCommand;
+import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public class GraphCommandsIT {
 
     @Test
     public void validHostAndURIPathAndAddGraphRequest_returnsSuccessString() throws GraphOperationException {
-        new AddGraphsCommand("http://localhost:8080/rest/v2", SUB_GRAPHS).execute();
+        new AddGraphsOperation("http://localhost:8080/rest/v2", SUB_GRAPHS).execute();
 
 //        assertEquals("Successfully added all subgraph(s)", actual);
     }

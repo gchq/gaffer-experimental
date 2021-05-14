@@ -16,12 +16,21 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
+/**
+ * Request Body for Creating Federated Store Gaffers
+ */
 public class FederatedRequestBody {
 
+    @JsonProperty("graphId")
     private String graphId;
+
+    @JsonProperty("description")
     private String description;
+
+    @JsonProperty("proxySubGraphs")
     private List<ProxySubGraph> proxySubGraphs;
 
     public FederatedRequestBody() {

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @UnitTest
-public class ValidateGraphHostCommandTest {
+public class ValidateGraphHostOperationTest {
 
     public static MockWebServer mockBackEnd;
 
@@ -54,7 +54,7 @@ public class ValidateGraphHostCommandTest {
         final String url = mockBackEnd.url("").toString();
         final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/notfound");
 
-        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostCommand(proxySubGraph).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
         assertEquals("The request to testGraph returned: 404 Not Found", actual.getMessage());
         assertTrue(actual.getCause() instanceof WebClientResponseException);
@@ -64,7 +64,7 @@ public class ValidateGraphHostCommandTest {
     public void shouldThrowException_WhenAttemptToConnectToInvalidHost() {
         final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", "http://localhost:404", "/rest");
 
-        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostCommand(proxySubGraph).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
         final String expected = "testGraph has invalid host. Reason: Connection refused at http://localhost:404/rest";
         assertEquals(expected, actual.getMessage());
@@ -77,7 +77,7 @@ public class ValidateGraphHostCommandTest {
         final String url = mockBackEnd.url("").toString();
         final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/internalerror");
 
-        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostCommand(proxySubGraph).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
         assertEquals("The request to testGraph returned: 500 Internal Server Error", actual.getMessage());
         assertTrue(actual.getCause() instanceof WebClientResponseException);
@@ -89,6 +89,6 @@ public class ValidateGraphHostCommandTest {
         final String url = mockBackEnd.url("").toString();
         final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/valid");
 
-        assertDoesNotThrow(() -> new ValidateGraphHostCommand(proxySubGraph).execute());
+        assertDoesNotThrow(() -> new ValidateGraphHostOperation(proxySubGraph).execute());
     }
 }
