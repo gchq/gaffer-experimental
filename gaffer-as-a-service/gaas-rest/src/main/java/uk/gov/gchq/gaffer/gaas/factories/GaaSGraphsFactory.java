@@ -21,6 +21,7 @@ import uk.gov.gchq.gaffer.common.model.v1.GafferList;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.util.JsonObjectWrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +65,7 @@ public final class GaaSGraphsFactory {
         if (gaffer.getSpec().getNestedObject(INGRESS_HOST_KEY) == null || gaffer.getSpec().getNestedObject(INGRESS_API_PATH_KEY) == null) {
             return DEFAULT_VALUE;
         }
-        return URL_PROTOCOL + gaffer.getSpec().getNestedObject(INGRESS_HOST_KEY).toString() + gaffer.getSpec().getNestedObject(INGRESS_API_PATH_KEY).toString();
+        return GraphUrl.from(gaffer).buildUrl();
     }
 
     private static RestApiStatus getStatus(final Gaffer gaffer) {

@@ -18,10 +18,12 @@ package uk.gov.gchq.gaffer.gaas.client.graph;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
+import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.io.IOException;
@@ -34,8 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @UnitTest
 public class AddGraphsOperationTest {
 
-    private static final List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "host only -DO NOT INCLUDE protocol", "/rest"));
-    public static MockWebServer mockBackEnd;
+    private static final List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "validgraph-kubernetes.cluster.com", "/rest"));
+    private static MockWebServer mockBackEnd;
+
+    private final String validHost = mockBackEnd.getHostName() + ":" + mockBackEnd.getPort();
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -49,41 +53,80 @@ public class AddGraphsOperationTest {
     }
 
     @Test
+    public void whenValidInputs_ShouldNotThrowException() throws InterruptedException {
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(200));
+        final GraphUrl url = new GraphUrl(validHost, "/root");
+
+        assertDoesNotThrow(() -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
+        final RecordedRequest request = mockBackEnd.takeRequest();
+        assertEquals("/root/graph/operations/execute", request.getPath());
+        final String expected = "{" +
+                "\"class\":\"uk.gov.gchq.gaffer.operation.OperationChain\"," +
+                "\"operations\":[{" +
+                    "\"class\":\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\"," +
+                    "\"graphId\":\"valid\"," +
+                    "\"schema\":{" +
+                        "\"types\":{}," +
+                        "\"config\":null," +
+                        "\"id\":null," +
+                        "\"timestampProperty\":null," +
+                        "\"vertexSerialiser\":null," +
+                        "\"visibilityProperty\":null" +
+                    "}," +
+                    "\"storeProperties\":{" +
+                        "\"gaffer.host\":\"validgraph-kubernetes.cluster.com\"," +
+                        "\"gaffer.context-root\":\"/rest\"," +
+                        "\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"," +
+                        "\"gaffer.port\":\"80\"," +
+                        "\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyProperties\"" +
+                    "}" +
+                "}]," +
+                "\"options\":null" +
+            "}";
+        assertEquals(expected, new String(request.getBody().readByteArray()));
+    }
+
+    @Test
+    public void whenGafferAPIReturns503Unavailable_ShouldRetryUntilSuccessful() {
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(503));
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(200));
+        final GraphUrl url = new GraphUrl(validHost, "/rest");
+
+        assertDoesNotThrow(() -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
+    }
+
+    @Test
     public void whenGafferAPIReturns400_ShouldThrow400BadRequest() {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(400));
-        final String url = mockBackEnd.url("").toString();
+        final GraphUrl url = new GraphUrl(validHost, "/rest");
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
 
-        assertEquals("The request to http://localhost:" + mockBackEnd.getPort() + "/ returned: 400 Bad Request", actual.getMessage());
-    }
-
-
-    @Test
-    public void whenGafferAPIReturns404_ShouldThrow404NotFound() {
-        mockBackEnd.enqueue(new MockResponse().setResponseCode(404));
-        final String url = mockBackEnd.url("").toString();
-
-        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
-
-        assertEquals("The request to http://localhost:" + mockBackEnd.getPort() + "/ returned: 404 Not Found", actual.getMessage());
-    }
-
-    @Test
-    public void invalidHost_ShouldThrowInvalidRequestException() {
-        final String url = "something";
-
-        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
-
-        final String expected = "Invalid host. Reason: failed to resolve 'something' after 4 queries at something";
+        final String expected = "AddGraph OperationChain request to Federated Store Graph response: 400 Bad Request at " +
+                "http://localhost:" + mockBackEnd.getPort() + "/rest/graph/operations/execute";
         assertEquals(expected, actual.getMessage());
     }
 
     @Test
-    public void whenValidInputs_ShouldNotThrowException() {
-        mockBackEnd.enqueue(new MockResponse().setResponseCode(200));
-        final String url = mockBackEnd.url("").toString();
+    public void whenGafferAPIReturns404_ShouldThrow404NotFound() {
+        mockBackEnd.enqueue(new MockResponse().setResponseCode(404));
+        final GraphUrl url = new GraphUrl(validHost, "/notfound");
 
-        assertDoesNotThrow(() -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
+
+        final String expected = "AddGraph OperationChain request to Federated Store Graph response: 404 Not Found at " +
+                "http://localhost:" + mockBackEnd.getPort() + "/notfound/graph/operations/execute";
+        assertEquals(expected, actual.getMessage());
+    }
+
+    @Test
+    public void invalidHost_ShouldThrowInvalidRequestException() {
+        final GraphUrl url = new GraphUrl("invalid-host:8080", "/rest");
+
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
+
+        final String expected = "AddGraph OperationChain request to Federated Store Graph failed. Reason: failed to " +
+                "resolve 'invalid-host' after 3 queries , at http://invalid-host:8080/rest/graph/operations/execute";
+        assertEquals(expected, actual.getMessage());
     }
 }

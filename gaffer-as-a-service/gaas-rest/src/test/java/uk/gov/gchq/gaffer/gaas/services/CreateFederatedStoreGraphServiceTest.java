@@ -16,7 +16,6 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
-import io.kubernetes.client.common.KubernetesObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.ArrayList;
@@ -42,9 +42,13 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @UnitTest
 class CreateFederatedStoreGraphServiceTest {
+
+    private static final String TEST_GRAPH_ID = "testgraphid";
+    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
 
     @Autowired
     private CreateFederatedStoreGraphService service;
@@ -54,9 +58,6 @@ class CreateFederatedStoreGraphServiceTest {
 
     @MockBean
     private GraphCommandExecutor graphCommandExecutor;
-
-    private static final String TEST_GRAPH_ID = "testgraphid";
-    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
 
     private final ProxySubGraph proxySubGraph = new ProxySubGraph("TestGraph", "invalid", "invalid");
     private final ProxySubGraph proxySubGraph2 = new ProxySubGraph("TestGraph2", "invalid2", "invalid2");
@@ -100,18 +101,19 @@ class CreateFederatedStoreGraphServiceTest {
     @Test
     public void shouldCreateAFedStoreGraph_whenAllURLsAreValid() throws GraphOperationException, GaaSRestApiException {
         doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
-        final ProxySubGraph subGraph = new ProxySubGraph("TestGraph2", "invalid", "invalid");
+        when(crdClient.createCRD(any(Gaffer.class))).thenReturn(new GraphUrl("localhost:8080", "/rest"));
+        final ProxySubGraph subGraph = new ProxySubGraph("test-graph-2", "localhost:4000", "/rest");
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(subGraph);
 
         service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, proxySubGraphsList));
 
-        verify(crdClient, times(1)).createCRD(any(KubernetesObject.class));
+        verify(crdClient, times(1)).createCRD(any(Gaffer.class));
     }
 
     @Test
     public void shouldThrowGaaSException_whenCreateCRDThrowsGaaSException() throws GaaSRestApiException, GraphOperationException {
         doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
-        doThrow(GaaSRestApiException.class).when(crdClient).createCRD(any(KubernetesObject.class));
+        doThrow(GaaSRestApiException.class).when(crdClient).createCRD(any(Gaffer.class));
         final ProxySubGraph subGraph = new ProxySubGraph("TestGraph2", "invalid", "invalid");
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(subGraph);
 
@@ -120,6 +122,7 @@ class CreateFederatedStoreGraphServiceTest {
 
     @Test
     public void shouldSendTheCorrectRequestToTheCRDClientWhenCreatingAFederatedGraph() throws GaaSRestApiException {
+        when(crdClient.createCRD(any(Gaffer.class))).thenReturn(new GraphUrl("localhost:8080", "/root"));
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph, proxySubGraph2);
         service.createFederatedStore(new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, proxySubGraphsList));
 
@@ -146,5 +149,4 @@ class CreateFederatedStoreGraphServiceTest {
         assertEquals(expected, exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatusCode());
     }
-
 }

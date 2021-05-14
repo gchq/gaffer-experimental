@@ -16,7 +16,6 @@
 
 package uk.gov.gchq.gaffer.gaas.client;
 
-import io.kubernetes.client.common.KubernetesObject;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
@@ -24,11 +23,13 @@ import io.kubernetes.client.openapi.models.V1NamespaceList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferList;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,8 +40,13 @@ import static uk.gov.gchq.gaffer.gaas.factories.GaaSGraphsFactory.from;
 import static uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory.from;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
-@Service
+@Repository
 public class CRDClient {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
+    private static final String PRETTY = null;
+    private static final String DRY_RUN = null;
+    private static final String FIELD_MANAGER = null;
 
     @Autowired
     private CustomObjectsApi customObjectsApi;
@@ -48,14 +54,10 @@ public class CRDClient {
     @Autowired
     private CoreV1Api coreV1Api;
 
-    private static final String PRETTY = null;
-    private static final String DRY_RUN = null;
-    private static final String FIELD_MANAGER = null;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
-
-    public void createCRD(final KubernetesObject requestBody) throws GaaSRestApiException {
+    public GraphUrl createCRD(final Gaffer requestBody) throws GaaSRestApiException {
         try {
             customObjectsApi.createNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, requestBody, PRETTY, DRY_RUN, FIELD_MANAGER);
+            return GraphUrl.from(requestBody);
         } catch (ApiException e) {
             if (requestBody == null || requestBody.getMetadata() == null) {
                 LOGGER.debug("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
@@ -64,15 +66,6 @@ public class CRDClient {
             }
             throw from(e);
         }
-    }
-
-    public GaaSGraph getCRDByGraphId(final String graphId) throws GaaSRestApiException {
-//        try {
-        throw new IllegalArgumentException("Not Implemented");
-//            return from(CommonUtil.convertToCustomObject(customObjectsApi.getNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, graphId), Gaffer.class));
-//        } catch (ApiException e) {
-//            throw from(e);
-//        }
     }
 
     public Map<String, List<GaaSGraph>> listAllCRDs() throws GaaSRestApiException {

@@ -70,7 +70,7 @@ public class CRDClientTest {
     @Test
     public void getGraphCRDs_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsTimeoutEx() throws ApiException {
         final ApiException apiException = makeApiException_timeout();
-        when(customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, this.namespace, this.plural, this.pretty, null, null, null, null, null, null, null))
+        when(customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, this.namespace, this.plural, null, null, null, null, null, null, null, null))
                 .thenThrow(apiException);
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.listAllCRDs());
 
@@ -80,7 +80,7 @@ public class CRDClientTest {
     @Test
     public void getGraphCRDs_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsApiEx() throws ApiException {
         final ApiException apiException = makeApiException_loggedOutOfCluster();
-        when(customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, this.namespace, this.plural, this.pretty, null, null, null, null, null, null, null))
+        when(customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, this.namespace, this.plural, null, null, null, null, null, null, null, null))
                 .thenThrow(apiException);
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.listAllCRDs());

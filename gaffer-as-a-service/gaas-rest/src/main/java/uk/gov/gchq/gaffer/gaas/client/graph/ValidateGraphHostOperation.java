@@ -25,14 +25,15 @@ import uk.gov.gchq.gaffer.rest.SystemStatus;
 
 public class ValidateGraphHostOperation implements Command {
 
-    public static final String GRAPH_STATUS_URI = "/graph/status";
+    private static final String HTTP_PROTOCOL = "http://";
+    private static final String GRAPH_STATUS_URI = "/graph/status";
 
     private final ProxySubGraph proxySubGraph;
     private final WebClient webClient;
 
     public ValidateGraphHostOperation(final ProxySubGraph proxySubGraph) {
         this.proxySubGraph = proxySubGraph;
-        this.webClient = WebClient.create(proxySubGraph.getHost() + proxySubGraph.getRoot());
+        this.webClient = WebClient.create(HTTP_PROTOCOL + proxySubGraph.getHost() + proxySubGraph.getRoot());
     }
 
     @Override
@@ -45,15 +46,23 @@ public class ValidateGraphHostOperation implements Command {
                     .bodyToMono(SystemStatus.class)
                     .block();
 
-            if (response == SystemStatus.DOWN) {
-                throw new GraphOperationException(proxySubGraph.getGraphId() + " is down");
-            }
+            validateSystemIsUp(response);
 
         } catch (final WebClientRequestException e) {
-            throw new GraphOperationException(proxySubGraph.getGraphId() + " has invalid host. Reason: " + e.getMostSpecificCause().getMessage() + " at " + proxySubGraph.getHost() + proxySubGraph.getRoot(), e);
+            throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' failed. Reason: " + e.getMostSpecificCause().getMessage() + " at " + e.getUri(), e);
 
         } catch (final WebClientResponseException e) {
-            throw new GraphOperationException("The request to " + proxySubGraph.getGraphId() + " returned: " + e.getRawStatusCode() + " " + e.getStatusText(), e);
+            throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' returned: " + e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
+        }
+    }
+
+    private void validateSystemIsUp(SystemStatus response) throws GraphOperationException {
+        final SystemStatus.Status status = response.getStatus();
+        if (status == null) {
+            throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' returned a null status");
+        }
+        if (status != SystemStatus.Status.UP) {
+            throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' status is " + status.getCode() + ". " + status.getDescription());
         }
     }
 }

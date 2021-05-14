@@ -19,28 +19,47 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsOperation;
+import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
+import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import java.util.Arrays;
 import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class GraphCommandsIT {
 
-    private static final List<ProxySubGraph> SUB_GRAPHS = Arrays.asList(new ProxySubGraph("valid", "ashsubgraphpm-kai-dev.apps.ocp1.purplesky.cloud", "/rest"));
+    private final GraphUrl validUrl = new GraphUrl("localhost:8080", "/rest/v2");
+    private final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("validgraph", "graph-kubernetes.cluster.cloud", "/rest"));
 
     @Test
-    public void validHostAndURIPathAndAddGraphRequest_returnsSuccessString() throws GraphOperationException {
-        new AddGraphsOperation("http://localhost:8080/rest/v2", SUB_GRAPHS).execute();
-
-//        assertEquals("Successfully added all subgraph(s)", actual);
+    public void addGraphs_shouldNotThrowAnything_whenSuccessfullyAddsGraph() {
+        assertDoesNotThrow(() -> new AddGraphsOperation(validUrl, subGraphs).execute());
     }
 
     @Test
-    public void validHostAndURIPath_returnsEvent() throws GraphOperationException {
-//        final WebClient webClient = webClientBuilder.baseUrl("http://localhost:8080/rest/v2").build();
-//        final String event = new ValidateGraphHostCommand("", webClient).execute();
+    public void addGraphs_shouldThrowGraphOpException_whenUrlIsInvalid() {
+        assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(validUrl, subGraphs).execute());
+    }
 
-//        assertEquals("Graph status is UP", event);
+    @Test
+    public void validateGraphHost_shouldThrowGraphOpEx_whenIncorrectRoot() {
+        final ProxySubGraph proxySubGraph = new ProxySubGraph("notfoundroot", "localhost:8080", "/not-found-root");
+
+        final GraphOperationException exception = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
+
+        assertEquals("", exception.getMessage());
+    }
+
+    @Test
+    public void validateGraphHost_shouldThrowGraphOpEx_whenHostIsntHostingAGraph() {
+        final ProxySubGraph proxySubGraph = new ProxySubGraph("invalidhost", "localhost:8082", "/rest");
+
+        final GraphOperationException exception = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
+
+        assertEquals("'invalidhost' graph has invalid host. Reason: Connection refused at http://localhost:8082/rest/graph/status/rest", exception.getMessage());
     }
 }

@@ -16,7 +16,6 @@
 
 package uk.gov.gchq.gaffer.gaas.client.graph;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -24,6 +23,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
+import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.proxystore.ProxyProperties;
@@ -32,20 +32,19 @@ import uk.gov.gchq.gaffer.store.schema.Schema;
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
 public class AddGraphsOperation implements Command {
 
     public static final String EXECUTE_OPERATION_URI = "/graph/operations/execute";
     public static final int GAFFER_PORT = 80;
 
-    private final WebClient webClient;
     private final List<ProxySubGraph> graphs;
-    private final String url;
+    private final WebClient webClient;
 
-    public AddGraphsOperation(final String url, final List<ProxySubGraph> graphs) {
-        this.url = url;
-        this.webClient = WebClient.create(url);
+    public AddGraphsOperation(final GraphUrl url, final List<ProxySubGraph> graphs) {
         this.graphs = graphs;
+        this.webClient = WebClient.create(url.buildUrl());
     }
 
     @Override
@@ -54,7 +53,7 @@ public class AddGraphsOperation implements Command {
             this.webClient
                     .post()
                     .uri(EXECUTE_OPERATION_URI)
-                    .body(Mono.just(makeRequestBody()), OperationChain.class)
+                    .body(Mono.just(makeOperationChainRequestBody()), OperationChain.class)
                     .retrieve()
                     .toBodilessEntity()
                     .retryWhen(Retry.fixedDelay(40, Duration.ofSeconds(3))
@@ -62,27 +61,18 @@ public class AddGraphsOperation implements Command {
                     .block();
 
         } catch (final WebClientRequestException e) {
-            throw new GraphOperationException("Invalid host. Reason: " + e.getMostSpecificCause().getMessage() + " at " + url, e);
+            throw new GraphOperationException("AddGraph OperationChain request to Federated Store Graph failed. Reason: " +
+                    e.getMostSpecificCause().getMessage() + ", at " + e.getUri(), e);
 
         } catch (final WebClientResponseException e) {
-            throw new GraphOperationException("The request to " + url + " returned: " + e.getRawStatusCode() + " " + e.getStatusText(), e);
+            throw new GraphOperationException("AddGraph OperationChain request to Federated Store Graph response: " +
+                    e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
         }
     }
 
-    private boolean is503ServiceUnavailable(final Throwable e) {
-        if (e instanceof WebClientResponseException) {
-            return ((WebClientResponseException) e).getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE;
-        }
-        return false;
-    }
+    private OperationChain makeOperationChainRequestBody() {
 
-    private OperationChain makeRequestBody() {
-        return new OperationChain(new OperationChain(getAddGraphOperations()));
-    }
-
-    private List<AddGraph> getAddGraphOperations() {
-
-        return graphs.stream().map(subGraph -> {
+        final List<AddGraph> addGraphOperations = graphs.stream().map(subGraph -> {
 
             final ProxyProperties storeProperties = new ProxyProperties();
             storeProperties.setStoreClass(ProxyStore.class);
@@ -97,5 +87,14 @@ public class AddGraphsOperation implements Command {
                     .schema(new Schema())
                     .build();
         }).collect(Collectors.toList());
+
+        return new OperationChain(addGraphOperations);
+    }
+
+    private boolean is503ServiceUnavailable(final Throwable e) {
+        if (e instanceof WebClientResponseException) {
+            return ((WebClientResponseException) e).getStatusCode() == SERVICE_UNAVAILABLE;
+        }
+        return false;
     }
 }

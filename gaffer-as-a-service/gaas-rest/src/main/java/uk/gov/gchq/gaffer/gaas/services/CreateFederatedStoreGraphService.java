@@ -26,12 +26,11 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import java.util.ArrayList;
 import java.util.List;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
-import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
-import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 @Service
 public class CreateFederatedStoreGraphService {
@@ -46,9 +45,10 @@ public class CreateFederatedStoreGraphService {
         if (request.getProxySubGraphs().isEmpty()) {
             throw new GaaSRestApiException("Bad Request", "There are no sub-graphs to add", 400);
         }
+
         validateProxyGraphURLs(request.getProxySubGraphs());
-        crdClient.createCRD(from(new GaaSCreateRequestBody(request.getGraphId(), request.getDescription(), "federatedStore")));
-        addSubgraphsToFederatedStore(request);
+        final GraphUrl url = crdClient.createCRD(from(new GaaSCreateRequestBody(request.getGraphId(), request.getDescription(), "federatedStore")));
+        addSubGraphsToFederatedStore(url, request);
     }
 
     private void validateProxyGraphURLs(final List<ProxySubGraph> proxySubGraphs) throws GaaSRestApiException {
@@ -66,8 +66,7 @@ public class CreateFederatedStoreGraphService {
         }
     }
 
-    private void addSubgraphsToFederatedStore(final FederatedRequestBody request) throws GaaSRestApiException {
-        final String url = "http://" + request.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/rest";
+    private void addSubGraphsToFederatedStore(final GraphUrl url, final FederatedRequestBody request) throws GaaSRestApiException {
         try {
             graphCommandExecutor.execute(new AddGraphsOperation(url, request.getProxySubGraphs()));
         } catch (final GraphOperationException e) {
