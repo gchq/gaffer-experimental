@@ -80,8 +80,8 @@ public class ValidateGraphHostOperationTest {
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
-        final String expected = "Get Status request for 'testGraph' failed. Reason: Connection refused at http://localhost:404/rest/graph/status";
-        assertEquals(expected, actual.getMessage());
+        final String expected = "Connection refused at http://localhost:404/rest/graph/status";
+        assertTrue(actual.getMessage().contains(expected));
         assertTrue(actual.getCause() instanceof WebClientRequestException);
     }
 
