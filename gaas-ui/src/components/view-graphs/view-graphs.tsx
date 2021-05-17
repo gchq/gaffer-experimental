@@ -136,6 +136,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                         <TableRow style={{ background: "#F4F2F2" }}>
                                             <TableCell />
                                             <TableCell>Graph ID</TableCell>
+                                            <TableCell>Store Type</TableCell>
                                             <TableCell>Status</TableCell>
                                             <TableCell>URL</TableCell>
                                             <TableCell>Actions</TableCell>

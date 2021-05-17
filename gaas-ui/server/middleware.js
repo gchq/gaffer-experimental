@@ -71,7 +71,7 @@ app.get("/graphs", (req, res) => {
                     graphId: "exampleGraphId",
                     description: "Example Graph description",
                     url: "http://road-traffic.k8s.cluster/rest",
-                    storeType: "MAP_STORE",
+                    storeType: "MAPSTORE",
                     status: "UP",
                 },
                 {

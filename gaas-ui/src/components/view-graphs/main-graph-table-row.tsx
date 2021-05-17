@@ -39,6 +39,7 @@ export function MainGraphTableRow(props: IProps) {
                 </IconButton>
             </TableCell>
             <TableCell component="th" scope="row">{row.getId()}</TableCell>
+            <TableCell><StatusChip status={row.getStoreType()} /></TableCell>
             <TableCell><StatusChip status={row.getStatus()} /></TableCell>
             <TableCell><a href={row.getUrl()} target="_blank" rel="noreferrer">{row.getUrl()}</a></TableCell>
             <TableCell>
