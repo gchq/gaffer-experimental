@@ -56,7 +56,7 @@ public class ValidateGraphHostOperation implements Command {
         }
     }
 
-    private void validateSystemIsUp(SystemStatus response) throws GraphOperationException {
+    private void validateSystemIsUp(final SystemStatus response) throws GraphOperationException {
         final SystemStatus.Status status = response.getStatus();
         if (status == null) {
             throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' returned a null status");

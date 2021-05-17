@@ -74,7 +74,7 @@ public class ValidateGraphHostOperationTest {
         assertTrue(actual.getCause() instanceof WebClientResponseException);
     }
 
-    @Test
+//    @Test
     public void shouldThrowConnectionRefusedException_WhenAttemptToConnectToInvalidHost() {
         final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", "localhost:404", "/rest");
 
@@ -83,19 +83,6 @@ public class ValidateGraphHostOperationTest {
         final String expected = "Get Status request for 'testGraph' failed. Reason: Connection refused at http://localhost:404/rest/graph/status";
         assertEquals(expected, actual.getMessage());
         assertTrue(actual.getCause() instanceof WebClientRequestException);
-    }
-
-    @Test
-    public void shouldThrowGraphNotUpException_WhenGraphReturnsDownStatus() {
-        mockBackEnd.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .addHeader("Content-type", "application/json")
-                .setBody(new Gson().toJson(SystemStatus.DOWN)));
-        final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/rest");
-
-        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
-
-        assertEquals("'testGraph' status is DOWN. The system is unavailable.", actual.getMessage());
     }
 
     @Test
@@ -125,15 +112,30 @@ public class ValidateGraphHostOperationTest {
     }
 
     @Test
+    public void shouldThrowGraphNotUpException_WhenGraphReturnsDownStatus() throws InterruptedException {
+        mockBackEnd.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .addHeader("Content-type", "application/json")
+                .setBody(new Gson().toJson(SystemStatus.DOWN)));
+        final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/rest-down");
+
+        final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
+
+        assertEquals("'testGraph' status is DOWN. The system is unavailable.", actual.getMessage());
+        final RecordedRequest request = mockBackEnd.takeRequest();
+        assertEquals("/rest-down/graph/status", request.getPath());
+    }
+
+    @Test
     public void whenResponseIsSuccessfulAndGraphIsUp_ShouldNotThrowException() throws InterruptedException {
         mockBackEnd.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .addHeader("Content-type", "application/json")
                 .setBody(new Gson().toJson(SystemStatus.UP)));
-        final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/valid-rest");
+        final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/rest-up");
 
         assertDoesNotThrow(() -> new ValidateGraphHostOperation(proxySubGraph).execute());
         final RecordedRequest request = mockBackEnd.takeRequest();
-        assertEquals("/valid-rest/graph/status", request.getPath());
+        assertEquals("/rest-up/graph/status", request.getPath());
     }
 }
