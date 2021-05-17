@@ -3,6 +3,7 @@ import {
     Container,
     Grid,
     Table,
+    Typography,
     TableBody,
     TableCell,
     TableContainer,
