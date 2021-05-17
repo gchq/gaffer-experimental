@@ -19,12 +19,14 @@ import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.cache.impl.HashMapCacheService;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.mapstore.MapStore;
 import java.util.HashMap;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties.CACHE_SERVICE_CLASS;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
 import static uk.gov.gchq.gaffer.store.StoreProperties.JOB_TRACKER_ENABLED;
+import static uk.gov.gchq.gaffer.store.StoreProperties.STORE_CLASS;
 
 @Service
 public class MapStoreType implements StoreType {
@@ -43,6 +45,7 @@ public class MapStoreType implements StoreType {
 
         private Map<String, Object> getDefaultMapStoreProperties() {
             final Map<String, Object> mapStoreProperties = new HashMap<>();
+            mapStoreProperties.put(STORE_CLASS, MapStore.class.getName());
             mapStoreProperties.put(CACHE_SERVICE_CLASS, HashMapCacheService.class.getName());
             mapStoreProperties.put(JOB_TRACKER_ENABLED, true);
             return mapStoreProperties;

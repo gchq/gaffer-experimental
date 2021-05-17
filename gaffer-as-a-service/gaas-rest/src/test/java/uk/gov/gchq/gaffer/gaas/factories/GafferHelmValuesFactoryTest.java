@@ -29,6 +29,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 public class GafferHelmValuesFactoryTest {
 
     private final Gson gson = new Gson();
+
     private LinkedHashMap<String, Object> getProxyHostStoreProperties() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("proxyHost", "http://my.graph.co.uk");
@@ -82,6 +83,7 @@ public class GafferHelmValuesFactoryTest {
                         "\"schema\":{" +
                         "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
                         "}," +
+                        "\"storeProperties\":{\"gaffer.store.class\":\"uk.gov.gchq.gaffer.accumulostore.AccumuloStore\"}," +
                         "\"config\":{" +
                         "\"description\":\"Another description\"," +
                         "\"graphId\":\"MyGraph\"" +
@@ -114,6 +116,7 @@ public class GafferHelmValuesFactoryTest {
                         "}," +
                         "\"storeProperties\":{" +
                         "\"gaffer.store.job.tracker.enabled\":true," +
+                        "\"gaffer.store.class\":\"uk.gov.gchq.gaffer.mapstore.MapStore\"," +
                         "\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"" +
                         "}," +
                         "\"config\":{" +
@@ -135,7 +138,18 @@ public class GafferHelmValuesFactoryTest {
         final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "mapStore", getSchema(), null));
 
         final String expected =
-                "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"},\"storeProperties\":{\"gaffer.store.job.tracker.enabled\":true,\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+                "{" +
+                        "\"apiVersion\":\"gchq.gov.uk/v1\"," +
+                        "\"kind\":\"Gaffer\"," +
+                        "\"metadata\":{\"name\":\"MyGraph\"}," +
+                        "\"spec\":{" +
+                        "\"graph\":{" +
+                        "\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"}," +
+                        "\"storeProperties\":{\"gaffer.store.job.tracker.enabled\":true,\"gaffer.store.class\":\"uk.gov.gchq.gaffer.mapstore.MapStore\",\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"}," +
+                        "\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"}}," +
+                        "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
+                        "}" +
+                        "}";
         assertEquals(expected, gson.toJson(requestBody));
     }
 

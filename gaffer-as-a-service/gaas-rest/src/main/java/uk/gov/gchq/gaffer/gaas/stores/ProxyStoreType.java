@@ -59,6 +59,5 @@ public class ProxyStoreType implements StoreType {
             gafferSpec.putNestedObject(getDefaultProxyStoreProperties(), STORE_PROPERTIES_KEY);
             return gafferSpec;
         }
-
     }
 }

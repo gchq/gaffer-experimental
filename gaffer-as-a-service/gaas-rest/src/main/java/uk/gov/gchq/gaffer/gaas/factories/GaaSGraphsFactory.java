@@ -16,12 +16,16 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
+import uk.gov.gchq.gaffer.accumulostore.AccumuloStore;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferList;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
+import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.util.JsonObjectWrapper;
+import uk.gov.gchq.gaffer.mapstore.MapStore;
+import uk.gov.gchq.gaffer.proxystore.ProxyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +35,8 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
+import static uk.gov.gchq.gaffer.store.StoreProperties.STORE_CLASS;
 
 public final class GaaSGraphsFactory {
 
@@ -42,14 +48,15 @@ public final class GaaSGraphsFactory {
 
         final List<Gaffer> gaffers = (List<Gaffer>) gafferList.getItems();
         if (gaffers != null) {
-            List<GaaSGraph> collect = gaffers.stream()
+            final List<GaaSGraph> collect = gaffers.stream()
                     .filter(gaffer -> gaffer.getSpec() != null && gaffer.getSpec().getNestedObject(GRAPH_ID_KEY) != null)
                     .map(gaffer -> new GaaSGraph()
                             .graphId(gaffer.getSpec().getNestedObject(GRAPH_ID_KEY).toString())
                             .description(getDescription(gaffer))
                             .url(getUrl(gaffer))
                             .status(getStatus(gaffer))
-                            .problems(getProblems(gaffer)))
+                            .problems(getProblems(gaffer))
+                            .storeType(getStoreType(gaffer)))
                     .collect(Collectors.toList());
             return JsonObjectWrapper.withLabel("graphs", collect);
         }
@@ -75,6 +82,24 @@ public final class GaaSGraphsFactory {
         return gaffer.getStatus() != null && gaffer.getStatus().getProblems() != null ? gaffer.getStatus().getProblems() : new ArrayList<String>();
     }
 
+    private static String getStoreType(final Gaffer gaffer) {
+        final Map<String, String> storeProperties = (Map<String, String>) gaffer.getSpec().getNestedObject(STORE_PROPERTIES_KEY);
+        final String storeClass = storeProperties != null ? storeProperties.get(STORE_CLASS) : null;
+
+        if (AccumuloStore.class.getName().equals(storeClass)) {
+            return "accumuloStore";
+        }
+        if (FederatedStore.class.getName().equals(storeClass)) {
+            return "federatedStore";
+        }
+        if (MapStore.class.getName().equals(storeClass)) {
+            return "mapStore";
+        }
+        if (ProxyStore.class.getName().equals(storeClass)) {
+            return "proxyStore";
+        }
+        return "n/a";
+    }
 
     private GaaSGraphsFactory() {
         // prevents calls from subclass

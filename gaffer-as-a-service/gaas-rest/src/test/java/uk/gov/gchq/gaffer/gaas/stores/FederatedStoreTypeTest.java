@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package uk.gov.gchq.gaffer.gaas.stores;
 
 import org.junit.jupiter.api.Test;
@@ -24,19 +23,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
 public class FederatedStoreTypeTest {
+
     @Test
     void testGetType() {
-        FederatedStoreType type = new FederatedStoreType();
+        final FederatedStoreType type = new FederatedStoreType();
+
         assertEquals("federatedStore", type.getType());
     }
 
     @Test
-    void testGetStoreSpecBuilder() {
-        FederatedStoreType type = new FederatedStoreType();
-        AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
-        String expected = "{graph={storeProperties={gaffer.serialiser.json.modules=uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules, gaffer.store.properties.class=uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties, gaffer.store.class=uk.gov.gchq.gaffer.federatedstore.FederatedStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
-        GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").build();
+    void shouldHaveDefaultFederatedStoreProperties() {
+        final FederatedStoreType type = new FederatedStoreType();
+        final AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
+
+        final GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").build();
+
+        final String expected = "{" +
+                "graph={" +
+                "storeProperties={gaffer.serialiser.json.modules=uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules, gaffer.store.properties.class=uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties, gaffer.store.class=uk.gov.gchq.gaffer.federatedstore.FederatedStore}, " +
+                "config={description=Another description, graphId=mygraph}}, " +
+                "ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}" +
+                "}";
         assertEquals(expected, build.toString());
     }
-
 }

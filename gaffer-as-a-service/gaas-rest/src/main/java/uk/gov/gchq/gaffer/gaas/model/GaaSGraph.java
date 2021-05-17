@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class GaaSGraph {
     private String url;
     private RestApiStatus status;
     private List<String> problems;
+    private String storeType;
 
     public GaaSGraph graphId(final String graphId) {
         this.graphId = graphId;
@@ -36,7 +38,6 @@ public class GaaSGraph {
         this.description = description;
         return this;
     }
-
 
     public GaaSGraph url(final String url) {
         this.url = url;
@@ -50,6 +51,11 @@ public class GaaSGraph {
 
     public GaaSGraph problems(final List<String> problems) {
         this.problems = problems;
+        return this;
+    }
+
+    public GaaSGraph storeType(final String storeType) {
+        this.storeType = storeType;
         return this;
     }
 
@@ -73,14 +79,19 @@ public class GaaSGraph {
         return problems;
     }
 
+    public String getStoreType() {
+        return storeType;
+    }
+
     @Override
     public String toString() {
-        return "GaaSGraph{" +
-                "graphId='" + graphId + '\'' +
-                ", description='" + description + '\'' +
-                ", url='" + url + '\'' +
-                ", status=" + status +
-                ", problems=" + problems +
-                '}';
+        return new ToStringBuilder(this)
+                .append("graphId", graphId)
+                .append("description", description)
+                .append("url", url)
+                .append("status", status)
+                .append("problems", problems)
+                .append("storeType", storeType)
+                .toString();
     }
 }

@@ -80,9 +80,10 @@ class StoreTypeFactoryTest {
 
     StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
     AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder("mapstore");
-    final String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
 
     GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
+
+    final String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.store.class=uk.gov.gchq.gaffer.mapstore.MapStore, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
     assertEquals(expected, build.toString());
   }
 
