@@ -74,7 +74,7 @@ public class ValidateGraphHostOperationTest {
         assertTrue(actual.getCause() instanceof WebClientResponseException);
     }
 
-//    @Test
+    @Test
     public void shouldThrowConnectionRefusedException_WhenAttemptToConnectToInvalidHost() {
         final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", "localhost:404", "/rest");
 
