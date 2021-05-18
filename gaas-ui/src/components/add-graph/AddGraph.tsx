@@ -33,7 +33,7 @@ import { TransitionProps } from "@material-ui/core/transitions";
 import GraphIdDescriptionInput from "./graph-id-description";
 import SchemaInput from "./schema-inputs";
 import StoreTypeSelect from "./storetype";
-import AddProxyGraphInput from "./add-proxy-graph-input";
+import AddProxyGraphInput, {IAlert} from "./add-proxy-graph-input";
 import GraphsTable from "./graphs-table";
 
 interface IState {
@@ -396,14 +396,26 @@ export default class AddGraph extends React.Component<{}, IState> {
                 hide={federatedStoreIsNotSelected()}
                 proxyURLValue={this.state.proxyURL}
                 onChangeProxyURL={(proxyURL) => this.setState({ proxyURL })}
-                onClickAddProxyGraph={(proxyGraph) =>
-                  this.setState({
-                    graphs: [...this.state.graphs, proxyGraph],
-                    selectedGraphs: [
-                      ...this.state.selectedGraphs,
-                      proxyGraph.getId(),
-                    ],
-                  })
+                onClickAddProxyGraph={(proxyGraph, alert: IAlert) => {
+                  if(proxyGraph.getUrl() !== "") {
+                    this.setState({
+                      graphs: [...this.state.graphs, proxyGraph],
+                      outcome: alert.outcome,
+                      outcomeMessage: alert.outcomeMessage,
+                      selectedGraphs: [
+                        ...this.state.selectedGraphs,
+                        proxyGraph.getId(),
+                      ],
+                    });
+                  } else{
+                    this.setState({
+                      outcome: alert.outcome,
+                      outcomeMessage: alert.outcomeMessage,
+                    })
+                    
+                  }
+
+                }
                 }
               />
               <GraphsTable

@@ -1,26 +1,24 @@
 import React, {ReactElement} from "react";
-import {
-    Button,
-    FormHelperText,
-    Grid,
-    TextField
-} from "@material-ui/core";
+import {Button, FormHelperText, Grid, TextField} from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import {Graph} from "../../domain/graph";
-import { GraphType } from "../../domain/graph-type";
-import { StoreType } from "../../domain/store-type";
-import { IAllGraphsResponse } from "../../rest/http-message-interfaces/response-interfaces";
-import { IApiResponse, RestClient } from "../../rest/clients/rest-client";
+import {GraphType} from "../../domain/graph-type";
+import {StoreType} from "../../domain/store-type";
+import {IApiResponse, RestClient} from "../../rest/clients/rest-client";
+import {AlertType} from "../alerts/notification-alert";
 
 interface IProps {
     hide: boolean;
     onChangeProxyURL (proxyURL: string): void;
     proxyURLValue: string;
-    onClickAddProxyGraph (newProxyGraph: Graph): void;
+    onClickAddProxyGraph (newProxyGraph: Graph, alert:IAlert): void;
 }
 
 interface IGraphResponse{
     status: string;
+}
+export interface IAlert {
+    outcome: AlertType , outcomeMessage: string
 }
 
 export default function AddProxyGraphInput(props: IProps): ReactElement {
@@ -41,18 +39,18 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
             .status()
             .execute(proxyURLValue);
         
-          console.log(response.data.status);
           return response.data.status === "UP";
     }
 
-    function checkSubmit(){
+    async function checkSubmit(){
         try{
-            if(checkIfValidURL()){
-                onClickAddProxyGraph(makeProxyGraph(proxyURLValue));
+            if(await checkIfValidURL()){
+                onClickAddProxyGraph(makeProxyGraph(proxyURLValue),{outcome: AlertType.SUCCESS, outcomeMessage: "Graph is valid"});
                 onChangeProxyURL("");
             }
         }catch(e){
-            console.log(e);
+            onClickAddProxyGraph(makeProxyGraph(""),{outcome: AlertType.FAILED, outcomeMessage: `Graph is invalid ${e.toString()}`});
+
         }
     }
 
@@ -87,9 +85,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
             >
                 <Button
                     id="add-new-proxy-button"
-                    onClick={() => {
-                        checkSubmit();
-                    }}
+                    onClick={async () => await checkSubmit()}
                     startIcon={<AddCircleOutlineOutlinedIcon/>}
                     type="submit"
                     variant="contained"
