@@ -19,14 +19,14 @@ describe("Get All Graphs Repo", () => {
                 graphId: "roadTraffic",
                 description: "DEPLOYED",
                 url: "roadTraffic URL",
-                storeType: "MAPSTORE",
+                storeType: "mapStore",
                 status: "UP"
             },
             {
                 graphId: "basicGraph",
                 description: "DELETION_QUEUED",
                 url: "basicGraph URL",
-                storeType: "MAPSTORE",
+                storeType: "mapStore",
                 status: "UP"
             },
         ];
@@ -47,7 +47,7 @@ describe("Get All Graphs Repo", () => {
                 graphId: "streetTraffic",
                 description: "DELETION_QUEUED",
                 url: "streetTraffic URL",
-                storeType: "ACCUMULO",
+                storeType: "accumuloStore",
                 status: "UP"
             },
         ];
@@ -57,6 +57,21 @@ describe("Get All Graphs Repo", () => {
 
         const expected = [new Graph("streetTraffic", "DELETION_QUEUED", "streetTraffic URL", "UP", StoreType.ACCUMULO, GraphType.GAAS_GRAPH)];
         expect(actual).toEqual(expected);
+    });
+
+    it("should return one Graph when api returns one", async () => {
+        const apiResponse: object = [
+            {
+                graphId: "streetTraffic",
+                description: "DELETION_QUEUED",
+                url: "streetTraffic URL",
+                storeType: "invalidStore",
+                status: "UP"
+            },
+        ];
+        mock.onGet("/graphs").reply(200, apiResponse);
+
+        await expect(repo.getAll()).rejects.toEqual(new Error("invalidStore is not a supported store type"));
     });
 
     it("should throw RestApiError with correct status message when no response body", async () => {
