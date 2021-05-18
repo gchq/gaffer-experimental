@@ -39,6 +39,18 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         }
     }
 
+      function isValidHttpUrl(string: string) {
+        let url;
+        
+        try {
+          url = new URL(string);
+        } catch (_) {
+          return false;  
+        }
+      
+        return url.protocol === "http:" || url.protocol === "https:";
+      }
+
     return (
         <>
         {!hide &&
@@ -51,13 +63,14 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                     value={proxyURLValue}
                     fullWidth
                     name="proxy-url"
+                    error={!isValidHttpUrl(proxyURLValue)}
                     autoComplete="proxy-url"
                     onChange={(event) => {
                         onChangeProxyURL(event.target.value)
                     }}
                 />
                 <FormHelperText>
-                    Enter URL for proxy store if not shown below
+                    Enter valid URL for proxy store if not shown below in table
                 </FormHelperText>
             </Grid>
             <Grid
@@ -75,7 +88,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                     type="submit"
                     variant="contained"
                     color="primary"
-                    disabled={proxyURLValue === ""}
+                    disabled={proxyURLValue === "" || !isValidHttpUrl(proxyURLValue)}
                 >
                     Add Proxy Graph
                 </Button>
