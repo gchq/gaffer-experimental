@@ -9,12 +9,18 @@ import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOut
 import {Graph} from "../../domain/graph";
 import { GraphType } from "../../domain/graph-type";
 import { StoreType } from "../../domain/store-type";
+import { IAllGraphsResponse } from "../../rest/http-message-interfaces/response-interfaces";
+import { IApiResponse, RestClient } from "../../rest/clients/rest-client";
 
 interface IProps {
     hide: boolean;
     onChangeProxyURL (proxyURL: string): void;
     proxyURLValue: string;
     onClickAddProxyGraph (newProxyGraph: Graph): void;
+}
+
+interface IGraphResponse{
+    status: string;
 }
 
 export default function AddProxyGraphInput(props: IProps): ReactElement {
@@ -27,6 +33,27 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
 
     function makeProxyGraph(url: string): Graph {
         return new Graph(url + "-graph", "Proxy Graph", url, "n/a", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
+    }
+
+    async function checkIfValidURL(): Promise<boolean>{
+        const response : IApiResponse<IGraphResponse> = await new RestClient()
+            .get()
+            .status()
+            .execute(proxyURLValue);
+        
+          console.log(response.data.status);
+          return response.data.status === "UP";
+    }
+
+    function checkSubmit(){
+        try{
+            if(checkIfValidURL()){
+                onClickAddProxyGraph(makeProxyGraph(proxyURLValue));
+                onChangeProxyURL("");
+            }
+        }catch(e){
+            console.log(e);
+        }
     }
 
     return (
@@ -61,8 +88,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                 <Button
                     id="add-new-proxy-button"
                     onClick={() => {
-                        onClickAddProxyGraph(makeProxyGraph(proxyURLValue));
-                        onChangeProxyURL("");
+                        checkSubmit();
                     }}
                     startIcon={<AddCircleOutlineOutlinedIcon/>}
                     type="submit"
