@@ -1,12 +1,13 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import AddGraph from "../../../src/components/add-graph/AddGraph";
-import { Graph } from "../../../src/domain/graph";
-import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";
 import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
+import {GetGraphStatusRepo} from "../../../src/rest/repositories/get-graph-status-repo";
+import {RestApiError} from "../../../src/rest/RestApiError";
 
 jest.mock("../../../src/rest/repositories/create-graph-repo");
+jest.mock("../../../src/rest/repositories/get-graph-status-repo");
 let wrapper: ReactWrapper;
 
 beforeEach(() => (wrapper = mount(<AddGraph />)));
@@ -62,22 +63,50 @@ describe("AddGraph UI component", () => {
       const button = wrapper.find("button#add-new-proxy-button");
       expect(button.props().disabled).toEqual(true);
     });
-    it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", () => {
+    it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", async () => {
       selectStoreType(StoreType.FEDERATED_STORE);
+      mockGetGraphStatus("UP")
       inputProxyURL("http://test.graph.url");
 
-      clickAddProxy();
+      await clickAddProxy();
 
       const graphTable = wrapper.find("table");
       expect(graphTable.text()).toEqual(
         "Graph IDDescriptionType http://test.graph.url-graphProxy GraphProxy Graph"
       );
     });
-    it("Should select a graph in table", async () => {
+    it("Should add a graph to the graphs table and display notification when url is valid", async () => {
       selectStoreType(StoreType.FEDERATED_STORE);
-      inputProxyURL("test.URL");
+      mockGetGraphStatus("UP")
+      inputProxyURL("http://test.graph.url");
+
       await clickAddProxy();
-      inputProxyURL("test2.URL");
+      await wrapper.update();
+
+      expect(wrapper.find("div#notification-alert").text()).toBe(
+          "Graph is valid"
+      );
+    });
+    it("Should not add graph to the graphs table and display notification when url is invalid", async () => {
+      selectStoreType(StoreType.FEDERATED_STORE);
+      mockGetGraphStatusThrowsError(() => {
+        throw new RestApiError("Not Found", "Resource not found");
+      });
+      inputProxyURL("test.graph.url");
+
+      await clickAddProxy();
+      await wrapper.update();
+
+      expect(wrapper.find("div#notification-alert").text()).toBe(
+          "Graph is invalid Not Found: Resource not found"
+      );
+    });
+    it("Should select a graph in table", async () => {
+      mockGetGraphStatus("UP");
+      selectStoreType(StoreType.FEDERATED_STORE);
+      inputProxyURL("https://www.testURL.com/");
+      await clickAddProxy();
+      inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
 
       clickTableBodyCheckBox(0, false);
@@ -87,10 +116,12 @@ describe("AddGraph UI component", () => {
       );
     });
     it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async () => {
+      mockGetGraphStatus("UP")
       selectStoreType(StoreType.FEDERATED_STORE);
-      inputProxyURL("test.URL");
+      inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
-      inputProxyURL("test2.URL");
+      mockGetGraphStatus("UP")
+      inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
 
       clickTableHeaderCheckBox(true);
@@ -110,10 +141,12 @@ describe("AddGraph UI component", () => {
       );
     });
     it("Should uncheck all graphs in the table when the uncheck all button is clicked", async () => {
+      mockGetGraphStatus("UP")
       selectStoreType(StoreType.FEDERATED_STORE);
-      inputProxyURL("test.URL");
+      inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
-      inputProxyURL("test2.URL");
+      mockGetGraphStatus("UP")
+      inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
 
       clickTableHeaderCheckBox(true);
@@ -129,17 +162,19 @@ describe("AddGraph UI component", () => {
       mockAddGraphRepoWithFunction(mock);
       inputGraphId("OK Graph");
       inputDescription("test");
+
       selectStoreType(StoreType.FEDERATED_STORE);
-      await inputProxyURL("test.URL");
+      mockGetGraphStatus("UP")
+      await inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
 
-      clickSubmit();
+      await clickSubmit();
       //@ts-ignore
       await wrapper.update();
       await wrapper.update();
 
       const expectedConfig: ICreateGraphConfig = {
-        proxyStores: [{ graphId: "test.URL-graph", url: "test.URL" }]
+        proxyStores: [{ graphId: "https://www.testURL.com/-graph", url: "https://www.testURL.com/" }]
       }
       expect(mock).toHaveBeenLastCalledWith(
         "OK Graph",
@@ -153,7 +188,7 @@ describe("AddGraph UI component", () => {
     });
   });
   describe("When Map Store Is Selected", ()=>{
-    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+    it("Should call AddGraphRepo with Map Store Graph request params and display success message", async () => {
       const mock = jest.fn();
       mockAddGraphRepoWithFunction(mock);
       
@@ -177,8 +212,8 @@ describe("AddGraph UI component", () => {
       );
     });
   });
-  describe("When Accumulp Store Is Selected", ()=>{
-    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+  describe("When Accumulo Store Is Selected", ()=>{
+    it("Should call AddGraphRepo with Accumulo Store Graph request params and display success message", async () => {
       const mock = jest.fn();
       mockAddGraphRepoWithFunction(mock);
       
@@ -188,7 +223,7 @@ describe("AddGraph UI component", () => {
       inputElements(elements);
       inputTypes(types);
 
-      clickSubmit();
+      await clickSubmit();
       //@ts-ignore
       await wrapper.update();
       await wrapper.update();
@@ -296,7 +331,7 @@ describe("AddGraph UI component", () => {
         true
       );
     });
-    it("should be disabled when MAP STORE selectedand types schema has error", () => {
+    it("should be disabled when MAP STORE selected and types schema has error", () => {
       inputGraphId("G");
       inputDescription("test");
       selectStoreType(StoreType.MAPSTORE);
@@ -353,9 +388,6 @@ describe("AddGraph UI component", () => {
   });
 
   function clickSubmit(): void {
-    expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
-      false
-    );
     wrapper.find("button#add-new-graph-button").simulate("click");
   }
   function inputGraphId(graphId: string): void {
@@ -431,6 +463,20 @@ describe("AddGraph UI component", () => {
     // @ts-ignore
     CreateGraphRepo.mockImplementationOnce(() => ({
       create: f,
+    }));
+  }
+  function mockGetGraphStatus(status: string): void {
+    // @ts-ignore
+    GetGraphStatusRepo.mockImplementationOnce(() => ({
+      getStatus: () =>
+          new Promise((resolve, reject) => {
+            resolve(status);
+          }),
+    }));
+  }function mockGetGraphStatusThrowsError(f: () => void): void {
+    // @ts-ignore
+    GetGraphStatusRepo.mockImplementationOnce(() => ({
+      getStatus: f,
     }));
   }
 });

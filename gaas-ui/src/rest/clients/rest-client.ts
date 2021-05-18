@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse, Method } from "axios";
 import status from "statuses";
 import { GaaSRestApiErrorResponse } from "../http-message-interfaces/error-response-interface";
 import { RestApiError } from "../RestApiError";
-import { Config } from "./../config";
+import { Config } from "../config";
 
 export interface IApiResponse<T = any> {
     status: number;

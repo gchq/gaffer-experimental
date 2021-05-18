@@ -28,7 +28,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
 
     async function checkSubmit(){
         try{
-            const status: string = await new GetGraphStatusRepo().checkStatus(proxyURLValue)
+            const status: string = await new GetGraphStatusRepo().getStatus(proxyURLValue)
             if(status === "UP"){
                 onClickAddProxyGraph(makeProxyGraph(proxyURLValue),{alertType: AlertType.SUCCESS, message: "Graph is valid"});
                 onChangeProxyURL("");
