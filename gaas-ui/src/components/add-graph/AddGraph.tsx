@@ -21,7 +21,7 @@ import {
   CreateGraphRepo,
   ICreateGraphConfig,
 } from "../../rest/repositories/create-graph-repo";
-import { AlertType, NotificationAlert } from "../alerts/notification-alert";
+import {AlertType, INotificationAlertProps, NotificationAlert} from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../domain/graph";
 import { ElementsSchema } from "../../domain/elements-schema";
@@ -33,7 +33,7 @@ import { TransitionProps } from "@material-ui/core/transitions";
 import GraphIdDescriptionInput from "./graph-id-description";
 import SchemaInput from "./schema-inputs";
 import StoreTypeSelect from "./storetype";
-import AddProxyGraphInput, {IAlert} from "./add-proxy-graph-input";
+import AddProxyGraphInput from "./add-proxy-graph-input";
 import GraphsTable from "./graphs-table";
 
 interface IState {
@@ -396,12 +396,12 @@ export default class AddGraph extends React.Component<{}, IState> {
                 hide={federatedStoreIsNotSelected()}
                 proxyURLValue={this.state.proxyURL}
                 onChangeProxyURL={(proxyURL) => this.setState({ proxyURL })}
-                onClickAddProxyGraph={(proxyGraph, alert: IAlert) => {
+                onClickAddProxyGraph={(proxyGraph, alert: INotificationAlertProps) => {
                   if(proxyGraph.getUrl() !== "") {
                     this.setState({
                       graphs: [...this.state.graphs, proxyGraph],
-                      outcome: alert.outcome,
-                      outcomeMessage: alert.outcomeMessage,
+                      outcome: alert.alertType,
+                      outcomeMessage: alert.message,
                       selectedGraphs: [
                         ...this.state.selectedGraphs,
                         proxyGraph.getId(),
@@ -409,10 +409,10 @@ export default class AddGraph extends React.Component<{}, IState> {
                     });
                   } else{
                     this.setState({
-                      outcome: alert.outcome,
-                      outcomeMessage: alert.outcomeMessage,
+                      outcome: alert.alertType,
+                      outcomeMessage: alert.message,
                     })
-                    
+
                   }
 
                 }

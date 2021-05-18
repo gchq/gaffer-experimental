@@ -4,21 +4,14 @@ import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOut
 import {Graph} from "../../domain/graph";
 import {GraphType} from "../../domain/graph-type";
 import {StoreType} from "../../domain/store-type";
-import {IApiResponse, RestClient} from "../../rest/clients/rest-client";
-import {AlertType} from "../alerts/notification-alert";
+import {AlertType, INotificationAlertProps} from "../alerts/notification-alert";
+import {GetGraphStatusRepo} from "../../rest/repositories/get-graph-status-repo";
 
 interface IProps {
     hide: boolean;
     onChangeProxyURL (proxyURL: string): void;
     proxyURLValue: string;
-    onClickAddProxyGraph (newProxyGraph: Graph, alert:IAlert): void;
-}
-
-interface IGraphResponse{
-    status: string;
-}
-export interface IAlert {
-    outcome: AlertType , outcomeMessage: string
+    onClickAddProxyGraph (newProxyGraph: Graph, alert:INotificationAlertProps): void;
 }
 
 export default function AddProxyGraphInput(props: IProps): ReactElement {
@@ -33,23 +26,15 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         return new Graph(url + "-graph", "Proxy Graph", url, "n/a", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
     }
 
-    async function checkIfValidURL(): Promise<boolean>{
-        const response : IApiResponse<IGraphResponse> = await new RestClient()
-            .get()
-            .status()
-            .execute(proxyURLValue);
-        
-          return response.data.status === "UP";
-    }
-
     async function checkSubmit(){
         try{
-            if(await checkIfValidURL()){
-                onClickAddProxyGraph(makeProxyGraph(proxyURLValue),{outcome: AlertType.SUCCESS, outcomeMessage: "Graph is valid"});
+            const status: string = await new GetGraphStatusRepo().checkStatus(proxyURLValue)
+            if(status === "UP"){
+                onClickAddProxyGraph(makeProxyGraph(proxyURLValue),{alertType: AlertType.SUCCESS, message: "Graph is valid"});
                 onChangeProxyURL("");
             }
         }catch(e){
-            onClickAddProxyGraph(makeProxyGraph(""),{outcome: AlertType.FAILED, outcomeMessage: `Graph is invalid ${e.toString()}`});
+            onClickAddProxyGraph(makeProxyGraph(""),{alertType: AlertType.FAILED, message: `Graph is invalid ${e.toString()}`});
 
         }
     }
