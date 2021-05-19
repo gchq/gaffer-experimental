@@ -1,3 +1,4 @@
+import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
 import Collapse from "@material-ui/core/Collapse";
@@ -39,6 +40,7 @@ export function MainGraphTableRow(props: IProps) {
                 </IconButton>
             </TableCell>
             <TableCell component="th" scope="row">{row.getId()}</TableCell>
+            <TableCell><Avatar> {row.getStoreType()}</Avatar></TableCell>
             <TableCell><StatusChip status={row.getStatus()} /></TableCell>
             <TableCell><a href={row.getUrl()} target="_blank" rel="noreferrer">{row.getUrl()}</a></TableCell>
             <TableCell>
