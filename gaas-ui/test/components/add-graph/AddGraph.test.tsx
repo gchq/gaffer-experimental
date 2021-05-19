@@ -92,7 +92,7 @@ describe("AddGraph UI component", () => {
           "Graph is valid"
       );
     });
-    it("Should not add graph when status is down to the graphs table and display notification when url is invalid", async () => {
+    it("Should not add graph when status is down to the graphs table and display notification", async () => {
       selectStoreType(StoreType.FEDERATED_STORE);
       mockGetGraphStatus("DOWN");
       inputProxyURL("http://test.graph.url");
@@ -100,10 +100,11 @@ describe("AddGraph UI component", () => {
         throw new RestApiError("Not Found", "Resource not found");
       });
       await clickAddProxy();
+      mockGetGraphStatus("DOWN");
       await wrapper.update();
 
       expect(wrapper.find("div#notification-alert").text()).toBe(
-          "Graph is invalid Not Found: Resource not found"
+          "Graph status is DOWN so could not be added"
       );
     });
     it("Should select a graph in table", async () => {
@@ -172,7 +173,6 @@ describe("AddGraph UI component", () => {
       mockGetGraphStatus("UP")
       await inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
-      console.log(wrapper.find("table").text());
 
       await clickSubmit();
       //@ts-ignore
