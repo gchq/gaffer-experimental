@@ -110,7 +110,7 @@ app.get("/graphs", (req, res) => {
                     status: "DOWN"
                 },
                 {
-                    graphId: "devGraph",
+                    graphId: "devGraph2",
                     description: "Secondary development mode graph",
                     url: "http://dev-environment-2.k8s.cluster/rest",
                     storeType: "mapStore",

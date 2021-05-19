@@ -23,15 +23,17 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
     }= props;
 
     function makeProxyGraph(url: string): Graph {
-        return new Graph(url + "-graph", "Proxy Graph", url, "n/a", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
+        return new Graph(url + "-graph", "Proxy Graph", url, "UP", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
     }
 
     async function checkSubmit(){
         try{
-            const status: string = await new GetGraphStatusRepo().getStatus(proxyURLValue)
+            const status: string = await new GetGraphStatusRepo().getStatus(proxyURLValue);
             if(status === "UP"){
                 onClickAddProxyGraph(makeProxyGraph(proxyURLValue),{alertType: AlertType.SUCCESS, message: "Graph is valid"});
                 onChangeProxyURL("");
+            }else{
+                onClickAddProxyGraph(makeProxyGraph(""),{alertType: AlertType.FAILED, message: "Graph status is DOWN so could not be added"});
             }
         }catch(e){
             onClickAddProxyGraph(makeProxyGraph(""),{alertType: AlertType.FAILED, message: `Graph is invalid ${e.toString()}`});

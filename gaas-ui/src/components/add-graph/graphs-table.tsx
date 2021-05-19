@@ -42,7 +42,7 @@ export default function GraphsTable(props: IProps): ReactElement {
               </TableRow>
             </TableHead>
             <TableBody>
-              {graphs.map((graph) => (
+              {graphs.filter((graph) =>  graph.getStatus() === "UP").map((graph) => (
                 <TableRow key={graph.getId()} hover>
                   <TableCell scope="row">{graph.getId()}</TableCell>
                   <TableCell align="center">{graph.getDescription()}</TableCell>

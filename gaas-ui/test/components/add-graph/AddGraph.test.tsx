@@ -1,6 +1,8 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import AddGraph from "../../../src/components/add-graph/AddGraph";
+import { Graph } from "../../../src/domain/graph";
+import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";
 import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
 import {GetGraphStatusRepo} from "../../../src/rest/repositories/get-graph-status-repo";
@@ -8,6 +10,7 @@ import {RestApiError} from "../../../src/rest/RestApiError";
 
 jest.mock("../../../src/rest/repositories/create-graph-repo");
 jest.mock("../../../src/rest/repositories/get-graph-status-repo");
+
 let wrapper: ReactWrapper;
 
 beforeEach(() => (wrapper = mount(<AddGraph />)));
@@ -64,11 +67,13 @@ describe("AddGraph UI component", () => {
       expect(button.props().disabled).toEqual(true);
     });
     it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", async () => {
-      selectStoreType(StoreType.FEDERATED_STORE);
       mockGetGraphStatus("UP")
+      selectStoreType(StoreType.FEDERATED_STORE);
+      mockAddGraphRepoWithFunction(jest.fn())
       inputProxyURL("http://test.graph.url");
 
       await clickAddProxy();
+      await wrapper.update();
 
       const graphTable = wrapper.find("table");
       expect(graphTable.text()).toEqual(
@@ -77,9 +82,9 @@ describe("AddGraph UI component", () => {
     });
     it("Should add a graph to the graphs table and display notification when url is valid", async () => {
       selectStoreType(StoreType.FEDERATED_STORE);
-      mockGetGraphStatus("UP")
       inputProxyURL("http://test.graph.url");
-
+      mockGetGraphStatus("UP")
+      mockAddGraphRepoWithFunction(() => {});
       await clickAddProxy();
       await wrapper.update();
 
@@ -87,18 +92,19 @@ describe("AddGraph UI component", () => {
           "Graph is valid"
       );
     });
-    it("Should not add graph to the graphs table and display notification when url is invalid", async () => {
+    it("Should not add graph when status is down to the graphs table and display notification", async () => {
       selectStoreType(StoreType.FEDERATED_STORE);
+      mockGetGraphStatus("DOWN");
+      inputProxyURL("http://test.graph.url");
       mockGetGraphStatusThrowsError(() => {
         throw new RestApiError("Not Found", "Resource not found");
       });
-      inputProxyURL("test.graph.url");
-
       await clickAddProxy();
+      mockGetGraphStatus("DOWN");
       await wrapper.update();
 
       expect(wrapper.find("div#notification-alert").text()).toBe(
-          "Graph is invalid Not Found: Resource not found"
+          "Graph status is DOWN so could not be added"
       );
     });
     it("Should select a graph in table", async () => {
@@ -479,6 +485,7 @@ describe("AddGraph UI component", () => {
       getStatus: f,
     }));
   }
+
 });
 
 const elements = {
