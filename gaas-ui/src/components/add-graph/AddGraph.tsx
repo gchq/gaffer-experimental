@@ -21,7 +21,7 @@ import {
   CreateGraphRepo,
   ICreateGraphConfig,
 } from "../../rest/repositories/create-graph-repo";
-import { AlertType, NotificationAlert } from "../alerts/notification-alert";
+import {AlertType, INotificationAlertProps, NotificationAlert} from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../domain/graph";
 import { ElementsSchema } from "../../domain/elements-schema";
@@ -396,14 +396,26 @@ export default class AddGraph extends React.Component<{}, IState> {
                 hide={federatedStoreIsNotSelected()}
                 proxyURLValue={this.state.proxyURL}
                 onChangeProxyURL={(proxyURL) => this.setState({ proxyURL })}
-                onClickAddProxyGraph={(proxyGraph) =>
-                  this.setState({
-                    graphs: [...this.state.graphs, proxyGraph],
-                    selectedGraphs: [
-                      ...this.state.selectedGraphs,
-                      proxyGraph.getId(),
-                    ],
-                  })
+                onClickAddProxyGraph={(proxyGraph, alert: INotificationAlertProps) => {
+                  if(proxyGraph.getUrl() !== "") {
+                    this.setState({
+                      graphs: [...this.state.graphs, proxyGraph],
+                      outcome: alert.alertType,
+                      outcomeMessage: alert.message,
+                      selectedGraphs: [
+                        ...this.state.selectedGraphs,
+                        proxyGraph.getId(),
+                      ],
+                    });
+                  } else{
+                    this.setState({
+                      outcome: alert.alertType,
+                      outcomeMessage: alert.message,
+                    })
+
+                  }
+
+                }
                 }
               />
               <GraphsTable

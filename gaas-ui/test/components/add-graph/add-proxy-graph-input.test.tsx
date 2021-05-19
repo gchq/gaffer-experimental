@@ -1,9 +1,6 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import AddProxyGraphInput from "../../../src/components/add-graph/add-proxy-graph-input";
-import { Graph } from "../../../src/domain/graph";
-import { GraphType } from "../../../src/domain/graph-type";
-import { StoreType } from "../../../src/domain/store-type";
 
 let component: ReactWrapper;
 const onChangeProxyURLMockCallback = jest.fn();
@@ -40,20 +37,6 @@ describe("GraphsTable UI Component", () => {
       component.find("div#proxy-url-grid").find("input").props().value
     ).toBe("http://url.value");
   });
-  it("should call onClick with new Proxy Graph and onChange with empty string to reset value", () => {
-    clickAddProxy();
-
-    const expected = new Graph(
-      "http://url.value-graph",
-      "Proxy Graph",
-      "http://url.value",
-      "n/a",
-      StoreType.PROXY_STORE,
-      GraphType.PROXY_GRAPH
-    );
-    expect(onClickAddProxyMockCallback).toHaveBeenCalledWith(expected);
-    expect(onChangeProxyURLMockCallback).toHaveBeenCalledWith("");
-  });
 });
 
 describe("Hide Component", () => {
@@ -72,16 +55,41 @@ describe("Hide Component", () => {
 });
 
 describe("Disable Add Proxy Button", () => {
-  const component = mount(
-    <AddProxyGraphInput
-      hide={false}
-      proxyURLValue={""}
-      onChangeProxyURL={onChangeProxyURLMockCallback}
-      onClickAddProxyGraph={onClickAddProxyMockCallback}
-    />
-  );
-
-  it("should disable when url input value is empty string", () => {
+  it("should enable when url input value is valid URL", () => {
+    const component = mount(
+      <AddProxyGraphInput
+        hide={false}
+        proxyURLValue={"http://test.com"}
+        onChangeProxyURL={onChangeProxyURLMockCallback}
+        onClickAddProxyGraph={onClickAddProxyMockCallback}
+      />
+    );
+    expect(component.find("button#add-new-proxy-button").props().disabled).toBe(
+      false
+    );
+  });
+  it("should disable when url input value is invalid URL", () => {
+    const component = mount(
+      <AddProxyGraphInput
+        hide={false}
+        proxyURLValue={"hp://test.com"}
+        onChangeProxyURL={onChangeProxyURLMockCallback}
+        onClickAddProxyGraph={onClickAddProxyMockCallback}
+      />
+    );
+    expect(component.find("button#add-new-proxy-button").props().disabled).toBe(
+      true
+    );
+  });
+  it("should disable when url input value is empty", () => {
+    const component = mount(
+      <AddProxyGraphInput
+        hide={false}
+        proxyURLValue={""}
+        onChangeProxyURL={onChangeProxyURLMockCallback}
+        onClickAddProxyGraph={onClickAddProxyMockCallback}
+      />
+    );
     expect(component.find("button#add-new-proxy-button").props().disabled).toBe(
       true
     );

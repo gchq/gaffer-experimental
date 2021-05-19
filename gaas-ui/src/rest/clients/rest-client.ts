@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse, Method } from "axios";
 import status from "statuses";
 import { GaaSRestApiErrorResponse } from "../http-message-interfaces/error-response-interface";
 import { RestApiError } from "../RestApiError";
-import { Config } from "./../config";
+import { Config } from "../config";
 
 export interface IApiResponse<T = any> {
     status: number;
@@ -39,6 +39,11 @@ export class RestClient<T> {
         return this;
     }
 
+    public status(): RestClient<T>{
+        this.url = "rest/graph/status";
+        return this;
+    }
+
     public namespaces(): RestClient<T> {
         this.url = "/namespaces";
         this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
@@ -66,12 +71,12 @@ export class RestClient<T> {
         return this;
     }
 
-    public async execute(): Promise<IApiResponse> {
+    public async execute(baseURL = Config.REACT_APP_KAI_REST_API_HOST): Promise<IApiResponse> {
         try {
             const response: AxiosResponse<any> = await axios({
                 url: this.url,
                 method: this.method,
-                baseURL: Config.REACT_APP_KAI_REST_API_HOST,
+                baseURL: baseURL,
                 headers: this.headers,
                 data: this.data,
             });

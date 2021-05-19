@@ -15,6 +15,8 @@ describe("RestClient 2** Responses", () => {
             .reply(201)
             .onDelete("/graphs/redundant-graph")
             .reply(202)
+            .onGet("/rest/graph/status")
+            .reply(200, {status: "UP"})
     );
     afterAll(() => mock.resetHandlers());
 
@@ -56,6 +58,16 @@ describe("RestClient 2** Responses", () => {
             status: 202,
         });
     });
+    it("should return the status when GET status is successful", async () => {
+        const actual = await new RestClient().get().status().execute("https://www.testURL.com/");
+
+        expect(actual).toEqual({
+            status: 200,
+             data:{
+                status: "UP"
+            },
+        });
+    });
 });
 
 describe("RestClient 4**/5** Error Responses", () => {
@@ -75,6 +87,8 @@ describe("RestClient 4**/5** Error Responses", () => {
             })
             .onDelete("/graphs/already-deleted")
             .reply(504, { title: "Server Error", detail: "Timeout" })
+            .onGet("/rest/graph/status")
+            .reply(404, { title: "Not Found", detail: "Could not find resource" })
     );
     afterAll(() => mock.resetHandlers());
 
@@ -84,6 +98,14 @@ describe("RestClient 4**/5** Error Responses", () => {
             throw new Error("Error did not throw");
         } catch (e) {
             expect(e.toString()).toBe("Validation Failed: Graph ID can not be null");
+        }
+    });
+    it("should throw 404 Error Message when api returns 404 - get graph status", async () => {
+        try {
+            await new RestClient().get().status().execute("https://www.testURL.com/");
+            throw new Error("Error did not throw");
+        } catch (e) {
+            expect(e.toString()).toBe("Not Found: Could not find resource");
         }
     });
     it("should throw 404 Error Message when api returns 404", async () => {
