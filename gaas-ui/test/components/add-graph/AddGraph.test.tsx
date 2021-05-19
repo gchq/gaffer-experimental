@@ -1,6 +1,8 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import AddGraph from "../../../src/components/add-graph/AddGraph";
+import { Graph } from "../../../src/domain/graph";
+import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";
 import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
 import {GetGraphStatusRepo} from "../../../src/rest/repositories/get-graph-status-repo";
@@ -8,6 +10,7 @@ import {RestApiError} from "../../../src/rest/RestApiError";
 
 jest.mock("../../../src/rest/repositories/create-graph-repo");
 jest.mock("../../../src/rest/repositories/get-graph-status-repo");
+
 let wrapper: ReactWrapper;
 
 beforeEach(() => (wrapper = mount(<AddGraph />)));
@@ -84,19 +87,18 @@ describe("AddGraph UI component", () => {
       mockAddGraphRepoWithFunction(() => {});
       await clickAddProxy();
       await wrapper.update();
-      console.log(wrapper.find("table").html());
 
       expect(wrapper.find("div#notification-alert").text()).toBe(
           "Graph is valid"
       );
     });
-    it("Should not add graph to the graphs table and display notification when url is invalid", async () => {
+    it("Should not add graph when status is down to the graphs table and display notification when url is invalid", async () => {
       selectStoreType(StoreType.FEDERATED_STORE);
+      mockGetGraphStatus("DOWN");
+      inputProxyURL("http://test.graph.url");
       mockGetGraphStatusThrowsError(() => {
         throw new RestApiError("Not Found", "Resource not found");
       });
-      inputProxyURL("test.graph.url");
-
       await clickAddProxy();
       await wrapper.update();
 
@@ -170,6 +172,7 @@ describe("AddGraph UI component", () => {
       mockGetGraphStatus("UP")
       await inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
+      console.log(wrapper.find("table").text());
 
       await clickSubmit();
       //@ts-ignore
@@ -415,7 +418,6 @@ describe("AddGraph UI component", () => {
       });
   }
   function clickAddProxy() {
-    console.log(wrapper.find("button#add-new-proxy-button").props().disabled)
     wrapper.find("button#add-new-proxy-button").simulate("click");
   }
   function clickTableBodyCheckBox(row: number, check: boolean) {
@@ -483,6 +485,7 @@ describe("AddGraph UI component", () => {
       getStatus: f,
     }));
   }
+
 });
 
 const elements = {
