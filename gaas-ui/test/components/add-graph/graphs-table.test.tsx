@@ -7,8 +7,8 @@ import { StoreType } from "../../../src/domain/store-type";
 
 let component: ReactWrapper;
 const graphs = [
-  new Graph("test-graph", "A description", "", "", StoreType.MAPSTORE, GraphType.GAAS_GRAPH),
-  new Graph("test-graph2", "Another description", "", "", StoreType.FEDERATED_STORE, GraphType.GAAS_GRAPH),
+  new Graph("test-graph", "A description", "", "UP", StoreType.MAPSTORE, GraphType.GAAS_GRAPH),
+  new Graph("test-graph2", "Another description", "", "UP", StoreType.FEDERATED_STORE, GraphType.GAAS_GRAPH),
   new Graph("another-graph3", "Some description", "", "", StoreType.ACCUMULO, GraphType.GAAS_GRAPH),
 ];
 const selectedGraphs = ["test-graph"];
@@ -33,7 +33,7 @@ afterEach(() => {
 describe("GraphsTable UI Component", () => {
   it("Should have the correct graphs in the table when graphs is passed in as a value", () => {
     const expected =
-      "Graph IDDescriptionType test-graphA descriptionGaaS Graphtest-graph2Another descriptionGaaS Graphanother-graph3Some descriptionGaaS Graph";
+      "Graph IDDescriptionType test-graphA descriptionGaaS Graphtest-graph2Another descriptionGaaS Graph";
     expect(component.find("table").text()).toBe(expected);
   });
   it("Should allow graphs in the table to be selected using a checkbox", () => {

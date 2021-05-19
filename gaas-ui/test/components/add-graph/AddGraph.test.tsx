@@ -64,11 +64,13 @@ describe("AddGraph UI component", () => {
       expect(button.props().disabled).toEqual(true);
     });
     it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", async () => {
-      selectStoreType(StoreType.FEDERATED_STORE);
       mockGetGraphStatus("UP")
+      selectStoreType(StoreType.FEDERATED_STORE);
+      mockAddGraphRepoWithFunction(jest.fn())
       inputProxyURL("http://test.graph.url");
 
       await clickAddProxy();
+      await wrapper.update();
 
       const graphTable = wrapper.find("table");
       expect(graphTable.text()).toEqual(
@@ -77,11 +79,12 @@ describe("AddGraph UI component", () => {
     });
     it("Should add a graph to the graphs table and display notification when url is valid", async () => {
       selectStoreType(StoreType.FEDERATED_STORE);
-      mockGetGraphStatus("UP")
       inputProxyURL("http://test.graph.url");
-
+      mockGetGraphStatus("UP")
+      mockAddGraphRepoWithFunction(() => {});
       await clickAddProxy();
       await wrapper.update();
+      console.log(wrapper.find("table").html());
 
       expect(wrapper.find("div#notification-alert").text()).toBe(
           "Graph is valid"
@@ -412,6 +415,7 @@ describe("AddGraph UI component", () => {
       });
   }
   function clickAddProxy() {
+    console.log(wrapper.find("button#add-new-proxy-button").props().disabled)
     wrapper.find("button#add-new-proxy-button").simulate("click");
   }
   function clickTableBodyCheckBox(row: number, check: boolean) {
