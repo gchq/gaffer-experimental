@@ -6,12 +6,13 @@ import {GraphType} from "../../domain/graph-type";
 import {StoreType} from "../../domain/store-type";
 import {AlertType, INotificationAlertProps} from "../alerts/notification-alert";
 import {GetGraphStatusRepo} from "../../rest/repositories/get-graph-status-repo";
+import {GetGraphDetails} from "../../rest/repositories/get-graph-details";
 
 interface IProps {
     hide: boolean;
     onChangeProxyURL (proxyURL: string): void;
     proxyURLValue: string;
-    onClickAddProxyGraph (newProxyGraph: Graph, alert:INotificationAlertProps): void;
+    onClickAddProxyGraph (newProxyGraph: Graph,alert:INotificationAlertProps  ): void;
 }
 
 export default function AddProxyGraphInput(props: IProps): ReactElement {
@@ -22,21 +23,19 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         onClickAddProxyGraph,
     }= props;
 
-    function makeProxyGraph(url: string): Graph {
-        return new Graph(url + "-graph", "Proxy Graph", url, "UP", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
-    }
-
     async function checkSubmit(){
         try{
             const status: string = await new GetGraphStatusRepo().getStatus(proxyURLValue);
+            const description: string = await new GetGraphDetails().getDescription(proxyURLValue);
             if(status === "UP"){
-                onClickAddProxyGraph(makeProxyGraph(proxyURLValue),{alertType: AlertType.SUCCESS, message: "Graph is valid"});
+            const graph: Graph = new Graph(proxyURLValue + "-graph", description, proxyURLValue, status, StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
+                onClickAddProxyGraph(graph,{alertType: AlertType.SUCCESS, message: "Graph is valid"});
                 onChangeProxyURL("");
             }else{
-                onClickAddProxyGraph(makeProxyGraph(""),{alertType: AlertType.FAILED, message: "Graph status is DOWN so could not be added"});
+                onClickAddProxyGraph(new Graph("","","","", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH),{alertType: AlertType.FAILED, message: "Graph status is DOWN so could not be added"});
             }
         }catch(e){
-            onClickAddProxyGraph(makeProxyGraph(""),{alertType: AlertType.FAILED, message: `Graph is invalid ${e.toString()}`});
+            onClickAddProxyGraph(new Graph("","","","", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH),{alertType: AlertType.FAILED, message: `Graph is invalid ${e.toString()}`});
 
         }
     }

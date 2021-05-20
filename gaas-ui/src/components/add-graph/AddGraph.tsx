@@ -396,7 +396,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                 hide={federatedStoreIsNotSelected()}
                 proxyURLValue={this.state.proxyURL}
                 onChangeProxyURL={(proxyURL) => this.setState({ proxyURL })}
-                onClickAddProxyGraph={(proxyGraph, alert: INotificationAlertProps) => {
+                onClickAddProxyGraph={(proxyGraph,alert: INotificationAlertProps ) => {
                   if(proxyGraph.getUrl() !== "") {
                     this.setState({
                       graphs: [...this.state.graphs, proxyGraph],
@@ -404,7 +404,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                       outcomeMessage: alert.message,
                       selectedGraphs: [
                         ...this.state.selectedGraphs,
-                        proxyGraph.getId(),
+                        proxyGraph?.getId(),
                       ],
                     });
                   } else{

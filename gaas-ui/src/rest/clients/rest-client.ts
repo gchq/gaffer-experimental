@@ -40,7 +40,11 @@ export class RestClient<T> {
     }
 
     public status(): RestClient<T>{
-        this.url = "rest/graph/status";
+        this.url = "graph/status";
+        return this;
+    }
+    public description(): RestClient<T>{
+        this.url = "graph/config/description";
         return this;
     }
 
