@@ -27,12 +27,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -214,28 +213,20 @@ public class GraphControllerIT extends AbstractTest {
 
         assertEquals(500, result.getResponse().getStatus());
 
-        List<String> expectedStoreTypeList = new ArrayList<>(Arrays.asList("mapStore", "accumuloStore", "proxyStore", "federatedStore"));
-        Collections.sort(expectedStoreTypeList);
+        final String[] expectedStoreType = new String[] {"accumuloStore", "federatedStore", "mapStore", "proxyStore"};
+        final String expectedErrorMessage = "\\{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: (\\w+(,\\s\\w+)*)\"}";
 
-        String contentAsString = result.getResponse().getContentAsString();
-        List<String> actualStoreTypeList =  findStoreTypes(contentAsString);
-        Collections.sort(actualStoreTypeList);
+        final String contentAsString = result.getResponse().getContentAsString();
 
-        assertEquals(expectedStoreTypeList, actualStoreTypeList);
+        final Matcher matcher = Pattern.compile(expectedErrorMessage).matcher(contentAsString);
+
+        assertTrue(matcher.matches(), String.format("Regex: [%s] does not match string: [%s]", expectedErrorMessage, contentAsString));
+
+        final String group = matcher.group(1);
+        final String[] actualStoreType = group.split(",\\s");
+        Arrays.sort(actualStoreType);
+        assertArrayEquals(expectedStoreType, actualStoreType);
     }
-
-    private List<String> findStoreTypes(final String contentAsString) {
-        Pattern pattern = Pattern.compile("mapStore|accumuloStore|federatedStore|proxyStore");
-        List<String> actualStoreTypeList = new ArrayList<>(Arrays.asList(contentAsString.split("[\\s,}\"]+")));
-        List<String> result = new ArrayList<>();
-        for (final String word : actualStoreTypeList) {
-            if (pattern.matcher(word).find()) {
-                result.add(word);
-            }
-        }
-        return result;
-    }
-
 
     @AfterEach
     void tearDown() {
