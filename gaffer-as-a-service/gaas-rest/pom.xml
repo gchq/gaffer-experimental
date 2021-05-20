@@ -9,7 +9,7 @@
         <version>1.16.0</version>
     </parent>
 
-    <artifactId>gaas-rest</artifactId>
+    <artifactId>${project.artefactId}</artifactId>
     <name>gaas-rest</name>
     <description>Gaffer as a Service REST API</description>
 
@@ -21,6 +21,7 @@
         <io.jsonwebtoken.version>0.9.1</io.jsonwebtoken.version>
         <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
         <fasterxml.jackson.version>2.11.2</fasterxml.jackson.version>
+        <project.artefactId>gaas-rest</project.artefactId>
     </properties>
 
     <dependencyManagement>
@@ -300,16 +301,35 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <properties>
+                <buildType>buildTar</buildType>
+                <credHelper></credHelper>
+                <userName>gchq</userName>
+                <maven.build.timestamp.format>yyyy-MM-dd.HH-mm-ss</maven.build.timestamp.format>
+                <imageName>${project.artefactId}-${project.version}-${maven.build.timestamp}</imageName>
+            </properties>
             <build>
             <plugins>
                 <plugin>
                     <groupId>com.google.cloud.tools</groupId>
                     <artifactId>jib-maven-plugin</artifactId>
                     <version>3.0.0</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>${buildType}</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                     <configuration>
                         <from>
                             <image>adoptopenjdk/openjdk8:jdk8u172-b11</image>
                         </from>
+                        <to>
+                            <image>${userName}/${imageName}</image>
+                            <credHelper>${credHelper}</credHelper>
+                        </to>
                     </configuration>
                 </plugin>
                 <plugin>
