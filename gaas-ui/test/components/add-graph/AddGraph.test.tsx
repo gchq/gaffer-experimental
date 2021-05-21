@@ -106,7 +106,6 @@ describe("AddGraph UI component", () => {
         throw new RestApiError("Not Found", "Resource not found");
       });
       await clickAddProxy();
-      mockGetGraphStatus("DOWN");
       await wrapper.update();
 
       expect(wrapper.find("div#notification-alert").text()).toBe(
@@ -512,6 +511,11 @@ describe("AddGraph UI component", () => {
     // @ts-ignore
     GetGraphStatusRepo.mockImplementationOnce(() => ({
       getStatus: f,
+    }));
+  }function mockGetGraphDescriptionThrowsError(f: () => void): void {
+    // @ts-ignore
+    GetGraphDetailsRepo.mockImplementationOnce(() => ({
+      getDescription: f,
     }));
   }
 
