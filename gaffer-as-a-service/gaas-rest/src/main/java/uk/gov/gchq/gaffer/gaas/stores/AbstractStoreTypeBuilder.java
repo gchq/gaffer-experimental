@@ -17,10 +17,14 @@
 package uk.gov.gchq.gaffer.gaas.stores;
 
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.graph.hook.GraphHook;
+import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.HOOKS_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
@@ -29,9 +33,12 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 public abstract class AbstractStoreTypeBuilder {
 
-    protected GaaSCreateRequestBody graph;
+    public static final String INGRESS_API_PATH_VALUE = "/rest";
+    public static final String INGRESS_UI_PATH_VALUE = "/ui";
+
     private String graphId;
     private String description;
+    private List<GraphHook> hooks = new ArrayList<>();
     private Map<String, Object> schema;
 
     public Map<String, Object> getProperties() {
@@ -44,11 +51,9 @@ public abstract class AbstractStoreTypeBuilder {
         return schema;
     }
 
-
     public String getGraphId() {
         return graphId;
     }
-
 
     public String getDescription() {
         return description;
@@ -63,6 +68,11 @@ public abstract class AbstractStoreTypeBuilder {
         this.description = description;
         return this;
     }
+
+    public AbstractStoreTypeBuilder addHook(final OperationAuthoriser operationAuthoriser) {
+        this.hooks.add(operationAuthoriser);
+        return this;
+    };
 
     public AbstractStoreTypeBuilder setSchema(final Map<String, Object> schema) {
         this.schema = schema;
@@ -79,8 +89,9 @@ public abstract class AbstractStoreTypeBuilder {
         gafferSpec.putNestedObject(graphId, GRAPH_ID_KEY);
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
         gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
-        gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
-        gafferSpec.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
+        gafferSpec.putNestedObject(hooks, HOOKS_KEY);
+        gafferSpec.putNestedObject(INGRESS_API_PATH_VALUE, INGRESS_API_PATH_KEY);
+        gafferSpec.putNestedObject(INGRESS_UI_PATH_VALUE, INGRESS_UI_PATH_KEY);
         return gafferSpec;
     }
 }

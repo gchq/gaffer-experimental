@@ -16,28 +16,51 @@
 
 package uk.gov.gchq.gaffer.gaas.stores;
 
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
+import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
 public class MapStoreTypeTest {
+
     @Test
     void testGetType() {
-        MapStoreType type = new MapStoreType();
+        final MapStoreType type = new MapStoreType();
+
         assertEquals("mapStore", type.getType());
     }
 
     @Test
     void testGetStoreSpecBuilder() {
-        MapStoreType type = new MapStoreType();
-        AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
-        String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
-        GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
-        assertEquals(expected, build.toString());
+        final MapStoreType type = new MapStoreType();
+        final AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
+
+        final OperationAuthoriser operationAuthoriser = new OperationAuthoriser();
+        operationAuthoriser.addAuths(AddGraph.class, "UNKNOWN", "WriteUser");
+        final GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").addHook(operationAuthoriser).setSchema(getSchema()).build();
+
+        final String expected = "{" +
+                "\"graph\":{" +
+                    "\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"}," +
+                    "\"storeProperties\":{\"gaffer.store.job.tracker.enabled\":true,\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"}," +
+                    "\"config\":{" +
+                        "\"description\":\"Another description\"," +
+                        "\"graphId\":\"mygraph\"," +
+                        "\"hooks\":[" +
+                            "{\"allAuths\":[\"WriteUser\",\"SuperUser\"],\"auths\":{\"class uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"WriteUser\",\"SuperUser\"]}}" +
+                        "]" +
+                    "}" +
+                "}," +
+                "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
+                "}";
+        assertEquals(expected, new Gson().toJson(build));
     }
+
     private LinkedHashMap<String, Object> getSchema() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("entities", new Object());
