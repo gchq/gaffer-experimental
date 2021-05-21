@@ -15,7 +15,7 @@ describe("RestClient 2** Responses", () => {
             .reply(201)
             .onDelete("/graphs/redundant-graph")
             .reply(202)
-            .onGet("/rest/graph/status")
+            .onGet("/graph/status")
             .reply(200, {status: "UP"})
     );
     afterAll(() => mock.resetHandlers());
@@ -87,7 +87,7 @@ describe("RestClient 4**/5** Error Responses", () => {
             })
             .onDelete("/graphs/already-deleted")
             .reply(504, { title: "Server Error", detail: "Timeout" })
-            .onGet("/rest/graph/status")
+            .onGet("/graph/status")
             .reply(404, { title: "Not Found", detail: "Could not find resource" })
     );
     afterAll(() => mock.resetHandlers());
