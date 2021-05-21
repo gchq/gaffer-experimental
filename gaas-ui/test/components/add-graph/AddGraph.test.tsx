@@ -91,13 +91,12 @@ describe("AddGraph UI component", () => {
       mockAddGraphRepoWithFunction(jest.fn());
     
       await clickAddProxy();
-      //await wrapper.update();
-
+      await wrapper.update();
+      expect(wrapper.html().includes("Graph is valid")).toBeTruthy();
       const graphTable = wrapper.find("table");
-      console.log(graphTable.text());
-      expect(wrapper.find("div#notification-alert").text()).toBe(
-          "Graph is valid"
-      );
+      expect(graphTable.text()).toEqual("Graph IDDescriptionType http://test.graph.url-graphAnotherDescProxy Graph");
+
+
     });
     it("Should not add graph when status is down to the graphs table and display notification", async () => {
       selectStoreType(StoreType.FEDERATED_STORE);
@@ -120,9 +119,11 @@ describe("AddGraph UI component", () => {
       selectStoreType(StoreType.FEDERATED_STORE);
       inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
+      mockGetGraphStatus("UP");
       mockGetGraphDetails("AnotherDesc");
       inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
+      await wrapper.update();
 
       clickTableBodyCheckBox(0, false);
 
@@ -139,6 +140,7 @@ describe("AddGraph UI component", () => {
       mockGetGraphStatus("UP")
       inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
+      await wrapper.update();
 
       clickTableHeaderCheckBox(true);
 
@@ -166,6 +168,7 @@ describe("AddGraph UI component", () => {
       mockGetGraphDetails("AnotherDesc");
       inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
+      await wrapper.update();
 
       clickTableHeaderCheckBox(true);
       clickTableHeaderCheckBox(false);
@@ -178,31 +181,32 @@ describe("AddGraph UI component", () => {
     it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
       const mock = jest.fn();
       mockAddGraphRepoWithFunction(mock);
+      mockGetGraphDetails("test")
+      mockGetGraphStatus("UP")
+
       inputGraphId("OK Graph");
       inputDescription("test");
-
       selectStoreType(StoreType.FEDERATED_STORE);
-      mockGetGraphStatus("UP")
+
       await inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
 
       await clickSubmit();
-      //@ts-ignore
-      await wrapper.update();
       await wrapper.update();
 
       const expectedConfig: ICreateGraphConfig = {
         proxyStores: [{ graphId: "https://www.testURL.com/-graph", url: "https://www.testURL.com/" }]
       }
+      expect(wrapper.find("div#notification-alert").text()).toBe(
+          "OK Graph was successfully added"
+      );
       expect(mock).toHaveBeenLastCalledWith(
         "OK Graph",
         "test",
         StoreType.FEDERATED_STORE,
         expectedConfig,
       );
-      expect(wrapper.find("div#notification-alert").text()).toBe(
-        "OK Graph was successfully added"
-      );
+
     });
   });
   describe("When Map Store Is Selected", ()=>{
