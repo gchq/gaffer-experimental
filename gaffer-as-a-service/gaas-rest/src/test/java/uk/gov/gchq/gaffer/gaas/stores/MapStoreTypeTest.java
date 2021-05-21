@@ -16,12 +16,13 @@
 
 package uk.gov.gchq.gaffer.gaas.stores;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
+import uk.gov.gchq.gaffer.federatedstore.operation.RemoveGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
-import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,13 +37,17 @@ public class MapStoreTypeTest {
     }
 
     @Test
-    void testGetStoreSpecBuilder() {
+    void testGetStoreSpecBuilder() throws JsonProcessingException {
         final MapStoreType type = new MapStoreType();
         final AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
 
-        final OperationAuthoriser operationAuthoriser = new OperationAuthoriser();
-        operationAuthoriser.addAuths(AddGraph.class, "UNKNOWN", "WriteUser");
-        final GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").addHook(operationAuthoriser).setSchema(getSchema()).build();
+        final GafferSpec build = storeSpecBuilder
+                .setGraphId("mygraph")
+                .setDescription("Another description")
+                .addOperationAuthoriserHook(RemoveGraph.class, "WriteUser")
+                .addOperationAuthoriserHook(AddGraph.class, "UNKNOWN", "WriteUser")
+                .setSchema(getSchema())
+                .build();
 
         final String expected = "{" +
                 "\"graph\":{" +
@@ -51,14 +56,21 @@ public class MapStoreTypeTest {
                     "\"config\":{" +
                         "\"description\":\"Another description\"," +
                         "\"graphId\":\"mygraph\"," +
-                        "\"hooks\":[" +
-                            "{\"allAuths\":[\"WriteUser\",\"SuperUser\"],\"auths\":{\"class uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"WriteUser\",\"SuperUser\"]}}" +
-                        "]" +
-                    "}" +
-                "}," +
-                "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
+                        "\"hooks\":[{" +
+                            "\"auths\":{" +
+                                "\"uk.gov.gchq.gaffer.federatedstore.operation.RemoveGraph\":[\"WriteUser\"]," +
+                                "\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"WriteUser\",\"UNKNOWN\"]}," +
+                            "\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\"}" +
+                        "]}" +
+                    "}," +
+                    "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
                 "}";
-        assertEquals(expected, new Gson().toJson(build));
+        assertEquals(expected, mapToJsonString(build));
+    }
+
+    private String mapToJsonString(final Object object) throws JsonProcessingException {
+        final ObjectMapper mapperObj = new ObjectMapper();
+        return mapperObj.writeValueAsString(object);
     }
 
     private LinkedHashMap<String, Object> getSchema() {

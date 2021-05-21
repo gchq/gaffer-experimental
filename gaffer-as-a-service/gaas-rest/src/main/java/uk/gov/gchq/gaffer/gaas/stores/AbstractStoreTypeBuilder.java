@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.stores;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.graph.hook.GraphHook;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
+import uk.gov.gchq.gaffer.operation.Operation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ public abstract class AbstractStoreTypeBuilder {
 
     private String graphId;
     private String description;
-    private List<GraphHook> hooks = new ArrayList<>();
+    private OperationAuthoriser operationAuthoriser = new OperationAuthoriser();
     private Map<String, Object> schema;
 
     public Map<String, Object> getProperties() {
@@ -69,10 +70,10 @@ public abstract class AbstractStoreTypeBuilder {
         return this;
     }
 
-    public AbstractStoreTypeBuilder addHook(final OperationAuthoriser operationAuthoriser) {
-        this.hooks.add(operationAuthoriser);
+    public AbstractStoreTypeBuilder addOperationAuthoriserHook(final Class<? extends Operation> opClass, final String... auths) {
+        operationAuthoriser.addAuths(opClass, auths);
         return this;
-    };
+    }
 
     public AbstractStoreTypeBuilder setSchema(final Map<String, Object> schema) {
         this.schema = schema;
@@ -85,6 +86,9 @@ public abstract class AbstractStoreTypeBuilder {
     }
 
     public GafferSpec build() {
+        final List<GraphHook> hooks = new ArrayList<>();
+        hooks.add(operationAuthoriser);
+
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(graphId, GRAPH_ID_KEY);
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
