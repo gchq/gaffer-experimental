@@ -9,11 +9,11 @@ The docker image built by Jib plugin you can change the default image using conf
 
 #To build docker image locally
 
-mvn clean install jib:dockerBuild  -DbuildType=buildTar -DimageName= -DuserName= -DcredHelper=
+mvn clean install -DbuildType=dockerBuild -DimageName= -DuserName= -DcredHelper=
 
 
 # To build docker image and push to docker repository
-mvn clean install jib:build -DbuildType=buildTar -DimageName= -DuserName= -DcredHelper=
+mvn clean install -DbuildType=build -DimageName= -DuserName= -DcredHelper=
 
 
 ## Swagger UI
