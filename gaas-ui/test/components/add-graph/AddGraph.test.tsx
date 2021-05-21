@@ -190,6 +190,7 @@ describe("AddGraph UI component", () => {
 
       await inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
+      await wrapper.update();
 
       await clickSubmit();
       await wrapper.update();
