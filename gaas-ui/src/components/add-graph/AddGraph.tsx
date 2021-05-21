@@ -404,7 +404,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                       outcomeMessage: alert.message,
                       selectedGraphs: [
                         ...this.state.selectedGraphs,
-                        proxyGraph?.getId(),
+                        proxyGraph.getId(),
                       ],
                     });
                   } else{

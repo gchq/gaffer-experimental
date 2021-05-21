@@ -5,11 +5,13 @@ import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";
 import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
+import { GetGraphDetailsRepo } from "../../../src/rest/repositories/get-graph-details-repo";
 import {GetGraphStatusRepo} from "../../../src/rest/repositories/get-graph-status-repo";
 import {RestApiError} from "../../../src/rest/RestApiError";
 
 jest.mock("../../../src/rest/repositories/create-graph-repo");
 jest.mock("../../../src/rest/repositories/get-graph-status-repo");
+jest.mock("../../../src/rest/repositories/get-graph-details-repo");
 
 let wrapper: ReactWrapper;
 
@@ -70,6 +72,7 @@ describe("AddGraph UI component", () => {
       mockGetGraphStatus("UP")
       selectStoreType(StoreType.FEDERATED_STORE);
       mockAddGraphRepoWithFunction(jest.fn())
+      mockGetGraphDetails("GraphDescription");
       inputProxyURL("http://test.graph.url");
 
       await clickAddProxy();
@@ -77,17 +80,21 @@ describe("AddGraph UI component", () => {
 
       const graphTable = wrapper.find("table");
       expect(graphTable.text()).toEqual(
-        "Graph IDDescriptionType http://test.graph.url-graphProxy GraphProxy Graph"
+        "Graph IDDescriptionType http://test.graph.url-graphGraphDescriptionProxy Graph"
       );
     });
     it("Should add a graph to the graphs table and display notification when url is valid", async () => {
-      selectStoreType(StoreType.FEDERATED_STORE);
-      inputProxyURL("http://test.graph.url");
       mockGetGraphStatus("UP")
-      mockAddGraphRepoWithFunction(() => {});
+      selectStoreType(StoreType.FEDERATED_STORE);
+      mockGetGraphDetails("AnotherDesc");
+      inputProxyURL("http://test.graph.url");
+      mockAddGraphRepoWithFunction(jest.fn());
+    
       await clickAddProxy();
-      await wrapper.update();
+      //await wrapper.update();
 
+      const graphTable = wrapper.find("table");
+      console.log(graphTable.text());
       expect(wrapper.find("div#notification-alert").text()).toBe(
           "Graph is valid"
       );
@@ -109,9 +116,11 @@ describe("AddGraph UI component", () => {
     });
     it("Should select a graph in table", async () => {
       mockGetGraphStatus("UP");
+      mockGetGraphDetails("AnotherDesc");
       selectStoreType(StoreType.FEDERATED_STORE);
       inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
+      mockGetGraphDetails("AnotherDesc");
       inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
 
@@ -123,6 +132,7 @@ describe("AddGraph UI component", () => {
     });
     it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async () => {
       mockGetGraphStatus("UP")
+      mockGetGraphDetails("AnotherDesc");
       selectStoreType(StoreType.FEDERATED_STORE);
       inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
@@ -148,10 +158,12 @@ describe("AddGraph UI component", () => {
     });
     it("Should uncheck all graphs in the table when the uncheck all button is clicked", async () => {
       mockGetGraphStatus("UP")
+      mockGetGraphDetails("AnotherDesc");
       selectStoreType(StoreType.FEDERATED_STORE);
       inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
       mockGetGraphStatus("UP")
+      mockGetGraphDetails("AnotherDesc");
       inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
 
@@ -471,6 +483,7 @@ describe("AddGraph UI component", () => {
       create: f,
     }));
   }
+  
   function mockGetGraphStatus(status: string): void {
     // @ts-ignore
     GetGraphStatusRepo.mockImplementationOnce(() => ({
@@ -479,7 +492,18 @@ describe("AddGraph UI component", () => {
             resolve(status);
           }),
     }));
-  }function mockGetGraphStatusThrowsError(f: () => void): void {
+  }
+  function mockGetGraphDetails(description: string): void {
+    // @ts-ignore
+    GetGraphDetailsRepo.mockImplementationOnce(() => ({
+      getDescription: () => 
+          new Promise((resolve, reject) => {
+            resolve(description);
+      }),
+          
+    }));
+  }
+  function mockGetGraphStatusThrowsError(f: () => void): void {
     // @ts-ignore
     GetGraphStatusRepo.mockImplementationOnce(() => ({
       getStatus: f,

@@ -6,7 +6,7 @@ import {GraphType} from "../../domain/graph-type";
 import {StoreType} from "../../domain/store-type";
 import {AlertType, INotificationAlertProps} from "../alerts/notification-alert";
 import {GetGraphStatusRepo} from "../../rest/repositories/get-graph-status-repo";
-import {GetGraphDetails} from "../../rest/repositories/get-graph-details";
+import {GetGraphDetailsRepo} from "../../rest/repositories/get-graph-details-repo";
 
 interface IProps {
     hide: boolean;
@@ -26,9 +26,9 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
     async function checkSubmit(){
         try{
             const status: string = await new GetGraphStatusRepo().getStatus(proxyURLValue);
-            const description: string = await new GetGraphDetails().getDescription(proxyURLValue);
             if(status === "UP"){
-            const graph: Graph = new Graph(proxyURLValue + "-graph", description, proxyURLValue, status, StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
+                const description: string = await new GetGraphDetailsRepo().getDescription(proxyURLValue);
+                const graph: Graph = new Graph(proxyURLValue + "-graph", description, proxyURLValue, status, StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
                 onClickAddProxyGraph(graph,{alertType: AlertType.SUCCESS, message: "Graph is valid"});
                 onChangeProxyURL("");
             }else{
