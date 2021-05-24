@@ -30,7 +30,6 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
             required
             fullWidth
             name="graph-id"
-            autoComplete="graph-id"
             onChange={(event) => onChangeGraphId(event.target.value)}
           />
         </Grid>
