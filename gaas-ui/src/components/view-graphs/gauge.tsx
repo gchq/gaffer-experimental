@@ -7,7 +7,7 @@ export default function Gauge(props: { data: { key: string, data: number}[], col
     const {maxValue, data, colours } = props;
 
     return (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <RadialGauge
                 height={165}
                 width={400}
@@ -15,7 +15,7 @@ export default function Gauge(props: { data: { key: string, data: number}[], col
                 maxValue={maxValue}
                 data={data}
                 series={
-                    <RadialGaugeSeries 
+                    <RadialGaugeSeries
                         colorScheme={colours} 
                         arcWidth={11}
                         outerArc={ <RadialGaugeArc disabled={true} animated={false} /> }

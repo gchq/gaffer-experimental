@@ -116,7 +116,7 @@ const NavigationAppbar: React.FC = (props: any) => {
     const buildUsername = () => (username.includes("@") ? username.slice(0, username.indexOf("@")) : username);
 
     return (
-        <div className={classes.root}>
+        <div className={classes.root} aria-label={"navigation-appbar"}>
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
@@ -139,7 +139,7 @@ const NavigationAppbar: React.FC = (props: any) => {
                         <List>
                             <ListItem className={classes.listItem}>
                                 <ListItemAvatar>
-                                    <Avatar>{username.slice(0, 1)}</Avatar>
+                                    <Avatar style={{color: "#ffffff", backgroundColor:"#5A7C81"}}>{username.slice(0, 1)}</Avatar>
                                 </ListItemAvatar>
                                 <ListItemText
                                     id="signedin-user-details"
