@@ -44,24 +44,20 @@ public class MapStoreTypeTest {
         final GafferSpec build = storeSpecBuilder
                 .setGraphId("mygraph")
                 .setDescription("Another description")
-                .addOperationAuthoriserHook(RemoveGraph.class, "WriteUser")
-                .addOperationAuthoriserHook(AddGraph.class, "UNKNOWN", "WriteUser")
+                .addOperationAuthoriser(RemoveGraph.class, "WriteUser")
+                .addOperationAuthoriser(AddGraph.class, "UNKNOWN", "WriteUser")
                 .setSchema(getSchema())
                 .build();
 
         final String expected = "{" +
-                "\"graph\":{" +
-                    "\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"}," +
-                    "\"storeProperties\":{\"gaffer.store.job.tracker.enabled\":true,\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"}," +
-                    "\"config\":{" +
-                        "\"description\":\"Another description\"," +
-                        "\"graphId\":\"mygraph\"," +
-                        "\"hooks\":[{" +
-                            "\"auths\":{" +
-                                "\"uk.gov.gchq.gaffer.federatedstore.operation.RemoveGraph\":[\"WriteUser\"]," +
-                                "\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"WriteUser\",\"UNKNOWN\"]}," +
-                            "\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\"}" +
-                        "]}" +
+                    "\"graph\":{" +
+                        "\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"}," +
+                        "\"storeProperties\":{\"gaffer.store.job.tracker.enabled\":true,\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"}," +
+                        "\"config\":{" +
+                            "\"description\":\"Another description\"," +
+                            "\"graphId\":\"mygraph\"," +
+                            "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.RemoveGraph\":[\"WriteUser\"],\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"UNKNOWN\",\"WriteUser\"]}}]" +
+                        "}" +
                     "}," +
                     "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
                 "}";

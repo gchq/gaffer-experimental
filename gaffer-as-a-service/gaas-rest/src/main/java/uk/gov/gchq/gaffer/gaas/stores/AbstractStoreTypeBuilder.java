@@ -17,11 +17,10 @@
 package uk.gov.gchq.gaffer.gaas.stores;
 
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.graph.hook.GraphHook;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import uk.gov.gchq.gaffer.operation.Operation;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
@@ -39,26 +38,9 @@ public abstract class AbstractStoreTypeBuilder {
 
     private String graphId;
     private String description;
-    private OperationAuthoriser operationAuthoriser = new OperationAuthoriser();
+    private Map<String, String[]> operationAuths = new LinkedHashMap<>();
     private Map<String, Object> schema;
-
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
     private Map<String, Object> properties;
-
-    public Map<String, Object> getSchema() {
-        return schema;
-    }
-
-    public String getGraphId() {
-        return graphId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 
     public AbstractStoreTypeBuilder setGraphId(final String graphId) {
         this.graphId = graphId;
@@ -70,13 +52,21 @@ public abstract class AbstractStoreTypeBuilder {
         return this;
     }
 
-    public AbstractStoreTypeBuilder addOperationAuthoriserHook(final Class<? extends Operation> opClass, final String... auths) {
-        operationAuthoriser.addAuths(opClass, auths);
-        return this;
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 
     public AbstractStoreTypeBuilder setSchema(final Map<String, Object> schema) {
         this.schema = schema;
+        return this;
+    }
+
+    public Map<String, Object> getSchema() {
+        return schema;
+    }
+
+    public AbstractStoreTypeBuilder addOperationAuthoriser(final Class<? extends Operation> operationClass, final String... auths) {
+        operationAuths.put(operationClass.getName(), auths);
         return this;
     }
 
@@ -86,16 +76,20 @@ public abstract class AbstractStoreTypeBuilder {
     }
 
     public GafferSpec build() {
-        final List<GraphHook> hooks = new ArrayList<>();
-        hooks.add(operationAuthoriser);
-
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(graphId, GRAPH_ID_KEY);
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
         gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
-        gafferSpec.putNestedObject(hooks, HOOKS_KEY);
+        gafferSpec.putNestedObject(Arrays.asList(getOpAuthoriser()), HOOKS_KEY);
         gafferSpec.putNestedObject(INGRESS_API_PATH_VALUE, INGRESS_API_PATH_KEY);
         gafferSpec.putNestedObject(INGRESS_UI_PATH_VALUE, INGRESS_UI_PATH_KEY);
         return gafferSpec;
+    }
+
+    private Map<String, Object> getOpAuthoriser() {
+        final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
+        opAuthoriser.put("class", OperationAuthoriser.class.getName());
+        opAuthoriser.put("auths", operationAuths);
+        return opAuthoriser;
     }
 }
