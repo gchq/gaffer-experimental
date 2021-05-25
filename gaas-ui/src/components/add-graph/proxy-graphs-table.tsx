@@ -17,14 +17,14 @@ interface IProps {
   onClickCheckbox(selectedGraphs: string[]): void;
 }
 
-export default function GraphsTable(props: IProps): ReactElement {
+export default function ProxyGraphsTable(props: IProps): ReactElement {
   const { hide, graphs, selectedGraphs, onClickCheckbox }: IProps = props;
 
   return (
     <>
       {!hide && (
-        <TableContainer id={"graphs-table"}>
-          <Table size="medium" aria-label="Graphs Table">
+        <TableContainer id={"proxy-graphs-table"}>
+          <Table size="medium" aria-label="Proxy Graphs Table">
             <TableHead>
               <TableRow style={{ background: "#F4F2F2" }}>
                 <TableCell component="th">Graph ID</TableCell>

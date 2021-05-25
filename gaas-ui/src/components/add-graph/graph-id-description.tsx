@@ -26,8 +26,10 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
             <InputLabel aria-label="graph-id-input-label" required>Graph Id</InputLabel>
           <TextField
             id="graph-id"
-            InputLabelProps = {{
-                "aria-label": "graph-id-input-label"
+            inputProps={{
+                name: "Graph ID",
+                id: "graph-id-input",
+                "aria-label": "graph-id-input"
             }}
             aria-label="graph-id-input"
             variant="outlined"
@@ -51,8 +53,10 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
             <TextField
             id="graph-description"
             aria-label="graph-description-input"
-            InputLabelProps = {{
-                "aria-label": "graph-description-input-label"
+            inputProps={{
+                name: "Graph Description",
+                id: "graph-description-input",
+                "aria-label": "graph-description-input"
             }}
             style={{ width: 400 }}
             value={descriptionValue}

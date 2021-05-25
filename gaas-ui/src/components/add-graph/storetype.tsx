@@ -34,7 +34,8 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                         }
                     >
                         <MenuItem value={StoreType.MAPSTORE} aria-label="mapstore-menu-item"
-                                  id="mapstore-menu-item" aria-labelledby={"storetype-select-label"}>
+                                  id="mapstore-menu-item" aria-labelledby={"storetype-select-label"}
+                        >
                             Map Store
                         </MenuItem>
                         <MenuItem value={StoreType.ACCUMULO} aria-label="accumulo-menu-item" id="accumulo-menu-item" aria-labelledby={"storetype-select-label"}>Accumulo</MenuItem>

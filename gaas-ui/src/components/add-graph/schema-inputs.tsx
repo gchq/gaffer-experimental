@@ -31,6 +31,11 @@ export default function SchemaInput(props: IProps): ReactElement {
             <InputLabel aria-label="schema-elements-input-label" required>Schema Elements JSON</InputLabel>
             <TextField
               id="schema-elements"
+              inputProps={{
+                name: "Schema Elements",
+                id: "schema-elements-input",
+                "aria-label": "schema-elements-input"
+              }}
               style={{ width: 400 }}
               value={elementsValue}
               required
@@ -47,6 +52,11 @@ export default function SchemaInput(props: IProps): ReactElement {
             <InputLabel aria-label="schema-types-input-label" required>Schema Types JSON</InputLabel>
             <TextField
               id="schema-types"
+              inputProps={{
+                name: "Schema Types",
+                id: "schema-types-input",
+                "aria-label": "schema-types-input"
+              }}
               style={{ width: 400 }}
               value={typesSchemaValue}
               name="schema-types"
