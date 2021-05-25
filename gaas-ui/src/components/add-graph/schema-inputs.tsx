@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import { TypesSchema } from "../../domain/types-schema";
 import { ElementsSchema } from "../../domain/elements-schema";
+import {InputLabel} from "@material-ui/core";
 
 interface IProps {
   hide: boolean;
@@ -27,11 +28,11 @@ export default function SchemaInput(props: IProps): ReactElement {
       {!hide && (
         <>
           <Grid item xs={12}>
+            <InputLabel aria-label="schema-elements-input-label" required>Schema Elements JSON</InputLabel>
             <TextField
               id="schema-elements"
               style={{ width: 400 }}
               value={elementsValue}
-              label="Schema Elements JSON"
               required
               multiline
               rows={5}
@@ -43,12 +44,12 @@ export default function SchemaInput(props: IProps): ReactElement {
             />
           </Grid>
           <Grid item xs={12}>
+            <InputLabel aria-label="schema-types-input-label" required>Schema Types JSON</InputLabel>
             <TextField
               id="schema-types"
               style={{ width: 400 }}
               value={typesSchemaValue}
               name="schema-types"
-              label="Schema Types JSON"
               required
               multiline
               rows={5}

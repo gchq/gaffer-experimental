@@ -1,5 +1,5 @@
 import React, {ReactElement} from "react";
-import {Button, FormHelperText, Grid, TextField} from "@material-ui/core";
+import {Button, FormHelperText, Grid, InputLabel, TextField} from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import {Graph} from "../../domain/graph";
 import {GraphType} from "../../domain/graph-type";
@@ -57,9 +57,11 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         {!hide &&
         <div id={"graphs-table"}>
             <Grid item xs={12} id={"proxy-url-grid"}>
+                <InputLabel aria-label="proxy-url-input-label">Proxy URL</InputLabel>
+
                 <TextField
                     id="proxy-url"
-                    label="Proxy URL"
+                    aria-label="proxy-url-textfield"
                     variant="outlined"
                     value={proxyURLValue}
                     fullWidth
@@ -83,6 +85,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                 alignItems="center"
             >
                 <Button
+                    aria-label="proxy-url-submit-button"
                     id="add-new-proxy-button"
                     onClick={async () => await checkSubmit()}
                     startIcon={<AddCircleOutlineOutlinedIcon/>}
