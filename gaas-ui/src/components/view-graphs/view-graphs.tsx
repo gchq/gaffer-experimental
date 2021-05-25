@@ -78,7 +78,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
         const { graphs, errorMessage } = this.state;
 
         return (
-            <main>
+            <main aria-label={"view-graphs-page"}>
                 {errorMessage && <NotificationAlert alertType={AlertType.FAILED} message={errorMessage} />}
                 <Toolbar />
                     <Container component="main" maxWidth="md">
@@ -89,7 +89,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                         <Typography gutterBottom variant="h6" component="h2">
                                             Summary
                                         </Typography>
-                                        <Gauge 
+                                        <Gauge
                                             maxValue={graphs.length}
                                             data={[
                                                 { key: "TOTAL", data: graphs.length },
@@ -97,7 +97,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                                 { key: "DOWN", data: graphs.filter((graph) => graph.getStatus() === "DOWN").length },
                                             ]}
                                             colours={[
-                                                "#9FA9B1",
+                                                "#fdb81e",
                                                 "#00ECB1",
                                                 "#F50057",
                                             ]}
@@ -120,9 +120,9 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                                     { key: "MAP", data: graphs.filter((graph) => graph.getStoreType() === StoreType.MAPSTORE).length },
                                                 ]}
                                                 colours={[
-                                                    "#9FA9B1",
-                                                    "#9FA9B1",
-                                                    "#9FA9B1",
+                                                    "#02bfe7",
+                                                    "#02bfe7",
+                                                    "#02bfe7",
                                                 ]} 
                                             />
                                         </CardContent>
