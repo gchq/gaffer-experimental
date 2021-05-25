@@ -2,6 +2,7 @@ import { Graph } from "../../domain/graph";
 import { GraphType } from "../../domain/graph-type";
 import { getStoreType } from "../../domain/store-type";
 import { IApiResponse, RestClient } from "../clients/rest-client";
+import { Config } from "../config";
 import {
   IAllGraphsResponse,
   IGraphByIdResponse,
@@ -10,6 +11,7 @@ import {
 export class GetAllGraphsRepo {
   public async getAll(): Promise<Graph[]> {
     const response: IApiResponse<IAllGraphsResponse> = await new RestClient()
+      .baseUrl(Config.REACT_APP_KAI_REST_API_HOST)
       .get()
       .graphs()
       .execute();
