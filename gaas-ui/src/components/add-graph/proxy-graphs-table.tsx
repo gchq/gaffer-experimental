@@ -32,6 +32,11 @@ export default function ProxyGraphsTable(props: IProps): ReactElement {
                 <TableCell align="center">Type</TableCell>
                 <TableCell align="right">
                   <Checkbox
+                  inputProps={{
+                    name: "checkbox all",
+                    id: "all-checkbox",
+                    "aria-label": "all-checkbox"
+                }}
                     checked={
                       graphs.length > 0 &&
                       selectedGraphs.length === graphs.length
@@ -52,6 +57,11 @@ export default function ProxyGraphsTable(props: IProps): ReactElement {
                     id={`${graph.getId()}-checkbox-cell`}
                   >
                     <Checkbox
+                    inputProps={{
+                      name: "checkbox" + graph.getId(),
+                      id: "checkbox" + graph.getId(),
+                      "aria-label": "checkbox" + graph.getId()
+                  }}
                       id={`${graph.getId()}-checkbox`}
                       required
                       checked={selectedGraphs.includes(graph.getId())}

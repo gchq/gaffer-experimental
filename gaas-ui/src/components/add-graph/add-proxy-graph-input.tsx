@@ -72,7 +72,6 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                     fullWidth
                     name="proxy-url"
                     error={!isValidHttpUrl(proxyURLValue)}
-                    autoComplete="proxy-url"
                     onChange={(event) => {
                         onChangeProxyURL(event.target.value)
                     }}
