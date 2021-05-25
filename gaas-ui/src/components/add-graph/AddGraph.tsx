@@ -218,7 +218,7 @@ export default class AddGraph extends React.Component<{}, IState> {
         <Toolbar />
 
         <Grid container justify="center">
-          <Container component="main" maxWidth="xs">
+          <Container maxWidth="xs">
             <CssBaseline />
             <div className={this.classes.paper}>
               <Grid

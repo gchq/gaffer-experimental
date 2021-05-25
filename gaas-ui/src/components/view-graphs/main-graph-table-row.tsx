@@ -34,7 +34,7 @@ export function MainGraphTableRow(props: IProps) {
         <TableRow className={classes.root} hover aria-label={"view-graphs-table"}>
             <TableCell aria-label={"expand-row-icon"}>
                 <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon />}
                 </IconButton>
             </TableCell>
             <TableCell component="th" scope="row" aria-label={"row-id"}>{row.getId()}</TableCell>

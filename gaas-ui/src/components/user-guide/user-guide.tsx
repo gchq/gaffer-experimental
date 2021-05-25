@@ -21,7 +21,7 @@ export default class UserGuide extends React.Component<{}, {}> {
 
     public render() {
         return (
-            <main>
+            <main aria-label="User-Guide-Page"> 
                 <Toolbar />
                 <Grid container justify="center" className={this.classes.root} style={{ marginTop: 30 }}>
                     <Card className={this.classes.card} style={{ maxWidth: 800 }}>

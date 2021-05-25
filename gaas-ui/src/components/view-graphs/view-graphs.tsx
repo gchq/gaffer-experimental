@@ -81,7 +81,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
             <main aria-label={"view-graphs-page"}>
                 {errorMessage && <NotificationAlert alertType={AlertType.FAILED} message={errorMessage} />}
                 <Toolbar />
-                    <Container component="main" maxWidth="md">
+                    <Container maxWidth="md">
                         <Grid container spacing={3}>
                             <Grid item xs={6}>
                                 <Paper>
