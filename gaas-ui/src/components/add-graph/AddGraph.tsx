@@ -251,7 +251,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                     justify="flex-end"
                     alignItems="center"
                   />
-                  <StoreTypeSelect
+                  <StoreTypeSelect aria-label="store-type-select"
                     value={this.state.storeType}
                     onChange={(storeType) => this.setState({ storeType })}
                   />

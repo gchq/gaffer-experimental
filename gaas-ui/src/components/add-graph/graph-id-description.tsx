@@ -25,12 +25,12 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
           <TextField
             id="graph-id"
             label="Graph Id"
+            aria-label="graph-id-input"
             variant="outlined"
             value={graphIdValue}
             required
             fullWidth
             name="graph-id"
-            autoComplete="graph-id"
             onChange={(event) => onChangeGraphId(event.target.value)}
           />
         </Grid>
@@ -45,6 +45,7 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
         <Grid item xs={12}>
           <TextField
             id="graph-description"
+            aria-label="graph-description-input"
             style={{ width: 400 }}
             label="Graph Description"
             value={descriptionValue}

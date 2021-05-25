@@ -31,17 +31,17 @@ export function MainGraphTableRow(props: IProps) {
 
     return (
       <React.Fragment>
-        <TableRow className={classes.root} hover>
-            <TableCell>
+        <TableRow className={classes.root} hover aria-label={"view-graphs-table"}>
+            <TableCell aria-label={"expand-row-icon"}>
                 <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
                 {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                 </IconButton>
             </TableCell>
-            <TableCell component="th" scope="row">{row.getId()}</TableCell>
-            <TableCell><Avatar> {row.getStoreType()}</Avatar></TableCell>
-            <TableCell><StatusChip status={row.getStatus()} /></TableCell>
-            <TableCell><a href={row.getUrl()} target="_blank" rel="noreferrer">{row.getUrl()}</a></TableCell>
-            <TableCell>
+            <TableCell component="th" scope="row" aria-label={"row-id"}>{row.getId()}</TableCell>
+            <TableCell aria-label={"graph-store-type"}><Avatar style={{color: "white", backgroundColor:"#5A7C81"}}> {row.getStoreType()}</Avatar></TableCell>
+            <TableCell aria-label={"graph-status"}><StatusChip status={row.getStatus()} /></TableCell>
+            <TableCell aria-label={"graph-url"}><a href={row.getUrl()} target="_blank" rel="noreferrer">{row.getUrl()}</a></TableCell>
+            <TableCell aria-label={"delete-graph"}>
                 <Tooltip TransitionComponent={Zoom} title={`Delete ${row.getId()}`}>
                     <IconButton
                         id={"view-graphs-delete-button-" + index}
@@ -56,9 +56,9 @@ export function MainGraphTableRow(props: IProps) {
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box margin={1}>
-                <Table size="small" aria-label="grapg-details">
+                <Table size="small" aria-label="graph-details">
                 <TableBody>
-                    <TableRow>
+                    <TableRow aria-label={"graph-description"}>
                         <TableCell component="th" scope="row">Description: {row.getDescription()}</TableCell>
                     </TableRow>
                 </TableBody>
@@ -72,7 +72,7 @@ export function MainGraphTableRow(props: IProps) {
 }
 
 function StatusChip(props: { status: string }) {
-    return (props.status === "UP") ? <Chip icon={<CheckRoundedIcon />} label={props.status} /> : <Chip icon={<WarningRoundedIcon />} label={props.status} color="secondary" />;
+    return (props.status === "UP") ? <Chip icon={<CheckRoundedIcon style={{color: "#ffffff"}}/>} label={props.status} style={{color: "#ffffff", backgroundColor:"#5A7C81"}} /> : <Chip icon={<WarningRoundedIcon style={{color: "#ffffff"}}/>} label={props.status} style={{ color: "#ffffff",backgroundColor: "#EB0052"}} />;
 }
 
 const useRowStyles = makeStyles({
