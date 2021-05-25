@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Container,
   CssBaseline,
@@ -207,7 +208,7 @@ export default class AddGraph extends React.Component<{}, IState> {
     };
 
     return (
-      <main>
+      <main aria-label="Add-Graph-Page">
         {this.state.outcome && (
           <NotificationAlert
             alertType={this.state.outcome}
@@ -232,6 +233,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                 <Typography variant="h4" align={"center"}>
                   Create Graph
                 </Typography>
+                <Box my={4} />
               </Grid>
               <form className={this.classes.form} noValidate>
                 <Grid container spacing={2}>
