@@ -35,7 +35,7 @@ import GraphIdDescriptionInput from "./graph-id-description";
 import SchemaInput from "./schema-inputs";
 import StoreTypeSelect from "./storetype";
 import AddProxyGraphInput from "./add-proxy-graph-input";
-import GraphsTable from "./graphs-table";
+import ProxyGraphsTable from "./proxy-graphs-table";
 
 interface IState {
   graphId: string;
@@ -420,7 +420,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                 }
                 }
               />
-              <GraphsTable
+              <ProxyGraphsTable
                 hide={federatedStoreIsNotSelected()}
                 graphs={this.state.graphs}
                 selectedGraphs={this.state.selectedGraphs}

@@ -30,7 +30,7 @@ export function MainGraphTableRow(props: IProps) {
     const classes = useRowStyles();
 
     return (
-      <React.Fragment>
+      <React.Fragment >
         <TableRow className={classes.root} hover aria-label={"view-graphs-table"}>
             <TableCell aria-label={"expand-row-icon"}>
                 <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>

@@ -62,6 +62,11 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                 <TextField
                     id="proxy-url"
                     aria-label="proxy-url-textfield"
+                    inputProps={{
+                        name: "Proxy URL",
+                        id: "proxy-url-input",
+                        "aria-label": "proxy-url-input"
+                    }}
                     variant="outlined"
                     value={proxyURLValue}
                     fullWidth
@@ -72,7 +77,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                         onChangeProxyURL(event.target.value)
                     }}
                 />
-                <FormHelperText>
+                <FormHelperText aria-label="proxy-url-form-helper-text">
                     Enter valid URL for proxy store if not shown below in table
                 </FormHelperText>
             </Grid>
@@ -83,6 +88,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                 direction="row"
                 justify="center"
                 alignItems="center"
+                aria-label="proxy-url-button-grid"
             >
                 <Button
                     aria-label="proxy-url-submit-button"
