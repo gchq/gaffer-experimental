@@ -1,4 +1,4 @@
-import React, {ReactElement} from "react";
+import React, {ReactElement, useState} from "react";
 import {Button, FormHelperText, Grid, TextField} from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import {Graph} from "../../domain/graph";
@@ -16,11 +16,12 @@ interface IProps {
 }
 
 export default function AddProxyGraphInput(props: IProps): ReactElement {
+    const [errorHelperText, setErrorHelperText] = useState("");
     const {
         hide,
         onChangeProxyURL,
         proxyURLValue,
-        onClickAddProxyGraph,
+        onClickAddProxyGraph
     }= props;
 
     async function checkSubmit(){
@@ -35,12 +36,13 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                 onClickAddProxyGraph(new Graph("","","","", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH),{alertType: AlertType.FAILED, message: "Graph status is DOWN so could not be added"});
             }
         }catch(e){
+            setErrorHelperText("Invalid proxy url")
             onClickAddProxyGraph(new Graph("","","","", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH),{alertType: AlertType.FAILED, message: `Graph is invalid ${e.toString()}`});
-
+           
         }
     }
 
-      function isValidHttpUrl(string: string) {
+      function isValidHttpUrl(string: string):boolean {
         let url;
         
         try {
@@ -50,6 +52,18 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         }
       
         return url.protocol === "http:" || url.protocol === "https:";
+      }
+
+      function getErrorHelperText(string: string):string {
+        let url;
+        
+        try {
+          url = new URL(string);
+        } catch (_) {
+          return "Proxy URL is not valid or not be empty";  
+        }
+
+        return "";
       }
 
     return (
@@ -64,15 +78,13 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                     value={proxyURLValue}
                     fullWidth
                     name="proxy-url"
-                    error={!isValidHttpUrl(proxyURLValue)}
+                    error={proxyURLValue!=="" && !isValidHttpUrl(proxyURLValue) || errorHelperText.length !==0}
                     autoComplete="proxy-url"
                     onChange={(event) => {
                         onChangeProxyURL(event.target.value)
                     }}
+                    helperText={errorHelperText}
                 />
-                <FormHelperText>
-                    Enter valid URL for proxy store if not shown below in table
-                </FormHelperText>
             </Grid>
             <Grid
                 id="proxy-button-grid"

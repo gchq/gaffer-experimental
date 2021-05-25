@@ -1,6 +1,11 @@
 import { mount, ReactWrapper } from "enzyme";
+import { title } from "node:process";
 import React from "react";
 import AddProxyGraphInput from "../../../src/components/add-graph/add-proxy-graph-input";
+import {GetGraphStatusRepo} from "../../../src/rest/repositories/get-graph-status-repo";
+import { RestApiError } from "../../../src/rest/RestApiError";
+
+jest.mock("../../../src/rest/repositories/get-graph-status-repo");
 
 let component: ReactWrapper;
 const onChangeProxyURLMockCallback = jest.fn();
@@ -18,7 +23,8 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  component.unmount();
+  component.unmount()
+  jest.resetAllMocks();
 });
 
 describe("GraphsTable UI Component", () => {
@@ -37,7 +43,41 @@ describe("GraphsTable UI Component", () => {
       component.find("div#proxy-url-grid").find("input").props().value
     ).toBe("http://url.value");
   });
+ 
 });
+
+describe("Error handling", () => {
+  const component = mount(
+    <AddProxyGraphInput
+      hide={false}
+      proxyURLValue={""}
+      onChangeProxyURL={onChangeProxyURLMockCallback}
+      onClickAddProxyGraph={onClickAddProxyMockCallback}
+    />
+  );
+  it("Should not show error on render", () =>{
+    expect(component.find("label#proxy-url-label").props().className).not.toContain("Mui-error");
+    expect(component.find("p#proxy-url-helper-text").length).toBe(0);
+  });
+
+  it("Should show error on invalid unkown error", async () => {
+    mockGetGraphStatusRepoToThrowError();
+    const component = mount(
+      <AddProxyGraphInput
+        hide={false}
+        proxyURLValue={"http://invalid"}
+        onChangeProxyURL={onChangeProxyURLMockCallback}
+        onClickAddProxyGraph={onClickAddProxyMockCallback}
+      />
+    );
+    component.find("button#add-new-proxy-button").simulate("click");
+    await component.update();
+    await component.update();
+    expect(component.find("label#proxy-url-label").props().className).toContain("Mui-error");
+    expect(component.find("p#proxy-url-helper-text").text()).toBe("Invalid proxy URL");
+    
+  })
+})
 
 describe("Hide Component", () => {
   const component = mount(
@@ -106,4 +146,11 @@ function inputProxyURL(url: string) {
 }
 function clickAddProxy() {
   component.find("button#add-new-proxy-button").simulate("click");
+}
+
+function mockGetGraphStatusRepoToThrowError() {
+  // @ts-ignore
+  GetGraphStatusRepo.mockImplementationOnce(() => ({
+      getStatus: () => new RestApiError("Server Error", "Invalid proxy URL"),
+  }));
 }
