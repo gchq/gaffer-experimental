@@ -43,9 +43,6 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                             Federated Store
                         </MenuItem>
                     </Select>
-                    <FormHelperText aria-label="store-type-select-helper-text" id="store-type-helper-text">
-                        Set to Map Store by default
-                    </FormHelperText>
                 </FormControl>
             </Grid>
     )

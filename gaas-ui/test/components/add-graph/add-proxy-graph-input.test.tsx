@@ -2,6 +2,9 @@ import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import { act } from "react-dom/test-utils";
 import AddProxyGraphInput from "../../../src/components/add-graph/add-proxy-graph-input";
+import { Graph } from "../../../src/domain/graph";
+import { GraphType } from "../../../src/domain/graph-type";
+import { StoreType } from "../../../src/domain/store-type";
 import { GetGraphDetailsRepo } from "../../../src/rest/repositories/get-graph-details-repo";
 import { GetGraphStatusRepo } from "../../../src/rest/repositories/get-graph-status-repo";
 import { RestApiError } from "../../../src/rest/RestApiError";
@@ -43,7 +46,7 @@ describe("GraphsTable UI Component", () => {
   });
 });
 
-describe("Error handling", () => {
+describe("Success & Error handling Adding Proxy Graph", () => {
   const component = mount(
     <AddProxyGraphInput
       hide={false}
@@ -114,7 +117,7 @@ describe("Error handling", () => {
     expect(component.find("p#proxy-url-helper-text").length).toBe(0);
   });
 
-  it("Should add Graph Is Down error when GraphStatusRepo returns DOWN", async () => {
+  it("Should display Graph Is Down error when GraphStatusRepo returns DOWN", async () => {
     mockGetGraphStatusRepoIsSuccessfulAndReturns("DOWN");
     const component = mount(
       <AddProxyGraphInput
@@ -133,6 +136,54 @@ describe("Error handling", () => {
     expect(component.find("label#proxy-url-label").props().className).toContain("Mui-error");
     expect(component.find("p#proxy-url-helper-text").text()).toBe(
       "Graph at the base URL: http://some-url is down"
+    );
+  });
+
+  it("Should still add ProxyGraph and call OnClickAddProxy when GraphDetailsRepo fails", async () => {
+    mockGetGraphStatusRepoIsSuccessfulAndReturns("UP");
+    mockGetGraphDetailsRepoToThrowError();
+    const component = mount(
+      <AddProxyGraphInput
+        hide={false}
+        proxyURLValue={"http://ok-url"}
+        onChangeProxyURL={onChangeProxyURLMockCallback}
+        onClickAddProxyGraph={onClickAddProxyMockCallback}
+      />
+    );
+    waitForComponentToRender(component);
+
+    clickAddProxy(component);
+    await component.update();
+    await component.update();
+
+    const expected: Graph = new Graph("http://ok-url-graph", "n/a", "http://ok-url", "UP", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH)
+    expect(onClickAddProxyMockCallback).toHaveBeenLastCalledWith(expected);
+  });
+
+  it("Should add ProxyGraph and call OnClickAddProxy with real description when both Repos successful", async () => {
+    mockGetGraphStatusRepoIsSuccessfulAndReturns("UP");
+    mockGetGraphDescriptionRepoIsSuccessfulAndReturns("This graph is good");
+    const component = mount(
+      <AddProxyGraphInput
+        hide={false}
+        proxyURLValue={"http://all-good-url.app"}
+        onChangeProxyURL={onChangeProxyURLMockCallback}
+        onClickAddProxyGraph={onClickAddProxyMockCallback}
+      />
+    );
+    waitForComponentToRender(component);
+
+    clickAddProxy(component);
+    await component.update();
+    await component.update();
+    await component.update();
+    await component.update();
+
+    const expected: Graph = new Graph("http://all-good-url.app-graph", "This graph is good", "http://all-good-url.app", "UP", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH)
+    expect(onClickAddProxyMockCallback).toHaveBeenLastCalledWith(expected);
+    expect(component.find("label#proxy-url-label").props().className).not.toContain("Mui-error");
+    expect(component.find("p#proxy-url-helper-text").text()).toBe(
+      "Successfully added Graph at http://all-good-url.app"
     );
   });
 });
@@ -222,12 +273,31 @@ function mockGetGraphStatusRepoToThrowError() {
   }));
 }
 
+function mockGetGraphDetailsRepoToThrowError() {
+  // @ts-ignore
+  GetGraphDetailsRepo.mockImplementationOnce(() => ({
+    getDescription: () => {
+      throw new RestApiError("Server Error", "Invalid proxy URL");
+    },
+  }));
+}
+
 function mockGetGraphStatusRepoIsSuccessfulAndReturns(status: string) {
   // @ts-ignore
   GetGraphStatusRepo.mockImplementationOnce(() => ({
     getStatus: () =>
       new Promise((resolve, reject) => {
         resolve(status);
+      }),
+  }));
+}
+
+function mockGetGraphDescriptionRepoIsSuccessfulAndReturns(description: string) {
+  // @ts-ignore
+  GetGraphDetailsRepo.mockImplementationOnce(() => ({
+    getDescription: () =>
+      new Promise((resolve, reject) => {
+        resolve(description);
       }),
   }));
 }

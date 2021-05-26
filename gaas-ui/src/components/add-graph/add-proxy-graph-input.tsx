@@ -4,19 +4,20 @@ import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOut
 import {Graph} from "../../domain/graph";
 import {GraphType} from "../../domain/graph-type";
 import {StoreType} from "../../domain/store-type";
-import {AlertType, INotificationAlertProps} from "../alerts/notification-alert";
 import {GetGraphStatusRepo} from "../../rest/repositories/get-graph-status-repo";
 import {GetGraphDetailsRepo} from "../../rest/repositories/get-graph-details-repo";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 interface IProps {
     hide: boolean;
     proxyURLValue: string;
     onChangeProxyURL(proxyURL: string): void;
-    onClickAddProxyGraph(newProxyGraph: Graph, alert: INotificationAlertProps): void;
+    onClickAddProxyGraph(newProxyGraph: Graph): void;
 }
 
 export default function AddProxyGraphInput(props: IProps): ReactElement {
     const [errorHelperText, setErrorHelperText] = useState("");
+    const [successHelperText, setSuccessHelperText] = useState("");
 
     const {
         hide,
@@ -29,9 +30,9 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         try {
             const status: string = await new GetGraphStatusRepo().getStatus(proxyURLValue);
             if (status === "UP") {
-                const description: string = await new GetGraphDetailsRepo().getDescription(proxyURLValue);
-                const graph: Graph = new Graph(proxyURLValue + "-graph", description, proxyURLValue, status, StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
-                onClickAddProxyGraph(graph,{alertType: AlertType.SUCCESS, message: "Graph is valid"});
+                const graph: Graph = new Graph(proxyURLValue + "-graph", await getDescription(), proxyURLValue, status, StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
+                setSuccessHelperText(`Successfully added Graph at ${proxyURLValue}`)
+                onClickAddProxyGraph(graph);
                 onChangeProxyURL("");
             } else {
                 setErrorHelperText(`Graph at the base URL: ${proxyURLValue} is down`);
@@ -40,12 +41,22 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
             setErrorHelperText(`A Graph does not exist at the base URL: ${proxyURLValue}`);
         }
     }
+
+    async function getDescription(): Promise<string> {
+        let description: string;
+        try {
+            description = await new GetGraphDetailsRepo().getDescription(proxyURLValue);
+        } catch(e) {
+            description = "n/a";
+        }
+        return description;
+    }
     
     function isValidHttpUrl(string: string):boolean {
         let url;
         try {
             url = new URL(string);
-        } catch (_) {
+        } catch (e) {
             return false;  
         }
         return url.protocol === "http:" || url.protocol === "https:";
@@ -65,10 +76,11 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                         error={errorHelperText.length > 0}
                         autoComplete="proxy-url"
                         onChange={(event) => {
+                            setSuccessHelperText("");
                             setErrorHelperText("");
                             onChangeProxyURL(event.target.value);
                         }}
-                        helperText={errorHelperText}
+                        helperText={errorHelperText + successHelperText}
                     />
                 </Grid>
                 <Grid
