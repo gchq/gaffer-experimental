@@ -2,6 +2,7 @@
 import React, { ReactElement } from "react";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
+import {InputLabel} from "@material-ui/core";
 
 interface IProps {
   graphIdValue: string;
@@ -21,10 +22,15 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
 
     return (
       <>
-        <Grid item xs={12}>
+        <Grid item xs={12} id={"id-description-fields"} aria-label="id-description-fields">
+            <InputLabel aria-label="graph-id-input-label" required>Graph Id</InputLabel>
           <TextField
             id="graph-id"
-            label="Graph Id"
+            inputProps={{
+                name: "Graph ID",
+                id: "graph-id-input",
+                "aria-label": "graph-id-input"
+            }}
             aria-label="graph-id-input"
             variant="outlined"
             value={graphIdValue}
@@ -43,11 +49,16 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
           alignItems="center"
         ></Grid>
         <Grid item xs={12}>
-          <TextField
+            <InputLabel aria-label="graph-description-input-label" required>Graph Description</InputLabel>
+            <TextField
             id="graph-description"
             aria-label="graph-description-input"
+            inputProps={{
+                name: "Graph Description",
+                id: "graph-description-input",
+                "aria-label": "graph-description-input"
+            }}
             style={{ width: 400 }}
-            label="Graph Description"
             value={descriptionValue}
             required
             multiline

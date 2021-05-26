@@ -1,5 +1,5 @@
 import React, {ReactElement} from "react";
-import {Button, FormHelperText, Grid, TextField} from "@material-ui/core";
+import {Button, FormHelperText, Grid, InputLabel, TextField} from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import {Graph} from "../../domain/graph";
 import {GraphType} from "../../domain/graph-type";
@@ -57,20 +57,26 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         {!hide &&
         <div id={"graphs-table"}>
             <Grid item xs={12} id={"proxy-url-grid"}>
+                <InputLabel aria-label="proxy-url-input-label">Proxy URL</InputLabel>
+
                 <TextField
                     id="proxy-url"
-                    label="Proxy URL"
+                    aria-label="proxy-url-textfield"
+                    inputProps={{
+                        name: "Proxy URL",
+                        id: "proxy-url-input",
+                        "aria-label": "proxy-url-input"
+                    }}
                     variant="outlined"
                     value={proxyURLValue}
                     fullWidth
                     name="proxy-url"
                     error={!isValidHttpUrl(proxyURLValue)}
-                    autoComplete="proxy-url"
                     onChange={(event) => {
                         onChangeProxyURL(event.target.value)
                     }}
                 />
-                <FormHelperText>
+                <FormHelperText aria-label="proxy-url-form-helper-text">
                     Enter valid URL for proxy store if not shown below in table
                 </FormHelperText>
             </Grid>
@@ -81,8 +87,10 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                 direction="row"
                 justify="center"
                 alignItems="center"
+                aria-label="proxy-url-button-grid"
             >
                 <Button
+                    aria-label="proxy-url-submit-button"
                     id="add-new-proxy-button"
                     onClick={async () => await checkSubmit()}
                     startIcon={<AddCircleOutlineOutlinedIcon/>}

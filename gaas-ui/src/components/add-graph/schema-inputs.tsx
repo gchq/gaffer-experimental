@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import { TypesSchema } from "../../domain/types-schema";
 import { ElementsSchema } from "../../domain/elements-schema";
+import {InputLabel} from "@material-ui/core";
 
 interface IProps {
   hide: boolean;
@@ -26,12 +27,17 @@ export default function SchemaInput(props: IProps): ReactElement {
     <>
       {!hide && (
         <>
-          <Grid item xs={12}>
+          <Grid item xs={12} id={"schema-elements-grid"}>
+            <InputLabel aria-label="schema-elements-input-label" required>Schema Elements JSON</InputLabel>
             <TextField
               id="schema-elements"
+              inputProps={{
+                name: "Schema Elements",
+                id: "schema-elements-input",
+                "aria-label": "schema-elements-input"
+              }}
               style={{ width: 400 }}
               value={elementsValue}
-              label="Schema Elements JSON"
               required
               multiline
               rows={5}
@@ -42,13 +48,18 @@ export default function SchemaInput(props: IProps): ReactElement {
               helperText={elementsValue !== "" ? new ElementsSchema(elementsValue).validate().errorMessage() : ""}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} id={"schema-types"}>
+            <InputLabel aria-label="schema-types-input-label" required>Schema Types JSON</InputLabel>
             <TextField
               id="schema-types"
+              inputProps={{
+                name: "Schema Types",
+                id: "schema-types-input",
+                "aria-label": "schema-types-input"
+              }}
               style={{ width: 400 }}
               value={typesSchemaValue}
               name="schema-types"
-              label="Schema Types JSON"
               required
               multiline
               rows={5}

@@ -18,20 +18,20 @@ afterEach(() => jest.resetAllMocks());
 
 describe("Graph ID & Description", () => {
   it("should populate input value with graphIdValue prop", () => {
-    expect(component.find("input#graph-id").props().value).toBe("display-id");
+    expect(component.find("input#graph-id-input").props().value).toBe("display-id");
   });
   it("should populate input value with graphIdValue prop", () => {
-    expect(component.find("textarea#graph-description").props().value).toBe("Inputted description here");
+    expect(component.find("textarea#graph-description-input").props().value).toBe("Inputted description here");
   });
   it("should call back with graph id when character inputted", () => {
-    component.find("input#graph-id").simulate("change", {
+    component.find("input#graph-id-input").simulate("change", {
       target: { value: "id" },
     });
 
     expect(graphIdMockCallBack).toHaveBeenLastCalledWith("id");
   });
   it("should call back with graph id when character inputted", () => {
-    component.find("textarea#graph-description").simulate("change", {
+    component.find("textarea#graph-description-input").simulate("change", {
       target: { value: "Some description" },
     });
 

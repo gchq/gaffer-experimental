@@ -1,6 +1,5 @@
-
 import React from "react";
-import { RadialGauge, RadialGaugeArc, RadialGaugeSeries } from "reaviz";
+import { RadialGauge, RadialGaugeArc, RadialGaugeSeries} from "reaviz";
 
 export default function Gauge(props: { data: { key: string, data: number}[], colours: string[], maxValue: number }) {
 
@@ -14,9 +13,10 @@ export default function Gauge(props: { data: { key: string, data: number}[], col
                 minValue={0}
                 maxValue={maxValue}
                 data={data}
+                style={{opacity:1}}
                 series={
                     <RadialGaugeSeries
-                        colorScheme={colours} 
+                        colorScheme={colours}
                         arcWidth={11}
                         outerArc={ <RadialGaugeArc disabled={true} animated={false} /> }
                         innerArc={<RadialGaugeArc cornerRadius={5} />}

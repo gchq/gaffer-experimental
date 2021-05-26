@@ -55,8 +55,8 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
 
     public render() {
         return (
-            <main id="old-password-login-form">
-                <Container component="main" maxWidth="xs">
+            <main aria-label="old-password-login-form" id="old-password-login-form">
+                <Container maxWidth="xs">
                     {this.state.outcome && (
                         <NotificationAlert alertType={this.state.outcome} message={this.state.outcomeMessage} />
                     )}

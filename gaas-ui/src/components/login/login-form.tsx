@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, CssBaseline, Grid, TextField, Link } from "@material-ui/core";
+import { Button, CssBaseline, Grid, TextField, Link, InputLabel } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
@@ -53,8 +53,8 @@ export default class LoginForm extends React.Component<IProps, IState> {
 
     public render() {
         return (
-            <main id="login-form">
-                <Container component="main" maxWidth="xs">
+            <main aria-label="login-form" id="login-form">
+                <Container maxWidth="xs">
                     {this.state.outcome && (
                         <NotificationAlert alertType={this.state.outcome} message={this.state.outcomeMessage} />
                     )}
@@ -77,6 +77,7 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                 }}
                                 noValidate
                             >
+                                <InputLabel aria-label="username-input-label" required>Username</InputLabel>
                                 <TextField
                                     id="username"
                                     variant="outlined"
@@ -84,7 +85,6 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                     margin="normal"
                                     required
                                     fullWidth
-                                    label="Username"
                                     name="username"
                                     autoComplete="username"
                                     autoFocus
@@ -101,6 +101,7 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                         }
                                     }}
                                 />
+                                <InputLabel aria-label="password-input-label" required>Password</InputLabel>
                                 <TextField
                                     variant="outlined"
                                     value={this.state.password}
@@ -108,7 +109,6 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                     required
                                     fullWidth
                                     name="password"
-                                    label="Password"
                                     type="password"
                                     id="password"
                                     autoComplete="current-password"
@@ -128,6 +128,7 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                 <Button
                                     fullWidth
                                     id="submit-sign-in-button"
+                                    aria-label="submit-sign-in-button"
                                     variant="contained"
                                     color="primary"
                                     style={{ marginTop: "20px" }}

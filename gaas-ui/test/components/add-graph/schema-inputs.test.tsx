@@ -27,23 +27,22 @@ describe("Hide Elements/Types Schema Inputs", () => {
   hide = true;
 
   it("should hide both text areas when hide prop is true", () => {
-    expect(component.find("textarea#schema-elements").length).toBe(0);
-    expect(component.find("textarea#schema-types").length).toBe(0);
+    expect(component.find("textarea#schema-elements-input").length).toBe(0);
+    expect(component.find("textarea#schema-types-input").length).toBe(0);
   });
 });
 
 describe("Elements Schema", () => {
   it("should callback elements json when inputted", () => {
-    inputElementsJson({ enities: "ds" });
-
+    inputElementsJson({ edges: {test: "test1"}, entities: {} });
     expect(elementsMockCallBack).toHaveBeenLastCalledWith(
-      JSON.stringify({ enities: "ds" })
+      JSON.stringify({ edges: {test: "test1"}, entities: {} })
     );
   });
   it("should pass inputted value in to TextField to be displayed", () => {
     const expected = JSON.stringify({ edges: {}, entities: {} });
 
-    expect(component.find("textarea#schema-elements").props().value).toBe(
+    expect(component.find("textarea#schema-elements-input").props().value).toBe(
       expected
     );
   });
@@ -60,7 +59,7 @@ describe("Types Schema", () => {
   it("should pass inputted value in to TextField to be displayed", () => {
     const expected = JSON.stringify({ types: {} });
 
-    expect(component.find("textarea#schema-types").props().value).toBe(
+    expect(component.find("textarea#schema-types-input").props().value).toBe(
       expected
     );
   });
@@ -77,11 +76,6 @@ describe("Elements Schema Error Handling", ()=>{
         onChangeTypesSchema={elementsMockCallBack}
       />
     );
-
-    expect(component.find("label#schema-elements-label").props().className).not.toContain("Mui-error");
-    expect(component.find("p#schema-elements-helper-text").length).toBe(0);
-
-    expect(component.find("label#schema-types-label").props().className).not.toContain("Mui-error");
     expect(component.find("p#schema-types-helper-text").length).toBe(0);
   });
   it("should display errors when invalid JSON",()=>{
@@ -95,24 +89,18 @@ describe("Elements Schema Error Handling", ()=>{
       />
     );
 
-    expect(component.find("label#schema-elements-label").props().className).toContain("Mui-error");
-    expect(component.find("p#schema-elements-helper-text").props().className).toContain("Mui-error");
-    expect(component.find("p#schema-elements-helper-text").text()).toBe("Elements Schema is not valid JSON");
-
-    expect(component.find("label#schema-types-label").props().className).toContain("Mui-error");
-    expect(component.find("p#schema-types-helper-text").props().className).toContain("Mui-error");
     expect(component.find("p#schema-types-helper-text").text()).toBe("Types Schema does not contain property types, [\"invalid\"] are invalid Types schema root properties");
   });
 })
 
 function inputElementsJson(elementsObject: object): void {
-  component.find("textarea#schema-elements").simulate("change", {
+  component.find("textarea#schema-elements-input").simulate("change", {
     target: { value: JSON.stringify(elementsObject) },
   });
 }
 
 function inputTypesJson(typesObject: object): void {
-  component.find("textarea#schema-types").simulate("change", {
+  component.find("textarea#schema-types-input").simulate("change", {
     target: { value: JSON.stringify(typesObject) },
   });
 }
