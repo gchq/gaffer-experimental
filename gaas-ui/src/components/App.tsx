@@ -1,3 +1,4 @@
+import { Box } from "@material-ui/core";
 import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import NavigationAppbar from "./navigation-bar/navigation-appbar";
@@ -5,17 +6,26 @@ import Routes from "./navigation-bar/Routes";
 
 function App() {
     return (
-        <div style={{ display: "flex" }}>
-            <NavigationAppbar />
-            <Switch>
-                <Redirect exact from="/" to="/AddGraph" />
-                {Routes.map((route: any) => (
-                    <Route exact path={route.path} key={route.path}>
-                        <route.component />
-                    </Route>
-                ))}
-            </Switch>
-        </div>
+            <Box display="flex"
+                 justifyContent="center"
+                 flexDirection="row"
+                 alignItems="center">
+                <Box display="flex" alignSelf="left">
+                    <NavigationAppbar />
+                </Box>
+                <Box display="flex" alignSelf="right" alignItems="right" justifyContent="right">
+                    <Switch>
+                        <Redirect exact from="/" to="/AddGraph" />
+                        {Routes.map((route: any) => (
+                            <Route exact path={route.path} key={route.path}>
+                                <route.component />
+                            </Route>
+                        ))}
+                    </Switch>
+                </Box>
+
+            </Box>
+
     );
 }
 
