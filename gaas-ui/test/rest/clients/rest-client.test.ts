@@ -17,6 +17,8 @@ describe("RestClient 2** Responses", () => {
             .reply(202)
             .onGet("/graph/status")
             .reply(200, {status: "UP"})
+            .onGet("/graph/config/description")
+            .reply(200, "test")
     );
     afterAll(() => mock.resetHandlers());
 
@@ -59,13 +61,20 @@ describe("RestClient 2** Responses", () => {
         });
     });
     it("should return the status when GET status is successful", async () => {
-        const actual = await new RestClient().get().status().execute("https://www.testURL.com/");
+        const actual = await new RestClient().get().status().execute();
 
         expect(actual).toEqual({
             status: 200,
              data:{
                 status: "UP"
             },
+        });
+    });it("should return the status when GET description is successful", async () => {
+        const actual = await new RestClient().get().description().execute();
+
+        expect(actual).toEqual({
+            status: 200,
+             data: "test",
         });
     });
 });
@@ -89,6 +98,8 @@ describe("RestClient 4**/5** Error Responses", () => {
             .reply(504, { title: "Server Error", detail: "Timeout" })
             .onGet("/graph/status")
             .reply(404, { title: "Not Found", detail: "Could not find resource" })
+            .onGet("/graph/config/description")
+            .reply(404, { title: "Not Found", detail: "Could not find resource" })
     );
     afterAll(() => mock.resetHandlers());
 
@@ -102,7 +113,14 @@ describe("RestClient 4**/5** Error Responses", () => {
     });
     it("should throw 404 Error Message when api returns 404 - get graph status", async () => {
         try {
-            await new RestClient().get().status().execute("https://www.testURL.com/");
+            await new RestClient().get().status().execute();
+            throw new Error("Error did not throw");
+        } catch (e) {
+            expect(e.toString()).toBe("Not Found: Could not find resource");
+        }
+    });it("should throw 404 Error Message when api returns 404 - get graph description", async () => {
+        try {
+            await new RestClient().get().description().execute();
             throw new Error("Error did not throw");
         } catch (e) {
             expect(e.toString()).toBe("Not Found: Could not find resource");
