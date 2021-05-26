@@ -23,7 +23,7 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
     return (
       <>
         <Grid item xs={12} id={"id-description-fields"} aria-label="id-description-fields">
-            <InputLabel aria-label="graph-id-input-label" required>Graph Id</InputLabel>
+            <InputLabel aria-label="graph-id-input-label" id="graph-id-input-label" required>Graph Id</InputLabel>
           <TextField
             id="graph-id"
             inputProps={{
@@ -36,6 +36,7 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
             value={graphIdValue}
             required
             fullWidth
+            autoFocus
             name="graph-id"
             onChange={(event) => onChangeGraphId(event.target.value)}
           />
@@ -49,7 +50,7 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
           alignItems="center"
         ></Grid>
         <Grid item xs={12}>
-            <InputLabel aria-label="graph-description-input-label" required>Graph Description</InputLabel>
+            <InputLabel aria-label="graph-description-input-label" id="graph-description-input-label" required>Graph Description</InputLabel>
             <TextField
             id="graph-description"
             aria-label="graph-description-input"
@@ -61,6 +62,7 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
             value={descriptionValue}
             required
             multiline
+            autoFocus
             rows={5}
             fullWidth
             name="graph-description"

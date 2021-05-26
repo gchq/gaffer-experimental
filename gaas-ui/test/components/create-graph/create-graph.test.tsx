@@ -1,8 +1,6 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import AddGraph from "../../../src/components/create-graph/create-graph";
-import { Graph } from "../../../src/domain/graph";
-import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";
 import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
 import { GetGraphDetailsRepo } from "../../../src/rest/repositories/get-graph-details-repo";

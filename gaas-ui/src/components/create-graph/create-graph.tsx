@@ -208,7 +208,7 @@ export default class AddGraph extends React.Component<{}, IState> {
     };
 
     return (
-      <main aria-label="Add-Graph-Page">
+      <main aria-label="create-graph-Page" id={"create-graph-page"}>
         {this.state.outcome && (
           <NotificationAlert
             alertType={this.state.outcome}
@@ -230,10 +230,12 @@ export default class AddGraph extends React.Component<{}, IState> {
                 alignItems="center"
                 style={{ margin: 10 }}
               >
-                <Typography variant="h4" align={"center"}>
-                  Create Graph
-                </Typography>
-                <Box my={4} />
+                <Box my={4}>
+                  <Typography variant="h4" align={"center"} id={"create-graph-title"} aria-label={"create-graph-title"}>
+                    Create Graph
+                  </Typography>
+                </Box>
+
               </Grid>
               <form className={this.classes.form} noValidate>
                 <Grid container spacing={2}>

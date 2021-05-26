@@ -82,8 +82,15 @@ export default class ViewGraph extends React.Component<{}, IState> {
                 {errorMessage && <NotificationAlert alertType={AlertType.FAILED} message={errorMessage} />}
                 <Toolbar />
                     <Container maxWidth="md">
-                        <Grid container spacing={3}>
-                            <Grid item xs={6}>
+                        <Box my={2}>
+                            <Typography variant="h4" align={"center"} id={"view-graphs-title"} aria-label={"view-graphs-title"}>
+                                View Graphs
+                            </Typography>
+                        </Box>
+                        <Grid container spacing={3} >
+
+                            <Grid item xs={6} justify="center"
+                                  alignItems="center">
                                 <Paper>
                                     <CardContent>
                                         <Typography gutterBottom variant="h6" component="h2">
