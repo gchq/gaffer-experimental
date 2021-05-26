@@ -1,6 +1,6 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
-import ProxyGraphsTable from "../../../src/components/add-graph/proxy-graphs-table";
+import ProxyGraphsTable from "../../../src/components/create-graph/proxy-graphs-table";
 import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";

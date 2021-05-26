@@ -33,7 +33,8 @@ export function MainGraphTableRow(props: IProps) {
       <React.Fragment >
         <TableRow className={classes.root} hover aria-label={"view-graphs-table"}>
             <TableCell aria-label={"expand-row-icon"}>
-                <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+                <IconButton id={"expand-row-button-" + index}
+                            aria-label={row.getId()+"-expand-button"} size="small" onClick={() => setOpen(!open)}>
                 {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon />}
                 </IconButton>
             </TableCell>
@@ -45,6 +46,7 @@ export function MainGraphTableRow(props: IProps) {
                 <Tooltip TransitionComponent={Zoom} title={`Delete ${row.getId()}`}>
                     <IconButton
                         id={"view-graphs-delete-button-" + index}
+                        aria-label={row.getId()+"-delete-button"}
                         onClick={async () => onClickDelete(row.getId())}
                     >
                         <DeleteOutlineOutlinedIcon />

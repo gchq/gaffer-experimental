@@ -17,6 +17,7 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                     variant="outlined"
                     id={"storetype-formcontrol"}
                     aria-label="store-type-input"
+                    fullWidth
                 >
                     <InputLabel aria-label="store-type-input-label" style={{fontSize: "20px"}} htmlFor={"storetype-select"} id={"storetype-select-label"}>Store Type</InputLabel>
                     <Box my={1}/>
@@ -29,6 +30,7 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                         labelId="storetype-select-label"
                         id="storetype-select"
                         aria-label="store-type-select"
+                        fullWidth
                         value={value}
                         onChange={(event) => onChange(event.target.value as StoreType)
                         }

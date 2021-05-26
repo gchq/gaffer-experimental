@@ -208,7 +208,7 @@ export default class AddGraph extends React.Component<{}, IState> {
     };
 
     return (
-      <main aria-label="Add-Graph-Page">
+      <main aria-label="create-graph-Page" id={"create-graph-page"}>
         {this.state.outcome && (
           <NotificationAlert
             alertType={this.state.outcome}
@@ -218,7 +218,7 @@ export default class AddGraph extends React.Component<{}, IState> {
         <Toolbar />
 
         <Grid container justify="center">
-          <Container maxWidth="xs">
+          <Container maxWidth="md">
             <CssBaseline />
             <div className={this.classes.paper}>
               <Grid
@@ -230,10 +230,12 @@ export default class AddGraph extends React.Component<{}, IState> {
                 alignItems="center"
                 style={{ margin: 10 }}
               >
-                <Typography variant="h4" align={"center"}>
-                  Create Graph
-                </Typography>
-                <Box my={4} />
+                <Box my={4}>
+                  <Typography variant="h4" align={"center"} id={"create-graph-title"} aria-label={"create-graph-title"}>
+                    Create Graph
+                  </Typography>
+                </Box>
+
               </Grid>
               <form className={this.classes.form} noValidate>
                 <Grid container spacing={2}>
@@ -438,7 +440,7 @@ export default class AddGraph extends React.Component<{}, IState> {
             alignItems="center"
           >
             <Button
-              id="add-new-graph-button"
+              id="create-new-graph-button"
               onClick={() => {
                 this.submitNewGraph();
               }}
@@ -449,7 +451,7 @@ export default class AddGraph extends React.Component<{}, IState> {
               className={this.classes.submit}
               disabled={this.disableSubmitButton()}
             >
-              Add Graph
+              Create Graph
             </Button>
           </Grid>
         </Grid>
