@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, withRouter } from "react-router-dom";
-import Routes from "./Routes";
+import Routes from "./routes";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import {
     AppBar,
@@ -100,7 +100,7 @@ const NavigationAppbar: React.FC = (props: any) => {
 
     const getSideNavIcon = (sidebarName: string) => {
         switch (sidebarName) {
-            case "Add Graph":
+            case "Create Graph":
                 return <AddCircleOutlineIcon />;
             case "View Graphs":
                 return <VisibilityIcon />;

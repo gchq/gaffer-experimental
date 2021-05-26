@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 import {
   Checkbox,
+  InputLabel,
   Table,
   TableBody,
   TableCell,
@@ -24,6 +25,7 @@ export default function ProxyGraphsTable(props: IProps): ReactElement {
     <>
       {!hide && (
         <TableContainer id={"proxy-graphs-table"}>
+          <InputLabel aria-label="proxy-graphs-table-label">Proxy Graphs Table</InputLabel>
           <Table size="medium" aria-label="Proxy Graphs Table">
             <TableHead>
               <TableRow style={{ background: "#F4F2F2" }}>

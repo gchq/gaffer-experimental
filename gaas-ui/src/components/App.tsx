@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
-import Routes from "./navigation-bar/Routes";
-import NavigationAppbar from "./navigation-bar/NavigationAppbar";
+import Routes from "./navigation-bar/routes";
+import NavigationAppbar from "./navigation-bar/navigation-appbar";
 
 function App() {
     return (

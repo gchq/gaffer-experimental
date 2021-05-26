@@ -1,6 +1,6 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
-import AddProxyGraphInput from "../../../src/components/add-graph/add-proxy-graph-input";
+import AddProxyGraphInput from "../../../src/components/create-graph/add-proxy-graph-input";
 
 let component: ReactWrapper;
 const onChangeProxyURLMockCallback = jest.fn();

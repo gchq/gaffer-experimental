@@ -27,7 +27,7 @@ export default class UserGuide extends React.Component<{}, {}> {
                     <Card className={this.classes.card} style={{ maxWidth: 800 }}>
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="h2">
-                                Add Graphs
+                                Create Graphs
                             </Typography>
                             <Box my={1} />
                             <Typography variant="body1" style={{color:"#0000000"}} component="p">
@@ -55,7 +55,7 @@ export default class UserGuide extends React.Component<{}, {}> {
                             </Typography>
                             <Box my={1} />
                             <Typography variant="body1" style={{color:"#0000000"}} component="p">
-                                Click Add Graph to add your graph. If your elements or types are invalid, it will give
+                                Click Create Graph to add your graph. If your elements or types are invalid, it will give
                                 you an error.
                             </Typography>
                             <Box my={1} />

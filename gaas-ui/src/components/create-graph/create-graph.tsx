@@ -218,7 +218,7 @@ export default class AddGraph extends React.Component<{}, IState> {
         <Toolbar />
 
         <Grid container justify="center">
-          <Container maxWidth="xs">
+          <Container maxWidth="md">
             <CssBaseline />
             <div className={this.classes.paper}>
               <Grid
@@ -438,7 +438,7 @@ export default class AddGraph extends React.Component<{}, IState> {
             alignItems="center"
           >
             <Button
-              id="add-new-graph-button"
+              id="create-new-graph-button"
               onClick={() => {
                 this.submitNewGraph();
               }}
@@ -449,7 +449,7 @@ export default class AddGraph extends React.Component<{}, IState> {
               className={this.classes.submit}
               disabled={this.disableSubmitButton()}
             >
-              Add Graph
+              Create Graph
             </Button>
           </Grid>
         </Grid>

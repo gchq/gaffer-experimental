@@ -36,7 +36,7 @@ export default function SchemaInput(props: IProps): ReactElement {
                 id: "schema-elements-input",
                 "aria-label": "schema-elements-input"
               }}
-              style={{ width: 400 }}
+              fullWidth
               value={elementsValue}
               required
               multiline
@@ -57,7 +57,7 @@ export default function SchemaInput(props: IProps): ReactElement {
                 id: "schema-types-input",
                 "aria-label": "schema-types-input"
               }}
-              style={{ width: 400 }}
+              fullWidth
               value={typesSchemaValue}
               name="schema-types"
               required
