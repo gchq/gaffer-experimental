@@ -154,6 +154,7 @@ app.delete("/graphs/:graphId", (req, res) => {
         res.status(403).end();
     }
 });
+
 app.get("/namespaces", (req, res) => {
     try {
         jwt.verify(req.get("Authorization"), jwtSecret, () => {
@@ -163,4 +164,20 @@ app.get("/namespaces", (req, res) => {
         res.status(403).end();
     }
 });
+
+app.get("/up/graph/status", (req, res) => {
+    console.log(req.url)
+    res.status(200).send({ status: "UP" });
+});
+
+app.get("/up/graph/config/description", (req, res) => {
+    console.log(req.url)
+    res.status(200).send("This stubbed graph can be found in middleware.js");
+});
+
+app.get("/down/graph/status", (req, res) => {
+    console.log(req.url)
+    res.status(200).send({ status: "DOWN" });
+});
+
 module.exports = server;
