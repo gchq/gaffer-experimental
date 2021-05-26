@@ -27,7 +27,7 @@ export default function SchemaInput(props: IProps): ReactElement {
     <>
       {!hide && (
         <>
-          <Grid item xs={12}>
+          <Grid item xs={12} id={"schema-elements-grid"}>
             <InputLabel aria-label="schema-elements-input-label" required>Schema Elements JSON</InputLabel>
             <TextField
               id="schema-elements"
@@ -48,7 +48,7 @@ export default function SchemaInput(props: IProps): ReactElement {
               helperText={elementsValue !== "" ? new ElementsSchema(elementsValue).validate().errorMessage() : ""}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} id={"schema-types"}>
             <InputLabel aria-label="schema-types-input-label" required>Schema Types JSON</InputLabel>
             <TextField
               id="schema-types"
