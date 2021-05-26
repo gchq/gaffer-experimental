@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Container,
   CssBaseline,
@@ -34,7 +35,7 @@ import GraphIdDescriptionInput from "./graph-id-description";
 import SchemaInput from "./schema-inputs";
 import StoreTypeSelect from "./storetype";
 import AddProxyGraphInput from "./add-proxy-graph-input";
-import GraphsTable from "./graphs-table";
+import ProxyGraphsTable from "./proxy-graphs-table";
 
 interface IState {
   graphId: string;
@@ -207,7 +208,7 @@ export default class AddGraph extends React.Component<{}, IState> {
     };
 
     return (
-      <main>
+      <main aria-label="create-graph-Page" id={"create-graph-page"}>
         {this.state.outcome && (
           <NotificationAlert
             alertType={this.state.outcome}
@@ -217,7 +218,7 @@ export default class AddGraph extends React.Component<{}, IState> {
         <Toolbar />
 
         <Grid container justify="center">
-          <Container component="main" maxWidth="xs">
+          <Container maxWidth="md">
             <CssBaseline />
             <div className={this.classes.paper}>
               <Grid
@@ -229,9 +230,12 @@ export default class AddGraph extends React.Component<{}, IState> {
                 alignItems="center"
                 style={{ margin: 10 }}
               >
-                <Typography variant="h4" align={"center"}>
-                  Create Graph
-                </Typography>
+                <Box my={4}>
+                  <Typography variant="h4" align={"center"} id={"create-graph-title"} aria-label={"create-graph-title"}>
+                    Create Graph
+                  </Typography>
+                </Box>
+
               </Grid>
               <form className={this.classes.form} noValidate>
                 <Grid container spacing={2}>
@@ -418,7 +422,7 @@ export default class AddGraph extends React.Component<{}, IState> {
                 }
                 }
               />
-              <GraphsTable
+              <ProxyGraphsTable
                 hide={federatedStoreIsNotSelected()}
                 graphs={this.state.graphs}
                 selectedGraphs={this.state.selectedGraphs}
@@ -436,7 +440,7 @@ export default class AddGraph extends React.Component<{}, IState> {
             alignItems="center"
           >
             <Button
-              id="add-new-graph-button"
+              id="create-new-graph-button"
               onClick={() => {
                 this.submitNewGraph();
               }}
@@ -447,7 +451,7 @@ export default class AddGraph extends React.Component<{}, IState> {
               className={this.classes.submit}
               disabled={this.disableSubmitButton()}
             >
-              Add Graph
+              Create Graph
             </Button>
           </Grid>
         </Grid>

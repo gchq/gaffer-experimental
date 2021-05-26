@@ -1,7 +1,7 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import { act } from "react-dom/test-utils";
-import AddProxyGraphInput from "../../../src/components/add-graph/add-proxy-graph-input";
+import AddProxyGraphInput from "../../../src/components/create-graph/add-proxy-graph-input";
 import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";

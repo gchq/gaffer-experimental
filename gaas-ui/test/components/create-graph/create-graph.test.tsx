@@ -1,8 +1,6 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
-import AddGraph from "../../../src/components/add-graph/AddGraph";
-import { Graph } from "../../../src/domain/graph";
-import { GraphType } from "../../../src/domain/graph-type";
+import AddGraph from "../../../src/components/create-graph/create-graph";
 import { StoreType } from "../../../src/domain/store-type";
 import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
 import { GetGraphDetailsRepo } from "../../../src/rest/repositories/get-graph-details-repo";
@@ -26,12 +24,12 @@ describe("AddGraph UI component", () => {
   describe("Layout On Render", () => {
     it("Should have a Graph Id, Description, Store Type dropdown inputs", () => {
       const textfield = wrapper.find("input");
-      expect(textfield.at(0).props().name).toBe("graph-id");
-      const descriptionTextArea = wrapper.find("textarea#graph-description");
-      expect(descriptionTextArea.props().name).toBe("graph-description");
+      expect(textfield.at(0).props().name).toBe("Graph ID");
+      const descriptionTextArea = wrapper.find("textarea#graph-description-input");
+      expect(descriptionTextArea.props().name).toBe("Graph Description");
       const select = wrapper.find("div#storetype-select-grid");
       expect(select.text()).toBe(
-        "Store TypeMap StoreStore TypeSet to Map Store by default"
+        "Store TypeMap Store​Set to Map Store by default"
       );
     });
     it("should have icon button", () => {
@@ -39,24 +37,24 @@ describe("AddGraph UI component", () => {
       expect(fileButton).toHaveLength(1);
     });
     it("should have an elements text area", () => {
-      const elementsTextfield = wrapper.find("textarea#schema-elements");
-      expect(elementsTextfield.props().name).toBe("schema-elements");
+      const elementsTextfield = wrapper.find("textarea#schema-elements-input");
+      expect(elementsTextfield.props().name).toBe("Schema Elements");
     });
     it("should have a types text area", () => {
-      const typesTextfield = wrapper.find("textarea#schema-types");
-      expect(typesTextfield.props().name).toBe("schema-types");
+      const typesTextfield = wrapper.find("textarea#schema-types-input");
+      expect(typesTextfield.props().name).toBe("Schema Types");
     });
     it("should have a Submit button", () => {
-      const submitButton = wrapper.find("button#add-new-graph-button").text();
-      expect(submitButton).toBe("Add Graph");
+      const submitButton = wrapper.find("button#create-new-graph-button").text();
+      expect(submitButton).toBe("Create Graph");
     });
   });
   describe("When Federated StoreType Is Selected", () => {
     it("Should have a URL Input, Add Button & Graph Table when federated store is selected", () => {
       selectStoreType(StoreType.FEDERATED_STORE);
 
-      const urlInput = wrapper.find("input#proxy-url");
-      expect(urlInput.props().name).toBe("proxy-url");
+      const urlInput = wrapper.find("input#proxy-url-input");
+      expect(urlInput.props().name).toBe("Proxy URL");
       const addButton = wrapper.find("button#add-new-proxy-button");
       expect(addButton.text()).toBe("Add Proxy Graph");
       const graphTable = wrapper.find("table");
@@ -153,7 +151,7 @@ describe("AddGraph UI component", () => {
       inputDescription("test");
       selectStoreType(StoreType.FEDERATED_STORE);
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -272,9 +270,9 @@ describe("AddGraph UI component", () => {
     });
   });
 
-  describe("Add Graph Button", () => {
+  describe("Create Graph Button", () => {
     it("should be disabled when Graph Name and Graph Description fields are empty", () => {
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -282,7 +280,7 @@ describe("AddGraph UI component", () => {
       inputDescription("test");
       inputElements(elements);
       inputTypes(types);
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -290,7 +288,7 @@ describe("AddGraph UI component", () => {
       inputGraphId("test");
       inputElements(elements);
       inputTypes(types);
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -300,7 +298,7 @@ describe("AddGraph UI component", () => {
       inputElements(elements);
       inputTypes(types);
       selectStoreType(StoreType.MAPSTORE);
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         false
       );
     });
@@ -310,7 +308,7 @@ describe("AddGraph UI component", () => {
       inputElements(elements);
       inputTypes(types);
       selectStoreType(StoreType.ACCUMULO);
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         false
       );
     });
@@ -320,7 +318,7 @@ describe("AddGraph UI component", () => {
       inputElements(elements);
       inputTypes(types);
       selectStoreType(StoreType.FEDERATED_STORE);
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -329,7 +327,7 @@ describe("AddGraph UI component", () => {
       inputDescription("test");
       inputElements(elements);
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -338,7 +336,7 @@ describe("AddGraph UI component", () => {
       inputDescription("test");
       inputTypes(types);
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -349,7 +347,7 @@ describe("AddGraph UI component", () => {
       inputElements({ invalid: "json" });
       inputTypes(types);
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -361,7 +359,7 @@ describe("AddGraph UI component", () => {
       inputTypes({ invalid: "json" });
       
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -372,7 +370,7 @@ describe("AddGraph UI component", () => {
       inputElements({ invalid: "json" });
       inputTypes(types);
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -384,7 +382,7 @@ describe("AddGraph UI component", () => {
       inputTypes({ invalid: "json" });
       
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -410,10 +408,10 @@ describe("AddGraph UI component", () => {
   });
 
   function clickSubmit(): void {
-    wrapper.find("button#add-new-graph-button").simulate("click");
+    wrapper.find("button#create-new-graph-button").simulate("click");
   }
   function inputGraphId(graphId: string): void {
-    wrapper.find("input#graph-id").simulate("change", {
+    wrapper.find("input#graph-id-input").simulate("change", {
       target: { value: graphId },
     });
   }
@@ -456,27 +454,27 @@ describe("AddGraph UI component", () => {
       });
   }
   function inputDescription(description: string): void {
-    wrapper.find("textarea#graph-description").simulate("change", {
+    wrapper.find("textarea#graph-description-input").simulate("change", {
       target: { value: description },
     });
-    expect(wrapper.find("textarea#graph-description").props().value).toBe(
+    expect(wrapper.find("textarea#graph-description-input").props().value).toBe(
       description
     );
   }
   function inputElements(elementsObject: object): void {
-    wrapper.find("textarea#schema-elements").simulate("change", {
+    wrapper.find("textarea#schema-elements-input").simulate("change", {
       target: { value: JSON.stringify(elementsObject) },
     });
-    expect(wrapper.find("textarea#schema-elements").props().value).toBe(
+    expect(wrapper.find("textarea#schema-elements-input").props().value).toBe(
       JSON.stringify(elementsObject)
     );
   }
 
   function inputTypes(typesObject: object): void {
-    wrapper.find("textarea#schema-types").simulate("change", {
+    wrapper.find("textarea#schema-types-input").simulate("change", {
       target: { value: JSON.stringify(typesObject) },
     });
-    expect(wrapper.find("textarea#schema-types").props().value).toBe(
+    expect(wrapper.find("textarea#schema-types-input").props().value).toBe(
       JSON.stringify(typesObject)
     );
   }

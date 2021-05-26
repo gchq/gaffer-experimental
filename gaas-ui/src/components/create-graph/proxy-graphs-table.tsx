@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 import {
   Checkbox,
+  InputLabel,
   Table,
   TableBody,
   TableCell,
@@ -17,14 +18,15 @@ interface IProps {
   onClickCheckbox(selectedGraphs: string[]): void;
 }
 
-export default function GraphsTable(props: IProps): ReactElement {
+export default function ProxyGraphsTable(props: IProps): ReactElement {
   const { hide, graphs, selectedGraphs, onClickCheckbox }: IProps = props;
 
   return (
     <>
       {!hide && (
-        <TableContainer id={"graphs-table"}>
-          <Table size="medium" aria-label="Graphs Table">
+        <TableContainer id={"proxy-graphs-table"}>
+          <InputLabel aria-label="proxy-graphs-table-label">Proxy Graphs Table</InputLabel>
+          <Table size="medium" aria-label="Proxy Graphs Table">
             <TableHead>
               <TableRow style={{ background: "#F4F2F2" }}>
                 <TableCell component="th">Graph ID</TableCell>
@@ -32,6 +34,11 @@ export default function GraphsTable(props: IProps): ReactElement {
                 <TableCell align="center">Type</TableCell>
                 <TableCell align="right">
                   <Checkbox
+                  inputProps={{
+                    name: "checkbox all",
+                    id: "all-checkbox",
+                    "aria-label": "all-checkbox"
+                }}
                     checked={
                       graphs.length > 0 &&
                       selectedGraphs.length === graphs.length
@@ -52,6 +59,11 @@ export default function GraphsTable(props: IProps): ReactElement {
                     id={`${graph.getId()}-checkbox-cell`}
                   >
                     <Checkbox
+                    inputProps={{
+                      name: "checkbox" + graph.getId(),
+                      id: "checkbox" + graph.getId(),
+                      "aria-label": "checkbox" + graph.getId()
+                  }}
                       id={`${graph.getId()}-checkbox`}
                       required
                       checked={selectedGraphs.includes(graph.getId())}

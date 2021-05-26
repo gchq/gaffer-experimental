@@ -1,6 +1,6 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
-import GraphsTable from "../../../src/components/add-graph/graphs-table";
+import ProxyGraphsTable from "../../../src/components/create-graph/proxy-graphs-table";
 import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";
@@ -16,7 +16,7 @@ const onClickCheckboxMockCallback = jest.fn();
 
 beforeEach(() => {
   component = mount(
-    <GraphsTable
+    <ProxyGraphsTable
       hide={false}
       graphs={graphs}
       selectedGraphs={selectedGraphs}
@@ -70,7 +70,7 @@ describe("GraphsTable UI Component", () => {
 
 describe("Hide graphs table if federated store is not selected", () => {
   const component = mount(
-    <GraphsTable
+    <ProxyGraphsTable
       hide={true}
       graphs={[]}
       selectedGraphs={[]}

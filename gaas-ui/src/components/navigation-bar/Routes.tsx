@@ -1,4 +1,4 @@
-import AddGraph from "../add-graph/AddGraph";
+import AddGraph from "../create-graph/create-graph";
 import ClusterNamespaces from "../cluster-namespaces/cluster-namespaces";
 import UserGuide from "../user-guide/user-guide";
 import ViewGraph from "../view-graphs/view-graphs";
@@ -6,7 +6,7 @@ import ViewGraph from "../view-graphs/view-graphs";
 const Routes = [
     {
         path: "/AddGraph",
-        sidebarName: "Add Graph",
+        sidebarName: "Create Graph",
         component: AddGraph,
     },
     {

@@ -1,5 +1,5 @@
 import React, {ReactElement} from "react";
-import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
+import { Box, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
 import { StoreType } from "../../domain/store-type";
 
 interface IProps {
@@ -17,11 +17,11 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                     variant="outlined"
                     id={"storetype-formcontrol"}
                     aria-label="store-type-input"
+                    fullWidth
                 >
-                    <InputLabel aria-label="store-type-input-label">Store Type</InputLabel>
-
+                    <InputLabel aria-label="store-type-input-label" style={{fontSize: "20px"}} htmlFor={"storetype-select"} id={"storetype-select-label"}>Store Type</InputLabel>
+                    <Box my={1}/>
                     <Select
-                        label="Store Type"
                         inputProps={{
                             name: "Store Type",
                             id: "outlined-age-native-simple",
@@ -30,16 +30,18 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                         labelId="storetype-select-label"
                         id="storetype-select"
                         aria-label="store-type-select"
+                        fullWidth
                         value={value}
                         onChange={(event) => onChange(event.target.value as StoreType)
                         }
                     >
                         <MenuItem value={StoreType.MAPSTORE} aria-label="mapstore-menu-item"
-                                  id="mapstore-menu-item">
+                                  id="mapstore-menu-item" aria-labelledby={"storetype-select-label"}
+                        >
                             Map Store
                         </MenuItem>
-                        <MenuItem value={StoreType.ACCUMULO} aria-label="accumulo-menu-item" id="accumulo-menu-item">Accumulo</MenuItem>
-                        <MenuItem value={StoreType.FEDERATED_STORE} aria-label="federated-menu-item" id="federated-menu-item">
+                        <MenuItem value={StoreType.ACCUMULO} aria-label="accumulo-menu-item" id="accumulo-menu-item" aria-labelledby={"storetype-select-label"}>Accumulo</MenuItem>
+                        <MenuItem value={StoreType.FEDERATED_STORE} aria-label="federated-menu-item" id="federated-menu-item" aria-labelledby={"storetype-select-label"}>
                             Federated Store
                         </MenuItem>
                     </Select>

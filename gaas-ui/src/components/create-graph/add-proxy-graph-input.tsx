@@ -1,5 +1,5 @@
 import React, {ReactElement, useState} from "react";
-import {Button, Grid, TextField} from "@material-ui/core";
+import {Button, Grid, InputLabel, TextField} from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import {Graph} from "../../domain/graph";
 import {GraphType} from "../../domain/graph-type";
@@ -51,24 +51,31 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         }
         return description;
     }
-    
+
     function isValidHttpUrl(string: string):boolean {
         let url;
         try {
             url = new URL(string);
         } catch (e) {
-            return false;  
+            return false;
         }
         return url.protocol === "http:" || url.protocol === "https:";
     }
-    
+
     return (
         <>
             {!hide && <div id={"graphs-table"}>
                 <Grid item xs={12} id={"proxy-url-grid"}>
+                    <InputLabel aria-label="proxy-url-input-label">Proxy URL</InputLabel>
+
                     <TextField
                         id="proxy-url"
-                        label="Proxy Graph Base URL"
+                        aria-label="proxy-url-textfield"
+                        inputProps={{
+                            name: "Proxy Graph Base URL",
+                            id: "proxy-url-input",
+                            "aria-label": "proxy-url-input"
+                        }}
                         variant="outlined"
                         value={proxyURLValue}
                         fullWidth
@@ -90,8 +97,10 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                     direction="row"
                     justify="center"
                     alignItems="center"
+                    aria-label="proxy-url-button-grid"
                 >
                     <Button
+                        aria-label="proxy-url-submit-button"
                         id="add-new-proxy-button"
                         onClick={async () => await onClickSubmit()}
                         startIcon={<AddCircleOutlineOutlinedIcon/>}
