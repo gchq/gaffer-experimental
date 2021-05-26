@@ -1,5 +1,6 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
+import { act } from "react-dom/test-utils";
 import AddProxyGraphInput from "../../../src/components/add-graph/add-proxy-graph-input";
 import { GetGraphDetailsRepo } from "../../../src/rest/repositories/get-graph-details-repo";
 import { GetGraphStatusRepo } from "../../../src/rest/repositories/get-graph-status-repo";
@@ -24,7 +25,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  component.unmount()
+  component.unmount();
   jest.resetAllMocks();
 });
 
@@ -35,16 +36,11 @@ describe("GraphsTable UI Component", () => {
   it("Should call the onChange function when the proxy url texfield receives an input", () => {
     inputProxyURL("http://input.test.url");
 
-    expect(onChangeProxyURLMockCallback).toHaveBeenCalledWith(
-      "http://input.test.url"
-    );
+    expect(onChangeProxyURLMockCallback).toHaveBeenCalledWith("http://input.test.url");
   });
   it("Should set the value of proxy url correctly", () => {
-    expect(
-      component.find("div#proxy-url-grid").find("input").props().value
-    ).toBe("http://url.value");
+    expect(component.find("div#proxy-url-grid").find("input").props().value).toBe("http://url.value");
   });
- 
 });
 
 describe("Error handling", () => {
@@ -56,7 +52,7 @@ describe("Error handling", () => {
       onClickAddProxyGraph={onClickAddProxyMockCallback}
     />
   );
-  it("Should not show error on render", () =>{
+  it("Should not show error on render", () => {
     expect(component.find("label#proxy-url-label").props().className).not.toContain("Mui-error");
     expect(component.find("p#proxy-url-helper-text").length).toBe(0);
   });
@@ -72,10 +68,12 @@ describe("Error handling", () => {
       />
     );
 
-    component.find("button#add-new-proxy-button").simulate("click");
-    
+    clickAddProxy(component);
+
     expect(component.find("label#proxy-url-label").props().className).toContain("Mui-error");
-    expect(component.find("p#proxy-url-helper-text").text()).toBe("A Graph does not exist at the base URL: http://invalid");
+    expect(component.find("p#proxy-url-helper-text").text()).toBe(
+      "A Graph does not exist at the base URL: http://invalid"
+    );
   });
 
   it("Should not turn input box red when User begins to enter correct URL before submitting", async () => {
@@ -87,39 +85,13 @@ describe("Error handling", () => {
         onClickAddProxyGraph={onClickAddProxyMockCallback}
       />
     );
-    
+
     expect(component.find("label#proxy-url-label").props().className).not.toContain("Mui-error");
     expect(component.find("p#proxy-url-helper-text").length).toBe(0);
   });
 
-  it("Should clear existing error helper text when valid Graph URL entered", ()=>{
-    const component = mount(
-      <AddProxyGraphInput
-        hide={false}
-        proxyURLValue={"http://some-url"}
-        onChangeProxyURL={onChangeProxyURLMockCallback}
-        onClickAddProxyGraph={onClickAddProxyMockCallback}
-      />);
-
-      mockGetGraphStatusRepoToThrowError();
-      component.find("button#add-new-proxy-button").simulate("click");
-
-      expect(component.find("label#proxy-url-label").props().className).toContain("Mui-error");
-      expect(component.find("p#proxy-url-helper-text").text()).toBe("A Graph does not exist at the base URL: http://some-url");
-
-      component
-        .find("div#proxy-url-grid")
-        .find("input")
-        .simulate("change", {
-          target: { value: "http://another-url" },
-        });
-
-      expect(component.find("label#proxy-url-label").props().className).not.toContain("Mui-error");
-      expect(component.find("p#proxy-url-helper-text").length).toBe(0);
-  });
-
-  it("Should add Graph Is Down error when GraphStatusRepo returns DOWN", () => {
-    mockGetGraphStatusRepoIsSuccessfulAndReturns("DOWN");
+  it("Should clear existing error helper text when valid Graph URL entered", () => {
+    mockGetGraphStatusRepoToThrowError();
     const component = mount(
       <AddProxyGraphInput
         hide={false}
@@ -129,10 +101,39 @@ describe("Error handling", () => {
       />
     );
 
-      component.find("button#add-new-proxy-button").simulate("click");
+    clickAddProxy(component);
 
-      expect(component.find("label#proxy-url-label").props().className).toContain("Mui-error");
-      expect(component.find("p#proxy-url-helper-text").text()).toBe("Graph at the base URL: http://some-url is down");
+    expect(component.find("label#proxy-url-label").props().className).toContain("Mui-error");
+    expect(component.find("p#proxy-url-helper-text").text()).toBe(
+      "A Graph does not exist at the base URL: http://some-url"
+    );
+
+    inputProxyBaseURL(component, "http://another-url");
+
+    expect(component.find("label#proxy-url-label").props().className).not.toContain("Mui-error");
+    expect(component.find("p#proxy-url-helper-text").length).toBe(0);
+  });
+
+  it("Should add Graph Is Down error when GraphStatusRepo returns DOWN", async () => {
+    mockGetGraphStatusRepoIsSuccessfulAndReturns("DOWN");
+    const component = mount(
+      <AddProxyGraphInput
+        hide={false}
+        proxyURLValue={"http://some-url"}
+        onChangeProxyURL={onChangeProxyURLMockCallback}
+        onClickAddProxyGraph={onClickAddProxyMockCallback}
+      />
+    );
+    waitForComponentToRender(component);
+
+    clickAddProxy(component);
+    await component.update();
+    await component.update();
+
+    expect(component.find("label#proxy-url-label").props().className).toContain("Mui-error");
+    expect(component.find("p#proxy-url-helper-text").text()).toBe(
+      "Graph at the base URL: http://some-url is down"
+    );
   });
 });
 
@@ -145,7 +146,7 @@ describe("Hide Component", () => {
       onClickAddProxyGraph={onClickAddProxyMockCallback}
     />
   );
-  
+
   it("Should not be visible when hide is true", () => {
     expect(component.find("div#graphs-table").length).toBe(0);
   });
@@ -161,9 +162,8 @@ describe("Disable Add Proxy Button", () => {
         onClickAddProxyGraph={onClickAddProxyMockCallback}
       />
     );
-    expect(component.find("button#add-new-proxy-button").props().disabled).toBe(
-      false
-    );
+
+    expect(component.find("button#add-new-proxy-button").props().disabled).toBe(false);
   });
   it("should disable when url input value is invalid URL", () => {
     const component = mount(
@@ -174,9 +174,8 @@ describe("Disable Add Proxy Button", () => {
         onClickAddProxyGraph={onClickAddProxyMockCallback}
       />
     );
-    expect(component.find("button#add-new-proxy-button").props().disabled).toBe(
-      true
-    );
+
+    expect(component.find("button#add-new-proxy-button").props().disabled).toBe(true);
   });
   it("should disable when url input value is empty", () => {
     const component = mount(
@@ -187,9 +186,8 @@ describe("Disable Add Proxy Button", () => {
         onClickAddProxyGraph={onClickAddProxyMockCallback}
       />
     );
-    expect(component.find("button#add-new-proxy-button").props().disabled).toBe(
-      true
-    );
+
+    expect(component.find("button#add-new-proxy-button").props().disabled).toBe(true);
   });
 });
 
@@ -202,23 +200,42 @@ function inputProxyURL(url: string) {
     });
 }
 
-function clickAddProxy() {
+function inputProxyBaseURL(component: ReactWrapper, url: string) {
+  component
+    .find("div#proxy-url-grid")
+    .find("input")
+    .simulate("change", {
+      target: { value: url },
+    });
+}
+
+function clickAddProxy(component: ReactWrapper) {
   component.find("button#add-new-proxy-button").simulate("click");
 }
 
 function mockGetGraphStatusRepoToThrowError() {
   // @ts-ignore
   GetGraphStatusRepo.mockImplementationOnce(() => ({
-      getStatus: () => { throw new RestApiError("Server Error", "Invalid proxy URL")},
+    getStatus: () => {
+      throw new RestApiError("Server Error", "Invalid proxy URL");
+    },
   }));
 }
 
 function mockGetGraphStatusRepoIsSuccessfulAndReturns(status: string) {
   // @ts-ignore
   GetGraphStatusRepo.mockImplementationOnce(() => ({
-      getStatus: () => 
-          new Promise((resolve, reject) => {
-            resolve(status);
-          }),
+    getStatus: () =>
+      new Promise((resolve, reject) => {
+        resolve(status);
+      }),
   }));
+}
+
+async function waitForComponentToRender(wrapper: ReactWrapper) {
+  // React forces test to use act(() => {}) when the component state is updated in some cases
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve));
+    wrapper.update();
+  });
 }

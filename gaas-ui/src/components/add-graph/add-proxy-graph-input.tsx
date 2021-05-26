@@ -12,7 +12,7 @@ interface IProps {
     hide: boolean;
     proxyURLValue: string;
     onChangeProxyURL(proxyURL: string): void;
-    onClickAddProxyGraph(newProxyGraph: Graph,alert:INotificationAlertProps  ): void;
+    onClickAddProxyGraph(newProxyGraph: Graph, alert: INotificationAlertProps): void;
 }
 
 export default function AddProxyGraphInput(props: IProps): ReactElement {
@@ -40,7 +40,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
             setErrorHelperText(`A Graph does not exist at the base URL: ${proxyURLValue}`);
         }
     }
-
+    
     function isValidHttpUrl(string: string):boolean {
         let url;
         try {
@@ -50,49 +50,48 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         }
         return url.protocol === "http:" || url.protocol === "https:";
     }
-
+    
     return (
         <>
-        {!hide &&
-        <div id={"graphs-table"}>
-            <Grid item xs={12} id={"proxy-url-grid"}>
-                <TextField
-                    id="proxy-url"
-                    label="Proxy Graph Base URL"
-                    variant="outlined"
-                    value={proxyURLValue}
-                    fullWidth
-                    name="proxy-url"
-                    error={errorHelperText.length > 0}
-                    autoComplete="proxy-url"
-                    onChange={(event) => {
-                        setErrorHelperText("");
-                        onChangeProxyURL(event.target.value);
-                    }}
-                    helperText={errorHelperText}
-                />
-            </Grid>
-            <Grid
-                id="proxy-button-grid"
-                container
-                style={{margin: 10}}
-                direction="row"
-                justify="center"
-                alignItems="center"
-            >
-                <Button
-                    id="add-new-proxy-button"
-                    onClick={async () => await onClickSubmit()}
-                    startIcon={<AddCircleOutlineOutlinedIcon/>}
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    disabled={proxyURLValue === "" || !isValidHttpUrl(proxyURLValue)}
+            {!hide && <div id={"graphs-table"}>
+                <Grid item xs={12} id={"proxy-url-grid"}>
+                    <TextField
+                        id="proxy-url"
+                        label="Proxy Graph Base URL"
+                        variant="outlined"
+                        value={proxyURLValue}
+                        fullWidth
+                        name="proxy-url"
+                        error={errorHelperText.length > 0}
+                        autoComplete="proxy-url"
+                        onChange={(event) => {
+                            setErrorHelperText("");
+                            onChangeProxyURL(event.target.value);
+                        }}
+                        helperText={errorHelperText}
+                    />
+                </Grid>
+                <Grid
+                    id="proxy-button-grid"
+                    container
+                    style={{margin: 10}}
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
                 >
-                    Add Proxy Graph
-                </Button>
-            </Grid>
-        </div>}
+                    <Button
+                        id="add-new-proxy-button"
+                        onClick={async () => await onClickSubmit()}
+                        startIcon={<AddCircleOutlineOutlinedIcon/>}
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={proxyURLValue === "" || !isValidHttpUrl(proxyURLValue)}
+                    >
+                        Add Proxy Graph
+                    </Button>
+                </Grid>
+            </div>}
         </>
     );
 }
