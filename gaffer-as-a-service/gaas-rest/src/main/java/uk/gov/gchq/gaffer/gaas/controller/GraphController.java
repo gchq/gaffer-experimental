@@ -37,6 +37,7 @@ import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+import uk.gov.gchq.gaffer.gaas.services.GetStoreTypesService;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,12 @@ public class GraphController {
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
         final Map<String, List<GaaSGraph>> list = gafferService.getAllGraphs();
+        return new ResponseEntity(list, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/storetypes", produces = "application/json")
+    public ResponseEntity<List<String>> getEndpoints() throws GaaSRestApiException {
+        final List<String> list = GetStoreTypesService.getStoreTypes();
         return new ResponseEntity(list, HttpStatus.OK);
     }
 
