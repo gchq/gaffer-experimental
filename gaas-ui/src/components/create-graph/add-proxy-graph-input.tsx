@@ -1,12 +1,11 @@
 import React, {ReactElement, useState} from "react";
-import {Button, Grid, InputLabel, TextField} from "@material-ui/core";
+import {Button, Grid, TextField} from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import {Graph} from "../../domain/graph";
 import {GraphType} from "../../domain/graph-type";
 import {StoreType} from "../../domain/store-type";
 import {GetGraphStatusRepo} from "../../rest/repositories/get-graph-status-repo";
 import {GetGraphDetailsRepo} from "../../rest/repositories/get-graph-details-repo";
-import FormHelperText from "@material-ui/core/FormHelperText";
 
 interface IProps {
     hide: boolean;
@@ -66,10 +65,9 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         <>
             {!hide && <div id={"graphs-table"}>
                 <Grid item xs={12} id={"proxy-url-grid"}>
-                    <InputLabel aria-label="proxy-url-input-label">Proxy URL</InputLabel>
-
                     <TextField
                         id="proxy-url"
+                        label="Proxy Graph Base URL"
                         aria-label="proxy-url-textfield"
                         inputProps={{
                             name: "Proxy Graph Base URL",
