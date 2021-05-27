@@ -84,6 +84,8 @@ public class UnitTestConfig {
     public GetNamespacesService getNamespacesService() {
         return new GetNamespacesService();
     }
+    @Bean
+    public GetStoreTypesService getStoreTypesService(){return new GetStoreTypesService();}
 
     @Bean
     public JwtTokenUtil jwtTokenUtil() {
@@ -105,6 +107,4 @@ public class UnitTestConfig {
         return mock(AuthenticationManager.class);
     }
 
-    @Bean
-    public GetStoreTypesService getStoreTypesService(){return new GetStoreTypesService();}
 }
