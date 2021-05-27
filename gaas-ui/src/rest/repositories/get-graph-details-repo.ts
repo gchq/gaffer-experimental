@@ -1,9 +1,9 @@
 import { IApiResponse, RestClient } from "../clients/rest-client";
 
 export class GetGraphDetailsRepo {
-    public async getDescription(proxiedGraphUrl: string): Promise<string> {
+    public async getDescription(proxiedGraphBaseUrl: string): Promise<string> {
         const response : IApiResponse<string> = await new RestClient()
-            .baseUrl(proxiedGraphUrl)
+            .baseUrl(proxiedGraphBaseUrl)
             .get()
             .description()
             .execute();

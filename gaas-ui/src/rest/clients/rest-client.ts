@@ -29,7 +29,7 @@ export class RestClient<T> {
     }
     
     public baseUrl(baseURL: string): RestClient<T> {
-        this.url = baseURL;
+        this.baseURL = baseURL;
         return this;
     }
     
@@ -56,12 +56,12 @@ export class RestClient<T> {
     }
 
     public status(): RestClient<T>{
-        this.url = "graph/status";
+        this.url = "/graph/status";
         return this;
     }
 
     public description(): RestClient<T>{
-        this.url = "graph/config/description";
+        this.url = "/graph/config/description";
         return this;
     }
 
