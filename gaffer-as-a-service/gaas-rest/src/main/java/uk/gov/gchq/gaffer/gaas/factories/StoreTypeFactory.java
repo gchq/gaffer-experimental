@@ -45,8 +45,8 @@ public class StoreTypeFactory {
         throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + storeTypesString);
     }
 
-    public List<String> getStoreTypesAsStringList() {
-        List<String> list = new ArrayList<String>();
+    public ArrayList<String> getStoreTypesAsStringList() {
+        ArrayList<String> list = new ArrayList<>();
         for (final StoreType storeType : storeTypes) {
             list.add(storeType.getType());
         }

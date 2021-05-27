@@ -35,75 +35,96 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @UnitTest
 class StoreTypeFactoryTest {
 
-  @Test
-  void testGetProxyStoreBuilder() {
-    List<StoreType> storeTypeManager = new ArrayList<>();
+    @Test
+    void testGetProxyStoreBuilder() {
+        List<StoreType> storeTypeManager = new ArrayList<>();
 
-    setStoreList(storeTypeManager);
+        setStoreList(storeTypeManager);
 
-    GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "proxyStore", getStoreProperties());
+        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "proxyStore", getStoreProperties());
 
 
-    StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-    AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder("proxystore");
-    final String expected =
-            "{graph={storeProperties={gaffer.host=http://my.graph.co.uk, gaffer.store.class=uk.gov.gchq.gaffer.proxystore.ProxyStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+        AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder("proxystore");
+        final String expected =
+                "{graph={storeProperties={gaffer.host=http://my.graph.co.uk, gaffer.store.class=uk.gov.gchq.gaffer.proxystore.ProxyStore}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
 
-    GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setProperties(getStoreProperties()).build();
-    assertEquals(expected, build.toString());
-  }
+        GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setProperties(getStoreProperties()).build();
+        assertEquals(expected, build.toString());
+    }
 
-  private void setStoreList(final List<StoreType> storeTypeManager) {
-    MapStoreType mapStore = new MapStoreType();
-    ProxyStoreType proxyStoreType = new ProxyStoreType();
-    AccumuloStoreType accumuloStoreType = new AccumuloStoreType();
-    FederatedStoreType federatedStoreType = new FederatedStoreType();
-    storeTypeManager.add(federatedStoreType);
-    storeTypeManager.add(accumuloStoreType);
-    storeTypeManager.add(proxyStoreType);
-    storeTypeManager.add(mapStore);
-  }
+    private void setStoreList(final List<StoreType> storeTypeManager) {
+        MapStoreType mapStore = new MapStoreType();
+        ProxyStoreType proxyStoreType = new ProxyStoreType();
+        AccumuloStoreType accumuloStoreType = new AccumuloStoreType();
+        FederatedStoreType federatedStoreType = new FederatedStoreType();
+        storeTypeManager.add(federatedStoreType);
+        storeTypeManager.add(accumuloStoreType);
+        storeTypeManager.add(proxyStoreType);
+        storeTypeManager.add(mapStore);
+    }
 
-  private LinkedHashMap<String, Object> getStoreProperties() {
-    final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
-    elementsSchema.put("proxyHost", "http://my.graph.co.uk");
-    return elementsSchema;
-  }
+    private LinkedHashMap<String, Object> getStoreProperties() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("proxyHost", "http://my.graph.co.uk");
+        return elementsSchema;
+    }
 
-  @Test
-  void testGetMapStoreBuilder() {
-    List<StoreType> storeTypeManager = new ArrayList<>();
+    @Test
+    void testGetMapStoreBuilder() {
+        List<StoreType> storeTypeManager = new ArrayList<>();
 
-    setStoreList(storeTypeManager);
+        setStoreList(storeTypeManager);
 
-    GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "mapStore", getSchema());
+        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("mygraph", "Another description", "mapStore", getSchema());
 
-    StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-    AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder("mapstore");
-    final String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+        AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder("mapstore");
+        final String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
 
-    GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
-    assertEquals(expected, build.toString());
-  }
+        GafferSpec build = builder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
+        assertEquals(expected, build.toString());
+    }
 
-  @Test
-  void testGetInvalidStoreBuilder() {
-    List<StoreType> storeTypeManager = new ArrayList<>();
+    @Test
+    void testGetInvalidStoreBuilder() {
+        List<StoreType> storeTypeManager = new ArrayList<>();
 
-    setStoreList(storeTypeManager);
-  StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-    final RuntimeException exception = assertThrows(RuntimeException.class, () -> storeTypeFactory.getBuilder("invalidStore"));
+        setStoreList(storeTypeManager);
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+        final RuntimeException exception = assertThrows(RuntimeException.class, () -> storeTypeFactory.getBuilder("invalidStore"));
 
-    final String expected = "java.lang.RuntimeException: StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore, mapStore";
+        final String expected = "java.lang.RuntimeException: StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore, mapStore";
 
-    assertEquals(expected, exception.toString());
-  }
+        assertEquals(expected, exception.toString());
+    }
 
-  private LinkedHashMap<String, Object> getSchema() {
-    final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
-    elementsSchema.put("entities", new Object());
-    elementsSchema.put("edges", new Object());
-    elementsSchema.put("types", new Object());
-    return elementsSchema;
-  }
+    @Test
+    void testGetStoreTypesAsStringList() {
+        List<StoreType> storeTypeManager = new ArrayList<>();
+
+        setStoreList(storeTypeManager);
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+
+        final ArrayList<String> list = storeTypeFactory.getStoreTypesAsStringList();
+        assertEquals("[federatedStore, accumuloStore, proxyStore, mapStore]", list.toString());
+    }
+
+    @Test
+    void testGetStoreTypesWhenListEmpty() {
+        List<StoreType> storeTypeManager = new ArrayList<>();
+
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+
+        final ArrayList<String> list = storeTypeFactory.getStoreTypesAsStringList();
+        assertEquals("[]", list.toString());
+    }
+
+    private LinkedHashMap<String, Object> getSchema() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("entities", new Object());
+        elementsSchema.put("edges", new Object());
+        elementsSchema.put("types", new Object());
+        return elementsSchema;
+    }
 }
