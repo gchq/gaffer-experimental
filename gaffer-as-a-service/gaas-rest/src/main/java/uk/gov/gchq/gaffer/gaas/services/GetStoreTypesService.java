@@ -29,7 +29,7 @@ public class GetStoreTypesService {
         AnnotationConfigApplicationContext context =
                 new AnnotationConfigApplicationContext(SpringContext.class);
         StoreTypeFactory storeTypeFactory = context.getBean(StoreTypeFactory.class);
-        storeTypesEndpointResponse.endpoints(storeTypeFactory.getStoreTypesAsStringList());
+        storeTypesEndpointResponse.setStoreTypes(storeTypeFactory.getStoreTypesAsStringList());
         return storeTypesEndpointResponse;
     }
 }

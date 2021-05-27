@@ -30,6 +30,6 @@ public class GetStoreTypesServiceTest {
     @Test
     void testGetStoreTypesServices_ReturnsCorrectResponse(){
         StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
-        assertEquals("[accumuloStore, federatedStore, mapStore, proxyStore]", getStoreTypesService.getStoreTypes().getEndpoints().toString());
+        assertEquals("[accumuloStore, federatedStore, mapStore, proxyStore]", getStoreTypesService.getStoreTypes().getStoreTypes().toString());
     }
 }

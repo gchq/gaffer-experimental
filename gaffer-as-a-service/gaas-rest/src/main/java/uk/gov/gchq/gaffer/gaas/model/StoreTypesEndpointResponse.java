@@ -20,14 +20,14 @@ import java.util.List;
 
 public class StoreTypesEndpointResponse {
 
-    private List<String> endpoints;
+    private List<String> storetypes;
 
-    public StoreTypesEndpointResponse endpoints(final List<String> endpoints) {
-        this.endpoints = endpoints;
+    public StoreTypesEndpointResponse setStoreTypes(final List<String> storetypes) {
+        this.storetypes = storetypes;
         return this;
     }
 
-    public List<String> getEndpoints() {
-        return endpoints;
+    public List<String> getStoreTypes() {
+        return storetypes;
     }
 }
