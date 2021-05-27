@@ -32,6 +32,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
@@ -79,9 +80,9 @@ public class GraphController {
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
-    public ResponseEntity<List<String>> getEndpoints() throws GaaSRestApiException {
-        final List<String> list = GetStoreTypesService.getStoreTypes();
-        return new ResponseEntity(list, HttpStatus.OK);
+    public ResponseEntity<StoreTypesEndpointResponse> getEndpoints() throws GaaSRestApiException {
+        final StoreTypesEndpointResponse response = GetStoreTypesService.getStoreTypes();
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")

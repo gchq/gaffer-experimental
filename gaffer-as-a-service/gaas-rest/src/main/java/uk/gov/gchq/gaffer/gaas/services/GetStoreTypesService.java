@@ -20,14 +20,16 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.SpringContext;
 import uk.gov.gchq.gaffer.gaas.factories.StoreTypeFactory;
-import java.util.List;
+import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
 
 @Service
 public class GetStoreTypesService {
-    public static List<String> getStoreTypes() {
+    public static StoreTypesEndpointResponse getStoreTypes() {
+        StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
         AnnotationConfigApplicationContext context =
                 new AnnotationConfigApplicationContext(SpringContext.class);
         StoreTypeFactory storeTypeFactory = context.getBean(StoreTypeFactory.class);
-        return storeTypeFactory.getStoreTypesAsStringList();
+        storeTypesEndpointResponse.endpoints(storeTypeFactory.getStoreTypesAsStringList());
+        return storeTypesEndpointResponse;
     }
 }
