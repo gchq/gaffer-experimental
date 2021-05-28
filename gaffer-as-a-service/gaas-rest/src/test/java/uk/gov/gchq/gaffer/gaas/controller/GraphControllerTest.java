@@ -73,7 +73,7 @@ public class GraphControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
-        assertEquals("{\"storeTypes\":[\"accumuloStore\",\"federatedStore\",\"mapStore\",\"proxyStore\"]}",getStoretypeResponse.getResponse().getContentAsString());
+        assertEquals("{\"storeTypes\":[\"accumuloStore\",\"federatedStore\",\"mapStore\",\"proxyStore\"]}", getStoretypeResponse.getResponse().getContentAsString());
     }
 
     @Test

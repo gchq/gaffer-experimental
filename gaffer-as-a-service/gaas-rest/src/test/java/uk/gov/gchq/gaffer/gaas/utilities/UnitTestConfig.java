@@ -79,7 +79,9 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public GetStoreTypesService getStoreTypesService(){return new GetStoreTypesService();}
+    public GetStoreTypesService getStoreTypesService() {
+        return new GetStoreTypesService();
+    }
 
     @Bean
     public JwtTokenUtil jwtTokenUtil() {

@@ -23,7 +23,8 @@ import uk.gov.gchq.gaffer.gaas.factories.StoreTypeFactory;
 import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
 
 @Service
-public class GetStoreTypesService {
+public final class GetStoreTypesService {
+
     public static StoreTypesEndpointResponse getStoreTypes() {
         StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
         AnnotationConfigApplicationContext context =
