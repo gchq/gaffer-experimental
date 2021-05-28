@@ -84,11 +84,45 @@ class StoreTypeFactoryTest {
         return elementsSchema;
     }
 
-    private LinkedHashMap<String, Object> getSchema() {
-        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
-        elementsSchema.put("entities", new Object());
-        elementsSchema.put("edges", new Object());
-        elementsSchema.put("types", new Object());
-        return elementsSchema;
-    }
+  @Test
+  void testGetInvalidStoreBuilder() {
+    List<StoreType> storeTypeManager = new ArrayList<>();
+
+    setStoreList(storeTypeManager);
+  StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+    final RuntimeException exception = assertThrows(RuntimeException.class, () -> storeTypeFactory.getBuilder("invalidStore"));
+
+    final String expected = "java.lang.RuntimeException: StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore, mapStore";
+
+    assertEquals(expected, exception.toString());
+  }
+
+  @Test
+  void testGetStoreTypesAsStringList() {
+    List<StoreType> storeTypeManager = new ArrayList<>();
+
+    setStoreList(storeTypeManager);
+    StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+
+    final ArrayList<String> list = storeTypeFactory.getStoreTypesAsStringList();
+    assertEquals("[federatedStore, accumuloStore, proxyStore, mapStore]", list.toString());
+  }
+
+  @Test
+  void testGetStoreTypesWhenListEmpty() {
+    List<StoreType> storeTypeManager = new ArrayList<>();
+
+    StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+
+    final ArrayList<String> list = storeTypeFactory.getStoreTypesAsStringList();
+    assertEquals("[]", list.toString());
+  }
+
+  private LinkedHashMap<String, Object> getSchema() {
+    final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+    elementsSchema.put("entities", new Object());
+    elementsSchema.put("edges", new Object());
+    elementsSchema.put("types", new Object());
+    return elementsSchema;
+  }
 }

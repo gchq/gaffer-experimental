@@ -32,11 +32,13 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+import uk.gov.gchq.gaffer.gaas.services.GetStoreTypesService;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +60,8 @@ public class GraphController {
     private ApiClient apiClient;
     @Autowired
     private GetNamespacesService getNamespacesService;
+    @Autowired
+    private GetStoreTypesService getStoreTypesService;
 
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
@@ -75,6 +79,12 @@ public class GraphController {
     public ResponseEntity<List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
         final Map<String, List<GaaSGraph>> list = gafferService.getAllGraphs();
         return new ResponseEntity(list, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/storetypes", produces = "application/json")
+    public ResponseEntity<StoreTypesEndpointResponse> getEndpoints() {
+        final StoreTypesEndpointResponse response = GetStoreTypesService.getStoreTypes();
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
