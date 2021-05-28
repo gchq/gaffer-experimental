@@ -1,7 +1,7 @@
 version: "2"
 services:
   gaas-rest:
-    image: "kitkat520/api"
+    image: "dockerhub/repo"
     ports:
       - "8080:8080"
     container_name: gaas-rest
