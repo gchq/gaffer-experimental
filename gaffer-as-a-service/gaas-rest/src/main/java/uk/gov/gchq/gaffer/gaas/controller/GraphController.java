@@ -83,7 +83,7 @@ public class GraphController {
 
     @GetMapping(path = "/storetypes", produces = "application/json")
     public ResponseEntity<StoreTypesEndpointResponse> getEndpoints() {
-        final StoreTypesEndpointResponse response = GetStoreTypesService.getStoreTypes();
+        final StoreTypesEndpointResponse response = getStoreTypesService.getStoreTypes();
         return new ResponseEntity(response, HttpStatus.OK);
     }
 

@@ -21,11 +21,12 @@ import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.SpringContext;
 import uk.gov.gchq.gaffer.gaas.factories.StoreTypeFactory;
 import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
+import javax.validation.constraints.NotNull;
 
 @Service
 public final class GetStoreTypesService {
-
-    public static StoreTypesEndpointResponse getStoreTypes() {
+    @NotNull
+    public StoreTypesEndpointResponse getStoreTypes() {
         StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
         AnnotationConfigApplicationContext context =
                 new AnnotationConfigApplicationContext(SpringContext.class);
