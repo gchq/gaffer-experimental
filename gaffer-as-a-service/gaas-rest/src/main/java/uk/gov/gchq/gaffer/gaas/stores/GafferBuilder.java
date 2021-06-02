@@ -24,6 +24,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
@@ -79,7 +80,8 @@ public class GafferBuilder {
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(graphId, GRAPH_ID_KEY);
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
-        gafferSpec.putNestedObject(properties.toString(), STORE_PROPERTIES_KEY);
+        gafferSpec.putNestedObject(schema, SCHEMA_FILE_KEY);
+        gafferSpec.putNestedObject(properties, STORE_PROPERTIES_KEY);
         gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
         gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
         gafferSpec.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
