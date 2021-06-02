@@ -18,6 +18,7 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
@@ -47,7 +48,7 @@ public class GafferHelmValuesFactoryTest {
         return elementsSchema;
     }
 
-    @Disabled
+    @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody_whenNoContextRootSpecified() {
         final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxyStore", getProxyHostStoreProperties()));
 
@@ -56,7 +57,7 @@ public class GafferHelmValuesFactoryTest {
         assertEquals(expected, gson.toJson(requestBody));
     }
 
-    @Disabled
+    @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody() {
         final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxyStore", getProxyHostAndRootStoreProperties()));
 
@@ -65,7 +66,7 @@ public class GafferHelmValuesFactoryTest {
         assertEquals(expected, gson.toJson(requestBody));
     }
 
-    @Disabled
+    @Test
     public void federatedStoreRequestShouldReturnFederatedRequestBody() {
 
         final Map<String, Object> federatedStoreProperties = new HashMap<>();
@@ -76,7 +77,7 @@ public class GafferHelmValuesFactoryTest {
         assertEquals(expected, gson.toJson(requestBody));
     }
 
-    @Disabled
+    @Test
     public void accumuloStoreRequestShouldReturnAccumuloRequestBody() {
         final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "accumulo", getSchema(), getStorePropertiesFromYAMLResources("accumulo")));
 
@@ -85,9 +86,10 @@ public class GafferHelmValuesFactoryTest {
                         "\"kind\":\"Gaffer\"," +
                         "\"metadata\":{\"name\":\"MyGraph\"}," +
                         "\"spec\":{" +
+                        "\"accumulo\":{\"enabled\":true}," +
                         "\"graph\":{" +
                         "\"schema\":{" +
-                        "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
+                        "\"schema.json\":{\"entities\":{},\"edges\":{},\"types\":{}}" +
                         "}," +
                         "\"config\":{" +
                         "\"description\":\"Another description\"," +
@@ -95,18 +97,15 @@ public class GafferHelmValuesFactoryTest {
                         "}" +
                         "}," +
                         "\"ingress\":{" +
-                        "\"host\":\"mygraph-kai-dev." + INGRESS_SUFFIX + "\"," +
+                        "\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\"," +
                         "\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}" +
-                        "}," +
-                        "\"accumulo\":{" +
-                        "\"enabled\":true" +
                         "}" +
                         "}" +
                         "}";
         assertEquals(expected, gson.toJson(requestBody));
     }
 
-    @Disabled
+    @Test
     public void mapStoreStoreRequestShouldReturnMapStoreRequestBody() {
         final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "mapStore", getSchema(), null));
 
@@ -137,7 +136,7 @@ public class GafferHelmValuesFactoryTest {
         assertEquals(expected, gson.toJson(requestBody));
     }
 
-    @Disabled
+    @Test
     public void addSchema_shouldAddElementsJsonAndTypesJson() {
         final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "mapStore", getSchema(), null));
 
