@@ -40,7 +40,7 @@ import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 public final class GafferHelmValuesFactory {
 
     private static final String KIND = "Gaffer";
-    private static final String DEFAULT_ADMIN_USER = "ADMIN";
+    private static final String DEFAULT_SYSTEM_USER = "GAAS_SYSTEM_USER";
 
     public static Gaffer from(final GaaSCreateRequestBody graph) {
 
@@ -64,7 +64,7 @@ public final class GafferHelmValuesFactory {
         final AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(graph.getStoreType())
                 .setGraphId(graph.getGraphId())
                 .setDescription(graph.getDescription())
-                .addOperationAuthoriser(AddGraph.class, DEFAULT_ADMIN_USER)
+                .addOperationAuthoriser(AddGraph.class, DEFAULT_SYSTEM_USER)
                 .setSchema(graph.getSchema())
                 .setProperties(graph.getStoreProperties());
         return  builder.build();
