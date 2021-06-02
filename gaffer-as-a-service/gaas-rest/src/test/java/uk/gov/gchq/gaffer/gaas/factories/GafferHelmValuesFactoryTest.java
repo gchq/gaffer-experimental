@@ -56,7 +56,7 @@ public class GafferHelmValuesFactoryTest {
                         "\"config\":{" +
                             "\"description\":\"Another description\"," +
                             "\"graphId\":\"MyGraph\"," +
-                            "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"ADMIN\"]}}]" +
+                            "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]" +
                         "}" +
                     "}," +
                     "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
@@ -79,7 +79,7 @@ public class GafferHelmValuesFactoryTest {
                         "\"config\":{" +
                             "\"description\":\"Another description\"," +
                             "\"graphId\":\"MyGraph\"," +
-                            "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"ADMIN\"]}}]" +
+                            "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]" +
                         "}" +
                     "}," +
                     "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
@@ -102,7 +102,7 @@ public class GafferHelmValuesFactoryTest {
                             "\"config\":{" +
                                 "\"description\":\"Another description\"," +
                                 "\"graphId\":\"MyGraph\"," +
-                                "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"ADMIN\"]}}]" +
+                                "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]" +
                             "}" +
                         "}," +
                         "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
@@ -127,7 +127,7 @@ public class GafferHelmValuesFactoryTest {
                         "\"config\":{" +
                         "\"description\":\"Another description\"," +
                         "\"graphId\":\"MyGraph\"," +
-                        "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"ADMIN\"]}}]" +
+                        "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]" +
                         "}" +
                         "}," +
                         "\"ingress\":{" +
@@ -157,7 +157,7 @@ public class GafferHelmValuesFactoryTest {
                         "\"config\":{" +
                             "\"description\":\"Another description\"," +
                             "\"graphId\":\"MyGraph\"," +
-                            "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"ADMIN\"]}}]" +
+                            "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]" +
                         "}" +
                     "}," +
                     "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
@@ -181,7 +181,7 @@ public class GafferHelmValuesFactoryTest {
                                 "\"config\":{" +
                                     "\"description\":\"Another description\"," +
                                     "\"graphId\":\"MyGraph\"," +
-                                    "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"ADMIN\"]}}]" +
+                                    "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]" +
                                 "}" +
                             "}," +
                             "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
