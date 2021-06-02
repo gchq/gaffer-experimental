@@ -35,12 +35,23 @@ public class GafferBuilder {
     private String graphId;
     private String description;
     private Map<String, Object> schema;
+    private Map<String, Object> properties;
 
     public Map<String, Object> getProperties() {
         return properties;
     }
 
-    private Map<String, Object> properties;
+    public void loopMap(final GafferSpec gafferSpec) {
+        for (final Map.Entry<String, Object> entry : properties.entrySet()) {
+            if (entry.getKey().equals("accumulo")) {
+                gafferSpec.putNestedObject(true, "accumulo", "enabled");
+                gafferSpec.putNestedObject(schema, SCHEMA_FILE_KEY);
+            } else {
+                gafferSpec.putNestedObject(properties, STORE_PROPERTIES_KEY);
+            }
+            System.out.println(entry.getKey() + ":" + entry.getValue());
+        }
+    }
 
     public Map<String, Object> getSchema() {
         return schema;
@@ -78,10 +89,10 @@ public class GafferBuilder {
 
     public GafferSpec build() {
         final GafferSpec gafferSpec = new GafferSpec();
+        loopMap(gafferSpec);
         gafferSpec.putNestedObject(graphId, GRAPH_ID_KEY);
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
-        gafferSpec.putNestedObject(schema, SCHEMA_FILE_KEY);
-        gafferSpec.putNestedObject(properties, STORE_PROPERTIES_KEY);
+        //gafferSpec.putNestedObject(properties);
         gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
         gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
         gafferSpec.putNestedObject("/ui", INGRESS_UI_PATH_KEY);

@@ -22,7 +22,6 @@ import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import java.io.InputStream;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class CreateGraphService {
         crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
     }
 
-    private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
+    private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
 
         String storeType = graph.getStoreType();
         Yaml yaml = new Yaml();
