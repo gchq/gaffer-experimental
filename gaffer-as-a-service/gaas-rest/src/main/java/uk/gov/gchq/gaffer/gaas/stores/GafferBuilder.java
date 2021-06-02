@@ -24,10 +24,11 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
-public abstract class AbstractStoreTypeBuilder {
+public class GafferBuilder {
 
     protected GaaSCreateRequestBody graph;
     private String graphId;
@@ -54,22 +55,22 @@ public abstract class AbstractStoreTypeBuilder {
         return description;
     }
 
-    public AbstractStoreTypeBuilder setGraphId(final String graphId) {
+    public GafferBuilder setGraphId(final String graphId) {
         this.graphId = graphId;
         return this;
     }
 
-    public AbstractStoreTypeBuilder setDescription(final String description) {
+    public GafferBuilder setDescription(final String description) {
         this.description = description;
         return this;
     }
 
-    public AbstractStoreTypeBuilder setSchema(final Map<String, Object> schema) {
+    public GafferBuilder setSchema(final Map<String, Object> schema) {
         this.schema = schema;
         return this;
     }
 
-    public AbstractStoreTypeBuilder setProperties(final Map<String, Object> properties) {
+    public GafferBuilder setProperties(final Map<String, Object> properties) {
         this.properties = properties;
         return this;
     }
@@ -78,6 +79,7 @@ public abstract class AbstractStoreTypeBuilder {
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(graphId, GRAPH_ID_KEY);
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
+        gafferSpec.putNestedObject(properties.toString(), STORE_PROPERTIES_KEY);
         gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
         gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
         gafferSpec.putNestedObject("/ui", INGRESS_UI_PATH_KEY);

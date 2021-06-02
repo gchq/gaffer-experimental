@@ -39,6 +39,11 @@ public class GaaSCreateRequestBody implements Serializable {
     private String proxyHost;
     private String proxyContextRoot;
     private Map<String, Object> schema;
+
+    public void setStoreProperties(Map<String, Object> storeProperties) {
+        this.storeProperties = storeProperties;
+    }
+
     private Map<String, Object> storeProperties = new HashMap<>();
 
     public Map<String, Object> getStoreProperties() {

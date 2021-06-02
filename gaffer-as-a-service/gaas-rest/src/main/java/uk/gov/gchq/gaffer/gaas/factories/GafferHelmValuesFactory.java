@@ -17,12 +17,13 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.SpringContext;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
+import uk.gov.gchq.gaffer.gaas.stores.GafferBuilder;
+import java.io.InputStream;
+import java.util.Map;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 
@@ -54,12 +55,7 @@ public final class GafferHelmValuesFactory {
 
     private static GafferSpec createGafferSpecFrom(final GaaSCreateRequestBody graph) {
 
-        AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(SpringContext.class);
-
-        StoreTypeFactory storeTypeFactory = context.getBean(StoreTypeFactory.class);
-
-        final AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(graph.getStoreType())
+        final GafferBuilder builder = new GafferBuilder()
                 .setGraphId(graph.getGraphId())
                 .setDescription(graph.getDescription())
                 .setSchema(graph.getSchema())

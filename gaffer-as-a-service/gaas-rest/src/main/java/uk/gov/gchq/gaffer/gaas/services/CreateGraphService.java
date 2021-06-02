@@ -18,10 +18,14 @@ package uk.gov.gchq.gaffer.gaas.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import java.io.InputStream;
+import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
 
 @Service
@@ -35,6 +39,15 @@ public class CreateGraphService {
     }
 
     private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
+
+        String storeType = graph.getStoreType();
+        Yaml yaml = new Yaml();
+        InputStream inputStream = this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("yaml/"+storeType+".yaml");
+
+        Map<String, Object> storeProperties = yaml.load(inputStream);
+        graph.setStoreProperties(storeProperties);
         return from(graph);
     }
 }
