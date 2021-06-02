@@ -16,36 +16,54 @@
 
 package uk.gov.gchq.gaffer.gaas.stores;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
 class AccumuloStoreTypeTest {
 
-  @Test
-  void testGetType() {
-    AccumuloStoreType type = new AccumuloStoreType();
-    assertEquals("accumuloStore", type.getType());
-  }
+    @Test
+    void testGetType() {
+        final AccumuloStoreType type = new AccumuloStoreType();
 
-  @Test
-  void testGetStoreSpecBuilder() {
-    AccumuloStoreType type = new AccumuloStoreType();
-    AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
-   String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}, accumulo={enabled=true}}";
-    GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
-    assertEquals(expected, build.toString());
-  }
+        assertEquals("accumuloStore", type.getType());
+    }
 
-  private LinkedHashMap<String, Object> getSchema() {
-    final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
-    elementsSchema.put("entities", new Object());
-    elementsSchema.put("edges", new Object());
-    elementsSchema.put("types", new Object());
-    return elementsSchema;
-  }
+    @Test
+    void testGetStoreSpecBuilder() throws IOException {
+        final AccumuloStoreType type = new AccumuloStoreType();
+        final AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
 
+        final GafferSpec build = storeSpecBuilder
+                .setGraphId("mygraph")
+                .setDescription("Another description")
+                .setSchema(getSchema())
+                .build();
+
+        final String expected = "{" +
+                    "\"graph\":{" +
+                        "\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"}," +
+                        "\"config\":{" +
+                            "\"description\":\"Another description\"," +
+                            "\"graphId\":\"mygraph\"," +
+                            "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{}}]" +
+                        "}" +
+                    "}," +
+                    "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}},\"accumulo\":{\"enabled\":true}" +
+                "}";
+        assertEquals(expected, new ObjectMapper().writeValueAsString(build));
+    }
+
+    private LinkedHashMap<String, Object> getSchema() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("entities", new Object());
+        elementsSchema.put("edges", new Object());
+        elementsSchema.put("types", new Object());
+        return elementsSchema;
+    }
 }

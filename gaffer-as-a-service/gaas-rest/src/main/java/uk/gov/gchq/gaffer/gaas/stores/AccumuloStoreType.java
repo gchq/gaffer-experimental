@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.stores;
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.ACCUMULO_ENABLED_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 
 @Service
@@ -40,7 +41,7 @@ public class AccumuloStoreType implements StoreType {
         public GafferSpec build() {
             final GafferSpec gafferSpec = super.build();
             gafferSpec.putNestedObject(new Gson().toJson(getSchema()), SCHEMA_FILE_KEY);
-            gafferSpec.putNestedObject(true, "accumulo", "enabled");
+            gafferSpec.putNestedObject(true, ACCUMULO_ENABLED_KEY);
             return gafferSpec;
         }
     }
