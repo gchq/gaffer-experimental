@@ -55,7 +55,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testAddGraph_WithSchema_Returns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "mapStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumulo", getSchema());
         final Gson gson = new Gson();
         final String inputJson = gson.toJson(gaaSCreateRequestBody);
 
@@ -91,7 +91,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumulo\"}";
         mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -106,7 +106,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void getGraphEndpointReturnsGraph() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumulo\"}";
         final MvcResult addGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -122,7 +122,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testGraphIdWithSpacesShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumulo\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -134,7 +134,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumulo\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -145,7 +145,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testGraphIdWitCapitalLettersShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumulo\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -156,7 +156,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testDescriptionEmptyShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"storeType\":\"ACCUMULO\"}";
+        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"storeType\":\"accumulo\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -167,7 +167,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testDeleteShouldReturn200AndRemoveCRD() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumuloStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumulo", getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         final MvcResult createGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -213,8 +213,8 @@ public class GraphControllerIT extends AbstractTest {
 
         assertEquals(500, result.getResponse().getStatus());
 
-        final String[] expectedStoreType = new String[] {"accumuloStore", "federatedStore", "mapStore", "proxyStore"};
-        final String expectedErrorMessage = "\\{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: (\\w+(,\\s\\w+)*)\"}";
+        final String[] expectedStoreType = new String[] {"accumulo", "federated"};
+        final String expectedErrorMessage = "\\{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: accumulo, federated\"}";
 
         final String contentAsString = result.getResponse().getContentAsString();
 
@@ -222,7 +222,7 @@ public class GraphControllerIT extends AbstractTest {
 
         assertTrue(matcher.matches(), String.format("Regex: [%s] does not match string: [%s]", expectedErrorMessage, contentAsString));
 
-        final String group = matcher.group(1);
+        final String group = matcher.toString();
         final String[] actualStoreType = group.split(",\\s");
         Arrays.sort(actualStoreType);
         assertArrayEquals(expectedStoreType, actualStoreType);

@@ -38,16 +38,21 @@ public class CreateGraphService {
         crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
     }
 
-    private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
+    private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
 
         String storeType = graph.getStoreType();
         Yaml yaml = new Yaml();
-        InputStream inputStream = this.getClass()
-                .getClassLoader()
-                .getResourceAsStream("yaml/"+storeType+".yaml");
+        try {
+            InputStream inputStream = this.getClass()
+                    .getClassLoader()
+                    .getResourceAsStream("yaml/" + storeType + ".yaml");
+            Map<String, Object> storeProperties = yaml.load(inputStream);
+            graph.setStoreProperties(storeProperties);
 
-        Map<String, Object> storeProperties = yaml.load(inputStream);
-        graph.setStoreProperties(storeProperties);
+        } catch (Exception e) {
+            throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: accumulo, federated");
+        }
+
         return from(graph);
     }
 }
