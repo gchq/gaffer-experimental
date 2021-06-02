@@ -214,7 +214,7 @@ public class GraphControllerIT extends AbstractTest {
         assertEquals(500, result.getResponse().getStatus());
 
         final String[] expectedStoreType = new String[] {"accumulo", "federated"};
-        final String expectedErrorMessage = "\\{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: accumulo, federated\"}";
+        final String expectedErrorMessage = "\\{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: (\\w+(,\\s\\w+)*)\"}";
 
         final String contentAsString = result.getResponse().getContentAsString();
 
@@ -222,7 +222,7 @@ public class GraphControllerIT extends AbstractTest {
 
         assertTrue(matcher.matches(), String.format("Regex: [%s] does not match string: [%s]", expectedErrorMessage, contentAsString));
 
-        final String group = matcher.toString();
+        final String group = matcher.group(1);
         final String[] actualStoreType = group.split(",\\s");
         Arrays.sort(actualStoreType);
         assertArrayEquals(expectedStoreType, actualStoreType);
