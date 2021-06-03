@@ -38,7 +38,11 @@ public class CreateGraphService {
     }
 
     private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
+        loadStoreProperties(graph);
+        return from(graph);
+    }
 
+    private void loadStoreProperties(final GaaSCreateRequestBody graph) {
         String storeType = graph.getStoreType();
         Yaml yaml = new Yaml();
         try {
@@ -51,7 +55,5 @@ public class CreateGraphService {
         } catch (Exception e) {
             throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: accumulo, federated");
         }
-
-        return from(graph);
     }
 }
