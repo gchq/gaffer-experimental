@@ -104,7 +104,7 @@ class StoreTypeFactoryTest {
     setStoreList(storeTypeManager);
     StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
 
-    final ArrayList<String> list = storeTypeFactory.getStoreTypesAsStringList();
+    final List<String> list = storeTypeFactory.getStoreTypesAsStringList();
     assertEquals("[federatedStore, accumuloStore, proxyStore, mapStore]", list.toString());
   }
 
@@ -114,7 +114,7 @@ class StoreTypeFactoryTest {
 
     StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
 
-    final ArrayList<String> list = storeTypeFactory.getStoreTypesAsStringList();
+    final List<String> list = storeTypeFactory.getStoreTypesAsStringList();
     assertEquals("[]", list.toString());
   }
 

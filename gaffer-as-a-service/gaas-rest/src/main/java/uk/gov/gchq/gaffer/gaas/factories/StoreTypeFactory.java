@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
 import uk.gov.gchq.gaffer.gaas.stores.StoreType;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,11 +44,9 @@ public class StoreTypeFactory {
         throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + storeTypesString);
         }
 
-    public ArrayList<String> getStoreTypesAsStringList() {
-        ArrayList<String> list = new ArrayList<>();
-        for (final StoreType storeType : storeTypes) {
-            list.add(storeType.getType());
-        }
-        return list;
+    public List<String> getStoreTypesAsStringList() {
+        return storeTypes.stream()
+                .map(StoreType::getType)
+                .collect(Collectors.toList());
     }
 }
