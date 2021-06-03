@@ -34,6 +34,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @UnitTest
 class StoreTypeFactoryTest {
 
+    private void setStoreList(final List<StoreType> storeTypeManager) {
+        MapStoreType mapStore = new MapStoreType();
+        ProxyStoreType proxyStoreType = new ProxyStoreType();
+        AccumuloStoreType accumuloStoreType = new AccumuloStoreType();
+        FederatedStoreType federatedStoreType = new FederatedStoreType();
+        storeTypeManager.add(federatedStoreType);
+        storeTypeManager.add(accumuloStoreType);
+        storeTypeManager.add(proxyStoreType);
+        storeTypeManager.add(mapStore);
+    }
+
+
     @Test
     void testGetProxyStoreBuilder() {
         final StoreTypeFactory storeTypeFactory = new StoreTypeFactory(getStoreTypes());
@@ -84,45 +96,32 @@ class StoreTypeFactoryTest {
         return elementsSchema;
     }
 
-  @Test
-  void testGetInvalidStoreBuilder() {
-    List<StoreType> storeTypeManager = new ArrayList<>();
+    @Test
+    void testGetStoreTypesAsStringList() {
+        List<StoreType> storeTypeManager = new ArrayList<>();
 
-    setStoreList(storeTypeManager);
-  StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-    final RuntimeException exception = assertThrows(RuntimeException.class, () -> storeTypeFactory.getBuilder("invalidStore"));
+        setStoreList(storeTypeManager);
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
 
-    final String expected = "java.lang.RuntimeException: StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore, mapStore";
+        final List<String> list = storeTypeFactory.getStoreTypesAsStringList();
+        assertEquals("[federatedStore, accumuloStore, proxyStore, mapStore]", list.toString());
+    }
 
-    assertEquals(expected, exception.toString());
-  }
+    @Test
+    void testGetStoreTypesWhenListEmpty() {
+        List<StoreType> storeTypeManager = new ArrayList<>();
 
-  @Test
-  void testGetStoreTypesAsStringList() {
-    List<StoreType> storeTypeManager = new ArrayList<>();
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
 
-    setStoreList(storeTypeManager);
-    StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+        final List<String> list = storeTypeFactory.getStoreTypesAsStringList();
+        assertEquals("[]", list.toString());
+    }
 
-    final List<String> list = storeTypeFactory.getStoreTypesAsStringList();
-    assertEquals("[federatedStore, accumuloStore, proxyStore, mapStore]", list.toString());
-  }
-
-  @Test
-  void testGetStoreTypesWhenListEmpty() {
-    List<StoreType> storeTypeManager = new ArrayList<>();
-
-    StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
-
-    final List<String> list = storeTypeFactory.getStoreTypesAsStringList();
-    assertEquals("[]", list.toString());
-  }
-
-  private LinkedHashMap<String, Object> getSchema() {
-    final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
-    elementsSchema.put("entities", new Object());
-    elementsSchema.put("edges", new Object());
-    elementsSchema.put("types", new Object());
-    return elementsSchema;
-  }
+    private LinkedHashMap<String, Object> getSchema() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("entities", new Object());
+        elementsSchema.put("edges", new Object());
+        elementsSchema.put("types", new Object());
+        return elementsSchema;
+    }
 }
