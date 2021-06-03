@@ -22,7 +22,7 @@ import {
   CreateGraphRepo,
   ICreateGraphConfig,
 } from "../../rest/repositories/create-graph-repo";
-import {AlertType, INotificationAlertProps, NotificationAlert} from "../alerts/notification-alert";
+import {AlertType, NotificationAlert} from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../domain/graph";
 import { ElementsSchema } from "../../domain/elements-schema";

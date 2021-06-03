@@ -154,7 +154,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                         {graphs.map((graph: Graph, index) => (
                                             <MainGraphTableRow 
                                                 key={graph.getId()} 
-                                                index={index} row={graph} 
+                                                index={index} graph={graph} 
                                                 onClickDelete={(graphId: string) => this.deleteGraph(graphId)} />
                                         ))}
                                     </TableBody>

@@ -48,6 +48,11 @@ export class RestClient<T> {
         return this;
     }
 
+    public urlPath(url: string): RestClient<T> {
+        this.url = url
+        return this;
+    }
+
     public graphs(pathVariable?: string): RestClient<T> {
         const _pathVariable = pathVariable ? `/${pathVariable}` : "";
         this.url = `/graphs${_pathVariable}`;

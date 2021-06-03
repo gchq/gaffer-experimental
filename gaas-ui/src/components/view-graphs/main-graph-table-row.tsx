@@ -19,13 +19,13 @@ import React from "react";
 import { Graph } from "../../domain/graph";
 
 interface IProps {
-    row: Graph;
     index: number;
+    graph: Graph;
     onClickDelete(graphId: string):void;
 }
 
 export function MainGraphTableRow(props: IProps) {
-    const { row, index, onClickDelete } = props;
+    const { graph, index, onClickDelete } = props;
     const [open, setOpen] = React.useState(false);
     const classes = useRowStyles();
 
@@ -34,20 +34,20 @@ export function MainGraphTableRow(props: IProps) {
         <TableRow className={classes.root} hover aria-label={"view-graphs-table"}>
             <TableCell aria-label={"expand-row-icon"}>
                 <IconButton id={"expand-row-button-" + index}
-                            aria-label={row.getId()+"-expand-button"} size="small" onClick={() => setOpen(!open)}>
+                            aria-label={graph.getId()+"-expand-button"} size="small" onClick={() => setOpen(!open)}>
                 {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon />}
                 </IconButton>
             </TableCell>
-            <TableCell component="th" scope="row" aria-label={"row-id"}>{row.getId()}</TableCell>
-            <TableCell aria-label={"graph-store-type"}><Avatar style={{color: "white", backgroundColor:"#5A7C81"}}> {row.getStoreType()}</Avatar></TableCell>
-            <TableCell aria-label={"graph-status"}><StatusChip status={row.getStatus()} /></TableCell>
-            <TableCell aria-label={"graph-url"}><a href={row.getUrl()} target="_blank" rel="noreferrer">{row.getUrl()}</a></TableCell>
+            <TableCell component="th" scope="row" aria-label={"row-id"}>{graph.getId()}</TableCell>
+            <TableCell aria-label={"graph-store-type"}><Avatar style={{color: "white", backgroundColor:"#5A7C81"}}> {graph.getStoreType()}</Avatar></TableCell>
+            <TableCell aria-label={"graph-status"}><StatusChip status={graph.getStatus()} /></TableCell>
+            <TableCell aria-label={"graph-url"}><a href={graph.getUrl()} target="_blank" rel="noreferrer">{graph.getUrl()}</a></TableCell>
             <TableCell aria-label={"delete-graph"}>
-                <Tooltip TransitionComponent={Zoom} title={`Delete ${row.getId()}`}>
+                <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
                     <IconButton
                         id={"view-graphs-delete-button-" + index}
-                        aria-label={row.getId()+"-delete-button"}
-                        onClick={async () => onClickDelete(row.getId())}
+                        aria-label={graph.getId()+"-delete-button"}
+                        onClick={async () => onClickDelete(graph.getId())}
                     >
                         <DeleteOutlineOutlinedIcon />
                     </IconButton>
@@ -61,7 +61,10 @@ export function MainGraphTableRow(props: IProps) {
                 <Table size="small" aria-label="graph-details">
                 <TableBody>
                     <TableRow aria-label={"graph-description"}>
-                        <TableCell component="th" scope="row">Description: {row.getDescription()}</TableCell>
+                        <TableCell component="th" scope="row">Description: {graph.getDescription()}</TableCell>
+                    </TableRow>
+                    <TableRow id={"federated-graph-ids-" + index} aria-label={"federated-graph-ids"}>
+                        <TableCell component="th" scope="row">TODO</TableCell>
                     </TableRow>
                 </TableBody>
               </Table>
