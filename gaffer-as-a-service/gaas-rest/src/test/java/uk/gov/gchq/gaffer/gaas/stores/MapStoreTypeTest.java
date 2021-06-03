@@ -16,27 +16,57 @@
 
 package uk.gov.gchq.gaffer.gaas.stores;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
+import uk.gov.gchq.gaffer.federatedstore.operation.RemoveGraph;
 import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
 public class MapStoreTypeTest {
+
     @Test
     void testGetType() {
-        MapStoreType type = new MapStoreType();
+        final MapStoreType type = new MapStoreType();
+
         assertEquals("mapStore", type.getType());
     }
 
     @Test
-    void testGetStoreSpecBuilder() {
-        MapStoreType type = new MapStoreType();
-        AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
-        String expected = "{graph={schema={schema.json={\"entities\":{},\"edges\":{},\"types\":{}}}, storeProperties={gaffer.store.job.tracker.enabled=true, gaffer.cache.service.class=uk.gov.gchq.gaffer.cache.impl.HashMapCacheService}, config={description=Another description, graphId=mygraph}}, ingress={host=mygraph-kai-dev.apps.my.kubernetes.cluster, pathPrefix={ui=/ui, api=/rest}}}";
-        GafferSpec build = storeSpecBuilder.setGraphId("mygraph").setDescription("Another description").setSchema(getSchema()).build();
-        assertEquals(expected, build.toString());
+    void testGetStoreSpecBuilder() throws JsonProcessingException {
+        final MapStoreType type = new MapStoreType();
+        final AbstractStoreTypeBuilder storeSpecBuilder = type.getStoreSpecBuilder();
+
+        final GafferSpec build = storeSpecBuilder
+                .setGraphId("mygraph")
+                .setDescription("Another description")
+                .addOperationAuthoriser(RemoveGraph.class, "WriteUser")
+                .addOperationAuthoriser(AddGraph.class, "UNKNOWN", "WriteUser")
+                .setSchema(getSchema())
+                .build();
+
+        final String expected = "{" +
+                    "\"graph\":{" +
+                        "\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"}," +
+                        "\"storeProperties\":{\"gaffer.store.job.tracker.enabled\":true,\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"}," +
+                        "\"config\":{" +
+                            "\"description\":\"Another description\"," +
+                            "\"graphId\":\"mygraph\"," +
+                            "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.RemoveGraph\":[\"WriteUser\"],\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"UNKNOWN\",\"WriteUser\"]}}]" +
+                        "}" +
+                    "}," +
+                    "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}" +
+                "}";
+        assertEquals(expected, mapToJsonString(build));
+    }
+
+    private String mapToJsonString(final Object object) throws JsonProcessingException {
+        final ObjectMapper mapperObj = new ObjectMapper();
+        return mapperObj.writeValueAsString(object);
     }
 
     private LinkedHashMap<String, Object> getSchema() {

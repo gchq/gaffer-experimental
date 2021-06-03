@@ -20,6 +20,7 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.SpringContext;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.stores.AbstractStoreTypeBuilder;
@@ -39,6 +40,7 @@ import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 public final class GafferHelmValuesFactory {
 
     private static final String KIND = "Gaffer";
+    private static final String DEFAULT_SYSTEM_USER = "GAAS_SYSTEM_USER";
 
     public static Gaffer from(final GaaSCreateRequestBody graph) {
 
@@ -62,6 +64,7 @@ public final class GafferHelmValuesFactory {
         final AbstractStoreTypeBuilder builder = storeTypeFactory.getBuilder(graph.getStoreType())
                 .setGraphId(graph.getGraphId())
                 .setDescription(graph.getDescription())
+                .addOperationAuthoriser(AddGraph.class, DEFAULT_SYSTEM_USER)
                 .setSchema(graph.getSchema())
                 .setProperties(graph.getStoreProperties());
         return builder.build();

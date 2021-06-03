@@ -19,7 +19,6 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,16 +43,16 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 @SpringBootTest
 public class CRDClientIT {
 
+    private static final String TEST_GRAPH_ID = "testgraphid";
+    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
+    private static final String ACCUMULO_ENABLED = "accumuloStore";
+
     @Autowired
     private CreateGraphService createGraphService;
     @Autowired
     private CRDClient crdClient;
     @Autowired
     private ApiClient apiClient;
-
-    private static final String TEST_GRAPH_ID = "test-graph-id";
-    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
-    private static final String ACCUMULO_ENABLED = "accumuloStore";
 
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {
@@ -100,20 +99,11 @@ public class CRDClientIT {
         assertEquals(expected, exception.getMessage());
     }
 
-    @Disabled
-    @Test
-    public void getCRD_WhenGraphIdIsGiven_GraphExists() throws GaaSRestApiException {
-        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema()));
-        crdClient.createCRD(gafferRequest);
-
-//        assertEquals("test-graph-id", crdClient.getCRDByGraphId("test-graph-id").getGraphId());
-    }
-
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
         crdClient.createCRD(from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema())));
 
-        assertTrue(crdClient.listAllCRDs().toString().contains("test-graph-id"));
+        assertTrue(crdClient.listAllCRDs().toString().contains("testgraphid"));
     }
 
     @Test
