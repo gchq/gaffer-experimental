@@ -17,21 +17,25 @@
 package uk.gov.gchq.gaffer.gaas.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
 
 @Service
 public class CreateGraphService {
+  @Autowired
+  private ResourceLoader resourceLoader;
 
   @Autowired
   private CRDClient crdClient;
@@ -40,12 +44,12 @@ public class CreateGraphService {
     crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
   }
 
-  private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
+  private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
     loadStoreProperties(graph);
     return from(graph);
   }
 
-  private void loadStoreProperties(final GaaSCreateRequestBody graph) {
+  private void loadStoreProperties(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
     String storeType = graph.getStoreType();
     Yaml yaml = new Yaml();
     try {
@@ -62,17 +66,24 @@ public class CreateGraphService {
 
   }
 
-  private String getStoreTypesAsStringList() {
-    List<String> results = new ArrayList<String>();
-    File[] files = new File("src/main/resources/yaml").listFiles();
-    for (final File file : files) {
-      if (file.isFile()) {
-        String fileName = file.getName().split("\\.", 2)[0];
-        results.add(fileName);
-      }
+  private String getStoreTypesAsStringList() throws GaaSRestApiException {
+    ArrayList<String> storeTypes = new ArrayList<>();
+    Resource[] resources = loadResources("classpath*:yaml/*.yaml");
+    for (final Resource resource : resources) {
+      String filename = resource.getFilename().split("\\.", 2)[0];
+      storeTypes.add(filename);
     }
-    String str = results.toString().replaceAll("\\[|\\]", "");
+    String str = storeTypes.toString().replaceAll("\\[|\\]", "");
     return str;
+  }
+
+  private Resource[] loadResources(String pattern) throws GaaSRestApiException {
+    try {
+      return ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources(pattern);
+    } catch (IOException e) {
+      throw new GaaSRestApiException(e.getLocalizedMessage(), e.getMessage(), 500);
+    }
+
   }
 
 
