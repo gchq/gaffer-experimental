@@ -27,11 +27,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -213,7 +214,7 @@ public class GraphControllerIT extends AbstractTest {
 
         assertEquals(500, result.getResponse().getStatus());
 
-        final String[] expectedStoreType = new String[] {"accumulo", "federated"};
+        final  List<String> expectedStoreType = new ArrayList<>(Arrays.asList("accumulo", "federated"));
         final String expectedErrorMessage = "\\{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: (\\w+(,\\s\\w+)*)\"}";
 
         final String contentAsString = result.getResponse().getContentAsString();
@@ -225,7 +226,9 @@ public class GraphControllerIT extends AbstractTest {
         final String group = matcher.group(1);
         final String[] actualStoreType = group.split(",\\s");
         Arrays.sort(actualStoreType);
-        assertArrayEquals(expectedStoreType, actualStoreType);
+        List<String> list = Arrays.asList(actualStoreType);
+        assertTrue(list.contains(expectedStoreType.get(0)));
+        assertTrue(list.contains(expectedStoreType.get(1)));
     }
 
     @AfterEach

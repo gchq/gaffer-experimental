@@ -23,37 +23,57 @@ import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
 
 @Service
 public class CreateGraphService {
 
-    @Autowired
-    private CRDClient crdClient;
+  @Autowired
+  private CRDClient crdClient;
 
-    public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
-        crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
+  public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
+    crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
+  }
+
+  private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
+    loadStoreProperties(graph);
+    return from(graph);
+  }
+
+  private void loadStoreProperties(final GaaSCreateRequestBody graph) {
+    String storeType = graph.getStoreType();
+    Yaml yaml = new Yaml();
+    try {
+      InputStream inputStream = this.getClass()
+              .getClassLoader()
+              .getResourceAsStream("yaml/" + storeType + ".yaml");
+      Map<String, Object> storeProperties = yaml.load(inputStream);
+      graph.setStoreProperties(storeProperties);
+
+
+    } catch (Exception e) {
+      throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + getStoreTypesAsStringList());
     }
 
-    private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
-        loadStoreProperties(graph);
-        return from(graph);
-    }
+  }
 
-    private void loadStoreProperties(final GaaSCreateRequestBody graph) {
-        String storeType = graph.getStoreType();
-        Yaml yaml = new Yaml();
-        try {
-            InputStream inputStream = this.getClass()
-                    .getClassLoader()
-                    .getResourceAsStream("yaml/" + storeType + ".yaml");
-            Map<String, Object> storeProperties = yaml.load(inputStream);
-            graph.setStoreProperties(storeProperties);
-
-        } catch (Exception e) {
-            throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: accumulo, federated");
-        }
+  private String getStoreTypesAsStringList() {
+    List<String> results = new ArrayList<String>();
+    File[] files = new File("src/main/resources/yaml").listFiles();
+    for (final File file : files) {
+      if (file.isFile()) {
+        String fileName = file.getName().split("\\.", 2)[0];
+        results.add(fileName);
+      }
     }
+    String str = results.toString().replaceAll("\\[|\\]", "");
+    return str;
+  }
+
+
 }
