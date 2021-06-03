@@ -15,8 +15,9 @@ import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined"
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
-import React from "react";
+import React, {useEffect} from "react";
 import { Graph } from "../../domain/graph";
+import {GetAllGraphIdsRepo} from "../../rest/repositories/gaffer/get-all-graph-ids-repo";
 
 interface IProps {
     index: number;
@@ -27,7 +28,17 @@ interface IProps {
 export function MainGraphTableRow(props: IProps) {
     const { graph, index, onClickDelete } = props;
     const [open, setOpen] = React.useState(false);
+    const [allGraphIds, setAllGraphIds]= React.useState<Array<string>>([]);
     const classes = useRowStyles();
+    useEffect(()=> {
+        getAllGraphIds();
+    },[])
+
+    async function getAllGraphIds(): Promise<void> {
+        const allGraphIdsResponse = await new GetAllGraphIdsRepo().get(graph.getUrl());
+        setAllGraphIds(allGraphIdsResponse);
+
+    }
 
     return (
       <React.Fragment >
@@ -58,13 +69,13 @@ export function MainGraphTableRow(props: IProps) {
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box margin={1}>
-                <Table size="small" aria-label="graph-details">
+                <Table size="small" aria-label="graph-details" >
                 <TableBody>
                     <TableRow aria-label={"graph-description"}>
                         <TableCell component="th" scope="row">Description: {graph.getDescription()}</TableCell>
                     </TableRow>
                     <TableRow id={"federated-graph-ids-" + index} aria-label={"federated-graph-ids"}>
-                        <TableCell component="th" scope="row">TODO</TableCell>
+                        <TableCell component="th" scope="row">{allGraphIds.length !== 0 ? "Federated Graphs: "+allGraphIds.join(", "): "No Federated Graphs"}</TableCell>
                     </TableRow>
                 </TableBody>
               </Table>
