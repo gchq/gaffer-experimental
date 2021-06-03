@@ -1,0 +1,4 @@
+graph:
+  storeProperties:
+    gaffer.store.job.tracker.enabled: true
+    gaffer.cache.service.class: uk.gov.gchq.gaffer.cache.impl.HashMapCacheService

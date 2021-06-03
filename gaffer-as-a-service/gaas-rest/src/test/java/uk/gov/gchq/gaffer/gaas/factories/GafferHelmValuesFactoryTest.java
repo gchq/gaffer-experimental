@@ -50,19 +50,19 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody_whenNoContextRootSpecified() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxyStore", getProxyHostStoreProperties()));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxyStore", getStorePropertiesFromYAMLResources("proxyNoContextRoot")));
 
         final String expected =
-                "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.host\":\"http://my.graph.co.uk\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+                "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\",\"gaffer.host\":\"http://my.graph.co.uk\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"},\"schema\":{}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
         assertEquals(expected, gson.toJson(requestBody));
     }
 
     @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxyStore", getProxyHostAndRootStoreProperties()));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxyStore", getStorePropertiesFromYAMLResources("proxy")));
 
         final String expected =
-                "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.host\":\"http://my.graph.co.uk\",\"gaffer.context-root\":\"/rest\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+                "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\",\"gaffer.host\":\"http://my.graph.co.uk\",\"gaffer.context-root\":\"/rest\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"},\"schema\":{}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
         assertEquals(expected, gson.toJson(requestBody));
     }
 
@@ -70,10 +70,10 @@ public class GafferHelmValuesFactoryTest {
     public void federatedStoreRequestShouldReturnFederatedRequestBody() {
 
         final Map<String, Object> federatedStoreProperties = new HashMap<>();
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "federated", getSchema(), getStorePropertiesFromYAMLResources("federated")));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "federated", getStorePropertiesFromYAMLResources("federated")));
 
         final String expected =
-                "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+                "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"},\"schema\":{}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
         assertEquals(expected, gson.toJson(requestBody));
     }
 
@@ -107,7 +107,7 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void mapStoreStoreRequestShouldReturnMapStoreRequestBody() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "mapStore", getSchema(), null));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "mapStore", getSchema(), getStorePropertiesFromYAMLResources("mapStore")));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\"," +
@@ -115,9 +115,6 @@ public class GafferHelmValuesFactoryTest {
                         "\"metadata\":{\"name\":\"MyGraph\"}," +
                         "\"spec\":{" +
                         "\"graph\":{" +
-                        "\"schema\":{" +
-                        "\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"" +
-                        "}," +
                         "\"storeProperties\":{" +
                         "\"gaffer.store.job.tracker.enabled\":true," +
                         "\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"" +
@@ -125,7 +122,9 @@ public class GafferHelmValuesFactoryTest {
                         "\"config\":{" +
                         "\"description\":\"Another description\"," +
                         "\"graphId\":\"MyGraph\"" +
-                        "}" +
+                        "}," +
+                        "\"schema\":" +
+                        "{\"schema.json\":{\"entities\":{},\"edges\":{},\"types\":{}}}" +
                         "}," +
                         "\"ingress\":{" +
                         "\"host\":\"mygraph-kai-dev." + INGRESS_SUFFIX + "\"," +
@@ -138,10 +137,10 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void addSchema_shouldAddElementsJsonAndTypesJson() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "mapStore", getSchema(), null));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "mapStore", getSchema(), getStorePropertiesFromYAMLResources("mapStore")));
 
         final String expected =
-                "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"},\"storeProperties\":{\"gaffer.store.job.tracker.enabled\":true,\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+                "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.store.job.tracker.enabled\":true,\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"},\"schema\":{\"schema.json\":{\"entities\":{},\"edges\":{},\"types\":{}}}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
         assertEquals(expected, gson.toJson(requestBody));
     }
 

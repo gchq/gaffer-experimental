@@ -25,7 +25,6 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.STORE_PROPERTIES_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
@@ -41,15 +40,9 @@ public class GafferBuilder {
         return properties;
     }
 
-    public void loopMap(final GafferSpec gafferSpec) {
+    public void addPropertiesToSpec(final GafferSpec gafferSpec) {
         for (final Map.Entry<String, Object> entry : properties.entrySet()) {
-            if (entry.getKey().equals("accumulo")) {
-                gafferSpec.putNestedObject(true, "accumulo", "enabled");
-                gafferSpec.putNestedObject(schema, SCHEMA_FILE_KEY);
-            } else {
-                gafferSpec.putNestedObject(properties, STORE_PROPERTIES_KEY);
-            }
-            System.out.println(entry.getKey() + ":" + entry.getValue());
+            gafferSpec.putNestedObject(entry.getValue(), entry.getKey());
         }
     }
 
@@ -89,10 +82,10 @@ public class GafferBuilder {
 
     public GafferSpec build() {
         final GafferSpec gafferSpec = new GafferSpec();
-        loopMap(gafferSpec);
+        addPropertiesToSpec(gafferSpec);
         gafferSpec.putNestedObject(graphId, GRAPH_ID_KEY);
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
-        //gafferSpec.putNestedObject(properties);
+        gafferSpec.putNestedObject(schema, SCHEMA_FILE_KEY);
         gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
         gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
         gafferSpec.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
