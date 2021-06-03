@@ -77,7 +77,7 @@ public class CreateGraphService {
     return str;
   }
 
-  private Resource[] loadResources(String pattern) throws GaaSRestApiException {
+  private Resource[] loadResources(final String pattern) throws GaaSRestApiException {
     try {
       return ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources(pattern);
     } catch (IOException e) {
