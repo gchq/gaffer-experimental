@@ -21,6 +21,7 @@ public final class Constants {
     // GafferSpec nested keys:
     public static final String[] GRAPH_ID_KEY = {"graph", "config", "graphId"};
     public static final String[] DESCRIPTION_KEY = {"graph", "config", "description"};
+    public static final String[] HOOKS_KEY = {"graph", "config", "hooks"};
     public static final String[] SCHEMA_FILE_KEY = {"graph", "schema", "schema.json"};
     public static final String[] STORE_PROPERTIES_KEY = {"graph", "storeProperties"};
     public static final String[] INGRESS_HOST_KEY = {"ingress", "host"};

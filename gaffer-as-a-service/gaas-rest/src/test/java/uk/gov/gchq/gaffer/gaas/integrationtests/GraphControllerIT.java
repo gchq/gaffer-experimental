@@ -27,7 +27,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -198,6 +202,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void createGraph_shouldReturn500BadRequestWhenStoreTypeIsInvalidType() throws Exception {
+
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "invalidStore", getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
 
@@ -207,8 +212,20 @@ public class GraphControllerIT extends AbstractTest {
                 .content(inputJson)).andReturn();
 
         assertEquals(500, result.getResponse().getStatus());
-        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: accumuloStore, federatedStore, mapStore, proxyStore\"}";
-        assertEquals(expected, result.getResponse().getContentAsString());
+
+        final String[] expectedStoreType = new String[] {"accumuloStore", "federatedStore", "mapStore", "proxyStore"};
+        final String expectedErrorMessage = "\\{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: (\\w+(,\\s\\w+)*)\"}";
+
+        final String contentAsString = result.getResponse().getContentAsString();
+
+        final Matcher matcher = Pattern.compile(expectedErrorMessage).matcher(contentAsString);
+
+        assertTrue(matcher.matches(), String.format("Regex: [%s] does not match string: [%s]", expectedErrorMessage, contentAsString));
+
+        final String group = matcher.group(1);
+        final String[] actualStoreType = group.split(",\\s");
+        Arrays.sort(actualStoreType);
+        assertArrayEquals(expectedStoreType, actualStoreType);
     }
 
     @AfterEach
