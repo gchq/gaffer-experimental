@@ -23,7 +23,6 @@ import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.util.PropertiesLoader;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
 
 @Service
@@ -40,8 +39,6 @@ public class CreateGraphService {
     crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
   }
     private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
-        PropertiesLoader propertiesLoader = new PropertiesLoader();
-        propertiesLoader.loadStoreProperties(graph);
         return from(graph);
     }
 

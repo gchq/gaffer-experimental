@@ -50,7 +50,7 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody_whenNoContextRootSpecified() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxyStore", getStorePropertiesFromYAMLResources("proxyNoContextRoot")));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxyNoContextRoot"));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\",\"gaffer.host\":\"http://my.graph.co.uk\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"},\"schema\":{}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
@@ -59,7 +59,7 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody() {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxyStore", getStorePropertiesFromYAMLResources("proxy")));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxy"));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\",\"gaffer.host\":\"http://my.graph.co.uk\",\"gaffer.context-root\":\"/rest\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\"},\"schema\":{}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
