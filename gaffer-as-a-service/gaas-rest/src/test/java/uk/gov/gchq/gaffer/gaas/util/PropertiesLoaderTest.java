@@ -53,7 +53,9 @@ class PropertiesLoaderTest {
     Throwable exception = assertThrows(RuntimeException.class, () -> {
       pLoader.loadStoreProperties(gaaSCreateRequestBody);
     });
-    assertTrue(exception.getLocalizedMessage().contains("StoreType is Invalid must be defined Valid Store Types supported are: accumulo, federated"));
+    assertTrue(exception.getLocalizedMessage().contains("StoreType is Invalid must be defined Valid Store Types supported are:"));
+    assertTrue(exception.getLocalizedMessage().contains("accumulo"));
+    assertTrue(exception.getLocalizedMessage().contains("federated"));
   }
 
 
