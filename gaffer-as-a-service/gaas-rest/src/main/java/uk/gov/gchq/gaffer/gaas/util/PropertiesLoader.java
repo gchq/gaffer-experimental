@@ -24,7 +24,6 @@ import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +42,7 @@ public class PropertiesLoader {
             Map<String, Object> storeProperties = new HashMap<>();
             Resource[] resources = loadResources("classpath*:yaml/" + storeType + ".yaml");
 
-            if(resources.length == 0){
+            if (resources.length == 0) {
                 throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + getStoreTypesAsStringList());
             }
 
@@ -75,7 +74,7 @@ public class PropertiesLoader {
     }
 
     private Resource[] loadResources(final String pattern) throws IOException {
-            return ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources(pattern);
+        return ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources(pattern);
     }
 
 }
