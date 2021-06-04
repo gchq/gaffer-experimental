@@ -53,10 +53,8 @@ public class CreateGraphService {
     String storeType = graph.getStoreType();
     Yaml yaml = new Yaml();
     try {
-      InputStream inputStream = this.getClass()
-              .getClassLoader()
-              .getResourceAsStream("yaml/" + storeType + ".yaml");
-      Map<String, Object> storeProperties = yaml.load(inputStream);
+      Resource[] resources = loadResources("classpath*:yaml/" + storeType + ".yaml");
+      Map<String, Object> storeProperties = yaml.load(resources[0].getInputStream());
       graph.setStoreProperties(storeProperties);
 
 
