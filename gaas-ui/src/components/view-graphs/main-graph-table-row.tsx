@@ -17,7 +17,8 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
 import React, {useEffect} from "react";
 import { Graph } from "../../domain/graph";
-import {GetAllGraphIdsRepo} from "../../rest/repositories/gaffer/get-all-graph-ids-repo";
+import { StoreType } from "../../domain/store-type";
+import { GetAllGraphIdsRepo } from "../../rest/repositories/gaffer/get-all-graph-ids-repo";
 
 interface IProps {
     index: number;
@@ -28,16 +29,22 @@ interface IProps {
 export function MainGraphTableRow(props: IProps) {
     const { graph, index, onClickDelete } = props;
     const [open, setOpen] = React.useState(false);
-    const [allGraphIds, setAllGraphIds]= React.useState<Array<string>>([]);
+    const [allGraphIdsText, setAllGraphIdsText]= React.useState<string>("");
     const classes = useRowStyles();
+
     useEffect(()=> {
-        getAllGraphIds();
+        if (graph.getStoreType() === StoreType.FEDERATED_STORE) {
+            getAllGraphIds();
+        }
     },[])
 
     async function getAllGraphIds(): Promise<void> {
-        const allGraphIdsResponse = await new GetAllGraphIdsRepo().get(graph.getUrl());
-        setAllGraphIds(allGraphIdsResponse);
-
+        try {
+            const allGraphIds: string[] = await new GetAllGraphIdsRepo().get(graph.getUrl());
+            setAllGraphIdsText(allGraphIds.length !== 0 ? "Federated Graphs: " + allGraphIds.join(", ") : "No Federated Graphs");
+        } catch(e) {
+            setAllGraphIdsText(`Federated Graphs: [GetAllGraphIds Operation - ${e.title}]`)
+        }
     }
 
     return (
@@ -74,9 +81,9 @@ export function MainGraphTableRow(props: IProps) {
                     <TableRow aria-label={"graph-description"}>
                         <TableCell component="th" scope="row">Description: {graph.getDescription()}</TableCell>
                     </TableRow>
-                    <TableRow id={"federated-graph-ids-" + index} aria-label={"federated-graph-ids"}>
-                        <TableCell component="th" scope="row">{allGraphIds.length !== 0 ? "Federated Graphs: "+allGraphIds.join(", "): "No Federated Graphs"}</TableCell>
-                    </TableRow>
+                    {graph.getStoreType() === StoreType.FEDERATED_STORE && <TableRow id={"federated-graph-ids-" + index} aria-label={"federated-graph-ids"}>
+                        <TableCell component="th" scope="row">{allGraphIdsText}</TableCell>
+                    </TableRow>}
                 </TableBody>
               </Table>
               </Box>
