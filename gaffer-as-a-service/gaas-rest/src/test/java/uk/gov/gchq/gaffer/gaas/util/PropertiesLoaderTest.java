@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PropertiesLoaderTest {
 
@@ -43,17 +45,16 @@ class PropertiesLoaderTest {
 
   }
 
-//  @Test
-//  public  void shouldThrowErrorForInvalidStoreType() throws GaaSRestApiException {
-//
-//    PropertiesLoader pLoader = new PropertiesLoader();
-//    GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("myGraph", "Another description", "invalidStore", getSchema());
-//    assertThrows(RuntimeException.class,pLoader.loadStoreProperties(gaaSCreateRequestBody));
-//
-//
-//
-//
-//  }
+  @Test
+  public  void shouldThrowErrorForInvalidStoreType() throws GaaSRestApiException {
+    PropertiesLoader pLoader = new PropertiesLoader();
+    GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("myGraph", "Another description", "invalidStore", getSchema());
+
+    Throwable exception = assertThrows(RuntimeException.class, () -> {
+      pLoader.loadStoreProperties(gaaSCreateRequestBody);
+    });
+    assertTrue(exception.getLocalizedMessage().contains("StoreType is Invalid must be defined Valid Store Types supported are: accumulo, federated"));
+  }
 
 
   private LinkedHashMap<String, Object> getSchema() {
