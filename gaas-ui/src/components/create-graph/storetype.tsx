@@ -1,5 +1,5 @@
 import React, {ReactElement} from "react";
-import { Box, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
+import { Box, FormControl, Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
 import { StoreType } from "../../domain/store-type";
 
 interface IProps {

@@ -63,7 +63,7 @@ app.get("/graphs", (req, res) => {
                 {
                     graphId: "roadTraffic",
                     description: "Road traffic graph. This graphs uses a federated store of proxy stores",
-                    url: "http://road-traffic.k8s.cluster/rest",
+                    url: "http://localhost:4000/rest",
                     storeType: "federatedStore",
                     status: "UP",
                 },
@@ -166,18 +166,19 @@ app.get("/namespaces", (req, res) => {
 });
 
 app.get("/up/graph/status", (req, res) => {
-    console.log(req.url)
     res.status(200).send({ status: "UP" });
 });
 
 app.get("/up/graph/config/description", (req, res) => {
-    console.log(req.url)
     res.status(200).send("This stubbed graph can be found in middleware.js");
 });
 
 app.get("/down/graph/status", (req, res) => {
-    console.log(req.url)
     res.status(200).send({ status: "DOWN" });
+});
+
+app.post("/rest/graph/operations/execute", (req, res) => {
+    res.status(200).send([ "mapEdges", "accEntities" ]);
 });
 
 module.exports = server;
