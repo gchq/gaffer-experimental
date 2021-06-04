@@ -39,7 +39,7 @@ import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
-import static uk.gov.gchq.gaffer.gaas.utilities.GafferKubernetesObjectFactory.from;
+import static uk.gov.gchq.gaffer.gaas.util.GafferKubernetesObjectFactory.from;
 
 @SpringBootTest
 public class CRDClientIT {
