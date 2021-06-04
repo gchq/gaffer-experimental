@@ -13,3 +13,5 @@ export interface IAllNameSpacesResponse extends Array<string> {}
 export interface IGraphStatusResponse {
     status: string;
 }
+
+export interface IGetAllGraphIdsResponse extends Array<string> {}
