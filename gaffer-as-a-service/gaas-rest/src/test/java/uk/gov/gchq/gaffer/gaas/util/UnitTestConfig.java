@@ -101,4 +101,9 @@ public class UnitTestConfig {
     public AuthenticationManager authenticationManager() {
         return mock(AuthenticationManager.class);
     }
+
+    @Bean
+    public PropertiesLoader propertiesLoader() {
+        return new PropertiesLoader();
+    }
 }
