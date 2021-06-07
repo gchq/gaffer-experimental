@@ -16,7 +16,6 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
@@ -29,16 +28,14 @@ import java.io.IOException;
 public final class GetStoreTypesService {
 
 
-
-
     @NotNull
-    public StoreTypesEndpointResponse getStoreTypes() throws  GaaSRestApiException{
-        PropertiesLoader propertiesLoader = new  PropertiesLoader();
+    public StoreTypesEndpointResponse getStoreTypes() throws GaaSRestApiException {
+        PropertiesLoader propertiesLoader = new PropertiesLoader();
         StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
         try {
             storeTypesEndpointResponse.setStoreTypes(propertiesLoader.getStoreTypesAsStringList());
         } catch (IOException e) {
-           throw new GaaSRestApiException(e.getMessage(), e.getLocalizedMessage(), 500);
+            throw new GaaSRestApiException(e.getMessage(), e.getLocalizedMessage(), 500);
         }
         return storeTypesEndpointResponse;
     }
