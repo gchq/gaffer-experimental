@@ -29,7 +29,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         try {
             const status: string = await new GetGraphStatusRepo().getStatus(proxyURLValue);
             if (status === "UP") {
-                const graph: Graph = new Graph(proxyURLValue + "-graph", await getDescription(), proxyURLValue, status, StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
+                const graph: Graph = new Graph(await getGraphId(), await getDescription(), proxyURLValue, status, StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
                 setSuccessHelperText(`Successfully added Graph at ${proxyURLValue}`)
                 onClickAddProxyGraph(graph);
                 onChangeProxyURL("");
@@ -49,6 +49,15 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
             description = "n/a";
         }
         return description;
+    }
+    async function getGraphId(): Promise<string> {
+        let graphId: string;
+        try {
+            graphId = await new GetGraphDetailsRepo().getGraphId(proxyURLValue);
+        } catch(e) {
+            graphId = "n/a";
+        }
+        return graphId;
     }
 
     function isValidHttpUrl(string: string):boolean {
