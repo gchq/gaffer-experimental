@@ -44,23 +44,16 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 @SpringBootTest
 public class CRDClientIT {
 
+    private static final String TEST_GRAPH_ID = "testgraphid";
+    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
+    private static final String ACCUMULO_ENABLED = "accumuloStore";
+
     @Autowired
     private CreateGraphService createGraphService;
     @Autowired
     private CRDClient crdClient;
     @Autowired
     private ApiClient apiClient;
-
-//    @Value("${gaffer.namespace}")
-//    private String namespace;
-//    @Value("${group}")
-//    private String group;
-//    @Value("${version}")
-//    private String version;
-
-    private static final String TEST_GRAPH_ID = "testgraphid";
-    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
-    private static final String ACCUMULO_ENABLED = "accumuloStore";
 
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {

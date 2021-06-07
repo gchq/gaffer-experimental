@@ -67,6 +67,16 @@ public class GraphControllerTest extends AbstractTest {
     private GetNamespacesService getNamespacesService;
 
     @Test
+    public void getStoretypes_ReturnsStoretypesAsList_whenSuccessful() throws Exception {
+
+        final MvcResult getStoretypeResponse = mvc.perform(get("/storetypes")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+        assertEquals("{\"storeTypes\":[\"accumuloStore\",\"federatedStore\",\"mapStore\",\"proxyStore\"]}", getStoretypeResponse.getResponse().getContentAsString());
+    }
+
+    @Test
     public void getGraphs_ReturnsGraphsAsList_whenSuccessful() throws Exception {
         final GaaSGraph graph = new GaaSGraph()
                 .graphId(TEST_GRAPH_ID)

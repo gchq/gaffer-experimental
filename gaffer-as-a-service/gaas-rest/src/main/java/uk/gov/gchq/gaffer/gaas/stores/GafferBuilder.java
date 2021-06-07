@@ -17,10 +17,14 @@
 package uk.gov.gchq.gaffer.gaas.stores;
 
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
+import uk.gov.gchq.gaffer.operation.Operation;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.HOOKS_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
@@ -30,9 +34,12 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 public class GafferBuilder {
 
-    protected GaaSCreateRequestBody graph;
+    public static final String INGRESS_API_PATH_VALUE = "/rest";
+    public static final String INGRESS_UI_PATH_VALUE = "/ui";
+
     private String graphId;
     private String description;
+    private Map<String, String[]> operationAuths = new LinkedHashMap<>();
     private Map<String, Object> schema;
     private Map<String, Object> properties;
 
@@ -87,8 +94,16 @@ public class GafferBuilder {
         gafferSpec.putNestedObject(description, DESCRIPTION_KEY);
         gafferSpec.putNestedObject(schema, SCHEMA_FILE_KEY);
         gafferSpec.putNestedObject(graphId.toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
-        gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
-        gafferSpec.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
+        gafferSpec.putNestedObject(Arrays.asList(getOpAuthoriser()), HOOKS_KEY);
+        gafferSpec.putNestedObject(INGRESS_API_PATH_VALUE, INGRESS_API_PATH_KEY);
+        gafferSpec.putNestedObject(INGRESS_UI_PATH_VALUE, INGRESS_UI_PATH_KEY);
         return gafferSpec;
+    }
+
+    private Map<String, Object> getOpAuthoriser() {
+        final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
+        opAuthoriser.put("class", OperationAuthoriser.class.getName());
+        opAuthoriser.put("auths", operationAuths);
+        return opAuthoriser;
     }
 }
