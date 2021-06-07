@@ -20,14 +20,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternUtils;
+import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@Component
 public class PropertiesLoader {
 
   @Autowired
@@ -74,5 +77,15 @@ public class PropertiesLoader {
      return resources;
   }
 
+
+  public List<String> getStoreTypesAsStringList()throws  IOException {
+    List<String> storeTypes = new ArrayList<>();
+    Resource[] resources = loadResources("classpath*:yaml/*.yaml");
+    for (final Resource resource : resources) {
+      String filename = resource.getFilename().split("\\.", 2)[0];
+      storeTypes.add(filename);
+    }
+    return storeTypes;
+  }
 
 }

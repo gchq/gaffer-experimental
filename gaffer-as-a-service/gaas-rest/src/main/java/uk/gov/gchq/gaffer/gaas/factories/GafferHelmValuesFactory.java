@@ -20,7 +20,7 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
-import uk.gov.gchq.gaffer.gaas.SpringContext;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.stores.GafferBuilder;
 import uk.gov.gchq.gaffer.gaas.util.PropertiesLoader;

@@ -18,17 +18,19 @@ package uk.gov.gchq.gaffer.gaas.services;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
-import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
+import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
 public class GetStoreTypesServiceTest {
+
     @Autowired
     private GetStoreTypesService getStoreTypesService;
 
     @Test
-    void testGetStoreTypesServices_ReturnsCorrectResponse() {
+    void testGetStoreTypesServices_ReturnsCorrectResponse() throws GaaSRestApiException {
         StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
         assertEquals("[accumuloStore, federatedStore, mapStore, proxyStore]", getStoreTypesService.getStoreTypes().getStoreTypes().toString());
     }

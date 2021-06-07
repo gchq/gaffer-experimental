@@ -16,22 +16,30 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.SpringContext;
-import uk.gov.gchq.gaffer.gaas.factories.StoreTypeFactory;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
+import uk.gov.gchq.gaffer.gaas.util.PropertiesLoader;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
+
 
 @Service
 public final class GetStoreTypesService {
+
+
+
+
     @NotNull
-    public StoreTypesEndpointResponse getStoreTypes() {
+    public StoreTypesEndpointResponse getStoreTypes() throws  GaaSRestApiException{
+        PropertiesLoader propertiesLoader = new  PropertiesLoader();
         StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
-        AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(SpringContext.class);
-        StoreTypeFactory storeTypeFactory = context.getBean(StoreTypeFactory.class);
-        storeTypesEndpointResponse.setStoreTypes(storeTypeFactory.getStoreTypesAsStringList());
+        try {
+            storeTypesEndpointResponse.setStoreTypes(propertiesLoader.getStoreTypesAsStringList());
+        } catch (IOException e) {
+           throw new GaaSRestApiException(e.getMessage(), e.getLocalizedMessage(), 500);
+        }
         return storeTypesEndpointResponse;
     }
 }

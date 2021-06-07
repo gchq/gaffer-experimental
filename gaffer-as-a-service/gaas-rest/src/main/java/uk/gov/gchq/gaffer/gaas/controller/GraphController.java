@@ -82,7 +82,7 @@ public class GraphController {
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
-    public ResponseEntity<StoreTypesEndpointResponse> getEndpoints() {
+    public ResponseEntity<StoreTypesEndpointResponse> getEndpoints() throws GaaSRestApiException {
         final StoreTypesEndpointResponse response = getStoreTypesService.getStoreTypes();
         return new ResponseEntity(response, HttpStatus.OK);
     }

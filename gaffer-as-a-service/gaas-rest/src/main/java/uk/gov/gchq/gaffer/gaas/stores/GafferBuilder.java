@@ -100,6 +100,11 @@ public class GafferBuilder {
         return gafferSpec;
     }
 
+    public GafferBuilder addOperationAuthoriser(final Class<? extends Operation> operationClass, final String... auths) {
+        operationAuths.put(operationClass.getName(), auths);
+        return this;
+    }
+
     private Map<String, Object> getOpAuthoriser() {
         final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
         opAuthoriser.put("class", OperationAuthoriser.class.getName());
