@@ -162,7 +162,7 @@ describe("Success & Error handling Adding Proxy Graph", () => {
 
   it("Should add ProxyGraph and call OnClickAddProxy with real description when both Repos successful", async () => {
     mockGetGraphStatusRepoIsSuccessfulAndReturns("UP");
-    mockGetGraphDescriptionRepoIsSuccessfulAndReturns("This graph is good");
+    mockGetGraphDetailsRepoIsSuccessfulAndReturns("graph-id","This graph is good");
     const component = mount(
       <AddProxyGraphInput
         hide={false}
@@ -180,7 +180,7 @@ describe("Success & Error handling Adding Proxy Graph", () => {
     await component.update();
 
     const expected: Graph = new Graph("http://all-good-url.app-graph", "This graph is good", "http://all-good-url.app", "UP", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH)
-    expect(onClickAddProxyMockCallback).toHaveBeenLastCalledWith(expected);
+    expect(onClickAddProxyMockCallback).toHaveBeenCalledWith(expected);
     expect(component.find("label#proxy-url-label").props().className).not.toContain("Mui-error");
     expect(component.find("p#proxy-url-helper-text").text()).toBe(
       "Successfully added Graph at http://all-good-url.app"
@@ -279,6 +279,9 @@ function mockGetGraphDetailsRepoToThrowError() {
     getDescription: () => {
       throw new RestApiError("Server Error", "Invalid proxy URL");
     },
+    getGraphId: () => {
+      throw new RestApiError("Server Error", "Invalid proxy URL");
+    },
   }));
 }
 
@@ -292,12 +295,16 @@ function mockGetGraphStatusRepoIsSuccessfulAndReturns(status: string) {
   }));
 }
 
-function mockGetGraphDescriptionRepoIsSuccessfulAndReturns(description: string) {
+function mockGetGraphDetailsRepoIsSuccessfulAndReturns(graphId: string,description: string) {
   // @ts-ignore
   GetGraphDetailsRepo.mockImplementationOnce(() => ({
     getDescription: () =>
       new Promise((resolve, reject) => {
         resolve(description);
+      }),
+    getGraphId: () =>
+      new Promise((resolve, reject) => {
+        resolve(graphId);
       }),
   }));
 }
@@ -306,6 +313,7 @@ async function waitForComponentToRender(wrapper: ReactWrapper) {
   // React forces test to use act(() => {}) when the component state is updated in some cases
   await act(async () => {
     await new Promise((resolve) => setTimeout(resolve));
+    wrapper.update();
     wrapper.update();
   });
 }
