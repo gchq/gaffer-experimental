@@ -32,6 +32,6 @@ public class GetStoreTypesServiceTest {
     @Test
     void testGetStoreTypesServices_ReturnsCorrectResponse() throws GaaSRestApiException {
         StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
-        assertEquals("[accumuloStore, federatedStore, mapStore, proxyStore]", getStoreTypesService.getStoreTypes().getStoreTypes().toString());
+        assertEquals("[accumulo, federated, mapStore, proxy, proxyNoContextRoot, accumulo, federated, mapStore, proxy, proxyNoContextRoot]", getStoreTypesService.getStoreTypes().getStoreTypes().toString());
     }
 }

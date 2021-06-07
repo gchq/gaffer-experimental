@@ -33,59 +33,59 @@ import java.util.Map;
 @Component
 public class PropertiesLoader {
 
-  @Autowired
-  private ResourceLoader resourceLoader;
+    @Autowired
+    private ResourceLoader resourceLoader;
 
-  public void loadStoreProperties(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
+    public void loadStoreProperties(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
 
-    try {
-      String storeType = graph.getStoreType();
-      Yaml yaml = new Yaml();
+        try {
+            String storeType = graph.getStoreType();
+            Yaml yaml = new Yaml();
 
-      Map<String, Object> storeProperties = new HashMap<>();
-      Resource[] resources = loadResources("classpath*:yaml/" + storeType + ".yaml");
+            Map<String, Object> storeProperties = new HashMap<>();
+            Resource[] resources = loadResources("classpath*:yaml/" + storeType + ".yaml");
 
-      if(resources.length == 0){
-        unSupportedStoreType();
-      }
-      
-      for (final Resource resource : resources) {
-        storeProperties = yaml.load(resource.getInputStream());
-        graph.setStoreProperties(storeProperties);
-      }
+            if (resources.length == 0) {
+                unSupportedStoreType();
+            }
 
-    } catch (IOException e) {
-      throw new GaaSRestApiException(e.getLocalizedMessage(), e.getMessage(), 500);
+            for (final Resource resource : resources) {
+                storeProperties = yaml.load(resource.getInputStream());
+                graph.setStoreProperties(storeProperties);
+            }
+
+        } catch (IOException e) {
+            throw new GaaSRestApiException(e.getLocalizedMessage(), e.getMessage(), 400);
+        }
+
     }
 
-  }
+    private void unSupportedStoreType() throws IOException {
+        ArrayList<String> storeTypes = new ArrayList<>();
+        Resource[] resources = loadResources("classpath*:yaml/*.yaml");
+        for (final Resource resource : resources) {
+            String filename = resource.getFilename().split("\\.", 2)[0];
+            storeTypes.add(filename);
+        }
+        throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + storeTypes.toString().replaceAll("\\[|\\]", ""));
 
-  private void unSupportedStoreType()throws  IOException {
-    ArrayList<String> storeTypes = new ArrayList<>();
-    Resource[] resources = loadResources("classpath*:yaml/*.yaml");
-    for (final Resource resource : resources) {
-      String filename = resource.getFilename().split("\\.", 2)[0];
-      storeTypes.add(filename);
     }
-    throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + storeTypes.toString().replaceAll("\\[|\\]", ""));
-
-  }
 
 
-  private  Resource[]  loadResources(final String pattern) throws  IOException {
-      Resource[] resources = ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources(pattern);
-     return resources;
-  }
-
-
-  public List<String> getStoreTypesAsStringList()throws  IOException {
-    List<String> storeTypes = new ArrayList<>();
-    Resource[] resources = loadResources("classpath*:yaml/*.yaml");
-    for (final Resource resource : resources) {
-      String filename = resource.getFilename().split("\\.", 2)[0];
-      storeTypes.add(filename);
+    private Resource[] loadResources(final String pattern) throws IOException {
+        Resource[] resources = ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources(pattern);
+        return resources;
     }
-    return storeTypes;
-  }
+
+
+    public List<String> getStoreTypesAsStringList() throws IOException {
+        List<String> storeTypes = new ArrayList<>();
+        Resource[] resources = loadResources("classpath*:yaml/*.yaml");
+        for (final Resource resource : resources) {
+            String filename = resource.getFilename().split("\\.", 2)[0];
+            storeTypes.add(filename);
+        }
+        return storeTypes;
+    }
 
 }
