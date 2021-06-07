@@ -5,7 +5,9 @@ import {Graph} from "../../domain/graph";
 import {GraphType} from "../../domain/graph-type";
 import {StoreType} from "../../domain/store-type";
 import {GetGraphStatusRepo} from "../../rest/repositories/get-graph-status-repo";
-import {GetGraphDetailsRepo} from "../../rest/repositories/get-graph-details-repo";
+import {GetGraphDescriptionRepo} from "../../rest/repositories/get-graph-description-repo";
+import {GetGraphIdRepo} from "../../rest/repositories/get-graph-id-repo";
+
 
 interface IProps {
     hide: boolean;
@@ -28,6 +30,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
     async function onClickSubmit(){
         try {
             const status: string = await new GetGraphStatusRepo().getStatus(proxyURLValue);
+
             if (status === "UP") {
                 const graph: Graph = new Graph(await getGraphId(), await getDescription(), proxyURLValue, status, StoreType.PROXY_STORE, GraphType.PROXY_GRAPH);
                 setSuccessHelperText(`Successfully added Graph at ${proxyURLValue}`)
@@ -44,7 +47,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
     async function getDescription(): Promise<string> {
         let description: string;
         try {
-            description = await new GetGraphDetailsRepo().getDescription(proxyURLValue);
+            description = await new GetGraphDescriptionRepo().getDescription(proxyURLValue);
         } catch(e) {
             description = "n/a";
         }
@@ -53,7 +56,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
     async function getGraphId(): Promise<string> {
         let graphId: string;
         try {
-            graphId = await new GetGraphDetailsRepo().getGraphId(proxyURLValue);
+            graphId = await new GetGraphIdRepo().getGraphId(proxyURLValue);
         } catch(e) {
             graphId = "n/a";
         }

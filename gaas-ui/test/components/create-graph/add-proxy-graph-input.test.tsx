@@ -5,11 +5,13 @@ import AddProxyGraphInput from "../../../src/components/create-graph/add-proxy-g
 import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";
-import { GetGraphDetailsRepo } from "../../../src/rest/repositories/get-graph-details-repo";
+import { GetGraphDescriptionRepo } from "../../../src/rest/repositories/get-graph-description-repo";
+import { GetGraphIdRepo } from "../../../src/rest/repositories/get-graph-id-repo";
 import { GetGraphStatusRepo } from "../../../src/rest/repositories/get-graph-status-repo";
 import { RestApiError } from "../../../src/rest/RestApiError";
 
-jest.mock("../../../src/rest/repositories/get-graph-details-repo");
+jest.mock("../../../src/rest/repositories/get-graph-description-repo");
+jest.mock("../../../src/rest/repositories/get-graph-id-repo");
 jest.mock("../../../src/rest/repositories/get-graph-status-repo");
 
 let component: ReactWrapper;
@@ -138,54 +140,6 @@ describe("Success & Error handling Adding Proxy Graph", () => {
       "Graph at the base URL: http://some-url is down"
     );
   });
-
-  it("Should still add ProxyGraph and call OnClickAddProxy when GraphDetailsRepo fails", async () => {
-    mockGetGraphStatusRepoIsSuccessfulAndReturns("UP");
-    mockGetGraphDetailsRepoToThrowError();
-    const component = mount(
-      <AddProxyGraphInput
-        hide={false}
-        proxyURLValue={"http://ok-url"}
-        onChangeProxyURL={onChangeProxyURLMockCallback}
-        onClickAddProxyGraph={onClickAddProxyMockCallback}
-      />
-    );
-    waitForComponentToRender(component);
-
-    clickAddProxy(component);
-    await component.update();
-    await component.update();
-
-    const expected: Graph = new Graph("http://ok-url-graph", "n/a", "http://ok-url", "UP", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH)
-    expect(onClickAddProxyMockCallback).toHaveBeenLastCalledWith(expected);
-  });
-
-  it("Should add ProxyGraph and call OnClickAddProxy with real description when both Repos successful", async () => {
-    mockGetGraphStatusRepoIsSuccessfulAndReturns("UP");
-    mockGetGraphDetailsRepoIsSuccessfulAndReturns("graph-id","This graph is good");
-    const component = mount(
-      <AddProxyGraphInput
-        hide={false}
-        proxyURLValue={"http://all-good-url.app"}
-        onChangeProxyURL={onChangeProxyURLMockCallback}
-        onClickAddProxyGraph={onClickAddProxyMockCallback}
-      />
-    );
-    waitForComponentToRender(component);
-
-    clickAddProxy(component);
-    await component.update();
-    await component.update();
-    await component.update();
-    await component.update();
-
-    const expected: Graph = new Graph("http://all-good-url.app-graph", "This graph is good", "http://all-good-url.app", "UP", StoreType.PROXY_STORE, GraphType.PROXY_GRAPH)
-    expect(onClickAddProxyMockCallback).toHaveBeenCalledWith(expected);
-    expect(component.find("label#proxy-url-label").props().className).not.toContain("Mui-error");
-    expect(component.find("p#proxy-url-helper-text").text()).toBe(
-      "Successfully added Graph at http://all-good-url.app"
-    );
-  });
 });
 
 describe("Hide Component", () => {
@@ -273,12 +227,18 @@ function mockGetGraphStatusRepoToThrowError() {
   }));
 }
 
-function mockGetGraphDetailsRepoToThrowError() {
+function mockGetGraphDescriptionRepoToThrowError() {
   // @ts-ignore
-  GetGraphDetailsRepo.mockImplementationOnce(() => ({
+  GetGraphDescriptionRepo.mockImplementationOnce(() => ({
     getDescription: () => {
       throw new RestApiError("Server Error", "Invalid proxy URL");
-    },
+    }
+  }));
+}
+
+function mockGetGraphIdRepoToThrowError() {
+  // @ts-ignore
+  GetGraphDescriptionRepo.mockImplementationOnce(() => ({
     getGraphId: () => {
       throw new RestApiError("Server Error", "Invalid proxy URL");
     },
@@ -295,19 +255,27 @@ function mockGetGraphStatusRepoIsSuccessfulAndReturns(status: string) {
   }));
 }
 
-function mockGetGraphDetailsRepoIsSuccessfulAndReturns(graphId: string,description: string) {
+function mockGetGraphDescriptionRepoIsSuccessfulAndReturns(description: string) {
   // @ts-ignore
-  GetGraphDetailsRepo.mockImplementationOnce(() => ({
+  GetGraphDescriptionRepo.mockImplementationOnce(() => ({
     getDescription: () =>
       new Promise((resolve, reject) => {
         resolve(description);
       }),
+  }));
+}
+
+function mockGetGraphIdRepoIsSuccessfulAndReturns(graphId: string) {
+  // @ts-ignore
+  GetGraphIdRepo.mockImplementationOnce(() => ({
     getGraphId: () =>
       new Promise((resolve, reject) => {
         resolve(graphId);
       }),
   }));
 }
+
+
 
 async function waitForComponentToRender(wrapper: ReactWrapper) {
   // React forces test to use act(() => {}) when the component state is updated in some cases

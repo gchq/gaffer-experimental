@@ -1,10 +1,10 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { GetGraphDetailsRepo } from "../../../src/rest/repositories/get-graph-details-repo";
+import { GetGraphDescriptionRepo } from "../../../src/rest/repositories/get-graph-description-repo";
 import { RestApiError } from "../../../src/rest/RestApiError";
 
 const mock = new MockAdapter(axios);
-const repo = new GetGraphDetailsRepo();
+const repo = new GetGraphDescriptionRepo();
 
 afterEach(() => mock.resetHandlers());
 
