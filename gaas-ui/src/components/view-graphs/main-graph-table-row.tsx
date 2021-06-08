@@ -36,7 +36,7 @@ export function MainGraphTableRow(props: IProps) {
         if (graph.getStoreType() === StoreType.FEDERATED_STORE) {
             getAllGraphIds();
         }
-    });
+    }, []);
 
     async function getAllGraphIds(): Promise<void> {
         try {
