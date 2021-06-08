@@ -169,6 +169,10 @@ app.get("/up/graph/status", (req, res) => {
     res.status(200).send({ status: "UP" });
 });
 
+app.get("/up/graph/config/graphId", (req, res) => {
+    res.status(200).send("middleware.js-graph");
+});
+
 app.get("/up/graph/config/description", (req, res) => {
     res.status(200).send("This stubbed graph can be found in middleware.js");
 });
