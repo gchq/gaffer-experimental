@@ -43,7 +43,7 @@ public class PropertiesLoader {
       Yaml yaml = new Yaml();
 
       Map<String, Object> storeProperties = new HashMap<>();
-      Resource[] resources = loadResources("classpath*:yaml/" + storeType + ".yaml");
+      Resource[] resources = loadResources("classpath*:config/" + storeType + ".yaml");
 
       if (resources.length == 0) {
         unSupportedStoreType();
@@ -78,7 +78,7 @@ public class PropertiesLoader {
 
   private List<String> getStoreTypes() throws IOException {
     List<String> storeTypes = new ArrayList<>();
-    Resource[] resources = loadResources("classpath*:yaml/*.yaml");
+    Resource[] resources = loadResources("classpath*:config/*.yaml");
     for (final Resource resource : resources) {
       String filename = resource.getFilename().split("\\.", 2)[0];
       storeTypes.add(filename);
