@@ -1,6 +1,6 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { IGetStoreTypesResponse } from "../../../src/rest/http-message-interfaces/response-interfaces";
+import { IAllStoreTypesResponse } from "../../../src/rest/http-message-interfaces/response-interfaces";
 import { GetStoreTypesRepo } from "../../../src/rest/repositories/get-store-types-repo";
 import { RestApiError } from "../../../src/rest/RestApiError";
 
@@ -11,15 +11,19 @@ afterEach(() => mock.resetHandlers());
 
 describe("Get Store Types Repository", () => {
   it("should return a list of store type config names", async () => {
-    const apiResponse: IGetStoreTypesResponse = {
-      storeTypes: ["accumulo-big", "accumulo-small"],
+    const apiResponse: IAllStoreTypesResponse = {
+      federatedStoreTypes: ["federated"],
+      storeTypes: ["accumulo-big", "accumulo-small"]
     };
     mock.onGet("/storetypes").reply(200, apiResponse);
 
-    const actual: string[] = await repo.get();
+    const actual: IAllStoreTypesResponse = await repo.get();
 
-    const expected = ["accumulo-big", "accumulo-small"];
-    expect(actual).toEqual(expected);
+    const expectedStoretypes = ["accumulo-big", "accumulo-small"];
+    const expectedFederatedStoreTypes = ["federated"];
+
+    expect(actual.storeTypes).toEqual(expectedStoretypes);
+    expect(actual.federatedStoreTypes).toEqual(expectedFederatedStoreTypes);
   });
 
   it("should throw RestApiError with correct status message when no response body", async () => {

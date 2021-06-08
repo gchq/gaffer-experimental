@@ -1,16 +1,16 @@
 import {IApiResponse, RestClient} from "../clients/rest-client";
 import { Config } from "../config";
-import {IGetStoreTypesResponse} from "../http-message-interfaces/response-interfaces";
+import {IAllStoreTypesResponse} from "../http-message-interfaces/response-interfaces";
 
 export class GetStoreTypesRepo {
 
-    public async get(): Promise<Array<string>> {
-        const response: IApiResponse<IGetStoreTypesResponse>= await new RestClient()
+    public async get(): Promise<IAllStoreTypesResponse> {
+        const response: IApiResponse<IAllStoreTypesResponse>= await new RestClient()
             .baseUrl(Config.REACT_APP_KAI_REST_API_HOST)
             .urlPath("/storetypes")
             .get()
             .execute();
 
-        return response.data.storeTypes;
+        return response.data;
     }
 }

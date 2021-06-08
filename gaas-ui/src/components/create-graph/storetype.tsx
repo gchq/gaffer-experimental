@@ -1,6 +1,7 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import { Box, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
 import {GetStoreTypesRepo} from "../../rest/repositories/get-store-types-repo";
+import {IAllStoreTypesResponse} from "../../rest/http-message-interfaces/response-interfaces";
 
 interface IProps {
     value: string;
@@ -15,9 +16,9 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
     const [successHelperText, setSuccessHelperText] = useState("");
     async function getStoreTypes(): Promise<void> {
         try {
-            const storeTypes: string[] = await new GetStoreTypesRepo().get();
-            if (storeTypes.length !== 0) {
-                setStoreTypes(storeTypes);
+            const storeTypes: IAllStoreTypesResponse = await new GetStoreTypesRepo().get();
+            if (storeTypes.storeTypes.length !== 0) {
+                setStoreTypes(storeTypes.storeTypes);
             }else{
                 setErrorHelperText("No storetypes available");
             }
