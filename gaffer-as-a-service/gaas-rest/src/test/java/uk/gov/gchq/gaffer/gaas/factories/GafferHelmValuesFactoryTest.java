@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import com.google.gson.Gson;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
@@ -103,61 +102,25 @@ public class GafferHelmValuesFactoryTest {
         assertEquals(expected, gson.toJson(requestBody));
     }
 
+    @Test
+    public void testGetStorePropertiesFromYAMLResources() {
+        Yaml yaml = new Yaml();
+        InputStream inputStream = this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("config/federated.yaml");
+        Map<String, Object> storeProperties = yaml.load(inputStream);
+        String expected = "{graph={storeProperties={gaffer.store.class=uk.gov.gchq.gaffer.federatedstore.FederatedStore, gaffer.store.properties.class=uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties, gaffer.serialiser.json.modules=uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules}}}";
+        assertEquals(expected, storeProperties.toString());
+
+    }
 
     private Map<String, Object> getStorePropertiesFromYAMLResources(final String file) {
         Yaml yaml = new Yaml();
         InputStream inputStream = this.getClass()
                 .getClassLoader()
-                .getResourceAsStream("yaml/" + file + ".yaml");
-
-
+                .getResourceAsStream("config/" + file + ".yaml");
         Map<String, Object> storeProperties = yaml.load(inputStream);
-
         return storeProperties;
-    }
-
-    @Disabled
-    public void testGetStorePropertiesFromYAMLResources() {
-        Yaml yaml = new Yaml();
-        InputStream inputStream = this.getClass()
-                .getClassLoader()
-                .getResourceAsStream("yaml/values-federated.yaml");
-
-
-        Map<String, Object> storeProperties = yaml.load(inputStream);
-
-
-        String expected =
-                "{graph={storeProperties={gaffer.store.class=uk.gov.gchq.gaffer.federatedstore.FederatedStore, gaffer.store.properties.class=uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties, gaffer.serialiser.json.modules=uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules}}, ui={config={\n" +
-                        "  \"gafferEndpoint\": {\n" +
-                        "    \"path\": \"/rest\"\n" +
-                        "  },\n" +
-                        "  \"operationOptions\": {\n" +
-                        "    \"visible\": [\n" +
-                        "      {\n" +
-                        "        \"key\": \"gaffer.federatedstore.operation.graphIds\",\n" +
-                        "        \"label\": \"Graph Ids\",\n" +
-                        "        \"multiple\": true,\n" +
-                        "        \"autocomplete\": {\n" +
-                        "          \"asyncOptions\": {\n" +
-                        "            \"class\": \"GetAllGraphIds\"\n" +
-                        "          }\n" +
-                        "        }\n" +
-                        "      },\n" +
-                        "      {\n" +
-                        "        \"key\": \"gaffer.federatedstore.operation.skipFailedFederatedStoreExecute\",\n" +
-                        "        \"label\": \"Skip Failed Graphs\",\n" +
-                        "        \"value\": \"false\",\n" +
-                        "        \"autocomplete\": {\n" +
-                        "          \"options\": [ \"true\", \"false\" ]\n" +
-                        "        }\n" +
-                        "      }\n" +
-                        "    ]\n" +
-                        "  }\n" +
-                        "}}}";
-
-        assertEquals(expected, storeProperties.toString());
-
     }
 
     private LinkedHashMap<String, Object> getSchema() {

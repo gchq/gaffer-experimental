@@ -20,14 +20,25 @@ import java.util.List;
 
 public class StoreTypesEndpointResponse {
 
-    private List<String> storetypes;
+    private List<String> storeTypes;
+
+    private List<String> federatedStoreTypes;
 
     public StoreTypesEndpointResponse setStoreTypes(final List<String> storetypes) {
-        this.storetypes = storetypes;
+        this.storeTypes = storetypes;
         return this;
     }
 
     public List<String> getStoreTypes() {
-        return storetypes;
+        return storeTypes;
+    }
+
+    public List<String> getFederatedStoreTypes() {
+        return federatedStoreTypes;
+    }
+
+    public StoreTypesEndpointResponse setFederatedStoreTypes(final List<String> federatedStoreTypes) {
+        this.federatedStoreTypes = federatedStoreTypes;
+        return this;
     }
 }
