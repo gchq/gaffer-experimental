@@ -1,6 +1,5 @@
 import React, {ReactElement, useEffect, useState} from "react";
-import { Box, FormControl, Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
-import { StoreType } from "../../domain/store-type";
+import { Box, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
 import {GetStoreTypesRepo} from "../../rest/repositories/get-store-types-repo";
 
 interface IProps {
@@ -17,10 +16,11 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
     async function getStoreTypes(): Promise<void> {
         try {
             const storeTypes: string[] = await new GetStoreTypesRepo().get();
-            if (storeTypes.length === 0) {
-                setSuccessHelperText("No Storetypes available");
+            if (storeTypes.length !== 0) {
+                setStoreTypes(storeTypes);
+            }else{
+                setErrorHelperText("No storetypes available");
             }
-            setStoreTypes(storeTypes);
         } catch (e) {
             setErrorHelperText(`Storetypes unavailable: ${e.message}`);
             
@@ -57,7 +57,6 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                             setErrorHelperText("");
                         }
                         }
-                        helperText={errorHelperText + successHelperText}
                     >
                         {storeTypes.map((store: string) => (
                                 <MenuItem value={store} aria-label={store+"-menu-item"}
@@ -69,6 +68,7 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
 
                         )}
                     </Select>
+                    <FormHelperText id="storetype-form-helper">{errorHelperText + successHelperText}</FormHelperText>
                 </FormControl>
             </Grid>
     )

@@ -25,6 +25,11 @@ describe("Storetype select component", () => {
             expect(component.find("div#storetype-formcontrol")
                 .find("input").props().value).toBe("");
         })
+        it("Should display helper message when storetype empty", () => {
+            waitForComponentToRender(component);
+            expect(component.find("p#storetype-form-helper").text()).toBe("No storetypes available");
+
+        })
     })
     describe("Integration with GetStoretypesRepo", () => {
         beforeEach(() =>{
@@ -49,8 +54,8 @@ describe("Storetype select component", () => {
             );
         });
         it("should show an error when GetStoretypesRepo throws an error", () => {
-            console.log(component.html().text())
-            expect(component.find("p#store-type-input-text").text()).toBe("");
+            waitForComponentToRender(component);
+            expect(component.find("p#storetype-form-helper").text()).toBe("Storetypes unavailable: undefined");
 
         });
     })
