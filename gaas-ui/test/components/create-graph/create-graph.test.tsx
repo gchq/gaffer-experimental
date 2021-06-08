@@ -30,7 +30,7 @@ afterEach(() => {
   jest.resetAllMocks();
 });
 
-describe("AddGraph UI component", () => {
+describe("CreateGraph UI component", () => {
   describe("Layout On Render", () => {
     it("Should have a Graph Id, Description, Store Type dropdown inputs", () => {
       const textfield = wrapper.find("input");
@@ -163,9 +163,9 @@ describe("AddGraph UI component", () => {
       expect(tableInputs.at(1).props().checked).toBe(false);
       expect(tableInputs.at(2).props().checked).toBe(false);
     });
-    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+    it("Should call CreateGraphRepo with Federated Store Graph request params and display success message", async () => {
       const mock = jest.fn();
-      mockAddGraphRepoWithFunction(mock);
+      mockCreateGraphRepoWithFunction(mock);
       mockGetGraphDescription("test");
       mockGetGraphId("test-graph");
       mockGetGraphStatus("UP");
@@ -195,9 +195,9 @@ describe("AddGraph UI component", () => {
       );
 
     });
-    it("Should call AddGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async () => {
+    it("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async () => {
       const mock = jest.fn();
-      mockAddGraphRepoWithFunction(mock);
+      mockCreateGraphRepoWithFunction(mock);
       mockGetGraphIdRepoToThrowError();
       mockGetGraphDescriptionRepoToThrowError();
       mockGetGraphStatus("UP");
@@ -229,9 +229,9 @@ describe("AddGraph UI component", () => {
     });
   });
   describe("When Map Store Is Selected", ()=>{
-    it("Should call AddGraphRepo with Map Store Graph request params and display success message", async () => {
+    it("Should call CreateGraphRepo with Map Store Graph request params and display success message", async () => {
       const mock = jest.fn();
-      mockAddGraphRepoWithFunction(mock);
+      mockCreateGraphRepoWithFunction(mock);
       
       inputGraphId("map-store-graph");
       inputDescription("Mappy description");
@@ -251,9 +251,9 @@ describe("AddGraph UI component", () => {
     });
   });
   describe("When Accumulo Store Is Selected", ()=>{
-    it("Should call AddGraphRepo with Accumulo Store Graph request params and display success message", async () => {
+    it("Should call CreateGraphRepo with Accumulo Store Graph request params and display success message", async () => {
       const mock = jest.fn();
-      mockAddGraphRepoWithFunction(mock);
+      mockCreateGraphRepoWithFunction(mock);
       
       inputGraphId("accumulo-graph");
       inputDescription("None");
@@ -405,7 +405,7 @@ describe("AddGraph UI component", () => {
 
   describe("On Submit Request", () => {
     it("should display success message in the NotificationAlert", async () => {
-      mockAddGraphRepoWithFunction(() => {});
+      mockCreateGraphRepoWithFunction(() => {});
       inputGraphId("OK Graph");
       inputDescription("test");
       inputElements(elements);
@@ -502,7 +502,7 @@ function inputTypes(typesObject: object): void {
   );
 }
 
-function mockAddGraphRepoWithFunction(f: () => void): void {
+function mockCreateGraphRepoWithFunction(f: () => void): void {
   // @ts-ignore
   CreateGraphRepo.mockImplementationOnce(() => ({
     create: f,

@@ -5,22 +5,22 @@ import ViewGraph from "../view-graphs/view-graphs";
 
 const Routes = [
     {
-        path: "/AddGraph",
+        path: "/creategraph",
         sidebarName: "Create Graph",
         component: CreateGraph,
     },
     {
-        path: "/ViewGraph",
+        path: "/viewgraphs",
         sidebarName: "View Graphs",
         component: ViewGraph,
     },
     {
-        path: "/Namespaces",
+        path: "/namespaces",
         sidebarName: "Cluster Namespaces",
         component: ClusterNamespaces,
     },
     {
-        path: "/UserGuide",
+        path: "/userguide",
         sidebarName: "User Guide",
         component: UserGuide,
     },
