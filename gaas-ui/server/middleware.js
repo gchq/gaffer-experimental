@@ -63,7 +63,7 @@ app.get("/graphs", (req, res) => {
                 {
                     graphId: "roadTraffic",
                     description: "Road traffic graph. This graphs uses a federated store of proxy stores",
-                    url: "http://localhost:4000/rest",
+                    url: "http://road-traffic.k8s.cluster/rest",
                     storeType: "federatedStore",
                     status: "UP",
                 },
