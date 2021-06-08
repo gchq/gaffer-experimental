@@ -11,14 +11,15 @@ interface IProps {
 export default function StoreTypeSelect(props: IProps): ReactElement {
     
     const { value, onChange } = props;
-    const [storeTypes, setStoreTypes] = React.useState<Array<string>>([]);
+    const [allStoreTypes, setAllStoreTypes] = React.useState<Array<string>>([]);
     const [errorHelperText, setErrorHelperText] = useState("");
     const [successHelperText, setSuccessHelperText] = useState("");
-    async function getStoreTypes(): Promise<void> {
+    //TODO: UNIT TESTS
+    async function getAllStoreTypes(): Promise<void> {
         try {
             const storeTypes: IAllStoreTypesResponse = await new GetStoreTypesRepo().get();
-            if (storeTypes.storeTypes.length !== 0) {
-                setStoreTypes(storeTypes.storeTypes);
+            if (storeTypes.storeTypes.length !== 0 || storeTypes.federatedStoreTypes.length !== 0) {
+                setAllStoreTypes(storeTypes.federatedStoreTypes.concat(storeTypes.storeTypes));
             }else{
                 setErrorHelperText("No storetypes available");
             }
@@ -28,7 +29,7 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
         }
     }
     useEffect(() => {
-        getStoreTypes();
+        getAllStoreTypes();
     })
 
     return (
@@ -59,7 +60,7 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                         }
                         }
                     >
-                        {storeTypes.map((store: string) => (
+                        {allStoreTypes.map((store: string) => (
                                 <MenuItem value={store} aria-label={store+"-menu-item"}
                                           id={store+"-menu-item"} aria-labelledby={"storetype-select-label"}
                                 >
