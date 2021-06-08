@@ -4,14 +4,14 @@ import { act } from "react-dom/test-utils";
 import CreateGraph from "../../../src/components/create-graph/create-graph";
 import { Graph } from "../../../src/domain/graph";
 import { StoreType } from "../../../src/domain/store-type";
-import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
+import { CreateStoreTypesGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-storetypes-graph-repo";
 import { GetAllGraphsRepo } from "../../../src/rest/repositories/get-all-graphs-repo";
 import { GetGraphDescriptionRepo } from "../../../src/rest/repositories/get-graph-description-repo";
 import { GetGraphIdRepo } from "../../../src/rest/repositories/get-graph-id-repo";
 import { GetGraphStatusRepo } from "../../../src/rest/repositories/get-graph-status-repo";
 import { RestApiError } from "../../../src/rest/RestApiError";
 
-jest.mock("../../../src/rest/repositories/create-graph-repo");
+jest.mock("../../../src/rest/repositories/create-storetypes-graph-repo");
 jest.mock("../../../src/rest/repositories/get-all-graphs-repo");
 jest.mock("../../../src/rest/repositories/get-graph-status-repo");
 jest.mock("../../../src/rest/repositories/get-graph-description-repo");
@@ -504,7 +504,7 @@ function inputTypes(typesObject: object): void {
 
 function mockCreateGraphRepoWithFunction(f: () => void): void {
   // @ts-ignore
-  CreateGraphRepo.mockImplementationOnce(() => ({
+  CreateStoreTypesGraphRepo.mockImplementationOnce(() => ({
     create: f,
   }));
 }

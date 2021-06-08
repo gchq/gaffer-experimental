@@ -19,9 +19,9 @@ import AddRoundedIcon from "@material-ui/icons/AddRounded";
 import React from "react";
 import { StoreType } from "../../domain/store-type";
 import {
-  CreateGraphRepo,
+  CreateStoreTypesGraphRepo,
   ICreateGraphConfig,
-} from "../../rest/repositories/create-graph-repo";
+} from "../../rest/repositories/create-storetypes-graph-repo";
 import {AlertType, NotificationAlert} from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../domain/graph";
@@ -48,7 +48,7 @@ interface IState {
   typesFiles: Array<File>;
   typesFieldDisabled: boolean;
   dialogIsOpen: boolean;
-  storeType: StoreType;
+  storeType: string;
   graphs: Graph[];
   proxyURL: string;
   root: string;
@@ -78,7 +78,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
       typesFiles: [],
       typesFieldDisabled: false,
       dialogIsOpen: false,
-      storeType: StoreType.MAPSTORE,
+      storeType: "",
       proxyURL: "",
       root: "",
       graphs: [],
@@ -127,7 +127,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
     }
 
       try {
-        await new CreateGraphRepo().create(graphId, description, storeType, config);
+        await new CreateStoreTypesGraphRepo().create(graphId, description, storeType, config);
         this.setState({
           outcome: AlertType.SUCCESS,
           outcomeMessage: `${graphId} was successfully added`,

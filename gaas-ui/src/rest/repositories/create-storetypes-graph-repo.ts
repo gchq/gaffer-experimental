@@ -5,14 +5,14 @@ import {IElements} from "../../domain/elements-schema";
 import {ITypesSchema} from "../../domain/types-schema";
 import { Config } from "../config";
 
-export class CreateGraphRepo {
+export class CreateStoreTypesGraphRepo {
     public async create(
         graphId: string,
         description: string,
-        storeType: StoreType,
+        storeType: string,
         config: ICreateGraphConfig,
     ): Promise<void> {
-        if (storeType === StoreType.ACCUMULO || storeType === StoreType.MAPSTORE) {
+        
             if (config.schema === undefined) {
                 throw new Error("Schema is undefined");
             }
@@ -24,20 +24,7 @@ export class CreateGraphRepo {
             };
             await new RestClient().baseUrl(Config.REACT_APP_KAI_REST_API_HOST).post().graphs().requestBody(httpRequestBody).execute();
         }
-        
-        else {
-            if (config.proxyStores === undefined) {
-                throw new Error("Proxy Stores is undefined");
-            }
-            const httpRequestBody: ICreateFederatedGraphRequestBody = {
-                graphId: graphId,
-                description: description,
-                storeType: StoreType.FEDERATED_STORE,
-                proxyStores: config.proxyStores
-            };
-            await new RestClient().baseUrl(Config.REACT_APP_KAI_REST_API_HOST).post().graphs().requestBody(httpRequestBody).execute();
-        }
-    }
+    
 }
 
 export interface ICreateGraphConfig {

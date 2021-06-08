@@ -170,10 +170,12 @@ app.get("/storetypes", (req, res) => {
             res.status(200).send({
                 storeTypes: [
                     "accumulo",
-                    "federated",
                     "mapStore",
                     "proxy",
                     "proxyNoContextRoot"
+                ],
+                federatedStoreTypes: [
+                    "federated"
                 ]
             });
         });
