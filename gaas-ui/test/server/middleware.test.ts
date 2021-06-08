@@ -190,4 +190,28 @@ describe("Namespaces", () => {
             });
     });
 });
+describe("Storetypes", () => {
+    beforeAll(async (done) => {
+        await request(server)
+            .post("/auth")
+            .send({
+                username: "user@yahoo.com",
+                password: "abc123",
+            })
+            .then((response) => {
+                token = response.body;
+                done();
+            });
+    });
+    it("storetypes endpoint with Authorization token should return storetypes", async () => {
+        await request(server)
+            .get("/storetypes")
+            .set("Authorization", token)
+            .then((response) => {
+                // @ts-ignore
+                expect(response.statusCode).toBe(200);
+                expect(response.body).toStrictEqual({"storeTypes": ["accumulo", "federated", "mapStore", "proxy", "proxyNoContextRoot"]});
+            });
+    })
+})
 export {};
