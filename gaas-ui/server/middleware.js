@@ -63,7 +63,7 @@ app.get("/graphs", (req, res) => {
                 {
                     graphId: "roadTraffic",
                     description: "Road traffic graph. This graphs uses a federated store of proxy stores",
-                    url: "http://localhost:4000/rest",
+                    url: "http://road-traffic.k8s.cluster/rest",
                     storeType: "federatedStore",
                     status: "UP",
                 },
@@ -159,6 +159,23 @@ app.get("/namespaces", (req, res) => {
     try {
         jwt.verify(req.get("Authorization"), jwtSecret, () => {
             res.status(200).send(["namespace1", "namespace2", "namespace3"]);
+        });
+    } catch (e) {
+        res.status(403).end();
+    }
+});
+app.get("/storetypes", (req, res) => {
+    try {
+        jwt.verify(req.get("Authorization"), jwtSecret, () => {
+            res.status(200).send({
+                storeTypes: [
+                    "accumulo",
+                    "federated",
+                    "mapStore",
+                    "proxy",
+                    "proxyNoContextRoot"
+                ]
+            });
         });
     } catch (e) {
         res.status(403).end();

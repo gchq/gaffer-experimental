@@ -1,7 +1,7 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import { act } from "react-dom/test-utils";
-import AddGraph from "../../../src/components/create-graph/create-graph";
+import CreateGraph from "../../../src/components/create-graph/create-graph";
 import { Graph } from "../../../src/domain/graph";
 import { StoreType } from "../../../src/domain/store-type";
 import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
@@ -19,7 +19,7 @@ let wrapper: ReactWrapper;
 
 beforeEach(async () => {
   mockGetAllGraphsRepoToReturn([]);
-  wrapper = mount(<AddGraph />);
+  wrapper = mount(<CreateGraph />);
 });
 
 afterEach(() => {
