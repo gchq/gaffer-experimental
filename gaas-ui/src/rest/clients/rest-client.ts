@@ -69,6 +69,10 @@ export class RestClient<T> {
         this.url = "/graph/config/description";
         return this;
     }
+    public graphId(): RestClient<T>{
+        this.url = "/graph/config/graphId";
+        return this;
+    }
 
     public namespaces(): RestClient<T> {
         this.url = "/namespaces";

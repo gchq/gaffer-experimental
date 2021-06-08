@@ -5,11 +5,11 @@ export class Graph {
     private graphId: string;
     private description: string;
     private url: string;
-    private status: string;
+    private status: "UP" | "DOWN";
     private storeType: StoreType;
     private type: GraphType;
 
-    constructor(graphId: string, description: string, url: string, status: string, storeType: StoreType, type: GraphType) {
+    constructor(graphId: string, description: string, url: string, status: "UP" | "DOWN", storeType: StoreType, type: GraphType) {
         this.graphId = graphId;
         this.description = description;
         this.url = url;
