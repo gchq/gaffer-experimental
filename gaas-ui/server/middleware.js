@@ -164,6 +164,23 @@ app.get("/namespaces", (req, res) => {
         res.status(403).end();
     }
 });
+app.get("/storetypes", (req, res) => {
+    try {
+        jwt.verify(req.get("Authorization"), jwtSecret, () => {
+            res.status(200).send({
+                storeTypes: [
+                    "accumulo",
+                    "federated",
+                    "mapStore",
+                    "proxy",
+                    "proxyNoContextRoot"
+                ]
+            });
+        });
+    } catch (e) {
+        res.status(403).end();
+    }
+});
 
 app.get("/up/graph/status", (req, res) => {
     res.status(200).send({ status: "UP" });
