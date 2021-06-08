@@ -1,15 +1,34 @@
-import React, {ReactElement} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import { Box, FormControl, Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
 import { StoreType } from "../../domain/store-type";
+import {GetStoreTypesRepo} from "../../rest/repositories/get-store-types-repo";
 
 interface IProps {
-    value: StoreType;
-    onChange(storeType: StoreType): void;
+    value: string;
+    onChange(storeType: string): void;
 }
 
 export default function StoreTypeSelect(props: IProps): ReactElement {
     
     const { value, onChange } = props;
+    const [storeTypes, setStoreTypes] = React.useState<Array<string>>([]);
+    const [errorHelperText, setErrorHelperText] = useState("");
+    const [successHelperText, setSuccessHelperText] = useState("");
+    async function getStoreTypes(): Promise<void> {
+        try {
+            const storeTypes: string[] = await new GetStoreTypesRepo().get();
+            if (storeTypes.length === 0) {
+                setSuccessHelperText("No Storetypes available");
+            }
+            setStoreTypes(storeTypes);
+        } catch (e) {
+            setErrorHelperText(`Storetypes unavailable: ${e.message}`);
+            
+        }
+    }
+    useEffect(() => {
+        getStoreTypes();
+    })
 
     return (
             <Grid item xs={12} id={"storetype-select-grid"} aria-label="store-type-grid" >
@@ -24,7 +43,7 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                     <Select
                         inputProps={{
                             name: "Store Type",
-                            id: "outlined-age-native-simple",
+                            id: "store-type-input",
                             "aria-label": "store-type-input"
                         }}
                         labelId="storetype-select-label"
@@ -32,18 +51,23 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                         aria-label="store-type-select"
                         fullWidth
                         value={value}
-                        onChange={(event) => onChange(event.target.value as StoreType)
+                        onChange={(event) => {
+                            onChange(event.target.value as string);
+                            setSuccessHelperText("");
+                            setErrorHelperText("");
                         }
+                        }
+                        helperText={errorHelperText + successHelperText}
                     >
-                        <MenuItem value={StoreType.MAPSTORE} aria-label="mapstore-menu-item"
-                                  id="mapstore-menu-item" aria-labelledby={"storetype-select-label"}
-                        >
-                            Map Store
-                        </MenuItem>
-                        <MenuItem value={StoreType.ACCUMULO} aria-label="accumulo-menu-item" id="accumulo-menu-item" aria-labelledby={"storetype-select-label"}>Accumulo</MenuItem>
-                        <MenuItem value={StoreType.FEDERATED_STORE} aria-label="federated-menu-item" id="federated-menu-item" aria-labelledby={"storetype-select-label"}>
-                            Federated Store
-                        </MenuItem>
+                        {storeTypes.map((store: string) => (
+                                <MenuItem value={store} aria-label={store+"-menu-item"}
+                                          id={store+"-menu-item"} aria-labelledby={"storetype-select-label"}
+                                >
+                                    {store}
+                                </MenuItem>
+                            )
+
+                        )}
                     </Select>
                 </FormControl>
             </Grid>

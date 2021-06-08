@@ -274,6 +274,7 @@ function mockGetGraphIdRepoIsSuccessfulAndReturns(graphId: string) {
 
 
 
+// @ts-ignore
 async function waitForComponentToRender(wrapper: ReactWrapper) {
   // React forces test to use act(() => {}) when the component state is updated in some cases
   await act(async () => {
