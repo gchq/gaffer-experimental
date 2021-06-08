@@ -18,7 +18,7 @@ function App() {
                 </Box>
                 <Box display="flex" alignSelf="right" alignItems="right" justifyContent="right">
                     <Switch>
-                        <Redirect exact from="/" to="/AddGraph" />
+                        <Redirect exact from="/" to="/graphs" />
                         {Routes.map((route: any) => (
                             <Route exact path={route.path} key={route.path}>
                                 <route.component />
