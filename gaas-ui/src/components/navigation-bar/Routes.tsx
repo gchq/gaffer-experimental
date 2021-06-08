@@ -10,7 +10,7 @@ const Routes = [
         component: CreateGraph,
     },
     {
-        path: "/graphs",
+        path: "/viewgraphs",
         sidebarName: "View Graphs",
         component: ViewGraph,
     },

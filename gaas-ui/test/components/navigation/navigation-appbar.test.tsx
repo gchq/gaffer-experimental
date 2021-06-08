@@ -55,7 +55,7 @@ describe("Navigation Appbar Component", () => {
     });
 
     it("should have navigation link in each list item", () => {
-        const Target = [{ href: "/creategraph" }, { href: "/graphs" }, { href: "/namespaces" }, { href: "/userguide" }];
+        const Target = [{ href: "/creategraph" }, { href: "/viewgraphs" }, { href: "/namespaces" }, { href: "/userguide" }];
         const NavUl = component.find("ul").at(1);
         for (var index = 0; index < NavUl.length; index += 1) {
             const anchor = NavUl.find("a").at(index);
