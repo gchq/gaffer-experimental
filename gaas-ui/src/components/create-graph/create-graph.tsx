@@ -64,7 +64,7 @@ const Transition = React.forwardRef(
   ) => <Slide direction="up" ref={ref} {...props} />
 );
 
-export default class AddGraph extends React.Component<{}, IState> {
+export default class CreateGraph extends React.Component<{}, IState> {
   constructor(props: object) {
     super(props);
     this.state = {
