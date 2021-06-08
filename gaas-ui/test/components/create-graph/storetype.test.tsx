@@ -1,93 +1,47 @@
 import {mount, ReactWrapper} from "enzyme";
 import React from "react";
 import StoreTypeSelect from "../../../src/components/create-graph/storetype";
-import {GetStoreTypesRepo} from "../../../src/rest/repositories/get-store-types-repo";
-import {act} from "react-dom/test-utils";
-import {RestApiError} from "../../../src/rest/RestApiError";
+import {StoreType} from "../../../src/domain/store-type";
 
-jest.mock("../../../src/rest/repositories/get-store-types-repo");
 let component: ReactWrapper;
 const onChangeMockCallBack = jest.fn();
+beforeEach(() =>{
+    component = mount(
+        <StoreTypeSelect value={StoreType.MAPSTORE} onChange={onChangeMockCallBack} />
+    );
+})
 afterEach(() => {
     component.unmount()
     jest.resetAllMocks();
 })
 
 describe("Storetype select component", () => {
-    describe("General", () => {
-        beforeEach(() =>{
-            mockGetStoretypesRepoToReturn([])
-            component = mount(
-                <StoreTypeSelect value={""} onChange={onChangeMockCallBack} />
-            );
-        })
-        it("Should have the correct value in the value props", () => {
-            expect(component.find("div#storetype-formcontrol")
-                .find("input").props().value).toBe("");
-        })
+    it("Should have the correct value in the value props", () => {
+        expect(component.find("div#storetype-formcontrol")
+            .find("input").props().value).toBe(StoreType.MAPSTORE);
     })
-    describe("Integration with GetStoretypesRepo", () => {
-        beforeEach(() =>{
-            mockGetStoretypesRepoToReturn(["accumulo", "federated", "mapStore", "proxy", "proxyNoContextRoot"]);
-            waitForComponentToRender(component);
-            component = mount(
-                <StoreTypeSelect value={""} onChange={onChangeMockCallBack} />
-            );
-        });
-        it("should allow a storetype to be selected", () => {
-            selectStoreType("accumulo");
-            expect(onChangeMockCallBack).toHaveBeenCalledWith("accumulo");
+    it("Should allow federated storetype to be selected", () => {
+        selectStoreType(StoreType.FEDERATED_STORE);
 
-        });
-    })
-    describe("GetStoretypeRepo error", () => {
-        beforeEach(() =>{
-            mockGetStoretypesRepoToThrow()
-            waitForComponentToRender(component);
-            component = mount(
-                <StoreTypeSelect value={""} onChange={onChangeMockCallBack} />
-            );
-        });
-        it("should show an error when GetStoretypesRepo throws an error", () => {
-            console.log(component.html().text())
-            expect(component.find("p#store-type-input-text").text()).toBe("");
+        expect(onChangeMockCallBack).toHaveBeenCalledWith(StoreType.FEDERATED_STORE);
+    });
+    it("Should allow accumulo storetype to be selected", () => {
+        selectStoreType(StoreType.ACCUMULO);
 
-        });
-    })
+        expect(onChangeMockCallBack).toHaveBeenCalledWith(StoreType.ACCUMULO);
+    });
+    it("Should allow mapstore storetype to be selected", () => {
+        selectStoreType(StoreType.MAPSTORE);
+
+        expect(onChangeMockCallBack).toHaveBeenCalledWith(StoreType.MAPSTORE);
+    });
 
 })
-function selectStoreType(storeType: string) {
+function selectStoreType(storeType: StoreType) {
     component
         .find("div#storetype-formcontrol")
         .find("input")
         .simulate("change", {
             target: { value: storeType },
         });
-}
-function mockGetStoretypesRepoToReturn(storetypes: string[]): void {
-    // @ts-ignore
-    GetStoreTypesRepo.mockImplementationOnce(() => ({
-        get: () =>
-            new Promise((resolve, reject) => {
-                resolve(storetypes);
-            }),
-    }));
-}
-function mockGetStoretypesRepoToThrow(): void {
-    // @ts-ignore
-    GetStoreTypesRepo.mockImplementationOnce(() => ({
-        get: () => {
-            throw new RestApiError("Server Error", "Storetypes unavailable");
-        }
-
-    }));
-}
-// @ts-ignore
-async function waitForComponentToRender(wrapper: ReactWrapper) {
-    // React forces test to use act(() => {}) when the component state is updated in some cases
-    await act(async () => {
-        await new Promise((resolve) => setTimeout(resolve));
-        wrapper.update();
-        wrapper.update();
-    });
 }
