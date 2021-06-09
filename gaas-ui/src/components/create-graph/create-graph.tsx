@@ -17,7 +17,6 @@ import {
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import AddRoundedIcon from "@material-ui/icons/AddRounded";
 import React from "react";
-import {StoreType} from "../../domain/store-type";
 import {CreateStoreTypesGraphRepo, ICreateGraphConfig,} from "../../rest/repositories/create-storetypes-graph-repo";
 import {AlertType, NotificationAlert} from "../alerts/notification-alert";
 import {GetAllGraphsRepo} from "../../rest/repositories/get-all-graphs-repo";
@@ -35,6 +34,7 @@ import AddProxyGraphInput from "./add-proxy-graph-input";
 import ProxyGraphsTable from "./proxy-graphs-table";
 import {IAllStoreTypesResponse} from "../../rest/http-message-interfaces/response-interfaces";
 import {GetStoreTypesRepo} from "../../rest/repositories/get-store-types-repo";
+import {CreateFederatedGraphRepo} from "../../rest/repositories/create-federated-graph-repo";
 
 interface IState {
     graphId: string;
@@ -47,7 +47,6 @@ interface IState {
     typesFiles: Array<File>;
     typesFieldDisabled: boolean;
     dialogIsOpen: boolean;
-    enumStoreType: StoreType.FEDERATED_STORE | StoreType.OTHER | undefined;
     storeType: string;
     storeTypes: string[];
     federatedStoreTypes: string[];
@@ -80,7 +79,6 @@ export default class CreateGraph extends React.Component<{}, IState> {
             typesFiles: [],
             typesFieldDisabled: false,
             dialogIsOpen: false,
-            enumStoreType: undefined,
             storeType: "",
             storeTypes: [],
             federatedStoreTypes: [],
@@ -130,10 +128,11 @@ export default class CreateGraph extends React.Component<{}, IState> {
     }
 
     private async submitNewGraph() {
-        const {graphId, description, storeType, graphs, selectedGraphs, enumStoreType} = this.state;
+        //TODO: separate functions
+        const {graphId, description, storeType, graphs, selectedGraphs} = this.state;
 
         let config: ICreateGraphConfig;
-        if (enumStoreType === StoreType.FEDERATED_STORE) {
+        if (this.currentStoreTypeIsFederated()) {
             const subGraphs: Array<{ graphId: string; url: string; }> = graphs
                 .filter((graph) => selectedGraphs.includes(graph.getId()))
                 .map((subGraph: Graph) => ({
@@ -153,7 +152,12 @@ export default class CreateGraph extends React.Component<{}, IState> {
         }
 
         try {
-            await new CreateStoreTypesGraphRepo().create(graphId, description, storeType, config);
+            if(!this.currentStoreTypeIsFederated()){
+                await new CreateStoreTypesGraphRepo().create(graphId, description, storeType, config);
+
+            } else {
+                await new CreateFederatedGraphRepo().create(graphId, description, storeType, config);
+            }
             this.setState({
                 outcome: AlertType.SUCCESS,
                 outcomeMessage: `${graphId} was successfully added`,
@@ -212,28 +216,24 @@ export default class CreateGraph extends React.Component<{}, IState> {
     }
 
     private disableSubmitButton(): boolean {
-        const { elements, types, graphId, description, selectedGraphs, enumStoreType} = this.state;
+        const { elements, types, graphId, description, selectedGraphs} = this.state;
         return (
-            (enumStoreType !== StoreType.FEDERATED_STORE && (!elements || !types)) ||
+            (!this.currentStoreTypeIsFederated() && (!elements || !types)) ||
             !graphId ||
             !description ||
-            (enumStoreType === StoreType.FEDERATED_STORE && selectedGraphs.length === 0) ||
-            (enumStoreType !== StoreType.FEDERATED_STORE && !new ElementsSchema(elements).validate().isEmpty()) ||
-            (enumStoreType !== StoreType.FEDERATED_STORE && !new TypesSchema(types).validate().isEmpty())
+            (this.currentStoreTypeIsFederated() && selectedGraphs.length === 0) ||
+            (!this.currentStoreTypeIsFederated() && !new ElementsSchema(elements).validate().isEmpty()) ||
+            (!this.currentStoreTypeIsFederated() && !new TypesSchema(types).validate().isEmpty())
         );
     }
 
-    private setEnumStoreType() {
-        if (this.state.federatedStoreTypes.includes(this.state.storeType)) {
-            this.setState({enumStoreType: StoreType.FEDERATED_STORE});
-        } else {
-            this.setState({enumStoreType: StoreType.OTHER});
-        }
-    }
+    private currentStoreTypeIsFederated(): boolean{
+        return (this.state.federatedStoreTypes.includes(this.state.storeType))}
+
 
     public render() {
         const federatedStoreIsNotSelected = (): boolean =>
-             this.state.enumStoreType !== StoreType.FEDERATED_STORE;
+             !this.currentStoreTypeIsFederated();
         const openDialogBox = () => {
             this.setState({dialogIsOpen: true});
         };
@@ -298,7 +298,6 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                              {
                                                                  storeType
                                                              });
-                                                         this.setEnumStoreType();
                                                          console.log(this.state)
                                                      }}
                                     />
