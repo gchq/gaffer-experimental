@@ -1,43 +1,16 @@
-import React, {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useState} from "react";
 import { Box, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
-import {GetStoreTypesRepo} from "../../rest/repositories/get-store-types-repo";
-import {IAllStoreTypesResponse} from "../../rest/http-message-interfaces/response-interfaces";
-import { StoreType } from "../../domain/store-type";
-
 interface IProps {
     value: string;
+    allStoreTypes: Array<string>;
     onChangeStoreType(storeType: string): void;
-    onChangeStoreTypes(storeTypes: string[]) : void;
-    onChangeFederatedStoreTypes(federatedStoreTypes: string[]) : void;
 }
 
 export default function StoreTypeSelect(props: IProps): ReactElement {
     
-    const { value, onChangeStoreType, onChangeFederatedStoreTypes, onChangeStoreTypes } = props;
-    const [allStoreTypes, setAllStoreTypes] = React.useState<Array<string>>([]);
+    const { value, allStoreTypes, onChangeStoreType } = props;
     const [errorHelperText, setErrorHelperText] = useState("");
     const [successHelperText, setSuccessHelperText] = useState("");
-    const [storeTypes, setStoreTypes] = React.useState<Array<string>>([]);
-    const [federatedStoreTypes, setFederatedStoreTypes] = React.useState<Array<string>>([]);
-    //TODO: UNIT TESTS
-    async function getAllStoreTypes(): Promise<void> {
-        try {
-            const storeTypes: IAllStoreTypesResponse = await new GetStoreTypesRepo().get();
-            if (storeTypes.storeTypes.length !== 0 || storeTypes.federatedStoreTypes.length !== 0) {
-                setAllStoreTypes(storeTypes.federatedStoreTypes.concat(storeTypes.storeTypes));
-                setStoreTypes(storeTypes.storeTypes);
-                setFederatedStoreTypes(storeTypes.federatedStoreTypes)
-            }else{
-                setErrorHelperText("No storetypes available");
-            }
-        } catch (e) {
-            setErrorHelperText(`Storetypes unavailable: ${e.message}`);
-            
-        }
-    }
-    useEffect(() => {
-        getAllStoreTypes();
-    })
 
     return (
             <Grid item xs={12} id={"storetype-select-grid"} aria-label="store-type-grid" >
@@ -62,8 +35,6 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                         value={value}
                         onChange={(event) => {
                             onChangeStoreType(event.target.value as string);
-                            onChangeStoreTypes(storeTypes);
-                            onChangeFederatedStoreTypes(federatedStoreTypes);
                             setSuccessHelperText("");
                             setErrorHelperText("");
                         }
