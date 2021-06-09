@@ -1,5 +1,5 @@
 import {RestClient} from "../clients/rest-client";
-import {ICreateFederatedGraphRequestBody, ICreateGraphRequestBody} from "../http-message-interfaces/request-interfaces";
+import {ICreateFederatedGraphRequestBody} from "../http-message-interfaces/request-interfaces";
 import { Config } from "../config";
 import { ICreateGraphConfig } from "./create-storetypes-graph-repo";
 

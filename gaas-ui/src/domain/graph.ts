@@ -6,10 +6,10 @@ export class Graph {
     private description: string;
     private url: string;
     private status: "UP" | "DOWN";
-    private storeType: StoreType;
+    private storeType: string;
     private type: GraphType;
 
-    constructor(graphId: string, description: string, url: string, status: "UP" | "DOWN", storeType: StoreType, type: GraphType) {
+    constructor(graphId: string, description: string, url: string, status: "UP" | "DOWN", storeType: string, type: GraphType) {
         this.graphId = graphId;
         this.description = description;
         this.url = url;
@@ -34,7 +34,7 @@ export class Graph {
         return this.status;
     }
 
-    public getStoreType(): StoreType {
+    public getStoreType(): string {
         return this.storeType;
     }
 

@@ -3,7 +3,7 @@ export interface IGraphByIdResponse {
     description: string;
     url: string;
     status: "UP" | "DOWN";
-    storeType: "federatedStore" | "mapStore" | "accumuloStore" | "proxyStore";
+    storeType: string;
 }
 
 export interface IAllGraphsResponse extends Array<IGraphByIdResponse> {}

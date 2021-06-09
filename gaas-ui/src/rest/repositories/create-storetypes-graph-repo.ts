@@ -1,6 +1,5 @@
-import {StoreType} from "../../domain/store-type";
 import {RestClient} from "../clients/rest-client";
-import {ICreateFederatedGraphRequestBody, ICreateGraphRequestBody} from "../http-message-interfaces/request-interfaces";
+import { ICreateGraphRequestBody} from "../http-message-interfaces/request-interfaces";
 import {IElements} from "../../domain/elements-schema";
 import {ITypesSchema} from "../../domain/types-schema";
 import { Config } from "../config";
