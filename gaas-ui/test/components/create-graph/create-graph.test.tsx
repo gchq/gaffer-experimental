@@ -14,7 +14,7 @@ import {GetGraphIdRepo} from "../../../src/rest/repositories/get-graph-id-repo";
 import {GetGraphStatusRepo} from "../../../src/rest/repositories/get-graph-status-repo";
 import {RestApiError} from "../../../src/rest/RestApiError";
 import {GetStoreTypesRepo} from "../../../src/rest/repositories/get-store-types-repo";
-import {IAllStoreTypesResponse} from "../../../src/rest/http-message-interfaces/response-interfaces";
+import {IStoreTypesResponse} from "../../../src/rest/http-message-interfaces/response-interfaces";
 
 jest.mock("../../../src/rest/repositories/create-storetypes-graph-repo");
 jest.mock("../../../src/rest/repositories/get-all-graphs-repo");
@@ -551,7 +551,7 @@ function mockGetAllGraphsRepoToReturn(graphs: Graph[]): void {
     }));
 }
 
-function mockGetStoreTypesRepoToReturn(storetypes: IAllStoreTypesResponse): void {
+function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypesResponse): void {
     // @ts-ignore
     GetStoreTypesRepo.mockImplementationOnce(() => ({
         get: () =>
