@@ -310,6 +310,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                 direction="row"
                                                 justify="flex-end"
                                                 alignItems="center"
+                                                id={"test"}
                                             >
                                                 <Tooltip
                                                     TransitionComponent={Zoom}
