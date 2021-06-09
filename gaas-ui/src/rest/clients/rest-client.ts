@@ -24,85 +24,89 @@ export class RestClient<T> {
         this.url = "";
         this.method = "get";
         this.headers = {};
-        this.data = undefined;
+        this.data = undefined;        
     }
     
-    public baseUrl(baseURL: string): RestClient<T> {
+    public create() {
+        return this.methodSpec;
+    }
+    
+    public baseUrl(baseURL: string) {
         this.baseURL = baseURL;
-        return this;
-    }
-    
-    public get(): RestClient<T> {
-        this.method = "get";
-        return this;
-    }
-    
-    public post(): RestClient<T> {
-        this.method = "post";
-        return this;
-    }
-    
-    public delete(): RestClient<T> {
-        this.method = "delete";
-        return this;
+        return this.methodSpec;
     }
 
-    public urlPath(url: string): RestClient<T> {
-        this.url = url
-        return this;
+    private methodSpec = {
+        get: () => { 
+            this.method = "get";
+            return this.uriSpec;
+         },
+        post: () => { 
+            this.method = "post";
+            return this.requestBodySpec;
+        },
+        delete: () => { 
+            this.method = "delete";
+            return this.uriSpec;
+        }
     }
 
-    public graphs(pathVariable?: string): RestClient<T> {
-        const _pathVariable = pathVariable ? `/${pathVariable}` : "";
-        this.url = `/graphs${_pathVariable}`;
-        this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
-        return this;
+    private requestBodySpec = {
+        requestBody: (requestBody?: T) => {
+            this.data = requestBody;
+            return this.uriSpec;
+        }
     }
 
-    public status(): RestClient<T>{
-        this.url = "/graph/status";
-        return this;
+    private uriSpec = {
+        uri: (uri: string) => { 
+            this.url = uri;
+            return this.executeSpec;
+         },
+         graphs: (pathVariable?: string) => {
+            const _pathVariable = pathVariable ? `/${pathVariable}` : "";
+            this.url = `/graphs${_pathVariable}`;
+            this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            return this.executeSpec;
+        },
+        status: () => {
+            this.url = "/graph/status";
+            return this.executeSpec;
+        },
+        description: () => {
+            this.url = "/graph/config/description";
+            return this.executeSpec;
+        },
+        graphId: () => {
+            this.url = "/graph/config/graphId";
+            return this.executeSpec;
+        },
+        namespaces: () =>  {
+            this.url = "/namespaces";
+            this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            return this.executeSpec;
+        },
+        authentication: (pathVariable?: string) => {
+            const _pathVariable = pathVariable ? `/${pathVariable}` : "";
+            this.url = `/auth${_pathVariable}`;
+            return this.executeSpec;
+        }
     }
 
-    public description(): RestClient<T>{
-        this.url = "/graph/config/description";
-        return this;
-    }
-
-    public graphId(): RestClient<T>{
-        this.url = "/graph/config/graphId";
-        return this;
-    }
-
-    public namespaces(): RestClient<T> {
-        this.url = "/namespaces";
-        this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
-        return this;
-    }
-
-    public authentication(pathVariable?: string): RestClient<T> {
-        const _pathVariable = pathVariable ? `/${pathVariable}` : "";
-        this.url = `/auth${_pathVariable}`;
-        return this;
-    }
-
-    public requestBody(requestBody: T): RestClient<T> {
-        this.data = requestBody;
-        return this;
-    }
-
-    public async execute(): Promise<IApiResponse> {
-        try {
-            const response: AxiosResponse<any> = await axios({
-                baseURL: this.baseURL,
-                url: this.url,
-                method: this.method,
-                headers: this.headers,
-                data: this.data,
-            });
-            return RestClient.convert(response);
-        } catch (e) {
-            throw RestClient.fromError(e);
+    private executeSpec = {
+        execute: async () => {
+            try {
+                const response: AxiosResponse<any> = await axios({
+                    baseURL: this.baseURL,
+                    url: this.url,
+                    method: this.method,
+                    headers: this.headers,
+                    data: this.data,
+                });
+                return RestClient.convert(response);
+            } catch (e) {
+                throw RestClient.fromError(e);
+            }
         }
     }
 

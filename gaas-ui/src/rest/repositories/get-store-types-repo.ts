@@ -7,8 +7,8 @@ export class GetStoreTypesRepo {
     public async get(): Promise<Array<string>> {
         const response: IApiResponse<IGetStoreTypesResponse>= await new RestClient()
             .baseUrl(Config.REACT_APP_KAI_REST_API_HOST)
-            .urlPath("/storetypes")
             .get()
+            .uri("/storetypes")
             .execute();
 
         return response.data.storeTypes;

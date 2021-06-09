@@ -8,9 +8,9 @@ export class GetAllGraphIdsRepo {
 
     const response = await new RestClient()
       .baseUrl(graphHost)
-      .urlPath("/graph/operations/execute")
       .post()
       .requestBody(getAllGraphIdsRequestBody)
+      .uri("/graph/operations/execute")
       .execute();
 
     return response.data;
