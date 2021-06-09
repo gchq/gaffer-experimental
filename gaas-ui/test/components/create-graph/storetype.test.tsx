@@ -4,7 +4,7 @@ import StoreTypeSelect from "../../../src/components/create-graph/storetype";
 import {GetStoreTypesRepo} from "../../../src/rest/repositories/get-store-types-repo";
 import {act} from "react-dom/test-utils";
 import {RestApiError} from "../../../src/rest/RestApiError";
-import {IAllStoreTypesResponse} from "../../../src/rest/http-message-interfaces/response-interfaces";
+import {IStoreTypesResponse} from "../../../src/rest/http-message-interfaces/response-interfaces";
 
 jest.mock("../../../src/rest/repositories/get-store-types-repo");
 let component: ReactWrapper;
