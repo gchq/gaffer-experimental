@@ -1,21 +1,22 @@
 export enum StoreType {
+    OTHER = "O",
+    FEDERATED_STORE  = "F",
     ACCUMULO = "A",
     MAPSTORE = "M",
-    FEDERATED_STORE  = "F",
-    PROXY_STORE  = "P",
+    PROXY_STORE="P"
 }
 
 export function getStoreType(storeType: string): StoreType {
 
     switch (storeType) {
         case "accumuloStore":
-            return StoreType.ACCUMULO;
+            return StoreType.OTHER;
         case "mapStore":
-            return StoreType.MAPSTORE;
+            return StoreType.OTHER;
         case "federatedStore":
             return StoreType.FEDERATED_STORE;
         case "proxyStore":
-            return StoreType.PROXY_STORE;
+            return StoreType.OTHER;
         default:
              throw new Error(storeType+" is not a supported store type");
 

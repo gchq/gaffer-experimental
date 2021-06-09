@@ -48,7 +48,10 @@ interface IState {
   typesFiles: Array<File>;
   typesFieldDisabled: boolean;
   dialogIsOpen: boolean;
+  enumStoreType: StoreType;
   storeType: string;
+  storeTypes: string[];
+  federatedStoreTypes: string[];
   graphs: Graph[];
   proxyURL: string;
   root: string;
@@ -78,7 +81,10 @@ export default class CreateGraph extends React.Component<{}, IState> {
       typesFiles: [],
       typesFieldDisabled: false,
       dialogIsOpen: false,
+      enumStoreType: StoreType.FEDERATED_STORE,
       storeType: "",
+      storeTypes: [],
+      federatedStoreTypes: [],
       proxyURL: "",
       root: "",
       graphs: [],
@@ -104,10 +110,10 @@ export default class CreateGraph extends React.Component<{}, IState> {
   }
 
   private async submitNewGraph() {
-    const { graphId, description, storeType, graphs, selectedGraphs } = this.state;
+    const { graphId, description, storeType, graphs, selectedGraphs, enumStoreType } = this.state;
 
     let config: ICreateGraphConfig;
-    if (storeType === StoreType.FEDERATED_STORE) {
+    if (enumStoreType === StoreType.FEDERATED_STORE) {
       const subGraphs: Array<{ graphId: string; url: string; }> = graphs
         .filter((graph) => selectedGraphs.includes(graph.getId()))
         .map((subGraph: Graph) => ({
@@ -186,20 +192,31 @@ export default class CreateGraph extends React.Component<{}, IState> {
   }
 
   private disableSubmitButton(): boolean {
-    const { storeType, elements, types, graphId, description, selectedGraphs } = this.state;
+    const { storeType, elements, types, graphId, description, selectedGraphs, enumStoreType } = this.state;
     return (
-      (storeType !== StoreType.FEDERATED_STORE && (!elements || !types)) ||
+      (enumStoreType !== StoreType.FEDERATED_STORE && (!elements || !types)) ||
       !graphId ||
       !description ||
-      (storeType === StoreType.FEDERATED_STORE && selectedGraphs.length === 0) ||
-      (storeType !== StoreType.FEDERATED_STORE && !new ElementsSchema(elements).validate().isEmpty()) || 
-      (storeType !== StoreType.FEDERATED_STORE && !new TypesSchema(types).validate().isEmpty())
+      (enumStoreType === StoreType.FEDERATED_STORE && selectedGraphs.length === 0) ||
+      (enumStoreType !== StoreType.FEDERATED_STORE && !new ElementsSchema(elements).validate().isEmpty()) || 
+      (enumStoreType !== StoreType.FEDERATED_STORE && !new TypesSchema(types).validate().isEmpty())
     );
+  }
+
+  private isFederated(): boolean{
+    if(this.state.federatedStoreTypes.includes(this.state.storeType)){
+      this.setState({enumStoreType: StoreType.FEDERATED_STORE});
+      return true;
+    }else{
+      this.setState({enumStoreType: StoreType.OTHER});
+      return false;
+    }
   }
 
   public render() {
     const federatedStoreIsNotSelected = (): boolean =>
-      this.state.storeType !== StoreType.FEDERATED_STORE;
+      //this.isFederated();
+      true;
     const openDialogBox = () => {
       this.setState({ dialogIsOpen: true });
     };
@@ -257,7 +274,9 @@ export default class CreateGraph extends React.Component<{}, IState> {
                   />
                   <StoreTypeSelect aria-label="store-type-select"
                     value={this.state.storeType}
-                    onChange={(storeType) => this.setState({ storeType })}
+                    onChangeStoreType={(storeType) => this.setState({ storeType })}
+                    onChangeStoreTypes={(storeTypes) => this.setState({ storeTypes })}
+                    onChangeFederatedStoreTypes={(federatedStoreTypes) => this.setState({ federatedStoreTypes })}
                   />
                   {federatedStoreIsNotSelected() && (
                     <>
