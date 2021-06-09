@@ -210,7 +210,17 @@ describe("Storetypes", () => {
             .then((response) => {
                 // @ts-ignore
                 expect(response.statusCode).toBe(200);
-                expect(response.body).toStrictEqual({"storeTypes": ["accumulo", "federated", "mapStore", "proxy", "proxyNoContextRoot"]});
+                expect(response.body).toStrictEqual({
+                    storeTypes: [
+                        "accumulo",
+                        "mapStore",
+                        "proxy",
+                        "proxyNoContextRoot"
+                    ],
+                    federatedStoreTypes: [
+                        "federated"
+                    ]
+                });
             });
     })
 })
