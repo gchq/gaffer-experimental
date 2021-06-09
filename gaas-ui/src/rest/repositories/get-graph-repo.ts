@@ -18,7 +18,7 @@ export class GetGraphRepo {
       response.data.description,
       response.data.url,
       response.data.status,
-      getStoreType(response.data.storeType),
+      response.data.storeType,
       GraphType.GAAS_GRAPH
     );
   }

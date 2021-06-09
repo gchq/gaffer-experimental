@@ -5,7 +5,6 @@ import { Graph } from "../../../src/domain/graph";
 import { IGraphByIdResponse } from "../../../src/rest/http-message-interfaces/response-interfaces";
 import { RestApiError } from "../../../src/rest/RestApiError";
 import { GraphType } from "../../../src/domain/graph-type";
-import { StoreType } from "../../../src/domain/store-type";
 
 const mock = new MockAdapter(axios);
 const repo = new GetGraphRepo();
@@ -23,22 +22,10 @@ describe("Get Graph By Id Repo", () => {
 
         const actual: Graph = await repo.get("graph-1");
 
-        const expected: Graph = new Graph("graph-1", "DEPLOYED", "graph-1 URL", "UP", StoreType.MAPSTORE, GraphType.GAAS_GRAPH);
+        const expected: Graph = new Graph("graph-1", "DEPLOYED", "graph-1 URL", "UP", "mapStore", GraphType.GAAS_GRAPH);
         expect(actual).toEqual(expected);
     });
 
-    it("should return one graph when request is successful", async () => {
-        const apiResponse: object = {
-            graphId: "graph-1",
-            description: "DEPLOYED",
-            url: "graph-1 URL",
-            storeType: "invalidStore",
-            status: "UP"
-        };
-        mock.onGet("/graphs/graph-1").reply(200, apiResponse);
-
-        await expect(repo.get("graph-1")).rejects.toEqual(new Error("invalidStore is not a supported store type"));
-    });
 
     it("should throw RestApiError when 404 and have correct error message when no response body returned", async () => {
         mock.onGet("/graphs/notfound-graph").reply(404);
