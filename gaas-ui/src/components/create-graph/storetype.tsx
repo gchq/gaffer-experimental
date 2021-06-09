@@ -9,9 +9,6 @@ interface IProps {
 export default function StoreTypeSelect(props: IProps): ReactElement {
     
     const { value, allStoreTypes, onChangeStoreType } = props;
-    const [errorHelperText, setErrorHelperText] = useState("");
-    const [successHelperText, setSuccessHelperText] = useState("");
-
     return (
             <Grid item xs={12} id={"storetype-select-grid"} aria-label="store-type-grid" >
                 <FormControl
@@ -35,8 +32,6 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                         value={value}
                         onChange={(event) => {
                             onChangeStoreType(event.target.value as string);
-                            setSuccessHelperText("");
-                            setErrorHelperText("");
                         }
                         }
                     >
@@ -50,7 +45,7 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
 
                         )}
                     </Select>
-                    <FormHelperText id="storetype-form-helper">{errorHelperText + successHelperText}</FormHelperText>
+                    <FormHelperText id="storetype-form-helper">{allStoreTypes.length === 0 ? "No storetypes available": ""}</FormHelperText>
                 </FormControl>
             </Grid>
     )
