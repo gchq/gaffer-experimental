@@ -90,7 +90,7 @@ describe("RestClient 2** Responses", () => {
     });
 });
 
-describe("RestClient 4**/5** Error Responses", () => {
+describe("GaaS API 4**/5** Error Responses", () => {
     beforeAll(() =>
         mock
             .onGet("/graphs")
@@ -170,6 +170,40 @@ describe("RestClient 4**/5** Error Responses", () => {
             throw new Error("Error did not throw");
         } catch (e) {
             expect(e.toString()).toBe("Server Error: Timeout");
+        }
+    });
+});
+
+describe("Gaffer REST API 4**/5** Error Responses", () => {
+    beforeAll(() =>
+        mock
+            .onGet("/graph/config/graphid")
+            .reply(403, {
+                statusCode: 403,
+                status: "Forbidden",
+                simpleMessage: "User does not have permission to run operation: uk.gov.gchq.gaffer.operation.impl.GetVariables"
+              })
+            .onPost("/graph/status")
+            .reply(404, {
+                statusCode: 404
+              })
+    );
+    afterAll(() => mock.resetHandlers());
+
+    it("should throw Error with simpleMessage when Gaffer API returns error response body", async () => {
+        try {
+            await new RestClient().get().urlPath("/graph/config/graphid").execute();
+            throw new Error("Error did not throw");
+        } catch (e) {
+            expect(e.toString()).toBe("Forbidden: User does not have permission to run operation: uk.gov.gchq.gaffer.operation.impl.GetVariables");
+        }
+    });
+    it("should throw generic status code error message when Gaffer API error response is not an instanceof", async () => {
+        try {
+            await new RestClient().get().urlPath("/graph/status").execute();
+            throw new Error("Error did not throw");
+        } catch (e) {
+            expect(e.toString()).toBe("Error Code 404: Not Found");
         }
     });
 });
