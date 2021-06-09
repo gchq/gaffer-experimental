@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosResponse, Method } from "axios";
 import status from "statuses";
-import { GaaSRestApiErrorResponse } from "../http-message-interfaces/error-response-interface";
 import { RestApiError } from "../RestApiError";
 
 export interface IApiResponse<T = any> {
@@ -69,6 +68,7 @@ export class RestClient<T> {
         this.url = "/graph/config/description";
         return this;
     }
+
     public graphId(): RestClient<T>{
         this.url = "/graph/config/graphId";
         return this;
@@ -106,7 +106,17 @@ export class RestClient<T> {
         }
     }
 
-    private static fromError(e: AxiosError<GaaSRestApiErrorResponse>): RestApiError {
+    private static async convert(response: AxiosResponse<any>): Promise<IApiResponse> {
+        return {
+            status: response.status,
+            data: response.data,
+        };
+    }
+
+    private static fromError(e: AxiosError<any>): RestApiError {
+        if (e.response && RestClient.isInstanceOfGafferApiErrorResponseBody(e.response.data)) { 
+            return new RestApiError(e.response.data.status, e.response.data.simpleMessage);
+        }
         if (e.response && e.response.data) {
             return new RestApiError(e.response.data.title, e.response.data.detail);
         }
@@ -117,10 +127,7 @@ export class RestClient<T> {
         return new RestApiError("Unknown Error", "Unable to make request");
     }
 
-    private static async convert(response: AxiosResponse<any>): Promise<IApiResponse> {
-        return {
-            status: response.status,
-            data: response.data,
-        };
+    private static isInstanceOfGafferApiErrorResponseBody(responseBody: object) {
+        return responseBody && responseBody.hasOwnProperty("status") && responseBody.hasOwnProperty("simpleMessage");
     }
 }
