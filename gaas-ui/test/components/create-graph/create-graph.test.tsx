@@ -28,6 +28,17 @@ let wrapper: ReactWrapper;
 
 beforeEach(async() => {
     mockGetAllGraphsRepoToReturn([]);
+    mockGetStoreTypesRepoToReturn({
+        storeTypes: [
+            "accumulo",
+            "mapStore",
+            "proxy",
+            "proxyNoContextRoot"
+        ],
+        federatedStoreTypes: [
+            "federated"
+        ]
+    });
     wrapper = mount(<CreateGraph/>);
 });
 
@@ -66,24 +77,11 @@ describe("CreateGraph UI component", () => {
         });
     });
     describe("When Federated StoreType Is Selected", () => {
-        beforeEach(() => {
-             mockGetStoreTypesRepoToReturn({
-                storeTypes: [
-                    "accumulo",
-                    "mapStore",
-                    "proxy",
-                    "proxyNoContextRoot"
-                ],
-                federatedStoreTypes: [
-                    "federated"
-                ]
-            });
-            waitForComponentToRender(wrapper);
-        });
         it("Should have a URL Input, Add Button & Graph Table when federated store is selected", async () => {
-            selectStoreType("federated");
+            await selectStoreType("federated");
             await wrapper.update();
             await wrapper.update();
+            
             const urlInput = wrapper.find("input#proxy-url-input");
             expect(urlInput.props().name).toBe("Proxy Graph Base URL");
             const addButton = wrapper.find("button#add-new-proxy-button");
@@ -91,12 +89,15 @@ describe("CreateGraph UI component", () => {
             const graphTable = wrapper.find("table");
             expect(graphTable.text()).toBe("Graph IDDescriptionType No Graphs.");
         });
-        it("Should disable the add proxy graph button when the proxy graph URL textfield is empty", () => {
-
+        it("Should disable the add proxy graph button when the proxy graph URL textfield is empty", async () => {
+            await selectStoreType("federated");
+            await wrapper.update();
             const button = wrapper.find("button#add-new-proxy-button");
             expect(button.props().disabled).toEqual(true);
         });
         it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", async() => {
+            selectStoreType("federated");
+            await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("Description for this Proxy Graph");
             mockGetGraphId("graph-id");
@@ -110,6 +111,8 @@ describe("CreateGraph UI component", () => {
             );
         });
         it("Should not add graph when status is down to the graphs table and display notification", async() => {
+            selectStoreType("federated");
+            await wrapper.update();
             mockGetGraphStatus("DOWN");
             mockGetGraphStatusRepoToThrowError();
             await inputProxyURL("http://test.graph.url");
@@ -119,6 +122,8 @@ describe("CreateGraph UI component", () => {
             expect(graphTable.text()).not.toContain("http://test.graph.url");
         });
         it("Should select a graph in table", async() => {
+            selectStoreType("federated");
+            await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
             await inputProxyURL("https://www.testURL.com/");
@@ -135,6 +140,8 @@ describe("CreateGraph UI component", () => {
             );
         });
         it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async() => {
+            selectStoreType("federated");
+            await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
             await inputProxyURL("https://www.testURL.com/");
@@ -151,7 +158,9 @@ describe("CreateGraph UI component", () => {
             expect(tableInputs.at(1).props().checked).toBe(true);
             expect(tableInputs.at(2).props().checked).toBe(true);
         });
-        it("Should disable the submit graph button when no proxy stores are selected", () => {
+        it("Should disable the submit graph button when no proxy stores are selected", async () => {
+            selectStoreType("federated");
+            await wrapper.update();
             inputGraphId("test");
             inputDescription("test");
 
@@ -161,16 +170,19 @@ describe("CreateGraph UI component", () => {
             );
         });
         it("Should uncheck all graphs in the table when the uncheck all button is clicked", async() => {
+            selectStoreType("federated");
+            await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
 
             await inputProxyURL("https://www.testURL.com/");
             await clickAddProxy();
+            await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
             await inputProxyURL("https://www.testURL2.com/");
             await clickAddProxy();
-
+            await wrapper.update();
             clickTableHeaderCheckBox(true);
             clickTableHeaderCheckBox(false);
 
@@ -182,21 +194,36 @@ describe("CreateGraph UI component", () => {
         it("Should call CreateGraphRepo with Federated Store Graph request params and display success message", async() => {
             const mock = jest.fn();
             mockCreateGraphRepoWithFunction(mock);
-            mockGetGraphDescription("test");
-            mockGetGraphId("test-graph");
-            mockGetGraphStatus("UP");
+            // selectStoreType("federated");
+            // await wrapper.update();
+            // mockGetGraphDescription("test");
+            // mockGetGraphId("test-graph");
+            // mockGetGraphStatus("UP");
 
+
+
+            // await inputProxyURL("https://www.testURL.com/");
+            // await clickAddProxy();
+            // wrapper.update()
+            // const tableInputs = wrapper.find("table").find("input");
+            // console.log(tableInputs)
+            // await clickSubmit();
+            // await wrapper.update();
+            selectStoreType("federated");
+            await wrapper.update();
             inputGraphId("OK Graph");
             inputDescription("test");
 
-
+            mockGetGraphStatus("UP");
+            mockGetGraphDescription("AnotherDesc");
             await inputProxyURL("https://www.testURL.com/");
             await clickAddProxy();
             await wrapper.update();
-
+            const tableInputs = wrapper.find("table").find("input");
+            expect(tableInputs.at(1).props().checked).toBe(true);
+            await wrapper.update()
             await clickSubmit();
             await wrapper.update();
-
             const expectedConfig: ICreateGraphConfig = {
                 proxyStores: [{graphId: "test-graph", url: "https://www.testURL.com/"}]
             };
@@ -206,7 +233,7 @@ describe("CreateGraph UI component", () => {
             expect(mock).toHaveBeenLastCalledWith(
                 "OK Graph",
                 "test",
-                StoreType.FEDERATED_STORE,
+                "federated",
                 expectedConfig,
             );
 
@@ -217,7 +244,8 @@ describe("CreateGraph UI component", () => {
             mockGetGraphIdRepoToThrowError();
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
-
+            selectStoreType("federated");
+            await wrapper.update();
             inputGraphId("OK Graph");
             inputDescription("test");
 
@@ -251,7 +279,7 @@ describe("CreateGraph UI component", () => {
 
             inputGraphId("map-store-graph");
             inputDescription("Mappy description");
-            selectStoreType(StoreType.MAPSTORE);
+            selectStoreType("mapstore");
             inputElements(elements);
             inputTypes(types);
 
@@ -260,7 +288,7 @@ describe("CreateGraph UI component", () => {
             const expectedConfig: ICreateGraphConfig = {
                 schema: {elements: elements, types: types},
             };
-            expect(mock).toHaveBeenLastCalledWith("map-store-graph", "Mappy description", StoreType.MAPSTORE, expectedConfig);
+            expect(mock).toHaveBeenLastCalledWith("map-store-graph", "Mappy description", "mapstore", expectedConfig);
             expect(wrapper.find("div#notification-alert").text()).toBe(
                 "map-store-graph was successfully added"
             );
@@ -343,12 +371,12 @@ describe("CreateGraph UI component", () => {
                 false
             );
         });
-        it("Should be disabled when federated selected and no proxy stores added", () => {
+        it("Should be disabled when federated selected and no proxy stores added", async () => {
+            selectStoreType("federated");
+            await wrapper.update();
             inputGraphId("test");
             inputDescription("test");
-            inputElements(elements);
-            inputTypes(types);
-
+            
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
                 true
             );
@@ -452,7 +480,6 @@ function inputGraphId(graphId: string): void {
 }
 
 async function selectStoreType(storeType: string) {
-    console.log(wrapper.html())
     await act(async() => {
     wrapper
         .find("div#storetype-formcontrol")

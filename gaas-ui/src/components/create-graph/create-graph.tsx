@@ -298,7 +298,6 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                              {
                                                                  storeType
                                                              });
-                                                         console.log(this.state)
                                                      }}
                                     />
                                     {federatedStoreIsNotSelected() && (
