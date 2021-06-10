@@ -193,41 +193,39 @@ describe("CreateGraph UI component", () => {
             expect(tableInputs.at(1).props().checked).toBe(false);
             expect(tableInputs.at(2).props().checked).toBe(false);
         });
-        fit("Should call CreateGraphRepo with Federated Store Graph request params and display success message", async() => {
+        it("Should call CreateGraphRepo with Federated Store Graph request params and display success message", async() => {
             const mock = jest.fn();
+            mockCreateFederatedGraphRepoWithFunction(mock);
+            await inputGraphId("OK Graph");
+            await inputDescription("test")
+            mockGetGraphDescriptionRepoToThrowError();
+            mockGetGraphStatus("UP");
             selectStoreType("federated");
             await wrapper.update();
-            inputGraphId("OK Graph");
-            inputDescription("test");
 
-            mockGetGraphStatus("UP");
-            await mockGetGraphId("test");
-            await mockGetGraphDescription("test");
+            await mockGetGraphStatus("UP");
+            await mockGetGraphId("graph id");
+            await mockGetGraphDescription("description");
 
             await inputProxyURL("https://www.testURL.com/");
             await clickAddProxy();
             await wrapper.update();
-
-            const tableInputs = wrapper.find("table").find("input");
-            expect(tableInputs.at(1).props().checked).toBe(true);
-            await wrapper.update();
-            mockCreateFederatedGraphRepoWithFunction(mock);
             await clickSubmit();
             const expectedConfig: ICreateGraphConfig = {
-                proxyStores: [{graphId: "test-graph", url: "https://www.testURL.com/"}]
+                proxyStores: [{graphId: "graph id", url: "https://www.testURL.com/"}]
             };
             expect(wrapper.find("div#notification-alert").text()).toBe(
                 "OK Graph was successfully added"
             );
-            // expect(mock).toHaveBeenLastCalledWith(
-            //     "OK Graph",
-            //     "test",
-            //     "federated",
-            //     expectedConfig,
-            // );
+            expect(mock).toHaveBeenLastCalledWith(
+                "OK Graph",
+                "test",
+                "federated",
+                expectedConfig,
+            );
 
         });
-        fit("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async() => {
+        it("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async() => {
             const mock = jest.fn();
             mockCreateFederatedGraphRepoWithFunction(mock);
             await inputGraphId("OK Graph");
