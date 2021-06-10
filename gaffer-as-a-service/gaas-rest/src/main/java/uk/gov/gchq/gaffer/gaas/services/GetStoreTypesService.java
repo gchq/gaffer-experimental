@@ -38,7 +38,7 @@ public final class GetStoreTypesService {
     public StoreTypesEndpointResponse getStoreTypes() throws GaaSRestApiException {
 
         try {
-          storeTypesEndpointResponse = propertiesLoader.getStoreTypesEndpointResponse();
+          storeTypesEndpointResponse = propertiesLoader.getStoreTypesEndpointResponse("classpath*:config/*.yaml");
 
         } catch (IOException e) {
             throw new GaaSRestApiException(e.getMessage(), e.getLocalizedMessage(), 500);

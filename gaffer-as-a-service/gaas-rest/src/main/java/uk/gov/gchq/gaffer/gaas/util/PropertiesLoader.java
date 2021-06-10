@@ -22,6 +22,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
+import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
@@ -61,28 +62,21 @@ public class PropertiesLoader {
 
   }
 
-  public StoreTypesEndpointResponse getStoreTypesEndpointResponse() throws IOException {
+  public StoreTypesEndpointResponse getStoreTypesEndpointResponse(final String config) throws IOException {
     Yaml yaml = new Yaml();
     StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
     List<String> storeTypes = new ArrayList<>();
     List<String> federatedStoreTypes = new ArrayList<>();
 
-    Resource[] resources = loadResources("classpath*:config/*.yaml");
+    Resource[] resources = loadResources(config);
 
     for (final Resource resource : resources) {
       String filename = resource.getFilename().split("\\.", 2)[0];
-      Map<String, Object> storeProperties = yaml.load(resource.getInputStream());
-      if (storeProperties.containsKey("graph")) {
-        Map<String, Object> test = (Map) ((Map) storeProperties.get("graph")).get("storeProperties");
-        if (test.containsKey("gaffer.store.class")) {
-          federatedStoreTypes.add(filename);
-        } else {
-          storeTypes.add(filename);
-        }
+      Map<String, Object> valuesConfigYaml = yaml.load(resource.getInputStream());
+      if (isFederatedStoreType(valuesConfigYaml)) {
+        federatedStoreTypes.add(filename);
       } else {
-        if (storeProperties.containsKey("accumulo")) {
-          storeTypes.add(filename);
-        }
+        storeTypes.add(filename);
       }
 
     }
@@ -90,6 +84,16 @@ public class PropertiesLoader {
     storeTypesEndpointResponse.setFederatedStoreTypes(federatedStoreTypes);
 
     return storeTypesEndpointResponse;
+  }
+
+  private boolean isFederatedStoreType(final Map<String, Object> valuesConfigYaml) {
+    if (valuesConfigYaml != null && valuesConfigYaml.containsKey("graph")) {
+      Map<String, Object> storeProperties = (Map) ((Map) valuesConfigYaml.get("graph")).get("storeProperties");
+      if (storeProperties != null && storeProperties.containsValue(FederatedStore.class.getName())) {
+        return true;
+      }
+    }
+    return false;
   }
 
 

@@ -16,10 +16,10 @@
 
 package uk.gov.gchq.gaffer.gaas.util;
 
-
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -39,10 +39,7 @@ class PropertiesLoaderTest {
     PropertiesLoader pLoader = new PropertiesLoader();
     GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("myGraph", "Another description", "accumulo", getSchema());
     pLoader.loadStoreProperties(gaaSCreateRequestBody);
-
     assertEquals(storeProperties, gaaSCreateRequestBody.getStoreProperties());
-
-
   }
 
   @Test
@@ -55,6 +52,21 @@ class PropertiesLoaderTest {
     });
 
     assertEquals(exception.getLocalizedMessage(), "StoreType is Invalid must be defined Valid Store Types supported are: " + pLoader.getStoreTypeNames());
+  }
+
+  @Test
+  public void testGetStoreTypesEndpointResponse() throws IOException {
+    PropertiesLoader pLoader = new PropertiesLoader();
+    StoreTypesEndpointResponse storeTypesEndpointResponse = pLoader.getStoreTypesEndpointResponse("classpath*:testconfigs/*.yaml");
+    assertEquals("[accumulo, emptyStoreClassValue, invalidConfig, mapStore, noGraphKey, proxy, proxyNoContextRoot]", storeTypesEndpointResponse.getStoreTypes().toString());
+
+  }
+
+  @Test
+  public void testGetFederatedStoreTypesEndpointResponse() throws IOException {
+    PropertiesLoader pLoader = new PropertiesLoader();
+    StoreTypesEndpointResponse storeTypesEndpointResponse = pLoader.getStoreTypesEndpointResponse("classpath*:testconfigs/*.yaml");
+    assertEquals("[federated]", storeTypesEndpointResponse.getFederatedStoreTypes().toString());
   }
 
 
