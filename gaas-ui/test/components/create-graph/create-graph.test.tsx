@@ -193,7 +193,7 @@ describe("CreateGraph UI component", () => {
             expect(tableInputs.at(1).props().checked).toBe(false);
             expect(tableInputs.at(2).props().checked).toBe(false);
         });
-        it("Should call CreateGraphRepo with Federated Store Graph request params and display success message", async() => {
+        fit("Should call CreateGraphRepo with Federated Store Graph request params and display success message", async() => {
             const mock = jest.fn();
             selectStoreType("federated");
             await wrapper.update();
@@ -201,8 +201,8 @@ describe("CreateGraph UI component", () => {
             inputDescription("test");
 
             mockGetGraphStatus("UP");
-            // await mockGetGraphId("test");
-            mockGetGraphDescription("test");
+            await mockGetGraphId("test");
+            await mockGetGraphDescription("test");
 
             await inputProxyURL("https://www.testURL.com/");
             await clickAddProxy();
@@ -227,27 +227,23 @@ describe("CreateGraph UI component", () => {
             // );
 
         });
-        it("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async() => {
+        fit("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async() => {
             const mock = jest.fn();
             mockCreateFederatedGraphRepoWithFunction(mock);
+            await inputGraphId("OK Graph");
+            await inputDescription("test")
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
             selectStoreType("federated");
             await wrapper.update();
-            inputGraphId("OK Graph");
-            inputDescription("test");
 
+            await mockGetGraphStatus("UP");
             await mockGetGraphIdRepoToThrowError();
             await mockGetGraphDescriptionRepoToThrowError();
-            await mockGetGraphStatus("UP");
-            await wrapper.update();
 
             await inputProxyURL("https://www.testURL.com/");
             await clickAddProxy();
             await wrapper.update();
-            const tableInputs = wrapper.find("table").find("input");
-            expect(tableInputs.at(1).props().checked).toBe(true);
-
             await clickSubmit();
 
             const expectedConfig: ICreateGraphConfig = {
@@ -461,6 +457,7 @@ describe("CreateGraph UI component", () => {
 });
 
 async function clickSubmit(): Promise<void> {
+    expect(wrapper.find("button#create-new-graph-button").props().disabled).toEqual(false)
     await act(async() => {
         wrapper.find("button#create-new-graph-button").simulate("click");
     });
