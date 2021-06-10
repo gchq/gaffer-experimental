@@ -80,8 +80,8 @@ describe("Graph API", () => {
                     {
                         graphId: "roadTraffic",
                         description: "Road traffic graph. This graphs uses a federated store of proxy stores",
-                        url: "http://road-traffic.k8s.cluster/rest",
-                        storeType: "federatedStore",
+                        url: "http://localhost:4000/rest",
+                        storeType: "federated",
                         status: "UP",
                     },
                     {
