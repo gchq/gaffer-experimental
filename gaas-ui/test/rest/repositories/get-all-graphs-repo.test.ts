@@ -5,6 +5,7 @@ import { Graph } from "../../../src/domain/graph";
 import { IAllGraphsResponse } from "../../../src/rest/http-message-interfaces/response-interfaces";
 import { RestApiError } from "../../../src/rest/RestApiError";
 import { GraphType } from "../../../src/domain/graph-type";
+import { StoreType } from "../../../src/domain/store-type";
 
 const mock = new MockAdapter(axios);
 const repo = new GetAllGraphsRepo();
@@ -18,12 +19,14 @@ describe("Get All Graphs Repo", () => {
                 graphId: "roadTraffic",
                 description: "DEPLOYED",
                 url: "roadTraffic URL",
+                storeType: "mapStore",
                 status: "UP"
             },
             {
                 graphId: "basicGraph",
                 description: "DELETION_QUEUED",
                 url: "basicGraph URL",
+                storeType: "mapStore",
                 status: "UP"
             },
         ];
@@ -31,7 +34,10 @@ describe("Get All Graphs Repo", () => {
 
         const actual: Graph[] = await repo.getAll();
 
-        const expected = [new Graph("roadTraffic", "DEPLOYED", "roadTraffic URL", "UP", GraphType.GAAS_GRAPH), new Graph("basicGraph", "DELETION_QUEUED", "basicGraph URL", "UP", GraphType.GAAS_GRAPH)];
+        const expected = [
+            new Graph("roadTraffic", "DEPLOYED", "roadTraffic URL", "UP", StoreType.MAPSTORE, GraphType.GAAS_GRAPH),
+            new Graph("basicGraph", "DELETION_QUEUED", "basicGraph URL", "UP", StoreType.MAPSTORE, GraphType.GAAS_GRAPH)
+        ];
         expect(actual).toEqual(expected);
     });
 
@@ -41,6 +47,7 @@ describe("Get All Graphs Repo", () => {
                 graphId: "streetTraffic",
                 description: "DELETION_QUEUED",
                 url: "streetTraffic URL",
+                storeType: "accumuloStore",
                 status: "UP"
             },
         ];
@@ -48,8 +55,23 @@ describe("Get All Graphs Repo", () => {
 
         const actual: Graph[] = await repo.getAll();
 
-        const expected = [new Graph("streetTraffic", "DELETION_QUEUED", "streetTraffic URL", "UP", GraphType.GAAS_GRAPH)];
+        const expected = [new Graph("streetTraffic", "DELETION_QUEUED", "streetTraffic URL", "UP", StoreType.ACCUMULO, GraphType.GAAS_GRAPH)];
         expect(actual).toEqual(expected);
+    });
+
+    it("should return one Graph when api returns one", async () => {
+        const apiResponse: object = [
+            {
+                graphId: "streetTraffic",
+                description: "DELETION_QUEUED",
+                url: "streetTraffic URL",
+                storeType: "invalidStore",
+                status: "UP"
+            },
+        ];
+        mock.onGet("/graphs").reply(200, apiResponse);
+
+        await expect(repo.getAll()).rejects.toEqual(new Error("invalidStore is not a supported store type"));
     });
 
     it("should throw RestApiError with correct status message when no response body", async () => {

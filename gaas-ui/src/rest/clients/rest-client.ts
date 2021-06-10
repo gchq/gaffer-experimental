@@ -2,7 +2,6 @@ import axios, { AxiosError, AxiosResponse, Method } from "axios";
 import status from "statuses";
 import { GaaSRestApiErrorResponse } from "../http-message-interfaces/error-response-interface";
 import { RestApiError } from "../RestApiError";
-import { Config } from "./../config";
 
 export interface IApiResponse<T = any> {
     status: number;
@@ -16,19 +15,36 @@ export class RestClient<T> {
         this.jwtToken = jwtToken;
     }
 
+    private baseURL: string;
     private url: string;
     private method: Method;
     private headers: object;
     private data: T | undefined;
     constructor() {
+        this.baseURL = "";
         this.url = "";
         this.method = "get";
         this.headers = {};
         this.data = undefined;
     }
-
+    
+    public baseUrl(baseURL: string): RestClient<T> {
+        this.baseURL = baseURL;
+        return this;
+    }
+    
     public get(): RestClient<T> {
         this.method = "get";
+        return this;
+    }
+    
+    public post(): RestClient<T> {
+        this.method = "post";
+        return this;
+    }
+    
+    public delete(): RestClient<T> {
+        this.method = "delete";
         return this;
     }
 
@@ -36,6 +52,16 @@ export class RestClient<T> {
         const _pathVariable = pathVariable ? `/${pathVariable}` : "";
         this.url = `/graphs${_pathVariable}`;
         this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+        return this;
+    }
+
+    public status(): RestClient<T>{
+        this.url = "/graph/status";
+        return this;
+    }
+
+    public description(): RestClient<T>{
+        this.url = "/graph/config/description";
         return this;
     }
 
@@ -51,16 +77,6 @@ export class RestClient<T> {
         return this;
     }
 
-    public post(): RestClient<T> {
-        this.method = "post";
-        return this;
-    }
-
-    public delete(): RestClient<T> {
-        this.method = "delete";
-        return this;
-    }
-
     public requestBody(requestBody: T): RestClient<T> {
         this.data = requestBody;
         return this;
@@ -69,9 +85,9 @@ export class RestClient<T> {
     public async execute(): Promise<IApiResponse> {
         try {
             const response: AxiosResponse<any> = await axios({
+                baseURL: this.baseURL,
                 url: this.url,
                 method: this.method,
-                baseURL: Config.REACT_APP_KAI_REST_API_HOST,
                 headers: this.headers,
                 data: this.data,
             });

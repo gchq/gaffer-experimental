@@ -100,7 +100,7 @@ const NavigationAppbar: React.FC = (props: any) => {
 
     const getSideNavIcon = (sidebarName: string) => {
         switch (sidebarName) {
-            case "Add Graph":
+            case "Create Graph":
                 return <AddCircleOutlineIcon />;
             case "View Graphs":
                 return <VisibilityIcon />;
@@ -116,9 +116,9 @@ const NavigationAppbar: React.FC = (props: any) => {
     const buildUsername = () => (username.includes("@") ? username.slice(0, username.indexOf("@")) : username);
 
     return (
-        <div className={classes.root}>
+        <div className={classes.root} aria-label={"navigation-appbar"}>
             <CssBaseline />
-            <AppBar position="fixed" className={classes.appBar}>
+            <AppBar position="fixed" className={classes.appBar} id={"main-appbar"} aria-label={"main-appbar"}>
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
                         Kai: Graph As A Service
@@ -133,13 +133,18 @@ const NavigationAppbar: React.FC = (props: any) => {
                     classes={{
                         paper: classes.drawerPaper,
                     }}
+                    id={"navigation-drawer"}
+                    aria-label={"navigation-drawer"}
                 >
                     <Toolbar />
                     <div className={classes.drawerContainer}>
-                        <List>
+                        <List
+                            id={"navigation-drawer-list"}
+                            aria-label={"navigation-drawer-list"}
+                        >
                             <ListItem className={classes.listItem}>
                                 <ListItemAvatar>
-                                    <Avatar>{username.slice(0, 1)}</Avatar>
+                                    <Avatar style={{color: "#ffffff", backgroundColor:"#5A7C81"}}>{username.slice(0, 1)}</Avatar>
                                 </ListItemAvatar>
                                 <ListItemText
                                     id="signedin-user-details"
@@ -149,7 +154,7 @@ const NavigationAppbar: React.FC = (props: any) => {
                             </ListItem>
                         </List>
                         <Divider />
-                        <List>
+                        <List >
                             {Routes.map((prop, key) => (
                                 <NavLink
                                     to={prop.path}

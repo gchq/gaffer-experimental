@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
@@ -28,7 +30,12 @@ public class GetNamespacesService {
     @Autowired
     private CRDClient crdClient;
 
+    @Autowired
+    private MeterRegistry meterRegistry;
+
+    @Timed(value = "getNamespaces.time", description = "Time taken to get all namespaces", percentiles = 0)
     public List<String> getNamespaces() throws GaaSRestApiException {
+        meterRegistry.counter("GetNamespacesService", "action", "get").increment();
         return crdClient.getAllNameSpaces();
     }
 }

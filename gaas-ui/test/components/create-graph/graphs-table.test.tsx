@@ -1,21 +1,22 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
-import GraphsTable from "../../../src/components/add-graph/graphs-table";
+import ProxyGraphsTable from "../../../src/components/create-graph/proxy-graphs-table";
 import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
+import { StoreType } from "../../../src/domain/store-type";
 
 let component: ReactWrapper;
 const graphs = [
-  new Graph("test-graph", "A description", "", "", GraphType.GAAS_GRAPH),
-  new Graph("test-graph2", "Another description", "", "", GraphType.GAAS_GRAPH),
-  new Graph("another-graph3", "Some description", "", "", GraphType.GAAS_GRAPH),
+  new Graph("test-graph", "A description", "", "UP", StoreType.MAPSTORE, GraphType.GAAS_GRAPH),
+  new Graph("test-graph2", "Another description", "", "UP", StoreType.FEDERATED_STORE, GraphType.GAAS_GRAPH),
+  new Graph("another-graph3", "Some description", "", "", StoreType.ACCUMULO, GraphType.GAAS_GRAPH),
 ];
 const selectedGraphs = ["test-graph"];
 const onClickCheckboxMockCallback = jest.fn();
 
 beforeEach(() => {
   component = mount(
-    <GraphsTable
+    <ProxyGraphsTable
       hide={false}
       graphs={graphs}
       selectedGraphs={selectedGraphs}
@@ -32,7 +33,7 @@ afterEach(() => {
 describe("GraphsTable UI Component", () => {
   it("Should have the correct graphs in the table when graphs is passed in as a value", () => {
     const expected =
-      "Graph IDDescriptionType test-graphA descriptionGaaS Graphtest-graph2Another descriptionGaaS Graphanother-graph3Some descriptionGaaS Graph";
+      "Graph IDDescriptionType test-graphA descriptionGaaS Graphtest-graph2Another descriptionGaaS Graph";
     expect(component.find("table").text()).toBe(expected);
   });
   it("Should allow graphs in the table to be selected using a checkbox", () => {
@@ -69,7 +70,7 @@ describe("GraphsTable UI Component", () => {
 
 describe("Hide graphs table if federated store is not selected", () => {
   const component = mount(
-    <GraphsTable
+    <ProxyGraphsTable
       hide={true}
       graphs={[]}
       selectedGraphs={[]}

@@ -1,3 +1,4 @@
+import { Config } from "../config";
 import { IAuthClient } from "./authclient";
 import { IApiResponse, RestClient } from "./rest-client";
 
@@ -14,12 +15,14 @@ export class AuthApiClient implements IAuthClient {
                 password: password,
             };
             const token: IApiResponse<string> = await new RestClient<IAuthRequest>()
+                .baseUrl(Config.REACT_APP_AUTH_ENDPOINT)
                 .post()
                 .authentication()
                 .requestBody(requestBody)
                 .execute();
             RestClient.setJwtToken(token.data);
             onSuccess();
+            
         } catch (e) {
             onError(e.message);
         }
@@ -38,6 +41,7 @@ export class AuthApiClient implements IAuthClient {
                 password: tempPassword,
             };
             const token: IApiResponse<string> = await new RestClient<IAuthRequest>()
+                .baseUrl(Config.REACT_APP_AUTH_ENDPOINT)
                 .post()
                 .authentication()
                 .requestBody(requestBody)
