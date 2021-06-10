@@ -1,15 +1,26 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
-import AddGraph from "../../../src/components/add-graph/AddGraph";
+import { act } from "react-dom/test-utils";
+import AddGraph from "../../../src/components/create-graph/create-graph";
 import { Graph } from "../../../src/domain/graph";
-import { GraphType } from "../../../src/domain/graph-type";
 import { StoreType } from "../../../src/domain/store-type";
 import { CreateGraphRepo, ICreateGraphConfig } from "../../../src/rest/repositories/create-graph-repo";
+import { GetAllGraphsRepo } from "../../../src/rest/repositories/get-all-graphs-repo";
+import { GetGraphDetailsRepo } from "../../../src/rest/repositories/get-graph-details-repo";
+import { GetGraphStatusRepo } from "../../../src/rest/repositories/get-graph-status-repo";
+import { RestApiError } from "../../../src/rest/RestApiError";
 
 jest.mock("../../../src/rest/repositories/create-graph-repo");
+jest.mock("../../../src/rest/repositories/get-all-graphs-repo");
+jest.mock("../../../src/rest/repositories/get-graph-status-repo");
+jest.mock("../../../src/rest/repositories/get-graph-details-repo");
+
 let wrapper: ReactWrapper;
 
-beforeEach(() => (wrapper = mount(<AddGraph />)));
+beforeEach(async () => {
+  mockGetAllGraphsRepoToReturn([]);
+  wrapper = mount(<AddGraph />);
+});
 
 afterEach(() => {
   wrapper.unmount();
@@ -20,37 +31,37 @@ describe("AddGraph UI component", () => {
   describe("Layout On Render", () => {
     it("Should have a Graph Id, Description, Store Type dropdown inputs", () => {
       const textfield = wrapper.find("input");
-      expect(textfield.at(0).props().name).toBe("graph-id");
-      const descriptionTextArea = wrapper.find("textarea#graph-description");
-      expect(descriptionTextArea.props().name).toBe("graph-description");
+      expect(textfield.at(0).props().name).toBe("Graph ID");
+      
+      const descriptionTextArea = wrapper.find("textarea#graph-description-input");
+      expect(descriptionTextArea.props().name).toBe("Graph Description");
+      
       const select = wrapper.find("div#storetype-select-grid");
-      expect(select.text()).toBe(
-        "Store TypeMap StoreStore TypeSet to Map Store by default"
-      );
+      expect(select.text()).toBe("Store TypeMap Store​");
     });
     it("should have icon button", () => {
       const fileButton = wrapper.find("button").at(0).find("svg");
       expect(fileButton).toHaveLength(1);
     });
     it("should have an elements text area", () => {
-      const elementsTextfield = wrapper.find("textarea#schema-elements");
-      expect(elementsTextfield.props().name).toBe("schema-elements");
+      const elementsTextfield = wrapper.find("textarea#schema-elements-input");
+      expect(elementsTextfield.props().name).toBe("Schema Elements");
     });
     it("should have a types text area", () => {
-      const typesTextfield = wrapper.find("textarea#schema-types");
-      expect(typesTextfield.props().name).toBe("schema-types");
+      const typesTextfield = wrapper.find("textarea#schema-types-input");
+      expect(typesTextfield.props().name).toBe("Schema Types");
     });
     it("should have a Submit button", () => {
-      const submitButton = wrapper.find("button#add-new-graph-button").text();
-      expect(submitButton).toBe("Add Graph");
+      const submitButton = wrapper.find("button#create-new-graph-button").text();
+      expect(submitButton).toBe("Create Graph");
     });
   });
   describe("When Federated StoreType Is Selected", () => {
     it("Should have a URL Input, Add Button & Graph Table when federated store is selected", () => {
       selectStoreType(StoreType.FEDERATED_STORE);
 
-      const urlInput = wrapper.find("input#proxy-url");
-      expect(urlInput.props().name).toBe("proxy-url");
+      const urlInput = wrapper.find("input#proxy-url-input");
+      expect(urlInput.props().name).toBe("Proxy Graph Base URL");
       const addButton = wrapper.find("button#add-new-proxy-button");
       expect(addButton.text()).toBe("Add Proxy Graph");
       const graphTable = wrapper.find("table");
@@ -62,22 +73,38 @@ describe("AddGraph UI component", () => {
       const button = wrapper.find("button#add-new-proxy-button");
       expect(button.props().disabled).toEqual(true);
     });
-    it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", () => {
+    it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", async () => {
+      mockGetGraphStatus("UP")
+      mockGetGraphDetails("Description for this Proxy Graph");
       selectStoreType(StoreType.FEDERATED_STORE);
-      inputProxyURL("http://test.graph.url");
-
-      clickAddProxy();
+      
+      await inputProxyURL("http://test.graph.url");
+      await clickAddProxy();
 
       const graphTable = wrapper.find("table");
-      expect(graphTable.text()).toEqual(
-        "Graph IDDescriptionType http://test.graph.url-graphProxy GraphProxy Graph"
+      expect(graphTable.text()).toBe(
+        "Graph IDDescriptionType http://test.graph.url-graphDescription for this Proxy GraphProxy Graph"
       );
     });
-    it("Should select a graph in table", async () => {
+    it("Should not add graph when status is down to the graphs table and display notification", async () => {
+      mockGetGraphStatus("DOWN");
+      mockGetGraphStatusThrowsError(() => { throw new RestApiError("Not Found", "Resource not found") });
       selectStoreType(StoreType.FEDERATED_STORE);
-      inputProxyURL("test.URL");
+      await inputProxyURL("http://test.graph.url");
       await clickAddProxy();
-      inputProxyURL("test2.URL");
+
+      const graphTable = wrapper.find("table");
+      expect(graphTable.text()).not.toContain("http://test.graph.url");
+    });
+    it("Should select a graph in table", async () => {
+      mockGetGraphStatus("UP");
+      mockGetGraphDetails("AnotherDesc");
+      selectStoreType(StoreType.FEDERATED_STORE);
+      await inputProxyURL("https://www.testURL.com/");
+      await clickAddProxy();
+      mockGetGraphStatus("UP");
+      mockGetGraphDetails("AnotherDesc");
+      await inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
 
       clickTableBodyCheckBox(0, false);
@@ -87,11 +114,15 @@ describe("AddGraph UI component", () => {
       );
     });
     it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async () => {
+      mockGetGraphStatus("UP")
+      mockGetGraphDetails("AnotherDesc");
       selectStoreType(StoreType.FEDERATED_STORE);
-      inputProxyURL("test.URL");
+      await inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
-      inputProxyURL("test2.URL");
+      mockGetGraphStatus("UP")
+      await inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
+      await wrapper.update();
 
       clickTableHeaderCheckBox(true);
 
@@ -105,15 +136,19 @@ describe("AddGraph UI component", () => {
       inputDescription("test");
       selectStoreType(StoreType.FEDERATED_STORE);
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
     it("Should uncheck all graphs in the table when the uncheck all button is clicked", async () => {
+      mockGetGraphStatus("UP")
+      mockGetGraphDetails("AnotherDesc");
       selectStoreType(StoreType.FEDERATED_STORE);
-      inputProxyURL("test.URL");
+      await inputProxyURL("https://www.testURL.com/");
       await clickAddProxy();
-      inputProxyURL("test2.URL");
+      mockGetGraphStatus("UP")
+      mockGetGraphDetails("AnotherDesc");
+      await inputProxyURL("https://www.testURL2.com/");
       await clickAddProxy();
 
       clickTableHeaderCheckBox(true);
@@ -127,33 +162,37 @@ describe("AddGraph UI component", () => {
     it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
       const mock = jest.fn();
       mockAddGraphRepoWithFunction(mock);
+      mockGetGraphDetails("test")
+      mockGetGraphStatus("UP")
+
       inputGraphId("OK Graph");
       inputDescription("test");
       selectStoreType(StoreType.FEDERATED_STORE);
-      await inputProxyURL("test.URL");
-      await clickAddProxy();
 
-      clickSubmit();
-      //@ts-ignore
+      await inputProxyURL("https://www.testURL.com/");
+      await clickAddProxy();
       await wrapper.update();
+
+      await clickSubmit();
       await wrapper.update();
 
       const expectedConfig: ICreateGraphConfig = {
-        proxyStores: [{ graphId: "test.URL-graph", url: "test.URL" }]
+        proxyStores: [{ graphId: "https://www.testURL.com/-graph", url: "https://www.testURL.com/" }]
       }
+      expect(wrapper.find("div#notification-alert").text()).toBe(
+          "OK Graph was successfully added"
+      );
       expect(mock).toHaveBeenLastCalledWith(
         "OK Graph",
         "test",
         StoreType.FEDERATED_STORE,
         expectedConfig,
       );
-      expect(wrapper.find("div#notification-alert").text()).toBe(
-        "OK Graph was successfully added"
-      );
+
     });
   });
   describe("When Map Store Is Selected", ()=>{
-    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+    it("Should call AddGraphRepo with Map Store Graph request params and display success message", async () => {
       const mock = jest.fn();
       mockAddGraphRepoWithFunction(mock);
       
@@ -163,10 +202,7 @@ describe("AddGraph UI component", () => {
       inputElements(elements);
       inputTypes(types);
 
-      clickSubmit();
-      //@ts-ignore
-      await wrapper.update();
-      await wrapper.update();
+      await clickSubmit();
 
       const expectedConfig: ICreateGraphConfig = {
         schema: { elements: elements, types: types },
@@ -177,8 +213,8 @@ describe("AddGraph UI component", () => {
       );
     });
   });
-  describe("When Accumulp Store Is Selected", ()=>{
-    it("Should call AddGraphRepo with Federated Store Graph request params and display success message", async () => {
+  describe("When Accumulo Store Is Selected", ()=>{
+    it("Should call AddGraphRepo with Accumulo Store Graph request params and display success message", async () => {
       const mock = jest.fn();
       mockAddGraphRepoWithFunction(mock);
       
@@ -188,10 +224,7 @@ describe("AddGraph UI component", () => {
       inputElements(elements);
       inputTypes(types);
 
-      clickSubmit();
-      //@ts-ignore
-      await wrapper.update();
-      await wrapper.update();
+      await clickSubmit();
 
       const expectedConfig: ICreateGraphConfig = {
         schema: { elements: elements, types: types },
@@ -215,9 +248,9 @@ describe("AddGraph UI component", () => {
     });
   });
 
-  describe("Add Graph Button", () => {
+  describe("Create Graph Button", () => {
     it("should be disabled when Graph Name and Graph Description fields are empty", () => {
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -225,7 +258,7 @@ describe("AddGraph UI component", () => {
       inputDescription("test");
       inputElements(elements);
       inputTypes(types);
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -233,7 +266,7 @@ describe("AddGraph UI component", () => {
       inputGraphId("test");
       inputElements(elements);
       inputTypes(types);
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -243,7 +276,7 @@ describe("AddGraph UI component", () => {
       inputElements(elements);
       inputTypes(types);
       selectStoreType(StoreType.MAPSTORE);
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         false
       );
     });
@@ -253,7 +286,7 @@ describe("AddGraph UI component", () => {
       inputElements(elements);
       inputTypes(types);
       selectStoreType(StoreType.ACCUMULO);
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         false
       );
     });
@@ -263,7 +296,7 @@ describe("AddGraph UI component", () => {
       inputElements(elements);
       inputTypes(types);
       selectStoreType(StoreType.FEDERATED_STORE);
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -272,7 +305,7 @@ describe("AddGraph UI component", () => {
       inputDescription("test");
       inputElements(elements);
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -281,7 +314,7 @@ describe("AddGraph UI component", () => {
       inputDescription("test");
       inputTypes(types);
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -292,11 +325,11 @@ describe("AddGraph UI component", () => {
       inputElements({ invalid: "json" });
       inputTypes(types);
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
-    it("should be disabled when MAP STORE selectedand types schema has error", () => {
+    it("should be disabled when MAP STORE selected and types schema has error", () => {
       inputGraphId("G");
       inputDescription("test");
       selectStoreType(StoreType.MAPSTORE);
@@ -304,7 +337,7 @@ describe("AddGraph UI component", () => {
       inputTypes({ invalid: "json" });
       
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -315,7 +348,7 @@ describe("AddGraph UI component", () => {
       inputElements({ invalid: "json" });
       inputTypes(types);
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -327,7 +360,7 @@ describe("AddGraph UI component", () => {
       inputTypes({ invalid: "json" });
       
 
-      expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
+      expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
         true
       );
     });
@@ -341,105 +374,143 @@ describe("AddGraph UI component", () => {
       inputElements(elements);
       inputTypes(types);
 
-      clickSubmit();
-      //@ts-ignore
-      await wrapper.update();
-      await wrapper.update();
+      await clickSubmit();
 
       expect(wrapper.find("div#notification-alert").text()).toBe(
         "OK Graph was successfully added"
       );
     });
   });
+});
 
-  function clickSubmit(): void {
-    expect(wrapper.find("button#add-new-graph-button").props().disabled).toBe(
-      false
-    );
-    wrapper.find("button#add-new-graph-button").simulate("click");
-  }
-  function inputGraphId(graphId: string): void {
-    wrapper.find("input#graph-id").simulate("change", {
-      target: { value: graphId },
+async function clickSubmit(): Promise<void> {
+  await act(async () => {
+    wrapper.find("button#create-new-graph-button").simulate("click");
+  });
+  await wrapper.update();
+  await wrapper.update();
+}
+function inputGraphId(graphId: string): void {
+  wrapper.find("input#graph-id-input").simulate("change", {
+    target: { value: graphId },
+  });
+}
+function selectStoreType(storeType: StoreType) {
+  wrapper
+    .find("div#storetype-formcontrol")
+    .find("input")
+    .simulate("change", {
+      target: { value: storeType },
     });
-  }
-  function selectStoreType(storeType: StoreType) {
-    wrapper
-      .find("div#storetype-formcontrol")
-      .find("input")
-      .simulate("change", {
-        target: { value: storeType },
-      });
-  }
-  function inputProxyURL(url: string) {
+}
+async function inputProxyURL(url: string): Promise<void> {
+  await act(async () => {
     wrapper
       .find("div#proxy-url-grid")
       .find("input")
       .simulate("change", {
         target: { value: url },
       });
-  }
-  function clickAddProxy() {
+  });
+}
+async function clickAddProxy(): Promise<void> {
+  await act(async () => {
     wrapper.find("button#add-new-proxy-button").simulate("click");
-  }
-  function clickTableBodyCheckBox(row: number, check: boolean) {
-    wrapper
-      .find("table")
-      .find("tbody")
-      .find("input")
-      .at(row)
-      .simulate("change", {
-        target: { checked: check },
-      });
-  }
-  function clickTableHeaderCheckBox(check: boolean) {
-    wrapper
-      .find("table")
-      .find("thead")
-      .find("input")
-      .simulate("change", {
-        target: { checked: check },
-      });
-  }
-  function inputDescription(description: string): void {
-    wrapper.find("textarea#graph-description").simulate("change", {
-      target: { value: description },
+  });
+}
+function clickTableBodyCheckBox(row: number, check: boolean) {
+  wrapper
+    .find("table")
+    .find("tbody")
+    .find("input")
+    .at(row)
+    .simulate("change", {
+      target: { checked: check },
     });
-    expect(wrapper.find("textarea#graph-description").props().value).toBe(
-      description
-    );
-  }
-  function inputElements(elementsObject: object): void {
-    wrapper.find("textarea#schema-elements").simulate("change", {
-      target: { value: JSON.stringify(elementsObject) },
+}
+function clickTableHeaderCheckBox(check: boolean) {
+  wrapper
+    .find("table")
+    .find("thead")
+    .find("input")
+    .simulate("change", {
+      target: { checked: check },
     });
-    expect(wrapper.find("textarea#schema-elements").props().value).toBe(
-      JSON.stringify(elementsObject)
-    );
-  }
+}
 
-  function inputTypes(typesObject: object): void {
-    wrapper.find("textarea#schema-types").simulate("change", {
-      target: { value: JSON.stringify(typesObject) },
-    });
-    expect(wrapper.find("textarea#schema-types").props().value).toBe(
-      JSON.stringify(typesObject)
-    );
-  }
+function inputDescription(description: string): void {
+  wrapper.find("textarea#graph-description-input").simulate("change", {
+    target: { value: description },
+  });
+  expect(wrapper.find("textarea#graph-description-input").props().value).toBe(
+    description
+  );
+}
 
-  function mockAddGraphRepoWithFunction(f: () => void): void {
-    // @ts-ignore
-    CreateGraphRepo.mockImplementationOnce(() => ({
-      create: f,
-    }));
-  }
-});
+function inputElements(elementsObject: object): void {
+  wrapper.find("textarea#schema-elements-input").simulate("change", {
+    target: { value: JSON.stringify(elementsObject) },
+  });
+  expect(wrapper.find("textarea#schema-elements-input").props().value).toBe(
+    JSON.stringify(elementsObject)
+  );
+}
+
+function inputTypes(typesObject: object): void {
+  wrapper.find("textarea#schema-types-input").simulate("change", {
+    target: { value: JSON.stringify(typesObject) },
+  });
+  expect(wrapper.find("textarea#schema-types-input").props().value).toBe(
+    JSON.stringify(typesObject)
+  );
+}
+
+function mockAddGraphRepoWithFunction(f: () => void): void {
+  // @ts-ignore
+  CreateGraphRepo.mockImplementationOnce(() => ({
+    create: f,
+  }));
+}
+
+function mockGetAllGraphsRepoToReturn(graphs: Graph[]): void {
+  // @ts-ignore
+  GetAllGraphsRepo.mockImplementationOnce(() => ({
+    getAll: graphs,
+  }));
+}
+
+function mockGetGraphStatus(status: string): void {
+  // @ts-ignore
+  GetGraphStatusRepo.mockImplementationOnce(() => ({
+    getStatus: () =>
+        new Promise((resolve, reject) => {
+          resolve(status);
+        }),
+  }));
+}
+
+function mockGetGraphDetails(description: string): void {
+  // @ts-ignore
+  GetGraphDetailsRepo.mockImplementationOnce(() => ({
+    getDescription: () => 
+        new Promise((resolve, reject) => {
+          resolve(description);
+    }),
+        
+  }));
+}
+
+function mockGetGraphStatusThrowsError(f: () => void): void {
+  // @ts-ignore
+  GetGraphStatusRepo.mockImplementationOnce(() => ({
+    getStatus: f,
+  }));
+}
 
 const elements = {
   entities: {
     Cardinality: {
-      description:
-        "An entity that is added to every vertex representing the connectivity of the vertex.",
+      description: "An entity that is added to every vertex representing the connectivity of the vertex.",
       vertex: "anyVertex",
       properties: {
         edgeGroup: "set",
@@ -451,8 +522,7 @@ const elements = {
   },
   edges: {
     RoadUse: {
-      description:
-        "A directed edge representing vehicles moving from junction A to junction B.",
+      description: "A directed edge representing vehicles moving from junction A to junction B.",
       source: "junction",
       destination: "junction",
       directed: "true",
@@ -485,8 +555,7 @@ const types = {
         class: "uk.gov.gchq.koryphe.impl.binaryoperator.Sum",
       },
       serialiser: {
-        class:
-          "uk.gov.gchq.gaffer.sketches.clearspring.cardinality.serialisation.HyperLogLogPlusSerialiser",
+        class: "uk.gov.gchq.gaffer.sketches.clearspring.cardinality.serialisation.HyperLogLogPlusSerialiser",
       },
     },
   },

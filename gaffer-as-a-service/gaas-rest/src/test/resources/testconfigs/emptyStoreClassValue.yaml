@@ -3,3 +3,4 @@ graph:
     gaffer.store.class:
     gaffer.store.properties.class: uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties
     gaffer.serialiser.json.modules: uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules
+

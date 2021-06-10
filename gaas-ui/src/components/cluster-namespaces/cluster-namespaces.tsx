@@ -59,11 +59,11 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
         const { namespaces, errorMessage } = this.state;
 
         return (
-            <main>
+            <main aria-label="Cluster-Namespace-Page">
                 {errorMessage && <NotificationAlert alertType={AlertType.FAILED} message={errorMessage} />}
                 <Toolbar />
                 <Grid container justify="center">
-                    <Container component="main" maxWidth="sm">
+                    <Container maxWidth="sm">
                         <TableContainer>
                             <Table size="medium" className={this.classes.table} aria-label="Namespaces Table">
                                 <TableHead>

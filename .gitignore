@@ -31,3 +31,11 @@ __pycache__
 .project
 */node_modules/
 */coverage/
+
+*.prefs
+
+gaffer-as-a-service/gaas-common/.classpath
+
+gaffer-as-a-service/gaas-rest/.classpath
+
+gaffer-as-a-service/gaffer-controller/.classpath

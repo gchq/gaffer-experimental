@@ -15,6 +15,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "helm.fullname" . }}
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
   labels:
   {{- include "helm.labels" . | nindent 4 }}
 spec:
