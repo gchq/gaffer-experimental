@@ -15,8 +15,10 @@ import {GetGraphStatusRepo} from "../../../src/rest/repositories/get-graph-statu
 import {RestApiError} from "../../../src/rest/RestApiError";
 import {GetStoreTypesRepo} from "../../../src/rest/repositories/get-store-types-repo";
 import {IStoreTypesResponse} from "../../../src/rest/http-message-interfaces/response-interfaces";
+import {CreateFederatedGraphRepo} from "../../../src/rest/repositories/create-federated-graph-repo"
 
 jest.mock("../../../src/rest/repositories/create-storetypes-graph-repo");
+jest.mock("../../../src/rest/repositories/create-federated-graph-repo");
 jest.mock("../../../src/rest/repositories/get-all-graphs-repo");
 jest.mock("../../../src/rest/repositories/get-graph-status-repo");
 jest.mock("../../../src/rest/repositories/get-graph-description-repo");
@@ -169,7 +171,7 @@ describe("CreateGraph UI component", () => {
                 true
             );
         });
-        fit("Should uncheck all graphs in the table when the uncheck all button is clicked", async() => {
+        it("Should uncheck all graphs in the table when the uncheck all button is clicked", async() => {
             selectStoreType("federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
@@ -209,8 +211,7 @@ describe("CreateGraph UI component", () => {
             const tableInputs = wrapper.find("table").find("input");
             expect(tableInputs.at(1).props().checked).toBe(true);
             await wrapper.update();
-            mockCreateGraphRepoWithFunction(() => {
-            });
+            mockCreateFederatedGraphRepoWithFunction(mock);
             await clickSubmit();
             await wrapper.update();
             const expectedConfig: ICreateGraphConfig = {
@@ -229,9 +230,7 @@ describe("CreateGraph UI component", () => {
         });
         it("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async() => {
             const mock = jest.fn();
-            mockCreateGraphRepoWithFunction(() => {
-            });
-            mockGetGraphIdRepoToThrowError();
+            mockCreateFederatedGraphRepoWithFunction(mock);
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
             selectStoreType("federated");
@@ -256,7 +255,7 @@ describe("CreateGraph UI component", () => {
             expect(mock).toHaveBeenLastCalledWith(
                 "OK Graph",
                 "test",
-                StoreType.FEDERATED_STORE,
+                "federated",
                 expectedConfig,
             );
 
@@ -265,7 +264,7 @@ describe("CreateGraph UI component", () => {
     describe("When Map Store Is Selected", () => {
         it("Should call CreateGraphRepo with Map Store Graph request params and display success message", async() => {
             const mock = jest.fn();
-            mockCreateGraphRepoWithFunction(mock);
+            mockCreateStoreTypesGraphRepoWithFunction(mock);
 
             inputGraphId("map-store-graph");
             inputDescription("Mappy description");
@@ -288,7 +287,7 @@ describe("CreateGraph UI component", () => {
     describe("When Accumulo Store Is Selected", () => {
         it("Should call CreateGraphRepo with Accumulo Store Graph request params and display success message", async() => {
             const mock = jest.fn();
-            mockCreateGraphRepoWithFunction(mock);
+            mockCreateStoreTypesGraphRepoWithFunction(mock);
 
             inputGraphId("accumulo-graph");
             inputDescription("None");
@@ -441,7 +440,7 @@ describe("CreateGraph UI component", () => {
 
     describe("On Submit Request", () => {
         it("should display success message in the NotificationAlert", async() => {
-            mockCreateGraphRepoWithFunction(() => {
+            mockCreateStoreTypesGraphRepoWithFunction(() => {
             });
             inputGraphId("OK Graph");
             inputDescription("test");
@@ -556,9 +555,16 @@ async function waitForComponentToRender(wrapper: ReactWrapper) {
     });
 }
 
-function mockCreateGraphRepoWithFunction(f: () => void): void {
+function mockCreateStoreTypesGraphRepoWithFunction(f: () => void): void {
     // @ts-ignore
     CreateStoreTypesGraphRepo.mockImplementationOnce(() => ({
+        create: f,
+    }));
+}
+
+function mockCreateFederatedGraphRepoWithFunction(f: () => void): void {
+    // @ts-ignore
+    CreateFederatedGraphRepo.mockImplementationOnce(() => ({
         create: f,
     }));
 }
