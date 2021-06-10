@@ -20,9 +20,10 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.util.ClientBuilder;
+import io.micrometer.core.aop.TimedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.WebClient;
 import java.io.IOException;
 
 @Configuration
@@ -44,7 +45,7 @@ public class AppConfig {
     }
 
     @Bean
-    public WebClient.Builder webClientBuilder() {
-        return WebClient.builder();
+    public TimedAspect timedAspect(final MeterRegistry registry) {
+        return new TimedAspect(registry);
     }
 }

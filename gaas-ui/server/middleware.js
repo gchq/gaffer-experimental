@@ -62,26 +62,65 @@ app.get("/graphs", (req, res) => {
             res.send([
                 {
                     graphId: "roadTraffic",
-                    description: "Road traffic graph",
+                    description: "Road traffic graph. This graphs uses a federated store of proxy stores",
                     url: "http://road-traffic.k8s.cluster/rest",
+                    storeType: "federatedStore",
+                    status: "UP",
+                },
+                {
+                    graphId: "exampleGraphId",
+                    description: "Example Graph description",
+                    url: "http://road-traffic.k8s.cluster/rest",
+                    storeType: "mapStore",
+                    status: "UP",
+                },
+                {
+                    graphId: "accEntitiesClashingGraph",
+                    description: "Clashing entities on an Accumulo Store graph",
+                    url: "http://acc-entities-2.k8s.cluster/rest",
+                    storeType: "accumuloStore",
+                    status: "DOWN",
+                },
+                {
+                    graphId: "mapEdges",
+                    description: "Map of edge",
+                    url: "http://map-edges.k8s.cluster/rest",
+                    storeType: "mapStore",
+                    status: "UP",
+                },
+                {
+                    graphId: "accEntities",
+                    description: "Accumulo graph of entities",
+                    url: "http://acc-entities-1.k8s.cluster/rest",
+                    storeType: "accumuloStore",
                     status: "UP",
                 },
                 {
                     graphId: "basicGraph",
-                    description: "Basic graph instance",
+                    description: "Basic graph instance using Accumulo",
                     url: "http://basic-graph.k8s.cluster/rest",
+                    storeType: "accumuloStore",
                     status: "UP"
                 },
                 {
                     graphId: "devGraph",
-                    description: "Development mode graph",
-                    url: "http://dev-environment.k8s.cluster/rest",
+                    description: "Primary dev environment graph",
+                    url: "http://dev-environment-1.k8s.cluster/rest",
+                    storeType: "mapStore",
                     status: "DOWN"
+                },
+                {
+                    graphId: "devGraph2",
+                    description: "Secondary development mode graph",
+                    url: "http://dev-environment-2.k8s.cluster/rest",
+                    storeType: "mapStore",
+                    status: "UP"
                 },
                 {
                     graphId: "testGaffer",
                     description: "Test instance of Gaffer",
                     url: "http://test-gaffer.k8s.cluster/rest",
+                    storeType: "mapStore",
                     status: "UP"
                 },
             ]);
@@ -115,6 +154,7 @@ app.delete("/graphs/:graphId", (req, res) => {
         res.status(403).end();
     }
 });
+
 app.get("/namespaces", (req, res) => {
     try {
         jwt.verify(req.get("Authorization"), jwtSecret, () => {
@@ -124,4 +164,20 @@ app.get("/namespaces", (req, res) => {
         res.status(403).end();
     }
 });
+
+app.get("/up/graph/status", (req, res) => {
+    console.log(req.url)
+    res.status(200).send({ status: "UP" });
+});
+
+app.get("/up/graph/config/description", (req, res) => {
+    console.log(req.url)
+    res.status(200).send("This stubbed graph can be found in middleware.js");
+});
+
+app.get("/down/graph/status", (req, res) => {
+    console.log(req.url)
+    res.status(200).send({ status: "DOWN" });
+});
+
 module.exports = server;

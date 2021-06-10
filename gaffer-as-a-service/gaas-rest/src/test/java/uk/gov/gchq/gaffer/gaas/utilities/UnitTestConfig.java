@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.utilities;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -33,6 +34,7 @@ import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+import uk.gov.gchq.gaffer.gaas.services.GetStoreTypesService;
 import uk.gov.gchq.gaffer.gaas.util.Properties;
 import static org.mockito.Mockito.mock;
 
@@ -43,6 +45,12 @@ public class UnitTestConfig {
     @Primary
     public ApiClient apiClient() {
         return mock(ApiClient.class);
+    }
+
+    @Bean
+    @Primary
+    public MeterRegistry meterRegistry() {
+        return mock(MeterRegistry.class);
     }
 
     @Bean
@@ -88,6 +96,11 @@ public class UnitTestConfig {
     @Bean
     public GetNamespacesService getNamespacesService() {
         return new GetNamespacesService();
+    }
+
+    @Bean
+    public GetStoreTypesService getStoreTypesService() {
+        return new GetStoreTypesService();
     }
 
     @Bean

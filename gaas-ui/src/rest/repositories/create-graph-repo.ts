@@ -3,6 +3,7 @@ import {RestClient} from "../clients/rest-client";
 import {ICreateFederatedGraphRequestBody, ICreateGraphRequestBody} from "../http-message-interfaces/request-interfaces";
 import {IElements} from "../../domain/elements-schema";
 import {ITypesSchema} from "../../domain/types-schema";
+import { Config } from "../config";
 
 export class CreateGraphRepo {
     public async create(
@@ -21,8 +22,9 @@ export class CreateGraphRepo {
                 storeType: storeType,
                 schema: config.schema,
             };
-            await new RestClient().post().graphs().requestBody(httpRequestBody).execute();
+            await new RestClient().baseUrl(Config.REACT_APP_KAI_REST_API_HOST).post().graphs().requestBody(httpRequestBody).execute();
         }
+        
         else {
             if (config.proxyStores === undefined) {
                 throw new Error("Proxy Stores is undefined");
@@ -33,7 +35,7 @@ export class CreateGraphRepo {
                 storeType: StoreType.FEDERATED_STORE,
                 proxyStores: config.proxyStores
             };
-            await new RestClient().post().graphs().requestBody(httpRequestBody).execute();
+            await new RestClient().baseUrl(Config.REACT_APP_KAI_REST_API_HOST).post().graphs().requestBody(httpRequestBody).execute();
         }
     }
 }

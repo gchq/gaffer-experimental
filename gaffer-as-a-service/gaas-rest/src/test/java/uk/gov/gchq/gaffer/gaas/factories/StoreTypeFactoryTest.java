@@ -34,6 +34,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @UnitTest
 class StoreTypeFactoryTest {
 
+    private void setStoreList(final List<StoreType> storeTypeManager) {
+        MapStoreType mapStore = new MapStoreType();
+        ProxyStoreType proxyStoreType = new ProxyStoreType();
+        AccumuloStoreType accumuloStoreType = new AccumuloStoreType();
+        FederatedStoreType federatedStoreType = new FederatedStoreType();
+        storeTypeManager.add(federatedStoreType);
+        storeTypeManager.add(accumuloStoreType);
+        storeTypeManager.add(proxyStoreType);
+        storeTypeManager.add(mapStore);
+    }
+
+
     @Test
     void testGetProxyStoreBuilder() {
         final StoreTypeFactory storeTypeFactory = new StoreTypeFactory(getStoreTypes());
@@ -82,6 +94,27 @@ class StoreTypeFactoryTest {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("proxyHost", "http://my.graph.co.uk");
         return elementsSchema;
+    }
+
+    @Test
+    void testGetStoreTypesAsStringList() {
+        List<StoreType> storeTypeManager = new ArrayList<>();
+
+        setStoreList(storeTypeManager);
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+
+        final List<String> list = storeTypeFactory.getStoreTypesAsStringList();
+        assertEquals("[federatedStore, accumuloStore, proxyStore, mapStore]", list.toString());
+    }
+
+    @Test
+    void testGetStoreTypesWhenListEmpty() {
+        List<StoreType> storeTypeManager = new ArrayList<>();
+
+        StoreTypeFactory storeTypeFactory = new StoreTypeFactory(storeTypeManager);
+
+        final List<String> list = storeTypeFactory.getStoreTypesAsStringList();
+        assertEquals("[]", list.toString());
     }
 
     private LinkedHashMap<String, Object> getSchema() {

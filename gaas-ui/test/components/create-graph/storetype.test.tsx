@@ -1,6 +1,6 @@
 import {mount, ReactWrapper} from "enzyme";
 import React from "react";
-import StoreTypeSelect from "../../../src/components/add-graph/storetype";
+import StoreTypeSelect from "../../../src/components/create-graph/storetype";
 import {StoreType} from "../../../src/domain/store-type";
 
 let component: ReactWrapper;

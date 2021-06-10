@@ -1,3 +1,4 @@
+import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
 import Collapse from "@material-ui/core/Collapse";
@@ -6,10 +7,8 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
 import Zoom from "@material-ui/core/Zoom";
 import CheckRoundedIcon from "@material-ui/icons/CheckRounded";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
@@ -31,20 +30,23 @@ export function MainGraphTableRow(props: IProps) {
     const classes = useRowStyles();
 
     return (
-      <React.Fragment>
-        <TableRow className={classes.root} hover>
-            <TableCell>
-                <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+      <React.Fragment >
+        <TableRow className={classes.root} hover aria-label={"view-graphs-table"}>
+            <TableCell aria-label={"expand-row-icon"}>
+                <IconButton id={"expand-row-button-" + index}
+                            aria-label={row.getId()+"-expand-button"} size="small" onClick={() => setOpen(!open)}>
+                {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon />}
                 </IconButton>
             </TableCell>
-            <TableCell component="th" scope="row">{row.getId()}</TableCell>
-            <TableCell><StatusChip status={row.getStatus()} /></TableCell>
-            <TableCell><a href={row.getUrl()} target="_blank" rel="noreferrer">{row.getUrl()}</a></TableCell>
-            <TableCell>
+            <TableCell component="th" scope="row" aria-label={"row-id"}>{row.getId()}</TableCell>
+            <TableCell aria-label={"graph-store-type"}><Avatar style={{color: "white", backgroundColor:"#5A7C81"}}> {row.getStoreType()}</Avatar></TableCell>
+            <TableCell aria-label={"graph-status"}><StatusChip status={row.getStatus()} /></TableCell>
+            <TableCell aria-label={"graph-url"}><a href={row.getUrl()} target="_blank" rel="noreferrer">{row.getUrl()}</a></TableCell>
+            <TableCell aria-label={"delete-graph"}>
                 <Tooltip TransitionComponent={Zoom} title={`Delete ${row.getId()}`}>
                     <IconButton
                         id={"view-graphs-delete-button-" + index}
+                        aria-label={row.getId()+"-delete-button"}
                         onClick={async () => onClickDelete(row.getId())}
                     >
                         <DeleteOutlineOutlinedIcon />
@@ -56,18 +58,10 @@ export function MainGraphTableRow(props: IProps) {
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box margin={1}>
-                <Typography variant="h6" gutterBottom component="div">
-                  Details
-                </Typography>
-                <Table size="small" aria-label="grapg-details">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Description</TableCell>
-                    </TableRow>
-                </TableHead>
+                <Table size="small" aria-label="graph-details">
                 <TableBody>
-                    <TableRow>
-                        <TableCell component="th" scope="row">{row.getDescription()}</TableCell>
+                    <TableRow aria-label={"graph-description"}>
+                        <TableCell component="th" scope="row">Description: {row.getDescription()}</TableCell>
                     </TableRow>
                 </TableBody>
               </Table>
@@ -80,7 +74,7 @@ export function MainGraphTableRow(props: IProps) {
 }
 
 function StatusChip(props: { status: string }) {
-    return (props.status === "UP") ? <Chip icon={<CheckRoundedIcon />} label={props.status} /> : <Chip icon={<WarningRoundedIcon />} label={props.status} color="secondary" />;
+    return (props.status === "UP") ? <Chip icon={<CheckRoundedIcon style={{color: "#ffffff"}}/>} label={props.status} style={{color: "#ffffff", backgroundColor:"#5A7C81"}} /> : <Chip icon={<WarningRoundedIcon style={{color: "#ffffff"}}/>} label={props.status} style={{ color: "#ffffff",backgroundColor: "#EB0052"}} />;
 }
 
 const useRowStyles = makeStyles({
