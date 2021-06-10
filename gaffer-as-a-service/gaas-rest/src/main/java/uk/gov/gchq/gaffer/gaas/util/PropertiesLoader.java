@@ -67,12 +67,11 @@ public class PropertiesLoader {
     List<String> storeTypes = new ArrayList<>();
     List<String> federatedStoreTypes = new ArrayList<>();
 
-    Map<String, Object> storeProperties = new HashMap<>();
     Resource[] resources = loadResources("classpath*:config/*.yaml");
 
     for (final Resource resource : resources) {
       String filename = resource.getFilename().split("\\.", 2)[0];
-      storeProperties = yaml.load(resource.getInputStream());
+      Map<String, Object> storeProperties = yaml.load(resource.getInputStream());
       if (storeProperties.containsKey("graph")) {
         Map<String, Object> test = (Map) ((Map) storeProperties.get("graph")).get("storeProperties");
         if (test.containsKey("gaffer.store.class")) {
