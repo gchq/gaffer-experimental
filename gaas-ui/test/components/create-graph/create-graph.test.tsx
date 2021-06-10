@@ -169,7 +169,7 @@ describe("CreateGraph UI component", () => {
                 true
             );
         });
-        it("Should uncheck all graphs in the table when the uncheck all button is clicked", async() => {
+        fit("Should uncheck all graphs in the table when the uncheck all button is clicked", async() => {
             selectStoreType("federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
@@ -193,35 +193,24 @@ describe("CreateGraph UI component", () => {
         });
         it("Should call CreateGraphRepo with Federated Store Graph request params and display success message", async() => {
             const mock = jest.fn();
-            mockCreateGraphRepoWithFunction(mock);
-            // selectStoreType("federated");
-            // await wrapper.update();
-            // mockGetGraphDescription("test");
-            // mockGetGraphId("test-graph");
-            // mockGetGraphStatus("UP");
 
-
-
-            // await inputProxyURL("https://www.testURL.com/");
-            // await clickAddProxy();
-            // wrapper.update()
-            // const tableInputs = wrapper.find("table").find("input");
-            // console.log(tableInputs)
-            // await clickSubmit();
-            // await wrapper.update();
-            selectStoreType("federated");
             await wrapper.update();
             inputGraphId("OK Graph");
             inputDescription("test");
+            selectStoreType("federated");
+            await wrapper.update();
 
             mockGetGraphStatus("UP");
+            mockGetGraphId("test");
             mockGetGraphDescription("AnotherDesc");
             await inputProxyURL("https://www.testURL.com/");
-            await clickAddProxy();
+            await clickAddProxy()
             await wrapper.update();
             const tableInputs = wrapper.find("table").find("input");
             expect(tableInputs.at(1).props().checked).toBe(true);
-            await wrapper.update()
+            await wrapper.update();
+            mockCreateGraphRepoWithFunction(() => {
+            });
             await clickSubmit();
             await wrapper.update();
             const expectedConfig: ICreateGraphConfig = {
@@ -240,7 +229,8 @@ describe("CreateGraph UI component", () => {
         });
         it("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async() => {
             const mock = jest.fn();
-            mockCreateGraphRepoWithFunction(mock);
+            mockCreateGraphRepoWithFunction(() => {
+            });
             mockGetGraphIdRepoToThrowError();
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
@@ -279,7 +269,8 @@ describe("CreateGraph UI component", () => {
 
             inputGraphId("map-store-graph");
             inputDescription("Mappy description");
-            selectStoreType("mapstore");
+            selectStoreType("mapStore");
+            await wrapper.update();
             inputElements(elements);
             inputTypes(types);
 
@@ -288,7 +279,7 @@ describe("CreateGraph UI component", () => {
             const expectedConfig: ICreateGraphConfig = {
                 schema: {elements: elements, types: types},
             };
-            expect(mock).toHaveBeenLastCalledWith("map-store-graph", "Mappy description", "mapstore", expectedConfig);
+            expect(mock).toHaveBeenLastCalledWith("map-store-graph", "Mappy description", "mapStore", expectedConfig);
             expect(wrapper.find("div#notification-alert").text()).toBe(
                 "map-store-graph was successfully added"
             );
@@ -301,7 +292,8 @@ describe("CreateGraph UI component", () => {
 
             inputGraphId("accumulo-graph");
             inputDescription("None");
-            selectStoreType(StoreType.ACCUMULO);
+            selectStoreType("accumulo");
+            await wrapper.update();
             inputElements(elements);
             inputTypes(types);
 
@@ -310,7 +302,7 @@ describe("CreateGraph UI component", () => {
             const expectedConfig: ICreateGraphConfig = {
                 schema: {elements: elements, types: types},
             };
-            expect(mock).toHaveBeenLastCalledWith("accumulo-graph", "None", StoreType.ACCUMULO, expectedConfig);
+            expect(mock).toHaveBeenLastCalledWith("accumulo-graph", "None", "accumulo", expectedConfig);
             expect(wrapper.find("div#notification-alert").text()).toBe(
                 "accumulo-graph was successfully added"
             );
