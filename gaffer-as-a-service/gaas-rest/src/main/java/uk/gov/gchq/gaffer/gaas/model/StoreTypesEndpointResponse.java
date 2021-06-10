@@ -16,8 +16,10 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
+import org.springframework.stereotype.Component;
 import java.util.List;
 
+@Component
 public class StoreTypesEndpointResponse {
 
     private List<String> storeTypes;

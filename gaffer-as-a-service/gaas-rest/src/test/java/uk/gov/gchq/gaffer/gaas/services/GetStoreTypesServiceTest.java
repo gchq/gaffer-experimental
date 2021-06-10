@@ -32,12 +32,12 @@ public class GetStoreTypesServiceTest {
     @Test
     void testGetStoreTypesServices_ReturnsCorrectResponse() throws GaaSRestApiException {
         StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
-        assertEquals("[accumulo, mapStore, proxy, proxyNoContextRoot]", getStoreTypesService.getStoreTypes().getStoreTypes().toString());
+        assertEquals("[accumulo, mapStore]", getStoreTypesService.getStoreTypes().getStoreTypes().toString());
     }
 
     @Test
     void testGetFederatedStoreTypesServices_ReturnsCorrectResponse() throws GaaSRestApiException {
         StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
-        assertEquals("[federated]", getStoreTypesService.getStoreTypes().getFederatedStoreTypes().toString());
+        assertEquals("[federated, proxy, proxyNoContextRoot]", getStoreTypesService.getStoreTypes().getFederatedStoreTypes().toString());
     }
 }
