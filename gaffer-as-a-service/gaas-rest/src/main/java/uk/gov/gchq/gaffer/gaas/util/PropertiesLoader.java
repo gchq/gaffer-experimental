@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,13 +61,49 @@ public class PropertiesLoader {
 
   }
 
-  public List<String> getStoreTypesAsStringList() throws IOException {
-    return getStoreTypes();
+  public StoreTypesEndpointResponse getStoreTypesEndpointResponse() throws IOException {
+    Yaml yaml = new Yaml();
+    StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
+    List<String> storeTypes = new ArrayList<>();
+    List<String> federatedStoreTypes = new ArrayList<>();
+
+    Map<String, Object> storeProperties = new HashMap<>();
+    Resource[] resources = loadResources("classpath*:config/*.yaml");
+
+    for (final Resource resource : resources) {
+      String filename = resource.getFilename().split("\\.", 2)[0];
+      storeProperties = yaml.load(resource.getInputStream());
+      if (storeProperties.containsKey("graph")) {
+        Map<String, Object> test = (Map) ((Map) storeProperties.get("graph")).get("storeProperties");
+        if (test.containsKey("gaffer.store.class")) {
+          federatedStoreTypes.add(filename);
+        } else {
+          storeTypes.add(filename);
+        }
+      } else {
+        if (storeProperties.containsKey("accumulo")) {
+          storeTypes.add(filename);
+        }
+      }
+
+    }
+    storeTypesEndpointResponse.setStoreTypes(storeTypes);
+    storeTypesEndpointResponse.setFederatedStoreTypes(federatedStoreTypes);
+
+    return storeTypesEndpointResponse;
   }
 
-  private void unSupportedStoreType() throws IOException {
-    throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + getStoreTypes().toString().replaceAll("\\[|\\]", ""));
 
+  public String getStoreTypeNames() throws IOException {
+    List<String> storeTypes = new ArrayList<>();
+    Resource[] resources = loadResources("classpath*:config/*.yaml");
+
+    for (final Resource resource : resources) {
+      String filename = resource.getFilename().split("\\.", 2)[0];
+      storeTypes.add(filename);
+    }
+    String result = storeTypes.toString().replaceAll("\\[|\\]", "");
+    return result;
   }
 
 
@@ -75,15 +112,10 @@ public class PropertiesLoader {
     return resources;
   }
 
+  private void unSupportedStoreType() throws IOException {
+    throw new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: " + getStoreTypeNames());
 
-  private List<String> getStoreTypes() throws IOException {
-    List<String> storeTypes = new ArrayList<>();
-    Resource[] resources = loadResources("classpath*:config/*.yaml");
-    for (final Resource resource : resources) {
-      String filename = resource.getFilename().split("\\.", 2)[0];
-      storeTypes.add(filename);
-    }
-    return storeTypes;
   }
+
 
 }

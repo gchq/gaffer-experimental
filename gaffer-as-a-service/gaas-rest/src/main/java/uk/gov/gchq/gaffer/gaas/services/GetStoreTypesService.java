@@ -23,9 +23,6 @@ import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
 import uk.gov.gchq.gaffer.gaas.util.PropertiesLoader;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -34,24 +31,14 @@ public final class GetStoreTypesService {
     @Autowired
     PropertiesLoader propertiesLoader;
 
+    @Autowired
+    StoreTypesEndpointResponse storeTypesEndpointResponse;
+
     @NotNull
     public StoreTypesEndpointResponse getStoreTypes() throws GaaSRestApiException {
-        StoreTypesEndpointResponse storeTypesEndpointResponse = new StoreTypesEndpointResponse();
-         List<String> storeTypes = new ArrayList<>();
-         List<String> federatedStoreTypes = new ArrayList<>();
 
         try {
-            
-            for(String storeType: propertiesLoader.getStoreTypesAsStringList()){
-              if(storeType.contains("federated")){
-                  federatedStoreTypes.add(storeType);
-              } else {
-                  storeTypes.add(storeType);
-              }
-            }
-
-            storeTypesEndpointResponse.setStoreTypes(storeTypes);
-            storeTypesEndpointResponse.setFederatedStoreTypes(federatedStoreTypes);
+          storeTypesEndpointResponse = propertiesLoader.getStoreTypesEndpointResponse();
 
         } catch (IOException e) {
             throw new GaaSRestApiException(e.getMessage(), e.getLocalizedMessage(), 500);

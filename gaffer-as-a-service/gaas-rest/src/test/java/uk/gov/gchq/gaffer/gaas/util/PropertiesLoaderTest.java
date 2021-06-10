@@ -20,18 +20,18 @@ package uk.gov.gchq.gaffer.gaas.util;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PropertiesLoaderTest {
 
   @Test
-  public  void shouldSetStorePropertiesOnTheGraph() throws GaaSRestApiException {
-     Map<String, Object> storeProperties = new HashMap<>();
+  public void shouldSetStorePropertiesOnTheGraph() throws GaaSRestApiException {
+    Map<String, Object> storeProperties = new HashMap<>();
     Map<String, Object> storeProperty = new HashMap<>();
     storeProperty.put("enabled", true);
     storeProperties.put("accumulo", storeProperty);
@@ -46,16 +46,15 @@ class PropertiesLoaderTest {
   }
 
   @Test
-  public  void shouldThrowErrorForInvalidStoreType() throws GaaSRestApiException {
+  public void shouldThrowErrorForInvalidStoreType() throws IOException {
     PropertiesLoader pLoader = new PropertiesLoader();
     GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("myGraph", "Another description", "invalidStore", getSchema());
 
     Throwable exception = assertThrows(RuntimeException.class, () -> {
       pLoader.loadStoreProperties(gaaSCreateRequestBody);
     });
-    assertTrue(exception.getLocalizedMessage().contains("StoreType is Invalid must be defined Valid Store Types supported are:"));
-    assertTrue(exception.getLocalizedMessage().contains("accumulo"));
-    assertTrue(exception.getLocalizedMessage().contains("federated"));
+
+    assertEquals(exception.getLocalizedMessage(), "StoreType is Invalid must be defined Valid Store Types supported are: " + pLoader.getStoreTypeNames());
   }
 
 
