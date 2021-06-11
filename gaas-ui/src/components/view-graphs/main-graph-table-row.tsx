@@ -40,15 +40,23 @@ export function MainGraphTableRow(props: IProps) {
 
     useEffect(() => {
         getStoreTypes();
-        if (allStoreTypes.federatedStoreTypes.includes(graph.getStoreType()) ) {
+        if (allStoreTypes.federatedStoreTypes.includes(graph.getStoreType())) {
+            console.log("i am here");
             getAllGraphIds();
         }
-    });
+        return () => {
+            setAllStoretypes({
+                storeTypes: [],
+                federatedStoreTypes: []
+            });
+            setAllGraphIdsText("");
+        };
+    },[]);
 
     async function getStoreTypes() {
         try {
             const storeTypes: IStoreTypesResponse = await new GetStoreTypesRepo().get();
-            setAllStoretypes(storeTypes)
+            setAllStoretypes(storeTypes);
         } catch (e) {
         }
     }
@@ -56,7 +64,7 @@ export function MainGraphTableRow(props: IProps) {
     async function getAllGraphIds(): Promise<void> {
         try {
             const allGraphIds: string[] = await new GetAllGraphIdsRepo().get(graph.getUrl());
-            console.log(allGraphIds);
+            console.log("all graph ids" + allGraphIds);
             setAllGraphIdsText(allGraphIds.length !== 0 ? "Federated Graphs: " + allGraphIds.join(", ") : "No Federated Graphs");
         } catch (e) {
             setAllGraphIdsText(`Federated Graphs: [GetAllGraphIds Operation - ${e.title}]`);
@@ -75,7 +83,10 @@ export function MainGraphTableRow(props: IProps) {
                 </TableCell>
                 <TableCell component="th" scope="row" aria-label={"row-id"}>{graph.getId()}</TableCell>
                 <TableCell aria-label={"graph-store-type"}><Avatar
-                    style={{color: "white", backgroundColor: "#5A7C81"}}> {graph.getStoreType().charAt(0).toUpperCase()}</Avatar></TableCell>
+                    style={{
+                        color: "white",
+                        backgroundColor: "#5A7C81"
+                    }}> {graph.getStoreType().charAt(0).toUpperCase()}</Avatar></TableCell>
                 <TableCell aria-label={"graph-status"}><StatusChip status={graph.getStatus()}/></TableCell>
                 <TableCell aria-label={"graph-url"}><a href={graph.getUrl()} target="_blank"
                                                        rel="noreferrer">{graph.getUrl()}</a></TableCell>
