@@ -55,6 +55,7 @@ export function MainGraphTableRow(props: IProps) {
     async function getAllGraphIds() {
         try {
             const allGraphIds: string[] = await new GetAllGraphIdsRepo().get(graph.getUrl());
+            console.log(allGraphIds);
             setAllGraphIdsText(allGraphIds.length !== 0 ? "Federated Graphs: " + allGraphIds.join(", ") : "No Federated Graphs");
         } catch (e) {
             setAllGraphIdsText(`Federated Graphs: [GetAllGraphIds Operation - ${e.title}]`);

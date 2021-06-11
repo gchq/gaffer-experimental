@@ -43,6 +43,7 @@ describe("Main Graph Table Row", () => {
             );
         });
         await component.update();
+        await mockGetAllGraphIdsRepoToReturn(["accumulo-graph-1", "accumulo-graph-2"]);
         await clickExpandRow(component);
         expect(component.find("tr#federated-graph-ids-0").text()).toBe(
             "Federated Graphs: accumulo-graph-1, accumulo-graph-2"
@@ -74,6 +75,7 @@ describe("Main Graph Table Row", () => {
         });
 
         await component.update();
+        await mockGetAllGraphIdsRepoToReturn([]);
         await clickExpandRow(component);
 
         expect(component.find("tr#federated-graph-ids-0").text()).toBe(
@@ -103,8 +105,9 @@ describe("Main Graph Table Row", () => {
                 />
             );
         });
-
-
+        // await component.update();
+        // await mockGetAllGraphIdsRepoThrowsError(new RestApiError("Not Found", "Resource not found"));
+        
         await clickExpandRow(component);
 
         expect(component.find("tr#federated-graph-ids-0").text()).toBe(
