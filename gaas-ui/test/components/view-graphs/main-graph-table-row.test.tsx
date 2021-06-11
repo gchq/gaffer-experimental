@@ -19,7 +19,7 @@ afterEach(() => {
 });
 
 describe("Main Graph Table Row", () => {
-    fit("should display federated graph ids as a list of strings", async() => {
+    it("should display federated graph ids as a list of strings", async() => {
         await mockGetStoreTypesRepoToReturn({
             storeTypes: [
                 "accumulo",
@@ -42,7 +42,6 @@ describe("Main Graph Table Row", () => {
                 />
             );
         });
-
         await component.update();
         await clickExpandRow(component);
         expect(component.find("tr#federated-graph-ids-0").text()).toBe(

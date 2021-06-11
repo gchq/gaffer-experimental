@@ -33,34 +33,28 @@ export function MainGraphTableRow(props: IProps) {
     const [open, setOpen] = React.useState(false);
     const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>("");
     const [federatedStores, setFederatedStores] = React.useState<Array<string>>([]);
-    const [otherStoreTypes, setStoreTypes]= React.useState<Array<string>>([]);
     const classes = useRowStyles();
 
     useEffect(() => {
-        console.log("i am here 1");
         getStoreTypes();
         if (federatedStores.includes(graph.getStoreType())) {
-            console.log("i am here 2");
             getAllGraphIds();
         }
-    },[]);
+
+
+    });
 
     async function getStoreTypes() {
         try {
-            const storeTypes: IStoreTypesResponse = await new GetStoreTypesRepo().get();
-            console.log(Object.entries(storeTypes))
-            setFederatedStores(federatedStores.concat(storeTypes.federatedStoreTypes));
-            setStoreTypes(storeTypes.storeTypes);
-            console.log("federated stores" + federatedStores);
-            console.log("stores" + otherStoreTypes);
+            const allStoreTypes = await new GetStoreTypesRepo().get();
+            setFederatedStores(allStoreTypes.federatedStoreTypes);
         } catch (e) {
         }
     }
 
-    async function getAllGraphIds(): Promise<void> {
+    async function getAllGraphIds() {
         try {
             const allGraphIds: string[] = await new GetAllGraphIdsRepo().get(graph.getUrl());
-            console.log("all graph ids" + allGraphIds);
             setAllGraphIdsText(allGraphIds.length !== 0 ? "Federated Graphs: " + allGraphIds.join(", ") : "No Federated Graphs");
         } catch (e) {
             setAllGraphIdsText(`Federated Graphs: [GetAllGraphIds Operation - ${e.title}]`);
