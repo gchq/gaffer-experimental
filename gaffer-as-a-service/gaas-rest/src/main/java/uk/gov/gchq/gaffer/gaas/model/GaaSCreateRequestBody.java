@@ -86,7 +86,7 @@ public class GaaSCreateRequestBody implements Serializable {
         return schema;
     }
 
-    public String getStoreType() {
+    public String getConfigName() {
         return storeType;
     }
 

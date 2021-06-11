@@ -111,14 +111,12 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public PropertiesLoader propertiesLoader() {
-        return new PropertiesLoader();
+    public GaaSGraphConfigsLoader propertiesLoader() {
+        return new GaaSGraphConfigsLoader();
     }
 
     @Bean
     public StoreTypesEndpointResponse storeTypesEndpointResponse() {
         return new StoreTypesEndpointResponse();
     }
-
-
 }

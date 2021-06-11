@@ -19,30 +19,20 @@ package uk.gov.gchq.gaffer.gaas.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
-import uk.gov.gchq.gaffer.gaas.util.PropertiesLoader;
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
+import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
+import java.util.List;
 
 
 @Service
 public final class GetStoreTypesService {
 
-  @Autowired
-  PropertiesLoader propertiesLoader;
+    private static final String CLASSPATH_CONFIG_YAML = "classpath*:config/*.yaml";
 
     @Autowired
-    StoreTypesEndpointResponse storeTypesEndpointResponse;
+    private GaaSGraphConfigsLoader gaaSGraphConfigsLoader;
 
-    @NotNull
-    public StoreTypesEndpointResponse getStoreTypes() throws GaaSRestApiException {
-
-        try {
-          storeTypesEndpointResponse = propertiesLoader.getStoreTypesEndpointResponse("classpath*:config/*.yaml");
-
-        } catch (IOException e) {
-            throw new GaaSRestApiException(e.getMessage(), e.getLocalizedMessage(), 500);
+    public List<GaaSGraphConfigSpec> getGafferConfigSpecs() throws GaaSRestApiException {
+        return gaaSGraphConfigsLoader.listConfigSpecs(CLASSPATH_CONFIG_YAML);
     }
-    return storeTypesEndpointResponse;
-  }
 }

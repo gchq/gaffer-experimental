@@ -32,7 +32,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
@@ -82,8 +82,8 @@ public class GraphController {
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
-    public ResponseEntity<StoreTypesEndpointResponse> getEndpoints() throws GaaSRestApiException {
-        final StoreTypesEndpointResponse response = getStoreTypesService.getStoreTypes();
+    public ResponseEntity<List<GaaSGraphConfigSpec>> getEndpoints() throws GaaSRestApiException {
+        final List<GaaSGraphConfigSpec> response = getStoreTypesService.getGafferConfigSpecs();
         return new ResponseEntity(response, HttpStatus.OK);
     }
 

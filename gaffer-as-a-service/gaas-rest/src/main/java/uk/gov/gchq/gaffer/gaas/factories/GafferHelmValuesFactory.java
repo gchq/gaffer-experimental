@@ -23,7 +23,8 @@ import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.stores.GafferBuilder;
-import uk.gov.gchq.gaffer.gaas.util.PropertiesLoader;
+import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
+import java.util.Map;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 
@@ -42,7 +43,7 @@ public final class GafferHelmValuesFactory {
     private static final String KIND = "Gaffer";
     private static final String DEFAULT_SYSTEM_USER = "GAAS_SYSTEM_USER";
 
-    public static Gaffer from(final GaaSCreateRequestBody graph) {
+    public static Gaffer from(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
 
         // TODO: Validate only - and . special characters, see Kubernetes metadata regex
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
@@ -54,13 +55,11 @@ public final class GafferHelmValuesFactory {
                 .spec(createGafferSpecFrom(graph));
     }
 
-    private static GafferSpec createGafferSpecFrom(final GaaSCreateRequestBody graph) {
-        try {
-            PropertiesLoader propertiesLoader = new PropertiesLoader();
-            propertiesLoader.loadStoreProperties(graph);
-        } catch (GaaSRestApiException e) {
-            //
-        }
+    private static GafferSpec createGafferSpecFrom(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
+
+        final GaaSGraphConfigsLoader loader = new GaaSGraphConfigsLoader();
+        final Map<String, Object> config = loader.getConfig("/config", graph.getConfigName());
+
         final GafferBuilder builder = new GafferBuilder()
                 .setGraphId(graph.getGraphId())
                 .setDescription(graph.getDescription())
@@ -68,7 +67,6 @@ public final class GafferHelmValuesFactory {
                 .setSchema(graph.getSchema())
                 .setProperties(graph.getStoreProperties());
         return builder.build();
-
     }
 
     private GafferHelmValuesFactory() {
