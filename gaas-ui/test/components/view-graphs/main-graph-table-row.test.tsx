@@ -19,23 +19,19 @@ afterEach(() => {
 });
 
 describe("Main Graph Table Row", () => {
-    fit("should display federated graph ids as a list of strings", async() => {
-        await act(async() => {
-            await mockGetStoreTypesRepoToReturn({
-                storeTypes: [
-                    "accumulo",
-                    "mapStore",
-                    "proxy",
-                    "proxyNoContextRoot"
-                ],
-                federatedStoreTypes: [
-                    "federated"
-                ]
-            });
+    it("should display federated graph ids as a list of strings", async() => {
+        await mockGetStoreTypesRepoToReturn({
+            storeTypes: [
+                "accumulo",
+                "mapStore",
+                "proxy",
+                "proxyNoContextRoot"
+            ],
+            federatedStoreTypes: [
+                "federated"
+            ]
         });
-        await act(async() => {
-            await mockGetAllGraphIdsRepoToReturn(["accumulo-graph-1", "accumulo-graph-2"]);
-        });
+        await mockGetAllGraphIdsRepoToReturn(["accumulo-graph-1", "accumulo-graph-2"]);
         await act(async() => {
             component = mount(
                 <MainGraphTableRow
@@ -67,14 +63,17 @@ describe("Main Graph Table Row", () => {
             ]
         });
         await mockGetAllGraphIdsRepoToReturn([]);
-        const component: ReactWrapper = mount(
-            <MainGraphTableRow
-                index={0}
-                graph={new Graph("fed-graph", "test", "http://fed-graph.k8s.cluster/rest", "UP", "federated", GraphType.GAAS_GRAPH)}
-                onClickDelete={() => {
-                }}
-            />
-        );
+        await act(async() => {
+            component = mount(
+                <MainGraphTableRow
+                    index={0}
+                    graph={new Graph("fed-graph", "test", "http://fed-graph.k8s.cluster/rest", "UP", "federated", GraphType.GAAS_GRAPH)}
+                    onClickDelete={() => {
+                    }}
+                />
+            );
+        });
+
         await component.update();
         await clickExpandRow(component);
 
@@ -95,15 +94,17 @@ describe("Main Graph Table Row", () => {
             ]
         });
         await mockGetAllGraphIdsRepoThrowsError(new RestApiError("Not Found", "Resource not found"));
+        await act(async() => {
+            component = mount(
+                <MainGraphTableRow
+                    index={0}
+                    graph={new Graph("fed-graph", "test", "http://fed-graph.k8s.cluster/rest", "UP", "federated", GraphType.GAAS_GRAPH)}
+                    onClickDelete={() => {
+                    }}
+                />
+            );
+        });
 
-        const component: ReactWrapper = mount(
-            <MainGraphTableRow
-                index={0}
-                graph={new Graph("fed-graph", "test", "http://fed-graph.k8s.cluster/rest", "UP", "federated", GraphType.GAAS_GRAPH)}
-                onClickDelete={() => {
-                }}
-            />
-        );
 
         await clickExpandRow(component);
 
@@ -123,14 +124,17 @@ describe("Main Graph Table Row", () => {
                 "federated"
             ]
         });
-        const component: ReactWrapper = mount(
-            <MainGraphTableRow
-                index={0}
-                graph={new Graph("fed-graph", "test", "http://fed-graph.k8s.cluster/rest", "UP", "mapStore", GraphType.GAAS_GRAPH)}
-                onClickDelete={() => {
-                }}
-            />
-        );
+        await act(async() => {
+            component = mount(
+                <MainGraphTableRow
+                    index={0}
+                    graph={new Graph("fed-graph", "test", "http://fed-graph.k8s.cluster/rest", "UP", "mapStore", GraphType.GAAS_GRAPH)}
+                    onClickDelete={() => {
+                    }}
+                />
+            );
+        });
+         
 
         await clickExpandRow(component);
 
@@ -142,44 +146,36 @@ describe("Main Graph Table Row", () => {
 async function clickExpandRow(component: ReactWrapper) {
     component.find("button#expand-row-button-0").simulate("click");
     await component.update();
-    
+
 }
 
 async function mockGetAllGraphIdsRepoToReturn(graphIds: string[]) {
-    await act(async() => {
-
-        // @ts-ignore
-        GetAllGraphIdsRepo.mockImplementationOnce(() => ({
-            get: () =>
-                new Promise((resolve, reject) => {
-                    resolve(graphIds);
-                }),
-        }));
-    });
-
+    // @ts-ignore
+    GetAllGraphIdsRepo.mockImplementationOnce(() => ({
+        get: () =>
+            new Promise((resolve, reject) => {
+                resolve(graphIds);
+            }),
+    }));
 }
 
 async function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypesResponse) {
-    await act(async() => {
-        // @ts-ignore
-        GetStoreTypesRepo.mockImplementationOnce(() => ({
-            get: () =>
-                new Promise((resolve, reject) => {
-                    resolve(storetypes);
-                }),
-        }));
+    // @ts-ignore
+    GetStoreTypesRepo.mockImplementationOnce(() => ({
+        get: () =>
+            new Promise((resolve, reject) => {
+                resolve(storetypes);
+            }),
+    }));
 
-    });
 }
 
 async function mockGetAllGraphIdsRepoThrowsError(error: RestApiError) {
-    await act(async() => {
-        // @ts-ignore
-        GetAllGraphIdsRepo.mockImplementationOnce(() => ({
-            get: () => {
-                throw error;
-            },
-        }));
-    });
+    // @ts-ignore
+    GetAllGraphIdsRepo.mockImplementationOnce(() => ({
+        get: () => {
+            throw error;
+        },
+    }));
 
 }
