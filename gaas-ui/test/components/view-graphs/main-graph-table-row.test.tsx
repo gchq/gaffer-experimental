@@ -19,7 +19,7 @@ afterEach(() => {
 });
 
 describe("Main Graph Table Row", () => {
-    it("should display federated graph ids as a list of strings", async() => {
+    fit("should display federated graph ids as a list of strings", async() => {
         await mockGetStoreTypesRepoToReturn({
             storeTypes: [
                 "accumulo",

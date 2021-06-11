@@ -32,31 +32,27 @@ export function MainGraphTableRow(props: IProps) {
     const {graph, index, onClickDelete} = props;
     const [open, setOpen] = React.useState(false);
     const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>("");
-    const [allStoreTypes, setAllStoretypes] = React.useState<IStoreTypesResponse>({
-        storeTypes: [],
-        federatedStoreTypes: []
-    });
+    const [federatedStores, setFederatedStores] = React.useState<Array<string>>([]);
+    const [otherStoreTypes, setStoreTypes]= React.useState<Array<string>>([]);
     const classes = useRowStyles();
 
     useEffect(() => {
+        console.log("i am here 1");
         getStoreTypes();
-        if (allStoreTypes.federatedStoreTypes.includes(graph.getStoreType())) {
-            console.log("i am here");
+        if (federatedStores.includes(graph.getStoreType())) {
+            console.log("i am here 2");
             getAllGraphIds();
         }
-        return () => {
-            setAllStoretypes({
-                storeTypes: [],
-                federatedStoreTypes: []
-            });
-            setAllGraphIdsText("");
-        };
     },[]);
 
     async function getStoreTypes() {
         try {
             const storeTypes: IStoreTypesResponse = await new GetStoreTypesRepo().get();
-            setAllStoretypes(storeTypes);
+            console.log(Object.entries(storeTypes))
+            setFederatedStores(federatedStores.concat(storeTypes.federatedStoreTypes));
+            setStoreTypes(storeTypes.storeTypes);
+            console.log("federated stores" + federatedStores);
+            console.log("stores" + otherStoreTypes);
         } catch (e) {
         }
     }
@@ -112,7 +108,7 @@ export function MainGraphTableRow(props: IProps) {
                                         <TableCell component="th"
                                                    scope="row">Description: {graph.getDescription()}</TableCell>
                                     </TableRow>
-                                    {allStoreTypes.federatedStoreTypes.includes(graph.getStoreType()) &&
+                                    {federatedStores.includes(graph.getStoreType()) &&
                                     <TableRow id={"federated-graph-ids-" + index} aria-label={"federated-graph-ids"}>
                                         <TableCell component="th" scope="row">{allGraphIdsText}</TableCell>
                                     </TableRow>}
