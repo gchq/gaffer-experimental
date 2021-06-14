@@ -38,7 +38,7 @@ import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-import uk.gov.gchq.gaffer.gaas.services.GetStoreTypesService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class GraphController {
     @Autowired
     private GetNamespacesService getNamespacesService;
     @Autowired
-    private GetStoreTypesService getStoreTypesService;
+    private GetGaaSGraphConfigsService getStoreTypesService;
 
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {

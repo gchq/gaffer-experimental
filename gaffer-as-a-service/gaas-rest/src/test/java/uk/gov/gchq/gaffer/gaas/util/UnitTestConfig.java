@@ -32,7 +32,7 @@ import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-import uk.gov.gchq.gaffer.gaas.services.GetStoreTypesService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
@@ -86,8 +86,8 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public GetStoreTypesService getStoreTypesService() {
-        return new GetStoreTypesService();
+    public GetGaaSGraphConfigsService getStoreTypesService() {
+        return new GetGaaSGraphConfigsService();
     }
 
     @Bean
