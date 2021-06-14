@@ -22,11 +22,11 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
-import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,23 +36,19 @@ public class GaaSGraphConfigsLoader {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    public List<GaaSGraphConfigSpec> listConfigSpecs(final String configDirectory) throws GaaSRestApiException {
+    private final Yaml yaml = new Yaml();
+
+    public Map<String, GafferSpec> listConfigSpecs(final String configDirectory) throws GaaSRestApiException {
 
         try {
-            final Yaml yaml = new Yaml();
             final Resource[] gafferConfigYamlResources = loadResources("classpath*:" + configDirectory + "/*.yaml");
-            final List<GaaSGraphConfigSpec> configSpecs = new ArrayList<>();
+            final Map<String, GafferSpec> configSpecs = new HashMap<>();
 
             for (final Resource resource : gafferConfigYamlResources) {
 
                 final String configFileName = resource.getFilename().split("\\.", 2)[0];
-                final Map<String, Object> gaasGraphConfigYaml = yaml.load(resource.getInputStream());
-
-                if (isFederatedStoreGaaSGraphConfig(gaasGraphConfigYaml)) {
-                    configSpecs.add(new GaaSGraphConfigSpec(configFileName, new String[] {"proxies"}));
-                } else {
-                    configSpecs.add(new GaaSGraphConfigSpec(configFileName, new String[] {"schema"}));
-                }
+                final GafferSpec gaasGraphConfigYaml = yaml.loadAs(resource.getInputStream(), GafferSpec.class);
+                configSpecs.put(configFileName, gaasGraphConfigYaml);
             }
             return configSpecs;
         } catch (final IOException e) {
@@ -60,14 +56,13 @@ public class GaaSGraphConfigsLoader {
         }
     }
 
-    public Map<String, Object> getConfig(final String configDirectory, final String configFileName) throws GaaSRestApiException {
+    public GafferSpec getConfig(final String configDirectory, final String configFileName) throws GaaSRestApiException {
 
         try {
-            final Yaml yaml = new Yaml();
             final Resource[] resources = loadResources("classpath*:" + configDirectory + "/" + configFileName + ".yaml");
 
             for (final Resource resource : resources) {
-                return yaml.load(resource.getInputStream());
+                return yaml.loadAs(resource.getInputStream(), GafferSpec.class);
             }
             throw new GaaSRestApiException("GaaS Graph Config Not Found", "Available config names are: " + getStoreTypeNames(), 404);
 
@@ -76,15 +71,6 @@ public class GaaSGraphConfigsLoader {
         }
     }
 
-    private boolean isFederatedStoreGaaSGraphConfig(final Map<String, Object> valuesConfigYaml) {
-        if (valuesConfigYaml != null && valuesConfigYaml.containsKey("graph")) {
-            Map<String, Object> storeProperties = (Map) ((Map) valuesConfigYaml.get("graph")).get("storeProperties");
-            if (storeProperties != null && storeProperties.containsValue(FederatedStore.class.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private Resource[] loadResources(final String pattern) throws IOException {
         return ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources(pattern);
