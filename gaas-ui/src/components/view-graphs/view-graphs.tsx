@@ -24,6 +24,7 @@ interface IState {
     graphs: Graph[];
     errorMessage: string;
     federatedStores: Array<string>;
+    otherStores: Array<string>;
 }
 
 export default class ViewGraph extends React.Component<{}, IState> {
@@ -32,19 +33,21 @@ export default class ViewGraph extends React.Component<{}, IState> {
         this.state = {
             graphs: [],
             errorMessage: "",
-            federatedStores: []
+            federatedStores: [],
+            otherStores: []
         };
     }
 
     public async componentDidMount() {
         await this.getGraphs();
-        await this.getFederatedStoreTypes();
+        await this.getAllStoreTypes();
     }
 
-    private async getFederatedStoreTypes() {
+    private async getAllStoreTypes() {
         try {
             const allStoreTypes = await new GetStoreTypesRepo().get();
             this.setState({federatedStores: allStoreTypes.federatedStoreTypes});
+            this.setState({otherStores: allStoreTypes.storeTypes})
         } catch (e) {
             this.setState({errorMessage: `Failed to get federated store types. ${e.toString()}`});
         }
@@ -66,6 +69,26 @@ export default class ViewGraph extends React.Component<{}, IState> {
         } catch (e) {
             this.setState({errorMessage: `Failed to delete graph "${graphName}". ${e.toString()}`});
         }
+    }
+    private storetypesData(): { key: string, data: number}[] {
+        const data: { key: string; data: number; }[] =[];
+        this.state.federatedStores.forEach((storetype: string) => {
+            data.push(
+                {
+                    key: storetype,
+                    data: this.state.graphs.filter((graph) => graph.getStoreType() === storetype).length
+                }
+            )
+        })
+        this.state.otherStores.forEach((storetype: string) => {
+            data.push(
+                {
+                    key: storetype,
+                    data: this.state.graphs.filter((graph) => graph.getStoreType() === storetype).length
+                }
+            )
+        })
+        return data.filter((item) => item.data !== 0);
     }
 
 
@@ -123,20 +146,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                     </Typography>
                                     <Gauge
                                         maxValue={graphs.length}
-                                        data={[
-                                            {
-                                                key: "ACCUMULO",
-                                                data: graphs.filter((graph) => graph.getStoreType() === StoreType.ACCUMULO).length
-                                            },
-                                            {
-                                                key: "FEDERATED",
-                                                data: graphs.filter((graph) => graph.getStoreType() === StoreType.FEDERATED_STORE).length
-                                            },
-                                            {
-                                                key: "MAP",
-                                                data: graphs.filter((graph) => graph.getStoreType() === StoreType.MAPSTORE).length
-                                            },
-                                        ]}
+                                        data={this.storetypesData()}
                                         colours={[
                                             "#02bfe7",
                                             "#02bfe7",
