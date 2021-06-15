@@ -1,13 +1,12 @@
 import { GraphType } from "./graph-type";
-import { StoreType } from "./store-type";
 
 export class Graph {
-    private graphId: string;
-    private description: string;
-    private url: string;
-    private status: "UP" | "DOWN";
-    private storeType: string;
-    private type: GraphType;
+    private readonly graphId: string;
+    private readonly description: string;
+    private readonly url: string;
+    private readonly status: "UP" | "DOWN";
+    private readonly storeType: string;
+    private readonly type: GraphType;
 
     constructor(graphId: string, description: string, url: string, status: "UP" | "DOWN", storeType: string, type: GraphType) {
         this.graphId = graphId;

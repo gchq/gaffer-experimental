@@ -1,30 +1,28 @@
+import React from "react";
 import {
     Container,
     Grid,
     Toolbar,
     Typography,
+    Box,
+    CardContent,
+    Paper,
 } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
-import CardContent from "@material-ui/core/CardContent";
-import Paper from "@material-ui/core/Paper";
-import {makeStyles} from "@material-ui/core/styles";
-import React from "react";
+
 import {Graph} from "../../domain/graph";
-import {StoreType} from "../../domain/store-type";
 import {GetAllGraphsRepo} from "../../rest/repositories/get-all-graphs-repo";
+import {DeleteGraphRepo} from "../../rest/repositories/delete-graph-repo";
+import {GetStoreTypesRepo} from "../../rest/repositories/get-store-types-repo";
+import {StoreType} from "../../domain/store-type";
 import {AlertType, NotificationAlert} from "../alerts/notification-alert";
 import {Copyright} from "../copyright/copyright";
 import Gauge from "./gauge";
-import {DeleteGraphRepo} from "../../rest/repositories/delete-graph-repo";
 import {ViewGraphsTable} from "./view-graphs-table";
-import {GetStoreTypesRepo} from "../../rest/repositories/get-store-types-repo";
 
 
 interface IState {
     graphs: Graph[];
-    selectedRow: any;
     errorMessage: string;
-    allGraphIdsText: string;
     federatedStores: Array<string>;
 }
 
@@ -33,9 +31,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
         super(props);
         this.state = {
             graphs: [],
-            selectedRow: "",
             errorMessage: "",
-            allGraphIdsText: "",
             federatedStores: []
         };
     }
@@ -72,18 +68,6 @@ export default class ViewGraph extends React.Component<{}, IState> {
         }
     }
 
-    private classes: any = makeStyles({
-        root: {
-            width: "100%",
-            marginTop: 40,
-            "& > *": {
-                borderBottom: "unset",
-            },
-        },
-        table: {
-            minWidth: 650,
-        },
-    });
 
     public render() {
         const {graphs, errorMessage} = this.state;

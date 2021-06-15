@@ -1,22 +1,31 @@
-import {Graph} from "../../domain/graph";
 import React, {useEffect} from "react";
-import {Button, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
+import {Graph} from "../../domain/graph";
+import {GetAllGraphIdsRepo} from "../../rest/repositories/gaffer/get-all-graph-ids-repo";
+import {
+    Button,
+    Grid,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Box,
+    Collapse,
+    Avatar,
+    Chip,
+    makeStyles,
+    Paper,
+    IconButton,
+    Tooltip,
+    Zoom
+} from "@material-ui/core";
 import RefreshOutlinedIcon from "@material-ui/icons/RefreshOutlined";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Chip from "@material-ui/core/Chip";
 import CheckRoundedIcon from "@material-ui/icons/CheckRounded";
 import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
-import {GetAllGraphIdsRepo} from "../../rest/repositories/gaffer/get-all-graph-ids-repo";
-import IconButton from "@material-ui/core/IconButton";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import Avatar from "@material-ui/core/Avatar";
-import Tooltip from "@material-ui/core/Tooltip";
-import Zoom from "@material-ui/core/Zoom";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
-import Collapse from "@material-ui/core/Collapse";
-import Box from "@material-ui/core/Box";
 
 interface IProps {
     graphs: Graph [];
@@ -25,6 +34,23 @@ interface IProps {
     refreshTable: () => void;
 }
 
+interface IGraphRow {
+    index: number;
+    graph: Graph;
+    federatedStores: Array<string>;
+    onClickDelete: (graphId: string) => void;
+}
+
+const useStyles = makeStyles({
+    root: {
+        "& > *": {
+            borderBottom: "unset",
+        },
+    },
+    table: {
+        minWidth: 650,
+    },
+});
 export function ViewGraphsTable(props: IProps) {
     const classes = useStyles();
 
@@ -81,16 +107,15 @@ function StatusChip(graph: { status: string }) {
 }
 
 function MainGraphTableRow(props: IGraphRow) {
-    const {graph, index,federatedStores, onClickDelete} = props;
+    const {graph, index, federatedStores, onClickDelete} = props;
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
+    const [rowIsExpanded, setRowIsExpanded] = React.useState(false);
     const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>("");
+
     useEffect(() => {
         if (federatedStores.includes(graph.getStoreType())) {
             getAllGraphIds();
         }
-
-
     });
 
     async function getAllGraphIds() {
@@ -108,8 +133,8 @@ function MainGraphTableRow(props: IGraphRow) {
                 <TableCell aria-label={"expand-row-icon"}>
                     <IconButton id={"expand-row-button-" + index}
                                 aria-label={graph.getId() + "-expand-button"} size="small"
-                                onClick={() => setOpen(!open)}>
-                        {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
+                                onClick={() => setRowIsExpanded(!rowIsExpanded)}>
+                        {rowIsExpanded ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row" aria-label={"row-id"}>{graph.getId()}</TableCell>
@@ -136,7 +161,7 @@ function MainGraphTableRow(props: IGraphRow) {
             </TableRow>
             <TableRow>
                 <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
+                    <Collapse in={rowIsExpanded} timeout="auto" unmountOnExit>
                         <Box margin={1}>
                             <Table size="small" aria-label="graph-details">
                                 <TableBody>
@@ -158,20 +183,3 @@ function MainGraphTableRow(props: IGraphRow) {
     );
 }
 
-interface IGraphRow {
-    index: number;
-    graph: Graph;
-    federatedStores: Array<string>;
-    onClickDelete: (graphId: string) => void;
-}
-
-const useStyles = makeStyles({
-    root: {
-        "& > *": {
-            borderBottom: "unset",
-        },
-    },
-    table: {
-        minWidth: 650,
-    },
-});
