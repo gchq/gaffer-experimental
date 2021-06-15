@@ -41,8 +41,8 @@ export default class ViewGraph extends React.Component<{}, IState> {
     }
 
     public async componentDidMount() {
-        this.getGraphs();
-        this.getFederatedStoreTypes();
+        await this.getGraphs();
+        await this.getFederatedStoreTypes();
     }
 
     private async getFederatedStoreTypes() {
@@ -50,6 +50,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
             const allStoreTypes = await new GetStoreTypesRepo().get();
             this.setState({federatedStores: allStoreTypes.federatedStoreTypes});
         } catch (e) {
+            this.setState({errorMessage: `Failed to get federated store types. ${e.toString()}`});
         }
     }
 

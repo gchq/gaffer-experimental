@@ -60,6 +60,15 @@ describe("When ViewGraphs mounts", () => {
         expect(table.find("tbody").text()).toBe("roadTraffic MUPhttp://roadTraffic.graph");
         expect(component.find("div#notification-alert").length).toBe(0);
     });
+    it("should display a down status in the status column when the graph status is down",async()=> {
+        mockGetGraphsToReturn([new Graph("roadTraffic", "DEPLOYED", "http://roadTraffic.graph", "DOWN", "mapStore", GraphType.GAAS_GRAPH)]);
+
+        const component = mount(<ViewGraph/>);
+        await component.update();
+
+        const table = component.find("table");
+        expect(table.find("tbody").text()).toBe("roadTraffic MDOWNhttp://roadTraffic.graph");
+    })
 });
 
 describe("Refresh Button", () => {
@@ -93,11 +102,15 @@ describe("Refresh Button", () => {
 });
 
 describe("Delete Button", () => {
+    let component: ReactWrapper;
+    afterEach(()=> {
+        component.unmount();
+    })
     it("should send a delete request when the delete button has been clicked", async() => {
         DeleteGraphRepo.prototype.delete = jest.fn();
         mockGetGraphsToReturn([new Graph("peaches", "ACTIVE", "http://peaches.graph", "UP", "mapStore", GraphType.GAAS_GRAPH)]);
 
-        const component = mount(<ViewGraph/>);
+        await act(async() => {component = mount(<ViewGraph/>);})
         await component.update();
         await component.update();
         expect(component.find("tbody").text()).toBe("peaches MUPhttp://peaches.graph");
@@ -113,7 +126,7 @@ describe("Delete Button", () => {
         DeleteGraphRepo.prototype.delete = jest.fn();
         mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL", "UP", "mapStore", GraphType.GAAS_GRAPH), new Graph("pears", "INACTIVE", "pears URL", "UP", "mapStore", GraphType.GAAS_GRAPH)]);
 
-        const component = mount(<ViewGraph/>);
+        await act(async() => {component = mount(<ViewGraph/>);})
         await component.update();
         await component.update();
         expect(component.find("tbody").text()).toBe("apples MUPapples URLpears MUPpears URL");
@@ -129,7 +142,7 @@ describe("Delete Button", () => {
         DeleteGraphRepo.prototype.delete = jest.fn();
         mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "apples URL", "UP", "mapStore", GraphType.GAAS_GRAPH), new Graph("pears", "INACTIVE", "pears URL", "UP", "mapStore", GraphType.GAAS_GRAPH)]);
 
-        const component = mount(<ViewGraph/>);
+        await act(async() => {component = mount(<ViewGraph/>);})
         await component.update();
         await component.update();
         expect(component.find("tbody").text()).toBe("apples MUPapples URLpears MUPpears URL");
@@ -147,8 +160,20 @@ describe("Delete Button", () => {
             throw new RestApiError("Server Error", "Timeout exception");
         });
         mockGetGraphsToReturn([new Graph("bananas", "INACTIVE", "bananas URL", "UP", "mapStore", GraphType.GAAS_GRAPH)]);
-
-        const component = mount(<ViewGraph/>);
+        mockGetStoreTypesRepoToReturn({
+            storeTypes: [
+                "accumulo",
+                "mapStore",
+                "proxy",
+                "proxyNoContextRoot"
+            ],
+            federatedStoreTypes: [
+                "federated"
+            ]
+        });
+        await act(async() => {
+            component = mount(<ViewGraph/>);
+        });
         await component.update();
         await component.update();
         expect(component.find("tbody").text()).toBe("bananas MUPbananas URL");
@@ -163,8 +188,11 @@ describe("Delete Button", () => {
         );
     });
 });
-fdescribe("Integration with GetAllGraphIds repo", () => {
+describe("Integration with GetAllGraphIds repo", () => {
     let component: ReactWrapper;
+    afterEach(() => {
+        component.unmount();
+    });
     it("should display federated graph ids as a list of strings", async() => {
         await mockGetStoreTypesRepoToReturn({
             storeTypes: [
@@ -181,7 +209,9 @@ fdescribe("Integration with GetAllGraphIds repo", () => {
         await act(async() => {
             component = mount(<ViewGraph/>);
         });
-        await mockGetAllGraphIdsRepoToReturn(["accumulo-graph-1", "accumulo-graph-2"]);
+        await act(async() => {
+            await mockGetAllGraphIdsRepoToReturn(["accumulo-graph-1", "accumulo-graph-2"]);
+        });
 
         await component.update();
         await component.update();
@@ -206,7 +236,9 @@ fdescribe("Integration with GetAllGraphIds repo", () => {
         await act(async() => {
             component = mount(<ViewGraph/>);
         });
-        await mockGetAllGraphIdsRepoToReturn([]);
+        await act(async() => {
+            await mockGetAllGraphIdsRepoToReturn([]);
+        });
 
         await component.update();
         await component.update();
@@ -216,7 +248,13 @@ fdescribe("Integration with GetAllGraphIds repo", () => {
         );
     });
     it("should display an error if GetAllGraphIds throws an error when called", async() => {
-        await mockGetStoreTypesRepoToReturn({
+        await act(async() => {
+            mockGetAllGraphIdsRepoThrowsError(() => {
+                throw new RestApiError("Server Error", "Timeout exception");
+            });
+
+        });
+        mockGetStoreTypesRepoToReturn({
             storeTypes: [
                 "accumulo",
                 "mapStore",
@@ -227,18 +265,16 @@ fdescribe("Integration with GetAllGraphIds repo", () => {
                 "federated"
             ]
         });
-        await mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "federated", GraphType.GAAS_GRAPH), new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", "mapStore", GraphType.GAAS_GRAPH)]);
-        await act(async() => {
-            component = mount(<ViewGraph/>);
-        });
+        mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "federated", GraphType.GAAS_GRAPH)]);
+        component = mount(<ViewGraph/>);
 
-        await mockGetAllGraphIdsRepoThrowsError(new RestApiError("Not Found", "Resource not found"));
         await component.update();
         await component.update();
         await component.update();
-        await clickExpandRow(component);
+
+        clickExpandRow(component);
         expect(component.find("tr#federated-graph-ids-0").text()).toBe(
-            "Federated Graphs: [GetAllGraphIds Operation - Not Found]"
+            "Federated Graphs: [GetAllGraphIds Operation - Server Error: Timeout exception]"
         );
     });
     it("should not display the row and execute GetALlGraphIds if graph is not Federated Store", async() => {
@@ -254,15 +290,34 @@ fdescribe("Integration with GetAllGraphIds repo", () => {
             ]
         });
         await mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "mapStore", GraphType.GAAS_GRAPH), new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", "mapStore", GraphType.GAAS_GRAPH)]);
-        await act(async() => {
-            component = mount(<ViewGraph/>);
-        });
+        await act(async() => {component = mount(<ViewGraph/>);})
+
         await component.update();
         await component.update();
         await clickExpandRow(component);
         expect(component.find("tr#federated-graph-ids-0").length).toBe(0);
     });
 
+});
+describe("Integration with GetStoreTypes Repo", () => {
+    let component: ReactWrapper;
+    afterEach(()=>  component.unmount())
+    it("should display a notification when GetStoreTypes throws an error", async() => {
+        await mockGetStoreTypesRepoToThrow(() => {
+            throw new RestApiError("Server Error", "Timeout exception");
+        });
+        await mockGetGraphsToReturn([new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "mapStore", GraphType.GAAS_GRAPH), new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", "mapStore", GraphType.GAAS_GRAPH)]);
+
+        await act(async() => {component = mount(<ViewGraph/>);})
+        await component.update();
+        await component.update();
+        await component.update();
+
+        expect(GetStoreTypesRepo).toHaveBeenCalledTimes(1);
+        expect(component.find("div#notification-alert").text()).toBe(
+            "Failed to get federated store types. Server Error: Timeout exception"
+        );
+    });
 });
 
 async function clickRefreshButton(component: ReactWrapper) {
@@ -320,12 +375,18 @@ async function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypesResponse) {
             }),
     }));
 }
-async function mockGetAllGraphIdsRepoThrowsError(error: RestApiError) {
+
+async function mockGetStoreTypesRepoToThrow(f: () => void) {
+    // @ts-ignore
+    GetStoreTypesRepo.mockImplementationOnce(() => ({
+        get: f,
+    }));
+}
+
+async function mockGetAllGraphIdsRepoThrowsError(f: () => void) {
     // @ts-ignore
     GetAllGraphIdsRepo.mockImplementationOnce(() => ({
-        get: () => {
-            throw error;
-        },
+        get: f,
     }));
 
 }

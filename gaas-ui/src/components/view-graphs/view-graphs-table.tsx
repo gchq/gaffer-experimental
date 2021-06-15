@@ -98,7 +98,7 @@ function MainGraphTableRow(props: IGraphRow) {
             const allGraphIds: string[] = await new GetAllGraphIdsRepo().get(graph.getUrl());
             setAllGraphIdsText(allGraphIds.length !== 0 ? "Federated Graphs: " + allGraphIds.join(", ") : "No Federated Graphs");
         } catch (e) {
-            setAllGraphIdsText(`Federated Graphs: [GetAllGraphIds Operation - ${e.title}]`);
+            setAllGraphIdsText(`Federated Graphs: [GetAllGraphIds Operation - ${e}]`);
         }
     }
 
