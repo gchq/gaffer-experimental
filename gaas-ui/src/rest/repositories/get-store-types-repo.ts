@@ -1,10 +1,10 @@
 import {IApiResponse, RestClient} from "../clients/rest-client";
 import { Config } from "../config";
-import {IStoreTypesResponse} from "../http-message-interfaces/response-interfaces";
+import {IStoreTypes, IStoreTypesResponse} from "../http-message-interfaces/response-interfaces";
 
 export class GetStoreTypesRepo {
 
-    public async get(): Promise<IStoreTypesResponse> {
+    public async get(): Promise<IStoreTypes> {
         const response: IApiResponse<IStoreTypesResponse>= await new RestClient()
             .baseUrl(Config.REACT_APP_KAI_REST_API_HOST)
             .get()

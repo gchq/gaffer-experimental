@@ -13,7 +13,7 @@ import {GetGraphIdRepo} from "../../../src/rest/repositories/get-graph-id-repo";
 import {GetGraphStatusRepo} from "../../../src/rest/repositories/get-graph-status-repo";
 import {RestApiError} from "../../../src/rest/RestApiError";
 import {GetStoreTypesRepo} from "../../../src/rest/repositories/get-store-types-repo";
-import {IStoreTypesResponse} from "../../../src/rest/http-message-interfaces/response-interfaces";
+import {IStoreTypes} from "../../../src/rest/http-message-interfaces/response-interfaces";
 import {CreateFederatedGraphRepo} from "../../../src/rest/repositories/create-federated-graph-repo";
 import {GraphType} from "../../../src/domain/graph-type";
 
@@ -662,7 +662,7 @@ function mockGetAllGraphsRepoToThrow(f: () => void): void {
     }));
 }
 
-function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypesResponse): void {
+function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypes): void {
     // @ts-ignore
     GetStoreTypesRepo.mockImplementationOnce(() => ({
         get: () =>

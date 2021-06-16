@@ -34,7 +34,7 @@ import AddProxyGraphInput from "./add-proxy-graph-input";
 import ProxyGraphsTable from "./proxy-graphs-table";
 import {GetStoreTypesRepo} from "../../rest/repositories/get-store-types-repo";
 import {CreateFederatedGraphRepo} from "../../rest/repositories/create-federated-graph-repo";
-import { IStoreTypesResponse } from "../../rest/http-message-interfaces/response-interfaces";
+import { IStoreTypes } from "../../rest/http-message-interfaces/response-interfaces";
 
 interface IState {
     graphId: string;
@@ -110,7 +110,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
 
     private async getAllStoreTypes() {
         try {
-            const storeTypes: IStoreTypesResponse = await new GetStoreTypesRepo().get();
+            const storeTypes: IStoreTypes = await new GetStoreTypesRepo().get();
                 this.setState({
                     storeTypes: storeTypes.storeTypes,
                     federatedStoreTypes: storeTypes.federatedStoreTypes

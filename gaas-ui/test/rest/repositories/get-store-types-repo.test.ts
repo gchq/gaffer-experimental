@@ -1,6 +1,6 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { IStoreTypesResponse } from "../../../src/rest/http-message-interfaces/response-interfaces";
+import { IStoreTypes } from "../../../src/rest/http-message-interfaces/response-interfaces";
 import { GetStoreTypesRepo } from "../../../src/rest/repositories/get-store-types-repo";
 import { RestApiError } from "../../../src/rest/RestApiError";
 
@@ -11,13 +11,13 @@ afterEach(() => mock.resetHandlers());
 
 describe("Get Store Types Repository", () => {
   it("should return a list of store type config names", async () => {
-    const apiResponse: IStoreTypesResponse = {
+    const apiResponse: IStoreTypes = {
       federatedStoreTypes: ["federated"],
       storeTypes: ["accumulo-big", "accumulo-small"]
     };
     mock.onGet("/storetypes").reply(200, apiResponse);
 
-    const actual: IStoreTypesResponse = await repo.get();
+    const actual: IStoreTypes = await repo.get();
 
     const expectedStoretypes = ["accumulo-big", "accumulo-small"];
     const expectedFederatedStoreTypes = ["federated"];
