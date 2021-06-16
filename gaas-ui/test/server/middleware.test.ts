@@ -80,8 +80,8 @@ describe("Graph API", () => {
                     {
                         graphId: "roadTraffic",
                         description: "Road traffic graph. This graphs uses a federated store of proxy stores",
-                        url: "http://road-traffic.k8s.cluster/rest",
-                        storeType: "federatedStore",
+                        url: "http://localhost:4000/rest",
+                        storeType: "federated",
                         status: "UP",
                     },
                     {
@@ -210,7 +210,17 @@ describe("Storetypes", () => {
             .then((response) => {
                 // @ts-ignore
                 expect(response.statusCode).toBe(200);
-                expect(response.body).toStrictEqual({"storeTypes": ["accumulo", "federated", "mapStore", "proxy", "proxyNoContextRoot"]});
+                expect(response.body).toStrictEqual({
+                    storeTypes: [
+                        "accumulo",
+                        "mapStore",
+                        "proxy",
+                        "proxyNoContextRoot"
+                    ],
+                    federatedStoreTypes: [
+                        "federated"
+                    ]
+                });
             });
     })
 })

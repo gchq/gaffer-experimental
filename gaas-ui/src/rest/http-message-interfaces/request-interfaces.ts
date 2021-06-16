@@ -1,6 +1,5 @@
 import { IElements } from "../../domain/elements-schema";
-import { ITypesSchema } from "../../domain/types-schema";
-import { StoreType } from "../../domain/store-type";
+import { ITypesSchema } from "../../domain/types-schema"
 
 export interface ICreateGraphInterface {
     graphId: string;
@@ -12,16 +11,16 @@ export interface ICreateGraphRequestBody extends ICreateGraphInterface{
         elements: IElements;
         types: ITypesSchema;
     };
-    storeType: StoreType.MAPSTORE | StoreType.ACCUMULO;
+    storeType: string
 }
 
 export interface ICreateFederatedGraphRequestBody extends ICreateGraphInterface {
     proxyStores: Array<{graphId: string, url: string}>;
-    storeType: StoreType.FEDERATED_STORE;
+    storeType: string;
 }
 
 export interface ICreateProxyGraphRequestBody extends ICreateGraphInterface{
     proxyContextRoot: string;
     proxyHost: string;
-    storeType: StoreType.PROXY_STORE;
+    storeType: string;
 }

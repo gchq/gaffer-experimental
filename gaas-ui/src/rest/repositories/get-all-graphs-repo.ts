@@ -1,6 +1,5 @@
 import { Graph } from "../../domain/graph";
 import { GraphType } from "../../domain/graph-type";
-import { getStoreType } from "../../domain/store-type";
 import { IApiResponse, RestClient } from "../clients/rest-client";
 import { Config } from "../config";
 import {
@@ -22,7 +21,7 @@ export class GetAllGraphsRepo {
           jsonObject.description,
           jsonObject.url,
           jsonObject.status,
-          getStoreType(jsonObject.storeType),
+          jsonObject.storeType,
           GraphType.GAAS_GRAPH
         )
     );

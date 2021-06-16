@@ -1,4 +1,4 @@
-import {CreateGraphRepo} from "../../../src/rest/repositories/create-graph-repo";
+import {CreateStoreTypesGraphRepo} from "../../../src/rest/repositories/create-storetypes-graph-repo";
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import {RestApiError} from "../../../src/rest/RestApiError";
@@ -6,12 +6,11 @@ import {
     ICreateFederatedGraphRequestBody,
     ICreateGraphRequestBody
 } from "../../../src/rest/http-message-interfaces/request-interfaces";
-import {StoreType} from "../../../src/domain/store-type";
 import {ElementsSchema} from "../../../src/domain/elements-schema";
 import {TypesSchema} from "../../../src/domain/types-schema";
 
 const mock = new MockAdapter(axios);
-const repo = new CreateGraphRepo();
+const repo = new CreateStoreTypesGraphRepo();
 const elements = new ElementsSchema(JSON.stringify({ entities: {}, edges: {} }));
 const types = new TypesSchema(JSON.stringify({ types: {} }));
 
@@ -23,11 +22,11 @@ describe("Create Graph Repo", () => {
                 schema: {elements: elements.getElements(), types: types.getTypes()},
                 graphId: "accumulo-graph",
                 description: "a description",
-                storeType: StoreType.ACCUMULO,
+                storeType: "accumulo",
             };
             mock.onPost("/graphs", request).reply(201);
 
-            await expect(repo.create("accumulo-graph", "a description", StoreType.ACCUMULO, { schema: {elements: elements.getElements(), types: types.getTypes()}})).resolves.toEqual(
+            await expect(repo.create("accumulo-graph", "a description", "accumulo", { schema: {elements: elements.getElements(), types: types.getTypes()}})).resolves.toEqual(
                 undefined
             );
         });
@@ -37,39 +36,20 @@ describe("Create Graph Repo", () => {
                 schema: {elements: elements.getElements(), types: types.getTypes()},
                 graphId: "map-graph",
                 description: "a description",
-                storeType: StoreType.MAPSTORE,
+                storeType: "mapstore",
             };
             mock.onPost("/graphs", request).reply(201);
 
-            await expect(repo.create("map-graph", "a description", StoreType.MAPSTORE, {schema: {elements: elements.getElements(), types: types.getTypes()}})).resolves.toEqual(
-                undefined
-            );
-        });
-        it("should request an FEDERATED_STORE  graph when FEDERATED_STORE is parameter", async () => {
-            const request: ICreateFederatedGraphRequestBody = {
-                proxyStores: [{graphId: "test-graph", url:"test.graph.url"}],
-                graphId: "fed-store",
-                description: "a description",
-                storeType: StoreType.FEDERATED_STORE
-            };
-            mock.onPost("/graphs", request).reply(201);
-
-            await expect(repo.create("fed-store", "a description", StoreType.FEDERATED_STORE, {proxyStores: [{graphId: "test-graph", url: "test.graph.url"}]})).resolves.toEqual(
+            await expect(repo.create("map-graph", "a description", "mapstore", {schema: {elements: elements.getElements(), types: types.getTypes()}})).resolves.toEqual(
                 undefined
             );
         });
     });
 
     describe("Null checks", ()=>{
-        it("Should throw an error when StoreType is Federated and proxyStores is undefined", async () => {
-            const config = {};
-            await expect(repo.create("bad-request-graph", "a description", StoreType.FEDERATED_STORE, config)).rejects.toEqual(
-                new Error("Proxy Stores is undefined")
-            );
-        })
         it("Should throw an error when StoreType is Mapstore or Accumulo and schema is undefined", async () => {
             const config = {};
-            await expect(repo.create("bad-request-graph", "a description", StoreType.MAPSTORE, config)).rejects.toEqual(
+            await expect(repo.create("bad-request-graph", "a description", "mapstore", config)).rejects.toEqual(
                 new Error("Schema is undefined")
             );
         })
@@ -81,11 +61,11 @@ describe("Create Graph Repo", () => {
                 schema: {elements: elements.getElements(), types: types.getTypes()},
                 graphId: "bad-request-graph",
                 description: "a description",
-                storeType: StoreType.MAPSTORE,
+                storeType: "mapstore",
             };
             mock.onPost("/graphs", request).reply(400);
 
-            await expect(repo.create("bad-request-graph", "a description", StoreType.MAPSTORE, {schema: {elements: elements.getElements(), types: types.getTypes()}})).rejects.toEqual(
+            await expect(repo.create("bad-request-graph", "a description", "mapstore", {schema: {elements: elements.getElements(), types: types.getTypes()}})).rejects.toEqual(
                 new RestApiError("Error Code 400", "Bad Request")
             );
         });
@@ -95,11 +75,11 @@ describe("Create Graph Repo", () => {
                 schema: {elements: elements.getElements(), types: types.getTypes()},
                 graphId: "forbidden-graph",
                 description: "a description",
-                storeType: StoreType.MAPSTORE,
+                storeType: "mapstore",
             };
             mock.onPost("/graphs", request).reply(403, { title: "Forbidden", detail: "Kubernetes access denied" });
 
-            await expect(repo.create("forbidden-graph", "a description", StoreType.MAPSTORE, {schema: {elements: elements.getElements(), types: types.getTypes()}})).rejects.toEqual(
+            await expect(repo.create("forbidden-graph", "a description", "mapstore", {schema: {elements: elements.getElements(), types: types.getTypes()}})).rejects.toEqual(
                 new RestApiError("Forbidden", "Kubernetes access denied")
             );
         });

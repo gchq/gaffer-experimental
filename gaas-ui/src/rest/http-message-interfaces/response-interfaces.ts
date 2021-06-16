@@ -3,7 +3,7 @@ export interface IGraphByIdResponse {
     description: string;
     url: string;
     status: "UP" | "DOWN";
-    storeType: "federatedStore" | "mapStore" | "accumuloStore" | "proxyStore";
+    storeType: string;
 }
 
 export interface IAllGraphsResponse extends Array<IGraphByIdResponse> {}
@@ -16,6 +16,7 @@ export interface IGraphStatusResponse {
 
 export interface IGetAllGraphIdsResponse extends Array<string> {}
 
-export interface IGetStoreTypesResponse {
+export interface IStoreTypesResponse {
     storeTypes: string[];
+    federatedStoreTypes: string[];
 }

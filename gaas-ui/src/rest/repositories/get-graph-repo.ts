@@ -1,6 +1,5 @@
 import { Graph } from "../../domain/graph";
 import { GraphType } from "../../domain/graph-type";
-import { getStoreType } from "../../domain/store-type";
 import { IApiResponse, RestClient } from "../clients/rest-client";
 import { Config } from "../config";
 import { IGraphByIdResponse } from "../http-message-interfaces/response-interfaces";
@@ -18,7 +17,7 @@ export class GetGraphRepo {
       response.data.description,
       response.data.url,
       response.data.status,
-      getStoreType(response.data.storeType),
+      response.data.storeType,
       GraphType.GAAS_GRAPH
     );
   }
