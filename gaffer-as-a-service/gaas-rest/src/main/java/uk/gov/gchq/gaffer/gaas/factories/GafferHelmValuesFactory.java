@@ -29,8 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
-import static uk.gov.gchq.gaffer.gaas.stores.GafferBuilder.INGRESS_API_PATH_VALUE;
-import static uk.gov.gchq.gaffer.gaas.stores.GafferBuilder.INGRESS_UI_PATH_VALUE;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.HOOKS_KEY;
@@ -55,6 +53,8 @@ public final class GafferHelmValuesFactory {
 
     private static final String KIND = "Gaffer";
     private static final String DEFAULT_SYSTEM_USER = "GAAS_SYSTEM_USER";
+    public static final String INGRESS_API_PATH_VALUE = "/rest";
+    public static final String INGRESS_UI_PATH_VALUE = "/ui";
 
 
     public static Gaffer from(final GaaSCreateRequestBody graph) throws GaaSRestApiException {

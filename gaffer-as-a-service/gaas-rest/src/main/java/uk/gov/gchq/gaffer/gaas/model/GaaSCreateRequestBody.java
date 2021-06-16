@@ -20,7 +20,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,20 +35,7 @@ public class GaaSCreateRequestBody implements Serializable {
     private String description;
     @NotNull(message = "\"configName\" must be defined. Valid Store Types supported are federatedStore, accumuloStore, proxyStore or mapStore")
     private String configName;
-    private String proxyHost;
-    private String proxyContextRoot;
     private Map<String, Object> schema;
-
-    public void setStoreProperties(final Map<String, Object> storeProperties) {
-        this.storeProperties = storeProperties;
-    }
-
-    private Map<String, Object> storeProperties = new HashMap<>();
-
-    public Map<String, Object> getStoreProperties() {
-        return storeProperties;
-    }
-
 
     public GaaSCreateRequestBody() {
     }
@@ -59,13 +45,6 @@ public class GaaSCreateRequestBody implements Serializable {
         this.description = description;
         this.configName = configName;
         this.schema = schema;
-    }
-
-    public GaaSCreateRequestBody(final String graphId, final String description, final String configName, final Map<String, Object> storeProperties) {
-        this.graphId = graphId;
-        this.description = description;
-        this.configName = configName;
-        this.storeProperties = storeProperties;
     }
 
     public String getGraphId() {
@@ -84,12 +63,5 @@ public class GaaSCreateRequestBody implements Serializable {
         return configName;
     }
 
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    public String getProxyContextRoot() {
-        return proxyContextRoot;
-    }
 
 }

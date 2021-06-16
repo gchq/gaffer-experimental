@@ -114,7 +114,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenSuccessful_shouldReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumuloStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -239,7 +239,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_hasSameGraphIdAsExistingOne_shouldReturn409() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumuloStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
@@ -307,7 +307,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_shouldRequestAnAccumuloStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumuloStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -337,7 +337,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_shouldRequestAProxyStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "proxy", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "proxy");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -370,7 +370,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_shouldReturn500BadRequestWhenStoreTypeIsInvalidType() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "invalidStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "invalidStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doThrow(new RuntimeException("configName is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore")).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 

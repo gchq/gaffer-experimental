@@ -54,7 +54,7 @@ public class CreateGraphServiceTest {
     @Test
     public void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
-        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", "accumulo", getSchema()));
+        createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", getSchema(), "accumulo"));
 
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());

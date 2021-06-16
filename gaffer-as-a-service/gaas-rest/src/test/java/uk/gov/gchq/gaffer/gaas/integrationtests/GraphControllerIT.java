@@ -51,7 +51,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testAddGraph_WithSchema_Returns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumulo", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumulo");
         final Gson gson = new Gson();
         final String inputJson = gson.toJson(gaaSCreateRequestBody);
 
@@ -65,7 +65,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumulo", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumulo");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -163,7 +163,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @Test
     public void testDeleteShouldReturn200AndRemoveCRD() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumulo", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumulo");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         final MvcResult createGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
