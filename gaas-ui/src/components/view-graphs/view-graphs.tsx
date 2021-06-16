@@ -13,7 +13,6 @@ import {Graph} from "../../domain/graph";
 import {GetAllGraphsRepo} from "../../rest/repositories/get-all-graphs-repo";
 import {DeleteGraphRepo} from "../../rest/repositories/delete-graph-repo";
 import {GetStoreTypesRepo} from "../../rest/repositories/get-store-types-repo";
-import {StoreType} from "../../domain/store-type";
 import {AlertType, NotificationAlert} from "../alerts/notification-alert";
 import {Copyright} from "../copyright/copyright";
 import Gauge from "./gauge";

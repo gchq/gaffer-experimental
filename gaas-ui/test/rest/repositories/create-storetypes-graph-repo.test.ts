@@ -6,7 +6,6 @@ import {
     ICreateFederatedGraphRequestBody,
     ICreateGraphRequestBody
 } from "../../../src/rest/http-message-interfaces/request-interfaces";
-import {StoreType} from "../../../src/domain/store-type";
 import {ElementsSchema} from "../../../src/domain/elements-schema";
 import {TypesSchema} from "../../../src/domain/types-schema";
 
@@ -45,28 +44,9 @@ describe("Create Graph Repo", () => {
                 undefined
             );
         });
-        // it("should request an FEDERATED_STORE  graph when FEDERATED_STORE is parameter", async () => {
-        //     const request: ICreateFederatedGraphRequestBody = {
-        //         proxyStores: [{graphId: "test-graph", url:"test.graph.url"}],
-        //         graphId: "fed-store",
-        //         description: "a description",
-        //         storeType: StoreType.FEDERATED_STORE
-        //     };
-        //     mock.onPost("/graphs", request).reply(201);
-
-        //     await expect(repo.create("fed-store", "a description", StoreType.FEDERATED_STORE, {proxyStores: [{graphId: "test-graph", url: "test.graph.url"}]})).resolves.toEqual(
-        //         undefined
-        //     );
-        // });
     });
 
     describe("Null checks", ()=>{
-        // it("Should throw an error when StoreType is Federated and proxyStores is undefined", async () => {
-        //     const config = {};
-        //     await expect(repo.create("bad-request-graph", "a description", StoreType.FEDERATED_STORE, config)).rejects.toEqual(
-        //         new Error("Proxy Stores is undefined")
-        //     );
-        // })
         it("Should throw an error when StoreType is Mapstore or Accumulo and schema is undefined", async () => {
             const config = {};
             await expect(repo.create("bad-request-graph", "a description", "mapstore", config)).rejects.toEqual(

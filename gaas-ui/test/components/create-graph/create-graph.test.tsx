@@ -3,7 +3,6 @@ import React from "react";
 import {act} from "react-dom/test-utils";
 import CreateGraph from "../../../src/components/create-graph/create-graph";
 import {Graph} from "../../../src/domain/graph";
-import {StoreType} from "../../../src/domain/store-type";
 import {
     CreateStoreTypesGraphRepo,
     ICreateGraphConfig
@@ -373,7 +372,7 @@ describe("CreateGraph UI component", () => {
             inputDescription("test");
             inputElements(elements);
             inputTypes(types);
-            selectStoreType(StoreType.MAPSTORE);
+            selectStoreType("mapStore");
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
                 false
             );
@@ -383,7 +382,7 @@ describe("CreateGraph UI component", () => {
             inputDescription("test");
             inputElements(elements);
             inputTypes(types);
-            selectStoreType(StoreType.ACCUMULO);
+            selectStoreType("accumulo");
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
                 false
             );
@@ -419,7 +418,7 @@ describe("CreateGraph UI component", () => {
         it("should be disabled when MAP STORE selected and elements schema has error", () => {
             inputGraphId("G");
             inputDescription("test");
-            selectStoreType(StoreType.MAPSTORE);
+            selectStoreType("mapStore");
             inputElements({invalid: "json"});
             inputTypes(types);
 
@@ -430,7 +429,7 @@ describe("CreateGraph UI component", () => {
         it("should be disabled when MAP STORE selected and types schema has error", () => {
             inputGraphId("G");
             inputDescription("test");
-            selectStoreType(StoreType.MAPSTORE);
+            selectStoreType("mapStore");
             inputElements(elements);
             inputTypes({invalid: "json"});
 
@@ -442,7 +441,7 @@ describe("CreateGraph UI component", () => {
         it("should be disabled when the elements schema has error", () => {
             inputGraphId("G");
             inputDescription("test");
-            selectStoreType(StoreType.ACCUMULO);
+            selectStoreType("accumulo");
             inputElements({invalid: "json"});
             inputTypes(types);
 
@@ -453,7 +452,7 @@ describe("CreateGraph UI component", () => {
         it("should be disabled when the types schema has error", () => {
             inputGraphId("G");
             inputDescription("test");
-            selectStoreType(StoreType.ACCUMULO);
+            selectStoreType("accumulo");
             inputElements(elements);
             inputTypes({invalid: "json"});
 
