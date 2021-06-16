@@ -99,7 +99,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
     private async getGraphs() {
         try {
             const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
-            this.setState({graphs, outcomeMessage: ""});
+            this.setState({graphs});
         } catch (e) {
             this.setState({
                 outcome: AlertType.FAILED,

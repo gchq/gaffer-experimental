@@ -224,24 +224,6 @@ function mockGetGraphStatusRepoToThrowError() {
   }));
 }
 
-function mockGetGraphDescriptionRepoToThrowError() {
-  // @ts-ignore
-  GetGraphDescriptionRepo.mockImplementationOnce(() => ({
-    getDescription: () => {
-      throw new RestApiError("Server Error", "Invalid proxy URL");
-    }
-  }));
-}
-
-function mockGetGraphIdRepoToThrowError() {
-  // @ts-ignore
-  GetGraphDescriptionRepo.mockImplementationOnce(() => ({
-    getGraphId: () => {
-      throw new RestApiError("Server Error", "Invalid proxy URL");
-    },
-  }));
-}
-
 function mockGetGraphStatusRepoIsSuccessfulAndReturns(status: string) {
   // @ts-ignore
   GetGraphStatusRepo.mockImplementationOnce(() => ({
@@ -251,27 +233,6 @@ function mockGetGraphStatusRepoIsSuccessfulAndReturns(status: string) {
       }),
   }));
 }
-
-function mockGetGraphDescriptionRepoIsSuccessfulAndReturns(description: string) {
-  // @ts-ignore
-  GetGraphDescriptionRepo.mockImplementationOnce(() => ({
-    getDescription: () =>
-      new Promise((resolve, reject) => {
-        resolve(description);
-      }),
-  }));
-}
-
-function mockGetGraphIdRepoIsSuccessfulAndReturns(graphId: string) {
-  // @ts-ignore
-  GetGraphIdRepo.mockImplementationOnce(() => ({
-    getGraphId: () =>
-      new Promise((resolve, reject) => {
-        resolve(graphId);
-      }),
-  }));
-}
-
 
 
 // @ts-ignore
