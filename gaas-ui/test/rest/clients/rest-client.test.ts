@@ -150,10 +150,10 @@ describe("GaaS API 4**/5** Error Responses", () => {
     });
     it("should throw 404 Error Message when api returns 404", async () => {
         try {
-            await new RestClient().post().get().graphs("unfindable-graph").execute();
+            await new RestClient().create().post().requestBody("unfindable-graph").graphs().execute();
             throw new Error("Error did not throw");
         } catch (e) {
-            expect(e.toString()).toBe("Not Found: Could not find resource");
+            expect(e.toString()).toBe("Error Code 404: Not Found");
         }
     });
     it("should throw 500 Error Message when api returns 404", async () => {

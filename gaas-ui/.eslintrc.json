@@ -20,7 +20,6 @@
     "arrow-body-style": ["error", "as-needed"],
     "quotes": [2, "double", "avoid-escape"],
     "new-cap": "error",
-    "no-invalid-this": "error",
     "prefer-const": "error",
     "no-eval": "error",
     "no-implied-eval": "error",
