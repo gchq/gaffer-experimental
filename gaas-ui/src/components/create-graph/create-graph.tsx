@@ -102,6 +102,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
             this.setState({graphs, outcomeMessage: ""});
         } catch (e) {
             this.setState({
+                outcome: AlertType.FAILED,
                 outcomeMessage: `Failed to get all graphs. ${e.toString()}`,
             });
         }
@@ -116,7 +117,8 @@ export default class CreateGraph extends React.Component<{}, IState> {
                 });
         } catch (e) {
             this.setState({
-                outcomeMessage: `Storetypes unavailable: ${e.message}`,
+                outcome: AlertType.FAILED,
+                outcomeMessage: `Storetypes unavailable: ${e.toString()}`,
             });
         }
     }

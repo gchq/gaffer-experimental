@@ -79,21 +79,31 @@ describe("CreateGraph UI component", () => {
             expect(submitButton).toBe("Create Graph");
         });
     });
-    describe("when get store type repo called", () => {
+    describe("when GetStoreTypesRepo called", () => {
         let component: ReactWrapper;
         afterEach(()=>  component.unmount())
-        fit("should show error notification when get all store types repo throws an exception", async () =>{
+        it("should show error notification when GetStoreTypesRepo throws an exception", async () =>{
             await mockGetStoreTypesRepoToThrow(() => {
                 throw new RestApiError("Server Error", "Timeout exception");
             });
-            await mockGetAllGraphsRepoToReturn([]);
+            mockGetAllGraphsRepoToReturn([]);
             await act(async() => {component = mount(<CreateGraph/>);})
-            await component.update();
+            component.update();
+            component.update();
+            component.update();
 
-            expect(GetStoreTypesRepo).toHaveBeenCalledTimes(1);
             expect(component.find("div#notification-alert").text()).toBe(
-            "Failed to get federated store types. Server Error: Timeout exception"
+            "Storetypes unavailable: Server Error: Timeout exception"
         );
+        })
+        it("should show helper text when GetStoreTypesRepo returns an empty array", async () =>{
+            mockGetAllGraphsRepoToReturn([])
+            mockGetStoreTypesRepoToReturn({storeTypes: [], federatedStoreTypes: []})
+            await act(async() => {component = mount(<CreateGraph/>);})
+            component.update();
+            component.update();
+            component.update();
+            expect(component.find("p#storetype-form-helper").text()).toBe("No storetypes available");
         })
     })
     describe("When Federated StoreType Is Selected", () => {
