@@ -110,16 +110,10 @@ export default class CreateGraph extends React.Component<{}, IState> {
     private async getAllStoreTypes() {
         try {
             const storeTypes: IStoreTypesResponse = await new GetStoreTypesRepo().get();
-            if (storeTypes.storeTypes.length !== 0 || storeTypes.federatedStoreTypes.length !== 0) {
                 this.setState({
                     storeTypes: storeTypes.storeTypes,
                     federatedStoreTypes: storeTypes.federatedStoreTypes
                 });
-            } else {
-                this.setState({
-                    outcomeMessage: "No storetypes available",
-                });
-            }
         } catch (e) {
             this.setState({
                 outcomeMessage: `Storetypes unavailable: ${e.message}`,

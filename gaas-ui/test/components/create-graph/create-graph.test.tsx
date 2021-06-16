@@ -26,6 +26,7 @@ jest.mock("../../../src/rest/repositories/get-graph-id-repo");
 jest.mock("../../../src/rest/repositories/get-store-types-repo");
 
 
+
 let wrapper: ReactWrapper;
 
 beforeEach(async() => {
@@ -78,6 +79,23 @@ describe("CreateGraph UI component", () => {
             expect(submitButton).toBe("Create Graph");
         });
     });
+    describe("when get store type repo called", () => {
+        let component: ReactWrapper;
+        afterEach(()=>  component.unmount())
+        fit("should show error notification when get all store types repo throws an exception", async () =>{
+            await mockGetStoreTypesRepoToThrow(() => {
+                throw new RestApiError("Server Error", "Timeout exception");
+            });
+            await mockGetAllGraphsRepoToReturn([]);
+            await act(async() => {component = mount(<CreateGraph/>);})
+            await component.update();
+
+            expect(GetStoreTypesRepo).toHaveBeenCalledTimes(1);
+            expect(component.find("div#notification-alert").text()).toBe(
+            "Failed to get federated store types. Server Error: Timeout exception"
+        );
+        })
+    })
     describe("When Federated StoreType Is Selected", () => {
         it("Should have a URL Input, Add Button & Graph Table when federated store is selected", async () => {
             await selectStoreType("federated");
@@ -642,6 +660,13 @@ function mockGetGraphIdRepoToThrowError() {
         getGraphId: () => {
             throw new RestApiError("Server Error", "Invalid proxy URL");
         },
+    }));
+}
+
+async function mockGetStoreTypesRepoToThrow(f: () => void) {
+    // @ts-ignore
+    GetStoreTypesRepo.mockImplementationOnce(() => ({
+        get: f,
     }));
 }
 
