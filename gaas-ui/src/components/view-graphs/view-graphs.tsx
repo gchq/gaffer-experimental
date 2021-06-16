@@ -74,7 +74,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
         this.state.federatedStores.forEach((storetype: string) => {
             data.push(
                 {
-                    key: storetype,
+                    key: storetype.toUpperCase(),
                     data: this.state.graphs.filter((graph) => graph.getStoreType() === storetype).length
                 }
             )
@@ -82,7 +82,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
         this.state.otherStores.forEach((storetype: string) => {
             data.push(
                 {
-                    key: storetype,
+                    key: storetype.toUpperCase(),
                     data: this.state.graphs.filter((graph) => graph.getStoreType() === storetype).length
                 }
             )
