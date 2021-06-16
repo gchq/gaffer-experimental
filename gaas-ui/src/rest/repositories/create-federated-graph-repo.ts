@@ -19,7 +19,7 @@ export class CreateFederatedGraphRepo {
             storeType: storeType,
             proxyStores: config.proxyStores
         };
-        await new RestClient().baseUrl(Config.REACT_APP_KAI_REST_API_HOST).post().graphs().requestBody(httpRequestBody).execute();
+        await new RestClient().baseUrl(Config.REACT_APP_KAI_REST_API_HOST).post().requestBody(httpRequestBody).graphs().execute();
     
        
         }
