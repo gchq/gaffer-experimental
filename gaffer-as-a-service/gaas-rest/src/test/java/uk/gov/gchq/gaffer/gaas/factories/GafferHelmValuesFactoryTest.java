@@ -34,27 +34,6 @@ public class GafferHelmValuesFactoryTest {
     private final Gson gson = new Gson();
 
     @Test
-    public void requestOverrides____() throws GaaSRestApiException {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("override-graph-id", "Override description", "accumulo", getSchema()));
-
-        final String expected = "{" +
-                "\"apiVersion\":\"gchq.gov.uk/v1\"," +
-                "\"kind\":\"Gaffer\"," +
-                "\"metadata\":{\"name\":\"override-graph-id\"}," +
-                "\"spec\":{" +
-                "\"graph\":{" +
-                "\"storeProperties\":{\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\",\"gaffer.host\":\"http://my.graph.co.uk\"}," +
-                "\"config\":{\"description\":\"Override description\",\"graphId\":\"override-graph-id\"," +
-                "\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}," +
-                "\"schema\":{}" +
-                "}," +
-                "\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}" +
-                "}";
-        assertEquals(expected, gson.toJson(requestBody));
-    }
-
-
-    @Test
     public void proxyStoreRequest_shouldReturnProxyStoreRequestBody_whenNoContextRootSpecified() throws GaaSRestApiException {
         final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "proxyNoContextRoot", getSchema()));
 
@@ -94,7 +73,7 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void accumuloStoreRequestShouldReturnAccumuloRequestBody() throws GaaSRestApiException {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "accumulo", getSchema()));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", getSchema(), "accumulo"));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"accumulo\":{\"enabled\":true},\"graph\":{\"schema\":{\"schema.json\":{\"entities\":{},\"edges\":{},\"types\":{}}},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
@@ -103,7 +82,7 @@ public class GafferHelmValuesFactoryTest {
 
     @Test
     public void mapStoreStoreRequestShouldReturnMapStoreRequestBody() throws GaaSRestApiException {
-        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", "mapStore", getSchema()));
+        final Gaffer requestBody = GafferHelmValuesFactory.from(new GaaSCreateRequestBody("MyGraph", "Another description", getSchema(), "mapStore"));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.store.job.tracker.enabled\":true,\"gaffer.cache.service.class\":\"uk.gov.gchq.gaffer.cache.impl.HashMapCacheService\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]},\"schema\":{\"schema.json\":{\"entities\":{},\"edges\":{},\"types\":{}}}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";

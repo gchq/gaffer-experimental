@@ -22,11 +22,24 @@ import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.stores.GafferBuilder;
 import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
+import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.gaas.stores.GafferBuilder.INGRESS_API_PATH_VALUE;
+import static uk.gov.gchq.gaffer.gaas.stores.GafferBuilder.INGRESS_UI_PATH_VALUE;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.HOOKS_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 /**
  * GafferHelmValuesFactory is a factory class that creates a Gaffer Helm Values Object that can be passed to the
@@ -43,6 +56,7 @@ public final class GafferHelmValuesFactory {
     private static final String KIND = "Gaffer";
     private static final String DEFAULT_SYSTEM_USER = "GAAS_SYSTEM_USER";
 
+
     public static Gaffer from(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
 
         // TODO: Validate only - and . special characters, see Kubernetes metadata regex
@@ -58,19 +72,28 @@ public final class GafferHelmValuesFactory {
     private static GafferSpec createGafferSpecFrom(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
 
         final GaaSGraphConfigsLoader loader = new GaaSGraphConfigsLoader();
-        final Map<String, Object> config = loader.getConfig("/config", graph.getConfigName());
+        final GafferSpec config = loader.getConfig("/config", graph.getConfigName());
 
-        final GafferBuilder builder = new GafferBuilder()
-                .setGraphId(graph.getGraphId())
-                .setDescription(graph.getDescription())
-                .addOperationAuthoriser(AddGraph.class, DEFAULT_SYSTEM_USER)
-                .setSchema(graph.getSchema())
-                .setProperties(graph.getStoreProperties());
-        return builder.build();
+        final Map<String, String[]> operationAuths = new LinkedHashMap<>();
+        operationAuths.put(AddGraph.class.getName(), new String[] {DEFAULT_SYSTEM_USER});
+
+        final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
+        opAuthoriser.put("class", OperationAuthoriser.class.getName());
+        opAuthoriser.put("auths", operationAuths);
+
+        config.putNestedObject(graph.getGraphId(), GRAPH_ID_KEY);
+        config.putNestedObject(graph.getDescription(), DESCRIPTION_KEY);
+        config.putNestedObject(graph.getSchema(), SCHEMA_FILE_KEY);
+        config.putNestedObject(Arrays.asList(opAuthoriser), HOOKS_KEY);
+        config.putNestedObject(graph.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
+        config.putNestedObject(INGRESS_API_PATH_VALUE, INGRESS_API_PATH_KEY);
+        config.putNestedObject(INGRESS_UI_PATH_VALUE, INGRESS_UI_PATH_KEY);
+        return config;
     }
 
     private GafferHelmValuesFactory() {
         // prevents calls from subclass
         throw new UnsupportedOperationException();
     }
+
 }

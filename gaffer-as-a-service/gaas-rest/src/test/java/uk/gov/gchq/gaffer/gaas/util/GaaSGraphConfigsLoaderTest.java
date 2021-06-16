@@ -16,14 +16,12 @@
 
 package uk.gov.gchq.gaffer.gaas.util;
 
-import org.apache.commons.collections.OrderedMap;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

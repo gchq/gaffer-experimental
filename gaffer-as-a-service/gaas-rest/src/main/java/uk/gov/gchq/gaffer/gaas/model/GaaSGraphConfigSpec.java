@@ -19,42 +19,52 @@ package uk.gov.gchq.gaffer.gaas.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.io.Serializable;
 
-public class GaaSGraphConfigSpec {
 
-    private String name;
-    private String[] parameters;
+public class GaaSGraphConfigSpec implements Serializable {
 
-    public GaaSGraphConfigSpec(final String name, final String[] parameters) {
-        this.name = name;
-        this.parameters = parameters;
+  private String name;
+  private String[] parameters;
+
+  public GaaSGraphConfigSpec(final String name, final String[] parameters) {
+    this.name = name;
+    this.parameters = parameters;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String[] getParameters() {
+    return parameters;
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        GaaSGraphConfigSpec that = (GaaSGraphConfigSpec) o;
-
-        return new EqualsBuilder().append(name, that.name).append(parameters, that.parameters).isEquals();
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(name).append(parameters).toHashCode();
-    }
+    GaaSGraphConfigSpec that = (GaaSGraphConfigSpec) o;
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("name", name)
-                .append("parameters", parameters)
-                .toString();
-    }
+    return new EqualsBuilder().append(name, that.name).append(parameters, that.parameters).isEquals();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37).append(name).append(parameters).toHashCode();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+            .append("name", name)
+            .append("parameters", parameters)
+            .toString();
+  }
 }

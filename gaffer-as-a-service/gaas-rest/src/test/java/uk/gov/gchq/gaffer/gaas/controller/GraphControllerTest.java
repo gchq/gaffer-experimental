@@ -73,7 +73,7 @@ public class GraphControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
-        assertEquals("{\"storeTypes\":[\"accumulo\",\"mapStore\",\"proxy\",\"proxyNoContextRoot\"],\"federatedStoreTypes\":[\"federated\"]}", getStoretypeResponse.getResponse().getContentAsString());
+        assertEquals("[{\"name\":\"accumulo\",\"parameters\":[\"schema\"]},{\"name\":\"proxy\",\"parameters\":[\"schema\"]},{\"name\":\"federated\",\"parameters\":[\"proxies\"]},{\"name\":\"mapStore\",\"parameters\":[\"schema\"]},{\"name\":\"proxyNoContextRoot\",\"parameters\":[\"schema\"]}]", getStoretypeResponse.getResponse().getContentAsString());
     }
 
     @Test
@@ -129,7 +129,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdIsNull_shouldReturn400() throws Exception {
-        final String graphRequest = "{\"description\":\"password\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"description\":\"password\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -143,7 +143,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdHasSpaces_isInvalidAndShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -157,7 +157,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdHasDashes_isValidAndShouldReturn201() throws Exception {
-        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -171,7 +171,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_graphIdWithSpecialCharacters_isInvalidAndShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"a description\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"a description\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -185,7 +185,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdHasCapitalLetters_shouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -199,7 +199,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenDescriptionIsEmptyOnly_return400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult response = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -322,7 +322,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_shouldRequestAMapStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "mapStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -337,7 +337,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_shouldRequestAProxyStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "proxyStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "proxy", getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -363,7 +363,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(gaaSCreateRequestBody)).andReturn();
 
         assertEquals(400, result.getResponse().getStatus());
-        final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. " +
+        final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"configName\\\" must be defined. " +
                 "Valid Store Types supported are federatedStore, accumuloStore, proxyStore or mapStore\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
     }
@@ -372,7 +372,7 @@ public class GraphControllerTest extends AbstractTest {
     public void createGraph_shouldReturn500BadRequestWhenStoreTypeIsInvalidType() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "invalidStore", getSchema());
         final String inputJson = mapToJson(gaaSCreateRequestBody);
-        doThrow(new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore")).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
+        doThrow(new RuntimeException("configName is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore")).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -380,7 +380,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(inputJson)).andReturn();
 
         assertEquals(500, result.getResponse().getStatus());
-        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore\"}";
+        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"configName is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
     }
 

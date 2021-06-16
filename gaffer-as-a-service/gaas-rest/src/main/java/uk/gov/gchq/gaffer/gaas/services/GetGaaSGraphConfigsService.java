@@ -30,7 +30,7 @@ import java.util.Map;
 @Service
 public final class GetGaaSGraphConfigsService {
 
-    private static final String CLASSPATH_CONFIG_YAML = "classpath*:config/*.yaml";
+    private static final String CLASSPATH_CONFIG_YAML = "/config";
     private static final String[] GAFFER_STORE_CLASS_NESTED_KEYS = {"graph", "storeProperties", "gaffer.store.class"};
 
     @Autowired

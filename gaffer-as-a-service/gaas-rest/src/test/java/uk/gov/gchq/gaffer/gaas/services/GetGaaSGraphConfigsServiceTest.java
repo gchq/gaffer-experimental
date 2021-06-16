@@ -46,7 +46,7 @@ public class GetGaaSGraphConfigsServiceTest {
     void whenGaasGraphConfigHasFederatedStore_returnGaasGraphConfigSpecWithProxiesParameter() throws GaaSRestApiException {
         final HashMap<String, GafferSpec> gafferSpecsMap = new HashMap<>();
         gafferSpecsMap.put("federated_config", getFederatedStoreGafferSpec());
-        when(loader.listConfigSpecs("classpath*:config/*.yaml")).thenReturn(gafferSpecsMap);
+        when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
         final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
 
@@ -59,7 +59,7 @@ public class GetGaaSGraphConfigsServiceTest {
         final HashMap<String, GafferSpec> gafferSpecsMap = new HashMap<>();
         gafferSpecsMap.put("federated_config", getFederatedStoreGafferSpec());
         gafferSpecsMap.put("mapStore_config", getMapStoreGafferSpec());
-        when(loader.listConfigSpecs("classpath*:config/*.yaml")).thenReturn(gafferSpecsMap);
+        when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
         final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
 
@@ -74,7 +74,7 @@ public class GetGaaSGraphConfigsServiceTest {
     void whenNonFedStoreConfig_returnSchemaParam() throws GaaSRestApiException {
         final HashMap<String, GafferSpec> gafferSpecsMap = new HashMap<>();
         gafferSpecsMap.put("mapStore", getMapStoreGafferSpec());
-        when(loader.listConfigSpecs("classpath*:config/*.yaml")).thenReturn(gafferSpecsMap);
+        when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
         final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
 
@@ -88,7 +88,7 @@ public class GetGaaSGraphConfigsServiceTest {
     void whenNullConfig_returnSchemaParamByDefault() throws GaaSRestApiException {
         final HashMap<String, GafferSpec> gafferSpecsMap = new HashMap<>();
         gafferSpecsMap.put("empty_config_as_null", null);
-        when(loader.listConfigSpecs("classpath*:config/*.yaml")).thenReturn(gafferSpecsMap);
+        when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
         final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
 
@@ -102,7 +102,7 @@ public class GetGaaSGraphConfigsServiceTest {
     void whenEmptyConfig_returnSchemaParamByDefault() throws GaaSRestApiException {
         final HashMap<String, GafferSpec> gafferSpecsMap = new HashMap<>();
         gafferSpecsMap.put("empty_config", new GafferSpec());
-        when(loader.listConfigSpecs("classpath*:config/*.yaml")).thenReturn(gafferSpecsMap);
+        when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
         final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
 
@@ -116,7 +116,7 @@ public class GetGaaSGraphConfigsServiceTest {
     void whenStoreClassValueIsNull_returnSchemaParamByDefault() throws GaaSRestApiException {
         final HashMap<String, GafferSpec> gafferSpecsMap = new HashMap<>();
         gafferSpecsMap.put("nullStoreClass_config", getNullStoreClassValueGafferSpec());
-        when(loader.listConfigSpecs("classpath*:config/*.yaml")).thenReturn(gafferSpecsMap);
+        when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
         final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
 
@@ -128,7 +128,7 @@ public class GetGaaSGraphConfigsServiceTest {
 
     @Test
     void whenEmptyMapOfGafferSpecs_returnEmptyList() throws GaaSRestApiException {
-        when(loader.listConfigSpecs("classpath*:config/*.yaml")).thenReturn(new HashMap<>());
+        when(loader.listConfigSpecs("/config")).thenReturn(new HashMap<>());
 
         final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
 
@@ -136,20 +136,20 @@ public class GetGaaSGraphConfigsServiceTest {
     }
 
     private GafferSpec getFederatedStoreGafferSpec() {
-        final GafferSpec federated_gafferSpec = new GafferSpec();
-        federated_gafferSpec.putNestedObject(FederatedStore.class.getName(), "graph", "storeProperties", "gaffer.store.class");
-        return federated_gafferSpec;
+        final GafferSpec federatedGafferSpec = new GafferSpec();
+        federatedGafferSpec.putNestedObject(FederatedStore.class.getName(), "graph", "storeProperties", "gaffer.store.class");
+        return federatedGafferSpec;
     }
 
     private GafferSpec getMapStoreGafferSpec() {
-        final GafferSpec mapStore_gafferSpec = new GafferSpec();
-        mapStore_gafferSpec.putNestedObject(MapStore.class.getName(), "graph", "storeProperties", "gaffer.store.class");
-        return mapStore_gafferSpec;
+        final GafferSpec mapStoreGafferSpec = new GafferSpec();
+        mapStoreGafferSpec.putNestedObject(MapStore.class.getName(), "graph", "storeProperties", "gaffer.store.class");
+        return mapStoreGafferSpec;
     }
 
     private GafferSpec getNullStoreClassValueGafferSpec() {
-        final GafferSpec mapStore_gafferSpec = new GafferSpec();
-        mapStore_gafferSpec.putNestedObject(null, "graph", "storeProperties", "gaffer.store.class");
-        return mapStore_gafferSpec;
+        final GafferSpec mapStoreGafferSpec = new GafferSpec();
+        mapStoreGafferSpec.putNestedObject(null, "graph", "storeProperties", "gaffer.store.class");
+        return mapStoreGafferSpec;
     }
 }

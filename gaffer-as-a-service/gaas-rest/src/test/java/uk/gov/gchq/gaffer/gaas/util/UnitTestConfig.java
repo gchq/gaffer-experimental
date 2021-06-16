@@ -30,9 +30,9 @@ import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
