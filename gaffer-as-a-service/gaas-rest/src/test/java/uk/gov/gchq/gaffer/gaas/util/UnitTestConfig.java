@@ -27,7 +27,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
@@ -115,8 +114,4 @@ public class UnitTestConfig {
         return new GaaSGraphConfigsLoader();
     }
 
-    @Bean
-    public StoreTypesEndpointResponse storeTypesEndpointResponse() {
-        return new StoreTypesEndpointResponse();
-    }
 }
