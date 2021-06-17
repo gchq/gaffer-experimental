@@ -58,7 +58,7 @@ public final class GafferFactory {
         // TODO: Validate only - and . special characters, see Kubernetes metadata regex
 
         HashMap<String, String> labels = new HashMap<>();
-        labels.put("config", createGraphRequest.getConfigName());
+        labels.put("configName", createGraphRequest.getConfigName());
 
         final V1ObjectMeta metadata = new V1ObjectMeta()
                 .name(createGraphRequest.getGraphId())

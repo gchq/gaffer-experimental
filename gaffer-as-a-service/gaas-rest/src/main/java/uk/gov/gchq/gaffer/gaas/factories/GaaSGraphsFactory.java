@@ -48,7 +48,7 @@ public final class GaaSGraphsFactory {
                             .graphId(gaffer.getSpec().getNestedObject(GRAPH_ID_KEY).toString())
                             .description(getDescription(gaffer))
                             .url(getUrl(gaffer))
-                            .config(gaffer.getMetadata().getLabels().get("config"))
+                            .config(gaffer.getMetadata().getLabels().get("configName"))
                             .status(getStatus(gaffer))
                             .problems(getProblems(gaffer)))
                     .collect(Collectors.toList());

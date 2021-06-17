@@ -160,7 +160,7 @@ public class GaaSGraphsFactoryTest {
         final Map<String, Object> gafferList = new LinkedHashMap<>();
         final List<Gaffer> gaffers = new ArrayList<>();
         HashMap<String, String> labels = new HashMap<>();
-        labels.put("config", "mapStore");
+        labels.put("configName", "mapStore");
         final V1ObjectMeta metadata = new V1ObjectMeta()
                 .name("test")
                 .labels(labels);
@@ -173,7 +173,7 @@ public class GaaSGraphsFactoryTest {
         final Map<String, Object> gafferList = new LinkedHashMap<>();
         final List<Gaffer> gaffers = new ArrayList<>();
         HashMap<String, String> labels = new HashMap<>();
-        labels.put("config", "mapStore");
+        labels.put("configName", "mapStore");
         final V1ObjectMeta metadata = new V1ObjectMeta()
                 .name("test")
                 .labels(labels);

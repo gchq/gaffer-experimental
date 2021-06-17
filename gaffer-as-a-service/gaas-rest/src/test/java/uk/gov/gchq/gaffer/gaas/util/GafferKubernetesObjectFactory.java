@@ -25,7 +25,7 @@ public final class GafferKubernetesObjectFactory {
 
     public static Gaffer from(final GaaSCreateRequestBody graph) {
         HashMap<String, String> labels = new HashMap<>();
-        labels.put("config", graph.getConfigName());
+        labels.put("configName", graph.getConfigName());
         final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId()).labels(labels);
 
         final GafferSpec gafferSpec = new GafferSpec();
