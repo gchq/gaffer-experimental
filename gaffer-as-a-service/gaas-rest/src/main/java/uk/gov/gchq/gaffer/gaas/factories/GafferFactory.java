@@ -32,7 +32,9 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.HOOKS_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
@@ -74,7 +76,11 @@ public final class GafferFactory {
             config.putNestedObject(overrides.getSchema(), SCHEMA_FILE_KEY);
         }
 
+        // Mandatory Ingress values
         config.putNestedObject(overrides.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
+        // TODO: test for these
+        config.putNestedObject("/rest", INGRESS_API_PATH_KEY);
+        config.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
         return config;
     }
 

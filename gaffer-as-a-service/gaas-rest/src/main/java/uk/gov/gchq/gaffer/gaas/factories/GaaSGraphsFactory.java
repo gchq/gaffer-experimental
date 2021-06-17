@@ -60,6 +60,7 @@ public final class GaaSGraphsFactory {
         return gaffer.getSpec().getNestedObject(DESCRIPTION_KEY) != null ? gaffer.getSpec().getNestedObject(DESCRIPTION_KEY).toString() : DEFAULT_VALUE;
     }
 
+    // TODO: only return the Ingress value - should be the same value that GaaS REST mandatory adds
     private static String getUrl(final Gaffer gaffer) {
         if (gaffer.getSpec().getNestedObject(INGRESS_HOST_KEY) == null || gaffer.getSpec().getNestedObject(INGRESS_API_PATH_KEY) == null) {
             return DEFAULT_VALUE;
