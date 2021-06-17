@@ -46,7 +46,7 @@ public class CRDClientIT {
 
     private static final String TEST_GRAPH_ID = "testgraphid";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
-    private static final String ACCUMULO_ENABLED = "accumuloStore";
+    private static final String ACCUMULO_ENABLED = "accumulo";
 
     @Autowired
     private CreateGraphService createGraphService;
@@ -110,7 +110,7 @@ public class CRDClientIT {
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
         final List<GraphConfig> list = new ArrayList<>();
-        assertEquals(list, crdClient.listAllCRDs());
+        assertEquals(list, crdClient.listAllCRDs().get("graphs"));
     }
 
     @Test
