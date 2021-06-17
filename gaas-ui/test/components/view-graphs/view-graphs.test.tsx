@@ -6,7 +6,7 @@ import {Graph} from "../../../src/domain/graph";
 import {DeleteGraphRepo} from "../../../src/rest/repositories/delete-graph-repo";
 import {RestApiError} from "../../../src/rest/RestApiError";
 import {GraphType} from "../../../src/domain/graph-type";
-import {IStoreTypesResponse} from "../../../src/rest/http-message-interfaces/response-interfaces";
+import {IStoreTypes} from "../../../src/rest/http-message-interfaces/response-interfaces";
 import {GetStoreTypesRepo} from "../../../src/rest/repositories/get-store-types-repo";
 import {GetAllGraphIdsRepo} from "../../../src/rest/repositories/gaffer/get-all-graph-ids-repo";
 import {act} from "@testing-library/react";
@@ -366,7 +366,7 @@ function mockGetAllGraphsThrowsError(f: () => void): void {
     }));
 }
 
-async function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypesResponse) {
+async function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypes) {
     // @ts-ignore
     GetStoreTypesRepo.mockImplementationOnce(() => ({
         get: () =>

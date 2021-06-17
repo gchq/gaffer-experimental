@@ -169,14 +169,43 @@ app.get("/storetypes", (req, res) => {
         jwt.verify(req.get("Authorization"), jwtSecret, () => {
             res.status(200).send({
                 storeTypes: [
-                    "accumulo",
-                    "mapStore",
-                    "proxy",
-                    "proxyNoContextRoot"
-                ],
-                federatedStoreTypes: [
-                    "federated"
-                ]
+                    {
+                      name: "accumuloSmall",
+                      parameters: [
+                        "schema"
+                      ]
+                    },
+                    {
+                        name: "accumulo",
+                        parameters: [
+                          "schema"
+                        ]
+                      },
+                      {
+                        name: "proxy",
+                        parameters: [
+                          "schema"
+                        ]
+                      },
+                      {
+                        name: "mapStore",
+                        parameters: [
+                          "schema"
+                        ]
+                      },
+                    {
+                      name: "accumuloBig",
+                      parameters: [
+                        "schema"
+                      ]
+                    },
+                    {
+                      name: "federated",
+                      parameters: [
+                        "proxies"
+                      ]
+                    }
+                  ]
             });
         });
     } catch (e) {

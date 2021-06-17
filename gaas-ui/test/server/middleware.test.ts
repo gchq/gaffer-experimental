@@ -212,14 +212,43 @@ describe("Storetypes", () => {
                 expect(response.statusCode).toBe(200);
                 expect(response.body).toStrictEqual({
                     storeTypes: [
-                        "accumulo",
-                        "mapStore",
-                        "proxy",
-                        "proxyNoContextRoot"
-                    ],
-                    federatedStoreTypes: [
-                        "federated"
-                    ]
+                        {
+                          name: "accumuloSmall",
+                          parameters: [
+                            "schema"
+                          ]
+                        },
+                        {
+                            name: "accumulo",
+                            parameters: [
+                              "schema"
+                            ]
+                          },
+                          {
+                            name: "proxy",
+                            parameters: [
+                              "schema"
+                            ]
+                          },
+                          {
+                            name: "mapStore",
+                            parameters: [
+                              "schema"
+                            ]
+                          },
+                        {
+                          name: "accumuloBig",
+                          parameters: [
+                            "schema"
+                          ]
+                        },
+                        {
+                          name: "federated",
+                          parameters: [
+                            "proxies"
+                          ]
+                        }
+                      ]
                 });
             });
     })
