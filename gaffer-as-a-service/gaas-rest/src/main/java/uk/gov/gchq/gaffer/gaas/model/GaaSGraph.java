@@ -26,10 +26,10 @@ public class GaaSGraph {
     private String url;
     private RestApiStatus status;
     private List<String> problems;
-    private String config;
+    private String configName;
 
-    public GaaSGraph config(final String config) {
-        this.config = config;
+    public GaaSGraph configName(final String config) {
+        this.configName = config;
         return this;
     }
 
@@ -80,7 +80,7 @@ public class GaaSGraph {
         return problems;
     }
 
-    public String getConfig() { return config; }
+    public String getConfigName() { return configName; }
 
     @Override
     public String toString() {
@@ -88,7 +88,7 @@ public class GaaSGraph {
                 "graphId='" + graphId + '\'' +
                 ", description='" + description + '\'' +
                 ", url='" + url + '\'' +
-                ", config=" + config + '\'' +
+                ", config=" + configName + '\'' +
                 ", status=" + status +
                 ", problems=" + problems +
                 '}';
