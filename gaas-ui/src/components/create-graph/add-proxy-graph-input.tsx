@@ -7,7 +7,6 @@ import {GetGraphStatusRepo} from "../../rest/repositories/get-graph-status-repo"
 import {GetGraphDescriptionRepo} from "../../rest/repositories/get-graph-description-repo";
 import {GetGraphIdRepo} from "../../rest/repositories/get-graph-id-repo";
 
-
 interface IProps {
     hide: boolean;
     proxyURLValue: string;
@@ -52,6 +51,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         }
         return description;
     }
+
     async function getGraphId(): Promise<string> {
         let graphId: string;
         try {
@@ -62,14 +62,13 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
         return graphId;
     }
 
-    function isValidHttpUrl(string: string):boolean {
-        let url;
+    function isValidHttpUrl(string: string): boolean {
         try {
-            url = new URL(string);
+            const url = new URL(string);
+            return url.protocol === "http:" || url.protocol === "https:";
         } catch (e) {
             return false;
         }
-        return url.protocol === "http:" || url.protocol === "https:";
     }
 
     return (
