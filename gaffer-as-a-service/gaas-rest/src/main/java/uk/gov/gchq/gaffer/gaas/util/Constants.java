@@ -23,6 +23,7 @@ public final class Constants {
     public static final String[] DESCRIPTION_KEY = {"graph", "config", "description"};
     public static final String[] HOOKS_KEY = {"graph", "config", "hooks"};
     public static final String[] SCHEMA_FILE_KEY = {"graph", "schema", "schema.json"};
+    public static final String[] GAFFER_STORE_CLASS_KEY = {"graph", "storeProperties", "gaffer.store.class"};
     public static final String[] INGRESS_HOST_KEY = {"ingress", "host"};
     public static final String[] INGRESS_API_PATH_KEY = {"ingress", "pathPrefix", "api"};
     public static final String[] INGRESS_UI_PATH_KEY = {"ingress", "pathPrefix", "ui"};

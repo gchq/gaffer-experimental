@@ -1,2 +1,8 @@
+ingress:
+  host: ""
+  pathPrefix:
+    ui: /ui
+    api: /rest
+
 accumulo:
   enabled: true

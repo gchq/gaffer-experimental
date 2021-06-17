@@ -35,7 +35,6 @@ public class GaaSGraphConfigsLoaderTest {
     private static final String[] GAFFER_STORE_PROPERTIES_CLASS_NESTED_KEYS = {"graph", "storeProperties", "uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties"};
     private static final String[] GAFFER_SERIALISER_JSON_NESTED_KEYS = {"graph", "storeProperties", "uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules"};
 
-
     private static final String[] GAFFER_INVALID_STORE_CLASS_NESTED_KEYS = {"graph", "invalidStoreProperties", "gaffer.store.class"};
     private static final String[] GAFFER_INVALID_STORE_JOB_TRACKER_ENABLED_NESTED_KEYS = {"graph", "invalidStoreProperties", "gaffer.store.job.tracker.enabled"};
     private static final String[] GAFFER_INVALID_STORE_CACHE_SERVICE_CLASS_NESTED_KEYS = {"graph", "invalidStoreProperties", "gaffer.cache.service.class"};
@@ -45,6 +44,14 @@ public class GaaSGraphConfigsLoaderTest {
 
     @Autowired
     private GaaSGraphConfigsLoader loader;
+
+    @Test
+    public void getConfig_shouldReturnNewGafferSpec_whenFileIsEmpty() throws GaaSRestApiException {
+        final GafferSpec actual = loader.getConfig("/invalidconfigs", "emptyConfig");
+
+        final GafferSpec expected = new GafferSpec();
+        assertEquals(expected, actual);
+    }
 
     @Test
     public void getConfig_shouldReturnConfigAsYamlTreeMap_whenFileNameExists() throws GaaSRestApiException {
@@ -66,7 +73,6 @@ public class GaaSGraphConfigsLoaderTest {
 
     @Test
     public void listConfigSpecs_shouldReturnProxiesConfigSpec_whenStorePropStoreClassIsFederatedStore() throws GaaSRestApiException {
-
         final Map<String, GafferSpec> specs = loader.listConfigSpecs("/testconfigs");
 
         final HashMap<String, GafferSpec> expected = new HashMap();
@@ -83,7 +89,6 @@ public class GaaSGraphConfigsLoaderTest {
         gafferSpecFederatedStore.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", GAFFER_SERIALISER_JSON_NESTED_KEYS);
         expected.put("federated", gafferSpecFederatedStore);
 
-
         final GafferSpec gafferSpecAccumulo = new GafferSpec();
         gafferSpecAccumulo.putNestedObject(true, "accumulo", "enabled");
         expected.put("accumulo", gafferSpecAccumulo);
@@ -93,7 +98,6 @@ public class GaaSGraphConfigsLoaderTest {
         gafferSpecMapStore.putNestedObject(true, GAFFER_STORE_JOB_TRACKER_ENABLED_NESTED_KEYS);
         gafferSpecMapStore.putNestedObject("uk.gov.gchq.gaffer.cache.impl.HashMapCacheService", GAFFER_CACHE_SERVICE_CLASS_NESTED_KEYS);
         expected.put("mapStore", gafferSpecMapStore);
-
 
         final GafferSpec gafferSpecNoContextProxyStore = new GafferSpec();
         gafferSpecNoContextProxyStore.putNestedObject("uk.gov.gchq.gaffer.proxystore.ProxyStore", GAFFER_STORE_CLASS_NESTED_KEYS);
@@ -117,11 +121,9 @@ public class GaaSGraphConfigsLoaderTest {
         gafferSpec.putNestedObject("uk.gov.gchq.gaffer.mapstore.MapStore", GAFFER_INVALID_STORE_CLASS_NESTED_KEYS);
         gafferSpec.putNestedObject(true, GAFFER_INVALID_STORE_JOB_TRACKER_ENABLED_NESTED_KEYS);
         gafferSpec.putNestedObject("uk.gov.gchq.gaffer.cache.impl.HashMapCacheService", GAFFER_INVALID_STORE_CACHE_SERVICE_CLASS_NESTED_KEYS);
-
         expected.put("invalidConfig", gafferSpec);
 
-
-        expected.put("noGraphKey", null);
+        expected.put("emptyConfig", new GafferSpec());
         assertEquals(expected, specs);
     }
 }

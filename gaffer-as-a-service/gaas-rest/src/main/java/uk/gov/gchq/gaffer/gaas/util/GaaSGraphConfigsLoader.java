@@ -47,7 +47,10 @@ public class GaaSGraphConfigsLoader {
             for (final Resource resource : gafferConfigYamlResources) {
 
                 final String configFileName = resource.getFilename().split("\\.", 2)[0];
-                final GafferSpec gaasGraphConfigYaml = yaml.loadAs(resource.getInputStream(), GafferSpec.class);
+                GafferSpec gaasGraphConfigYaml = yaml.loadAs(resource.getInputStream(), GafferSpec.class);
+                if (gaasGraphConfigYaml == null) {
+                    gaasGraphConfigYaml = new GafferSpec();
+                }
                 configSpecs.put(configFileName, gaasGraphConfigYaml);
             }
             return configSpecs;
@@ -62,7 +65,11 @@ public class GaaSGraphConfigsLoader {
             final Resource[] resources = loadResources("classpath*:" + configDirectory + "/" + configFileName + ".yaml");
 
             for (final Resource resource : resources) {
-                return yaml.loadAs(resource.getInputStream(), GafferSpec.class);
+                final GafferSpec gafferSpec = yaml.loadAs(resource.getInputStream(), GafferSpec.class);
+                if (gafferSpec == null) {
+                    return new GafferSpec();
+                }
+                return gafferSpec;
             }
             throw new GaaSRestApiException("GaaS Graph Config Not Found", "Available config names are: " + getStoreTypeNames(), 404);
 
@@ -70,7 +77,6 @@ public class GaaSGraphConfigsLoader {
             throw new GaaSRestApiException(e.getMessage(), 500, e);
         }
     }
-
 
     private Resource[] loadResources(final String pattern) throws IOException {
         return ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources(pattern);

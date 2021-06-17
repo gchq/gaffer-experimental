@@ -19,34 +19,35 @@ package uk.gov.gchq.gaffer.gaas.services;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
+import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
+import static uk.gov.gchq.gaffer.gaas.factories.GafferFactory.from;
 
 @Service
 public class CreateGraphService {
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
+    private MeterRegistry meterRegistry;
+    @Autowired
+    private GaaSGraphConfigsLoader loader;
     @Autowired
     private CRDClient crdClient;
-
-    @Autowired
-    private MeterRegistry meterRegistry;
 
     @Timed(value = "createGraph.time", description = "Time taken to create graph", percentiles = 0)
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
         meterRegistry.counter("CreateGraphService", "action", "create").increment();
-        crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
+
+        final GafferSpec config = loader.getConfig("/config", gaaSCreateRequestBodyInput.getConfigName());
+
+        crdClient.createCRD(overrideConfig(config, gaaSCreateRequestBodyInput));
     }
 
-    private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) throws GaaSRestApiException {
-        return from(graph);
+    private Gaffer overrideConfig(final GafferSpec gafferSpecConfig, final GaaSCreateRequestBody overrides) throws GaaSRestApiException {
+        return from(gafferSpecConfig, overrides);
     }
-
 }
