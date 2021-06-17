@@ -78,7 +78,6 @@ public final class GafferFactory {
 
         // Mandatory Ingress values
         config.putNestedObject(overrides.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
-        // TODO: test for these
         config.putNestedObject("/rest", INGRESS_API_PATH_KEY);
         config.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
         return config;
