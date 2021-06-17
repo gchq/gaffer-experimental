@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
+import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
@@ -23,6 +24,7 @@ import uk.gov.gchq.gaffer.common.model.v1.GafferStatus;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,7 +159,12 @@ public class GaaSGraphsFactoryTest {
     private Map<String, Object> makeGafferList(final GafferSpec graphSpec) {
         final Map<String, Object> gafferList = new LinkedHashMap<>();
         final List<Gaffer> gaffers = new ArrayList<>();
-        gaffers.add(new Gaffer().spec(graphSpec));
+        HashMap<String, String> labels = new HashMap<>();
+        labels.put("config", "mapStore");
+        final V1ObjectMeta metadata = new V1ObjectMeta()
+                .name("test")
+                .labels(labels);
+        gaffers.add(new Gaffer().spec(graphSpec).metaData(metadata));
         gafferList.put("items", gaffers);
         return gafferList;
     }
@@ -165,7 +172,12 @@ public class GaaSGraphsFactoryTest {
     private Map<String, Object> makeGafferList(final GafferSpec graphSpec, final GafferStatus gafferStatus) {
         final Map<String, Object> gafferList = new LinkedHashMap<>();
         final List<Gaffer> gaffers = new ArrayList<>();
-        gaffers.add(new Gaffer().spec(graphSpec).status(gafferStatus));
+        HashMap<String, String> labels = new HashMap<>();
+        labels.put("config", "mapStore");
+        final V1ObjectMeta metadata = new V1ObjectMeta()
+                .name("test")
+                .labels(labels);
+        gaffers.add(new Gaffer().spec(graphSpec).status(gafferStatus).metaData(metadata));
         gafferList.put("items", gaffers);
         return gafferList;
     }
