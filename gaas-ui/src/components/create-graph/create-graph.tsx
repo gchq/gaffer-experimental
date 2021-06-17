@@ -32,9 +32,8 @@ import SchemaInput from "./schema-inputs";
 import StoreTypeSelect from "./storetype";
 import AddProxyGraphInput from "./add-proxy-graph-input";
 import ProxyGraphsTable from "./proxy-graphs-table";
-import {GetStoreTypesRepo} from "../../rest/repositories/get-store-types-repo";
+import {GetStoreTypesRepo, IStoreTypes} from "../../rest/repositories/get-store-types-repo";
 import {CreateFederatedGraphRepo} from "../../rest/repositories/create-federated-graph-repo";
-import { IStoreTypes } from "../../rest/http-message-interfaces/response-interfaces";
 
 interface IState {
     graphId: string;

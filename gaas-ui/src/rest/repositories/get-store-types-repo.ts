@@ -1,6 +1,11 @@
-import {IApiResponse, RestClient} from "../clients/rest-client";
+import { IApiResponse, RestClient } from "../clients/rest-client";
 import { Config } from "../config";
-import {IStore, IStoreTypes, IStoreTypesResponse} from "../http-message-interfaces/response-interfaces";
+import { IStoreTypesResponse } from "../http-message-interfaces/response-interfaces";
+
+export interface IStoreTypes {
+    storeTypes: string[];
+    federatedStoreTypes: string[];
+}
 
 export class GetStoreTypesRepo {
 
@@ -13,13 +18,15 @@ export class GetStoreTypesRepo {
 
         const federatedStores: string[] = [];
         const otherStores: string[] = [];
-        response.data.storeTypes.forEach((store: IStore) => {
+
+        response.data.storeTypes.forEach((store) => {
             if(store.parameters.includes("proxies")) {
                 federatedStores.push(store.name);
             } else {
                 otherStores.push(store.name);
             }
-        })
+        });
+
         return {storeTypes: otherStores, federatedStoreTypes: federatedStores}
     }
 }

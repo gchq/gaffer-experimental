@@ -8,7 +8,6 @@ import {
     CardContent,
     Paper,
 } from "@material-ui/core";
-
 import {Graph} from "../../domain/graph";
 import {GetAllGraphsRepo} from "../../rest/repositories/get-all-graphs-repo";
 import {DeleteGraphRepo} from "../../rest/repositories/delete-graph-repo";
@@ -17,7 +16,6 @@ import {AlertType, NotificationAlert} from "../alerts/notification-alert";
 import {Copyright} from "../copyright/copyright";
 import Gauge from "./gauge";
 import {ViewGraphsTable} from "./view-graphs-table";
-
 
 interface IState {
     graphs: Graph[];
@@ -69,7 +67,8 @@ export default class ViewGraph extends React.Component<{}, IState> {
             this.setState({errorMessage: `Failed to delete graph "${graphName}". ${e.toString()}`});
         }
     }
-    private storetypesData(): { key: string, data: number}[] {
+
+    private convertStoreTypesToGaugeData(): { key: string, data: number}[] {
         const data: { key: string; data: number; }[] =[];
         this.state.federatedStores.forEach((storetype: string) => {
             data.push(
@@ -89,7 +88,6 @@ export default class ViewGraph extends React.Component<{}, IState> {
         })
         return data.filter((item) => item.data !== 0);
     }
-
 
     public render() {
         const {graphs, errorMessage} = this.state;
@@ -145,7 +143,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                     </Typography>
                                     <Gauge
                                         maxValue={graphs.length}
-                                        data={this.storetypesData()}
+                                        data={this.convertStoreTypesToGaugeData()}
                                         colours={[
                                             "#02bfe7",
                                             "#02bfe7",

@@ -12,8 +12,7 @@ import {GetGraphDescriptionRepo} from "../../../src/rest/repositories/get-graph-
 import {GetGraphIdRepo} from "../../../src/rest/repositories/get-graph-id-repo";
 import {GetGraphStatusRepo} from "../../../src/rest/repositories/get-graph-status-repo";
 import {RestApiError} from "../../../src/rest/RestApiError";
-import {GetStoreTypesRepo} from "../../../src/rest/repositories/get-store-types-repo";
-import {IStoreTypes} from "../../../src/rest/http-message-interfaces/response-interfaces";
+import {GetStoreTypesRepo, IStoreTypes} from "../../../src/rest/repositories/get-store-types-repo";
 import {CreateFederatedGraphRepo} from "../../../src/rest/repositories/create-federated-graph-repo";
 import {GraphType} from "../../../src/domain/graph-type";
 
@@ -151,6 +150,7 @@ describe("CreateGraph UI component", () => {
             component.update();
             component.update();
             component.update();
+
             expect(component.find("p#storetype-form-helper").text()).toBe("No storetypes available");
         });
     });
@@ -194,6 +194,7 @@ describe("CreateGraph UI component", () => {
             mockGetGraphStatus("DOWN");
             mockGetGraphStatusRepoToThrowError();
             await inputProxyURL("http://test.graph.url");
+
             await clickAddProxy();
 
             const graphTable = wrapper.find("table");
@@ -404,6 +405,7 @@ describe("CreateGraph UI component", () => {
             inputDescription("test");
             inputElements(elements);
             inputTypes(types);
+
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
                 true
             );
@@ -412,6 +414,7 @@ describe("CreateGraph UI component", () => {
             inputGraphId("test");
             inputElements(elements);
             inputTypes(types);
+
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
                 true
             );
@@ -421,7 +424,9 @@ describe("CreateGraph UI component", () => {
             inputDescription("test");
             inputElements(elements);
             inputTypes(types);
+
             selectStoreType(wrapper, "mapStore");
+
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
                 false
             );
@@ -431,7 +436,9 @@ describe("CreateGraph UI component", () => {
             inputDescription("test");
             inputElements(elements);
             inputTypes(types);
+
             selectStoreType(wrapper, "accumulo");
+
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
                 false
             );
@@ -468,6 +475,7 @@ describe("CreateGraph UI component", () => {
             inputGraphId("G");
             inputDescription("test");
             selectStoreType(wrapper, "mapStore");
+
             inputElements({invalid: "json"});
             inputTypes(types);
 
@@ -479,9 +487,9 @@ describe("CreateGraph UI component", () => {
             inputGraphId("G");
             inputDescription("test");
             selectStoreType(wrapper, "mapStore");
+
             inputElements(elements);
             inputTypes({invalid: "json"});
-
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
                 true
@@ -504,7 +512,6 @@ describe("CreateGraph UI component", () => {
             selectStoreType(wrapper, "accumulo");
             inputElements(elements);
             inputTypes({invalid: "json"});
-
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
                 true

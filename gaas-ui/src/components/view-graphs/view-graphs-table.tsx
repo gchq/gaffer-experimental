@@ -51,6 +51,7 @@ const useStyles = makeStyles({
         minWidth: 650,
     },
 });
+
 export function ViewGraphsTable(props: IProps) {
     const classes = useStyles();
 
@@ -182,4 +183,3 @@ function MainGraphTableRow(props: IGraphRow) {
         </React.Fragment>
     );
 }
-

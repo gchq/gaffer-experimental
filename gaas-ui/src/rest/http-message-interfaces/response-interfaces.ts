@@ -16,14 +16,9 @@ export interface IGraphStatusResponse {
 
 export interface IGetAllGraphIdsResponse extends Array<string> {}
 
-export interface IStoreTypes {
-    storeTypes: string[];
-    federatedStoreTypes: string[];
-}
 export interface IStoreTypesResponse {
-    storeTypes: IStore[];
-}
-export interface IStore {
-    name: string;
-    parameters: string[];
+    storeTypes: Array<{
+        name: string;
+        parameters: string[];
+    }>;
 }
