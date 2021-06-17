@@ -16,11 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
@@ -34,8 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 @UnitTest
@@ -53,21 +47,9 @@ class GetGafferServiceTest {
     private static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
     private static final List<String>  TEST_GRAPH_PROBLEMS = new ArrayList<String>(Arrays.asList("There is problem with this Graph"));
 
-    @MockBean
-    private Counter mockCounter;
-
-    @MockBean
-    private MeterRegistry meterRegistry;
-
-    @BeforeEach
-    void beforeEach() {
-       reset(mockCounter);
-    }
-
 
     @Test
     void testGetGraphs_whenGraphRequestIsNotEmpty() throws GaaSRestApiException {
-        when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
 
         final GaaSGraph graph = new GaaSGraph()
                 .graphId(TEST_GRAPH_ID)
@@ -93,7 +75,6 @@ class GetGafferServiceTest {
 
     @Test
     void testGetGraphs_whenGraphRequestIsEmpty() throws GaaSRestApiException {
-        when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final List<GaaSGraph> graphList = new ArrayList<>();
         Map<String, List<GaaSGraph>> graphs = new HashMap<>();
         graphs.put("graphs", graphList);
