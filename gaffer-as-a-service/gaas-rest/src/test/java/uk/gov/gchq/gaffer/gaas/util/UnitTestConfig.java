@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.utilities;
+package uk.gov.gchq.gaffer.gaas.util;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
@@ -29,10 +29,9 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-import uk.gov.gchq.gaffer.gaas.services.GetStoreTypesService;
-import uk.gov.gchq.gaffer.gaas.util.Properties;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
@@ -86,8 +85,8 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public GetStoreTypesService getStoreTypesService() {
-        return new GetStoreTypesService();
+    public GetGaaSGraphConfigsService getStoreTypesService() {
+        return new GetGaaSGraphConfigsService();
     }
 
     @Bean
@@ -109,4 +108,10 @@ public class UnitTestConfig {
     public AuthenticationManager authenticationManager() {
         return mock(AuthenticationManager.class);
     }
+
+    @Bean
+    public GaaSGraphConfigsLoader propertiesLoader() {
+        return new GaaSGraphConfigsLoader();
+    }
+
 }

@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.services;
 
 import io.micrometer.core.annotation.Timed;
-import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
@@ -32,12 +31,9 @@ public class GetGafferService {
     @Autowired
     private CRDClient crdClient;
 
-    @Autowired
-    private MeterRegistry meterRegistry;
 
     @Timed(value = "getAllGraphs.time", description = "Time taken to get all graphs", percentiles = 0)
     public Map<String, List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
-        meterRegistry.counter("GetGafferService", "action", "get").increment();
         return crdClient.listAllCRDs();
     }
 }
