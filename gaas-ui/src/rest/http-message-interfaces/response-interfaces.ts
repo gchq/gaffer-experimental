@@ -21,5 +21,9 @@ export interface IStoreTypes {
     federatedStoreTypes: string[];
 }
 export interface IStoreTypesResponse {
-    storeTypes: object[];
+    storeTypes: IStore[];
+}
+export interface IStore {
+    name: string;
+    parameters: string[];
 }

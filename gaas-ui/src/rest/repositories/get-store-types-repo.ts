@@ -1,8 +1,6 @@
-import { keys } from "../../../server/users";
-import StoreTypeSelect from "../../components/create-graph/storetype";
 import {IApiResponse, RestClient} from "../clients/rest-client";
 import { Config } from "../config";
-import {IStoreTypes, IStoreTypesResponse} from "../http-message-interfaces/response-interfaces";
+import {IStore, IStoreTypes, IStoreTypesResponse} from "../http-message-interfaces/response-interfaces";
 
 export class GetStoreTypesRepo {
 
@@ -13,15 +11,15 @@ export class GetStoreTypesRepo {
             .uri("/storetypes")
             .execute();
 
-        let federatedStores: string[];
-        let otherStores: string[];
-        response.data.storeTypes.forEach((storeType: Object )=>{
-            for(const value of Object.values(storeType)){
-                if(value[1] === "parameters" && value.includes("proxies")){
-                    federatedStores.push()
-                }
+        const federatedStores: string[] = [];
+        const otherStores: string[] = [];
+        response.data.storeTypes.forEach((store: IStore) => {
+            if(store.parameters.includes("proxies")) {
+                federatedStores.push(store.name);
+            } else {
+                otherStores.push(store.name);
             }
         })
-        return {storeTypes: [], federatedStoreTypes: []}  
+        return {storeTypes: otherStores, federatedStoreTypes: federatedStores}
     }
 }
