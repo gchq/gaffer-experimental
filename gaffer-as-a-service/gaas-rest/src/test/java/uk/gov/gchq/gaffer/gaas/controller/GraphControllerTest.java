@@ -28,9 +28,11 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import java.util.ArrayList;
@@ -65,15 +67,22 @@ public class GraphControllerTest extends AbstractTest {
     private DeleteGraphService deleteGraphService;
     @MockBean
     private GetNamespacesService getNamespacesService;
+    @MockBean
+    private GetGaaSGraphConfigsService getStoreTypesService;
 
     @Test
     public void getStoretypes_ReturnsStoretypesAsList_whenSuccessful() throws Exception {
+        final List<GaaSGraphConfigSpec> specs = Arrays.asList(
+                new GaaSGraphConfigSpec("accumulo", new String[] {"schema"}),
+                new GaaSGraphConfigSpec("federated", new String[] {"proxies"}));
+        when(getStoreTypesService.getGafferConfigSpecs()).thenReturn(specs);
 
         final MvcResult getStoretypeResponse = mvc.perform(get("/storetypes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
-        assertEquals("[{\"name\":\"accumulo\",\"parameters\":[\"schema\"]},{\"name\":\"proxy\",\"parameters\":[\"schema\"]},{\"name\":\"federated\",\"parameters\":[\"proxies\"]},{\"name\":\"mapStore\",\"parameters\":[\"schema\"]},{\"name\":\"proxyNoContextRoot\",\"parameters\":[\"schema\"]}]", getStoretypeResponse.getResponse().getContentAsString());
+
+        assertEquals("{\"storeTypes\":[{\"name\":\"accumulo\",\"parameters\":[\"schema\"]},{\"name\":\"federated\",\"parameters\":[\"proxies\"]}]}", getStoretypeResponse.getResponse().getContentAsString());
     }
 
     @Test

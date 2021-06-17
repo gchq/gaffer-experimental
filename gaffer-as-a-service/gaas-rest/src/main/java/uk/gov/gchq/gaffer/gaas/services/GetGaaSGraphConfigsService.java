@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public final class GetGaaSGraphConfigsService {
+public class GetGaaSGraphConfigsService {
 
     private static final String CLASSPATH_CONFIG_YAML = "/config";
     private static final String[] GAFFER_STORE_CLASS_NESTED_KEYS = {"graph", "storeProperties", "gaffer.store.class"};

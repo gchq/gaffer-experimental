@@ -40,6 +40,7 @@ import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,8 +84,9 @@ public class GraphController {
 
     @GetMapping(path = "/storetypes", produces = "application/json")
     public ResponseEntity<List<GaaSGraphConfigSpec>> getEndpoints() throws GaaSRestApiException {
-        final List<GaaSGraphConfigSpec> response = getStoreTypesService.getGafferConfigSpecs();
-        return new ResponseEntity(response, HttpStatus.OK);
+        final Map<String, Object> body = new HashMap<>();
+        body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
+        return new ResponseEntity(body, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
