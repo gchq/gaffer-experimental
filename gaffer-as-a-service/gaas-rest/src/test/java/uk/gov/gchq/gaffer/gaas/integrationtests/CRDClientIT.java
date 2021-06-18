@@ -103,7 +103,6 @@ public class CRDClientIT {
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
         crdClient.createCRD(from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED)));
-        System.out.println(crdClient.listAllCRDs().toString());
         assertTrue(crdClient.listAllCRDs().toString().contains("testgraphid"));
     }
 
