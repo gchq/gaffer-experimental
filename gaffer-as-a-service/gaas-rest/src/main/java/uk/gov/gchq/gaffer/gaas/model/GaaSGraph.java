@@ -80,7 +80,9 @@ public class GaaSGraph {
         return problems;
     }
 
-    public String getConfigName() { return configName; }
+    public String getConfigName() {
+        return configName;
+    }
 
     @Override
     public String toString() {
