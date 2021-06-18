@@ -373,7 +373,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(gaaSCreateRequestBody)).andReturn();
 
         assertEquals(400, result.getResponse().getStatus());
-        final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"configName\\\" must be defined. Valid config names can be found at /storeTypes endpoint\"}";
+        final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"configName\\\" must be defined. Valid config names can be found at /storetypes endpoint\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
     }
 
