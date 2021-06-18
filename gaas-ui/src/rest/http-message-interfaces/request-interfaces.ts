@@ -9,11 +9,11 @@ export interface ICreateGraphRequestBody extends ICreateGraphInterface{
         elements: IElements;
         types: ITypesSchema;
     };
-    storeType: string
+    configName: string
 }
 export interface ICreateFederatedGraphRequestBody extends ICreateGraphInterface {
     proxyStores: Array<{graphId: string, url: string}>;
-    storeType: string;
+    configName: string;
 }
 export interface ICreateProxyGraphRequestBody extends ICreateGraphInterface{
     proxyContextRoot: string;

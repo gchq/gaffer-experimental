@@ -7,7 +7,7 @@ export class CreateStoreTypesGraphRepo {
     public async create(
         graphId: string,
         description: string,
-        storeType: string,
+        configName: string,
         config: ICreateGraphConfig,
     ): Promise<void> {
             if (config.schema === undefined) {
@@ -16,7 +16,7 @@ export class CreateStoreTypesGraphRepo {
             const httpRequestBody: ICreateGraphRequestBody = {
                 graphId: graphId,
                 description: description,
-                storeType: storeType,
+                configName: configName,
                 schema: config.schema,
             };
             await new RestClient().baseUrl(Config.REACT_APP_KAI_REST_API_HOST).post().requestBody(httpRequestBody).graphs().execute();

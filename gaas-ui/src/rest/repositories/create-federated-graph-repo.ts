@@ -7,7 +7,7 @@ export class CreateFederatedGraphRepo {
     public async create(
         graphId: string,
         description: string,
-        storeType: string,
+        configName: string,
         config: ICreateGraphConfig,
     ): Promise<void> {
         if (config.proxyStores === undefined) {
@@ -16,7 +16,7 @@ export class CreateFederatedGraphRepo {
         const httpRequestBody: ICreateFederatedGraphRequestBody = {
             graphId: graphId,
             description: description,
-            storeType: storeType,
+            configName: configName,
             proxyStores: config.proxyStores
         };
         await new RestClient().baseUrl(Config.REACT_APP_KAI_REST_API_HOST).post().requestBody(httpRequestBody).graphs().execute();
