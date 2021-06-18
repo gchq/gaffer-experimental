@@ -19,11 +19,14 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import java.util.HashMap;
 
 public final class GafferKubernetesObjectFactory {
 
     public static Gaffer from(final GaaSCreateRequestBody graph) {
-        final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId());
+        HashMap<String, String> labels = new HashMap<>();
+        labels.put("configName", graph.getConfigName());
+        final V1ObjectMeta metadata = new V1ObjectMeta().name(graph.getGraphId()).labels(labels);
 
         final GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject(graph.getGraphId(), "graph", "config", "graphId");

@@ -24,6 +24,7 @@ import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
@@ -57,7 +58,13 @@ public final class GafferFactory {
     public static Gaffer from(final GafferSpec gafferSpecConfig, final GaaSCreateRequestBody createGraphRequest) {
 
         // TODO: Validate only - and . special characters, see Kubernetes metadata regex
-        final V1ObjectMeta metadata = new V1ObjectMeta().name(createGraphRequest.getGraphId());
+
+        HashMap<String, String> labels = new HashMap<>();
+        labels.put("configName", createGraphRequest.getConfigName());
+
+        final V1ObjectMeta metadata = new V1ObjectMeta()
+                .name(createGraphRequest.getGraphId())
+                .labels(labels);
 
         return new Gaffer()
                 .apiVersion(GROUP + "/" + VERSION)
