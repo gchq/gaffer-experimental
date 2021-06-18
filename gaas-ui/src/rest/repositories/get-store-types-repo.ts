@@ -13,7 +13,7 @@ export class GetStoreTypesRepo {
         const response: IApiResponse<IStoreTypesResponse>= await new RestClient()
             .baseUrl(Config.REACT_APP_KAI_REST_API_HOST)
             .get()
-            .uri("/storetypes")
+            .storeTypes()
             .execute();
 
         const federatedStores: string[] = [];

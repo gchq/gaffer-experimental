@@ -21,7 +21,7 @@ export class GetAllGraphsRepo {
           jsonObject.description,
           jsonObject.url,
           jsonObject.status,
-          jsonObject.storeType,
+          jsonObject.configName,
           GraphType.GAAS_GRAPH
         )
     );
