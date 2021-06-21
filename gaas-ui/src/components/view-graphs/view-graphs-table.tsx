@@ -114,7 +114,7 @@ function MainGraphTableRow(props: IGraphRow) {
     const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>("");
 
     useEffect(() => {
-        if (federatedStores.includes(graph.getStoreType())) {
+        if (federatedStores.includes(graph.getConfigName())) {
             getAllGraphIds();
         }
     });
@@ -143,7 +143,7 @@ function MainGraphTableRow(props: IGraphRow) {
                     style={{
                         color: "white",
                         backgroundColor: "#5A7C81"
-                    }}> {graph.getStoreType().charAt(0).toUpperCase()}</Avatar></TableCell>
+                    }}> {graph.getConfigName().charAt(0).toUpperCase()}</Avatar></TableCell>
                 <TableCell aria-label={"graph-status"}>
                     <StatusChip status={graph.getStatus()}/></TableCell>
                 <TableCell aria-label={"graph-url"}><a href={graph.getUrl()} target="_blank"
@@ -170,7 +170,7 @@ function MainGraphTableRow(props: IGraphRow) {
                                         <TableCell component="th"
                                                    scope="row">Description: {graph.getDescription()}</TableCell>
                                     </TableRow>
-                                    {federatedStores.includes(graph.getStoreType()) &&
+                                    {federatedStores.includes(graph.getConfigName()) &&
                                     <TableRow id={"federated-graph-ids-" + index} aria-label={"federated-graph-ids"}>
                                         <TableCell component="th" scope="row">{allGraphIdsText}</TableCell>
                                     </TableRow>}

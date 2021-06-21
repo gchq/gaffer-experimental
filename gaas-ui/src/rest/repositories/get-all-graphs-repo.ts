@@ -14,8 +14,7 @@ export class GetAllGraphsRepo {
       .get()
       .graphs()
       .execute();
-
-    return response.data.map((jsonObject: IGraphByIdResponse) =>
+    return response.data.graphs.map((jsonObject: IGraphByIdResponse) =>
         new Graph(
           jsonObject.graphId,
           jsonObject.description,

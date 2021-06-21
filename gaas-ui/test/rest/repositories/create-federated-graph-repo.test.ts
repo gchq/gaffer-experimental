@@ -3,7 +3,6 @@ import axios from "axios";
 import {RestApiError} from "../../../src/rest/RestApiError";
 import {
     ICreateFederatedGraphRequestBody,
-    ICreateGraphRequestBody
 } from "../../../src/rest/http-message-interfaces/request-interfaces";
 import { CreateFederatedGraphRepo } from "../../../src/rest/repositories/create-federated-graph-repo";
 
@@ -17,7 +16,7 @@ describe("Create Graph Repo", () => {
                 proxyStores: [{graphId: "test-graph", url:"test.graph.url"}],
                 graphId: "fed-store",
                 description: "a description",
-                storeType: "federated"
+                configName: "federated"
             };
             mock.onPost("/graphs", request).reply(201);
 
@@ -28,7 +27,7 @@ describe("Create Graph Repo", () => {
     });
 
     describe("Null checks", ()=>{
-        it("Should throw an error when StoreType is Federated and proxyStores is undefined", async () => {
+        it("Should throw an error when configName is Federated and proxyStores is undefined", async () => {
             const config = {};
             await expect(repo.create("bad-request-graph", "a description", "federated", config)).rejects.toEqual(
                 new Error("Proxy Stores is undefined")
@@ -41,7 +40,7 @@ describe("Create Graph Repo", () => {
                 proxyStores: [{graphId: "test-graph", url: "test.graph.url"}],
                 graphId: "bad-request-graph",
                 description: "a description",
-                storeType: "federated",
+                configName: "federated",
             };
             mock.onPost("/graphs", request).reply(400);
 
@@ -55,7 +54,7 @@ describe("Create Graph Repo", () => {
                 proxyStores: [{graphId: "test-graph", url: "test.graph.url"}],
                 graphId: "forbidden-graph",
                 description: "a description",
-                storeType: "federated",
+                configName: "federated",
             };
             mock.onPost("/graphs", request).reply(403, { title: "Forbidden", detail: "Kubernetes access denied" });
 

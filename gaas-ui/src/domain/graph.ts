@@ -5,15 +5,15 @@ export class Graph {
     private readonly description: string;
     private readonly url: string;
     private readonly status: "UP" | "DOWN";
-    private readonly storeType: string;
+    private readonly configName: string;
     private readonly type: GraphType;
 
-    constructor(graphId: string, description: string, url: string, status: "UP" | "DOWN", storeType: string, type: GraphType) {
+    constructor(graphId: string, description: string, url: string, status: "UP" | "DOWN", configName: string, type: GraphType) {
         this.graphId = graphId;
         this.description = description;
         this.url = url;
         this.status = status;
-        this.storeType = storeType;
+        this.configName = configName;
         this.type = type;
     }
 
@@ -33,8 +33,8 @@ export class Graph {
         return this.status;
     }
 
-    public getStoreType(): string {
-        return this.storeType;
+    public getConfigName(): string {
+        return this.configName;
     }
 
     public getType(): GraphType {

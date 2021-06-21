@@ -3,7 +3,6 @@ import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import {RestApiError} from "../../../src/rest/RestApiError";
 import {
-    ICreateFederatedGraphRequestBody,
     ICreateGraphRequestBody
 } from "../../../src/rest/http-message-interfaces/request-interfaces";
 import {ElementsSchema} from "../../../src/domain/elements-schema";
@@ -22,7 +21,7 @@ describe("Create Graph Repo", () => {
                 schema: {elements: elements.getElements(), types: types.getTypes()},
                 graphId: "accumulo-graph",
                 description: "a description",
-                storeType: "accumulo",
+                configName: "accumulo",
             };
             mock.onPost("/graphs", request).reply(201);
 
@@ -36,7 +35,7 @@ describe("Create Graph Repo", () => {
                 schema: {elements: elements.getElements(), types: types.getTypes()},
                 graphId: "map-graph",
                 description: "a description",
-                storeType: "mapstore",
+                configName: "mapstore",
             };
             mock.onPost("/graphs", request).reply(201);
 
@@ -47,7 +46,7 @@ describe("Create Graph Repo", () => {
     });
 
     describe("Null checks", ()=>{
-        it("Should throw an error when StoreType is Mapstore or Accumulo and schema is undefined", async () => {
+        it("Should throw an error when configName is Mapstore or Accumulo and schema is undefined", async () => {
             const config = {};
             await expect(repo.create("bad-request-graph", "a description", "mapstore", config)).rejects.toEqual(
                 new Error("Schema is undefined")
@@ -61,7 +60,7 @@ describe("Create Graph Repo", () => {
                 schema: {elements: elements.getElements(), types: types.getTypes()},
                 graphId: "bad-request-graph",
                 description: "a description",
-                storeType: "mapstore",
+                configName: "mapstore",
             };
             mock.onPost("/graphs", request).reply(400);
 
@@ -75,7 +74,7 @@ describe("Create Graph Repo", () => {
                 schema: {elements: elements.getElements(), types: types.getTypes()},
                 graphId: "forbidden-graph",
                 description: "a description",
-                storeType: "mapstore",
+                configName: "mapstore",
             };
             mock.onPost("/graphs", request).reply(403, { title: "Forbidden", detail: "Kubernetes access denied" });
 
