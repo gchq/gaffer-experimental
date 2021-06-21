@@ -13,22 +13,23 @@ afterEach(() => mock.resetHandlers());
 
 describe("Get All Graphs Repo", () => {
     it("should return many Graphs when api returns many", async () => {
-        const apiResponse: IAllGraphsResponse = [
+        const apiResponse: IAllGraphsResponse = {
+            graphs:[
             {
                 graphId: "roadTraffic",
                 description: "DEPLOYED",
                 url: "roadTraffic URL",
-                storeType: "mapStore",
+                configName: "mapStore",
                 status: "UP"
             },
             {
                 graphId: "basicGraph",
                 description: "DELETION_QUEUED",
                 url: "basicGraph URL",
-                storeType: "mapStore",
+                configName: "mapStore",
                 status: "UP"
             },
-        ];
+        ]};
         mock.onGet("/graphs").reply(200, apiResponse);
 
         const actual: Graph[] = await repo.getAll();
@@ -41,15 +42,18 @@ describe("Get All Graphs Repo", () => {
     });
 
     it("should return one Graph when api returns one", async () => {
-        const apiResponse: IAllGraphsResponse = [
-            {
-                graphId: "streetTraffic",
-                description: "DELETION_QUEUED",
-                url: "streetTraffic URL",
-                storeType: "accumuloStore",
-                status: "UP"
-            },
-        ];
+        const apiResponse: IAllGraphsResponse = {
+            graphs:
+            [
+                {
+                    graphId: "streetTraffic",
+                    description: "DELETION_QUEUED",
+                    url: "streetTraffic URL",
+                    configName: "accumuloStore",
+                    status: "UP"
+                },
+    ]
+    };
         mock.onGet("/graphs").reply(200, apiResponse);
 
         const actual: Graph[] = await repo.getAll();

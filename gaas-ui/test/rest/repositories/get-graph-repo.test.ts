@@ -15,7 +15,7 @@ describe("Get Graph By Id Repo", () => {
             graphId: "graph-1",
             description: "DEPLOYED",
             url: "graph-1 URL",
-            storeType: "mapStore",
+            configName: "mapStore",
             status: "UP"
         };
         mock.onGet("/graphs/graph-1").reply(200, apiResponse);

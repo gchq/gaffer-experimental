@@ -74,7 +74,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
             data.push(
                 {
                     key: storetype.toUpperCase(),
-                    data: this.state.graphs.filter((graph) => graph.getStoreType() === storetype).length
+                    data: this.state.graphs.filter((graph) => graph.getConfigName() === storetype).length
                 }
             )
         })
@@ -82,7 +82,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
             data.push(
                 {
                     key: storetype.toUpperCase(),
-                    data: this.state.graphs.filter((graph) => graph.getStoreType() === storetype).length
+                    data: this.state.graphs.filter((graph) => graph.getConfigName() === storetype).length
                 }
             )
         })

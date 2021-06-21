@@ -14,14 +14,13 @@ export class GetAllGraphsRepo {
       .get()
       .graphs()
       .execute();
-
-    return response.data.map((jsonObject: IGraphByIdResponse) =>
+    return response.data.graphs.map((jsonObject: IGraphByIdResponse) =>
         new Graph(
           jsonObject.graphId,
           jsonObject.description,
           jsonObject.url,
           jsonObject.status,
-          jsonObject.storeType,
+          jsonObject.configName,
           GraphType.GAAS_GRAPH
         )
     );
