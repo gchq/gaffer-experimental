@@ -19,13 +19,12 @@ package uk.gov.gchq.gaffer.gaas.model;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 import java.util.Map;
 
 /**
  * <b>GaaS: Create Gaffer Request Body</b>
  */
-public class GaaSCreateRequestBody implements Serializable {
+public class GaaSCreateRequestBody {
 
     @NotNull(message = "Graph id should not be null")
     @NotBlank(message = "Graph id should not be null")
