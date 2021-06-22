@@ -18,6 +18,8 @@ package uk.gov.gchq.gaffer.gaas.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsOperation;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
@@ -28,6 +30,7 @@ import uk.gov.gchq.gaffer.gaas.factories.GafferFactory;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
+import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +41,13 @@ public class CreateFederatedStoreGraphService {
     private CRDClient crdClient;
 
     @Autowired
+    private GaaSGraphConfigsLoader loader;
+
+    @Autowired
     private GraphCommandExecutor graphCommandExecutor;
+
+    private static final String CLASSPATH_CONFIG_YAML = "/config";
+    private static final String[] GAFFER_STORE_CLASS_NESTED_KEYS = {"graph", "storeProperties", "gaffer.store.class"};
 
     public void createFederatedStore(final FederatedRequestBody request) throws GaaSRestApiException {
         if (request.getProxySubGraphs().isEmpty()) {
@@ -48,11 +57,15 @@ public class CreateFederatedStoreGraphService {
         validateProxyGraphURLs(request.getProxySubGraphs());
 
         // TODO #1: Get the GafferSpec config from GaaSGraphConfigsLoader by name
+        final GafferSpec config = loader.getConfig(CLASSPATH_CONFIG_YAML, request.getConfigName());
 
         // TODO #2: Validate if the Config returned is a Federated store one, else throw BadRequest error
+        if(!isFederatedStoreConfig(config)){
+            throw new GaaSRestApiException("Bad Request", "Graph is not a federated store", 400);
+        }
 
         // TODO #3: Pass config in to the GafferFactory, more tests around this
-        final GraphUrl url = crdClient.createCRD(GafferFactory.from(null, request));
+        final GraphUrl url = crdClient.createCRD(GafferFactory.from(config, request));
         addSubGraphsToFederatedStore(url, request);
     }
 
@@ -77,5 +90,10 @@ public class CreateFederatedStoreGraphService {
         } catch (final GraphOperationException e) {
             throw new GaaSRestApiException("Failed to Add Graph(s) to \"" + request.getGraphId() + "\"", e.getMessage(), 502);
         }
+    }
+
+    private boolean isFederatedStoreConfig(final GafferSpec gafferSpec) {
+        return gafferSpec != null
+                && FederatedStore.class.getName().equals(gafferSpec.getNestedObject(GAFFER_STORE_CLASS_NESTED_KEYS));
     }
 }

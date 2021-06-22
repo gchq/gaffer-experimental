@@ -421,7 +421,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createFedGraph_shouldReturnBadRequest_whenEmptyProxyStoresRequested() throws Exception {
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList());
+        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(), "federated");
 
         final MvcResult result = mvc.perform(post("/graphs/federated")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -438,7 +438,7 @@ public class GraphControllerTest extends AbstractTest {
         doThrow(new GraphOperationException("The request to proxygraph returned: 404 Not Found"))
                 .when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
+        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph), "federated");
 
         final MvcResult result = mvc.perform(post("/graphs/federated")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -455,7 +455,7 @@ public class GraphControllerTest extends AbstractTest {
         doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
         doThrow(new GaaSRestApiException("Kubernetes Error", "Invalid values", 400)).when(crdClient).createCRD(any(Gaffer.class));
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
+        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph), "federated");
 
         final MvcResult result = mvc.perform(post("/graphs/federated")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -474,7 +474,7 @@ public class GraphControllerTest extends AbstractTest {
         doThrow(new GraphOperationException("Graph: Internal Server Error, cause...")).when(graphCommandExecutor).execute(any(AddGraphsOperation.class));
 
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
+        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph), "federated");
 
         final MvcResult result = mvc.perform(post("/graphs/federated")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

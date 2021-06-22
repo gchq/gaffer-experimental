@@ -51,7 +51,7 @@ public class GraphCommandsIT {
 
         final GraphOperationException exception = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
-        assertEquals("", exception.getMessage());
+        assertEquals("Get Status request for 'notfoundroot' failed. Reason: Connection refused at http://localhost:8080/not-found-root/graph/status", exception.getMessage());
     }
 
     @Test
@@ -60,6 +60,6 @@ public class GraphCommandsIT {
 
         final GraphOperationException exception = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
-        assertEquals("'invalidhost' graph has invalid host. Reason: Connection refused at http://localhost:8082/rest/graph/status/rest", exception.getMessage());
+        assertEquals("Get Status request for 'invalidhost' failed. Reason: Connection refused at http://localhost:8082/rest/graph/status", exception.getMessage());
     }
 }

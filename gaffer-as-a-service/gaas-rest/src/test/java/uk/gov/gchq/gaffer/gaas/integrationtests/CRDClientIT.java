@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
@@ -38,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.GafferKubernetesObjectFactory.from;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
@@ -58,6 +61,10 @@ public class CRDClientIT {
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {
         final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED));
+        GafferSpec spec = gafferRequest.getSpec();
+        spec.putNestedObject("apps.my.k8s.cluster", INGRESS_HOST_KEY);
+        spec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
+
         assertDoesNotThrow(() -> crdClient.createCRD(gafferRequest));
     }
 
@@ -102,8 +109,11 @@ public class CRDClientIT {
 
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
-        crdClient.createCRD(from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED)));
-
+        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED));
+        GafferSpec spec = gafferRequest.getSpec();
+        spec.putNestedObject("apps.my.k8s.cluster", INGRESS_HOST_KEY);
+        spec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
+        crdClient.createCRD(gafferRequest);
         assertTrue(crdClient.listAllCRDs().toString().contains("testgraphid"));
     }
 
@@ -124,8 +134,12 @@ public class CRDClientIT {
 
     @Test
     public void deleteCRD_whenGraphDoesExist_doesNotThrowException() throws GaaSRestApiException {
-        final String existingGraph = "existing-graph";
-        crdClient.createCRD(from(new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED)));
+        final String existingGraph = "existing-graph-2";
+        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED));
+        GafferSpec spec = gafferRequest.getSpec();
+        spec.putNestedObject("apps.my.k8s.cluster", INGRESS_HOST_KEY);
+        spec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
+        crdClient.createCRD(gafferRequest);
         assertDoesNotThrow(() -> crdClient.deleteCRD(existingGraph));
     }
 
