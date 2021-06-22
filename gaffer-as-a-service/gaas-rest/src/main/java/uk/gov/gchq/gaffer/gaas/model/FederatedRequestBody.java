@@ -26,20 +26,21 @@ public class FederatedRequestBody {
 
     @JsonProperty("graphId")
     private String graphId;
-
     @JsonProperty("description")
     private String description;
-
     @JsonProperty("proxySubGraphs")
     private List<ProxySubGraph> proxySubGraphs;
+    @JsonProperty("configName")
+    private String configName;
 
     public FederatedRequestBody() {
     }
 
-    public FederatedRequestBody(final String graphId, final String graphDescription, final List<ProxySubGraph> proxySubGraphs) {
+    public FederatedRequestBody(final String graphId, final String graphDescription, final List<ProxySubGraph> proxySubGraphs, final String configName) {
         this.graphId = graphId;
         this.description = graphDescription;
         this.proxySubGraphs = proxySubGraphs;
+        this.configName = configName;
     }
 
     public String getGraphId() {
@@ -52,5 +53,9 @@ public class FederatedRequestBody {
 
     public List<ProxySubGraph> getProxySubGraphs() {
         return proxySubGraphs;
+    }
+
+    public String getConfigName() {
+        return configName;
     }
 }

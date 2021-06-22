@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.utilities;
+package uk.gov.gchq.gaffer.gaas.util;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
@@ -24,7 +24,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.reactive.function.client.WebClient;
 import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
@@ -32,10 +31,9 @@ import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-import uk.gov.gchq.gaffer.gaas.services.GetStoreTypesService;
-import uk.gov.gchq.gaffer.gaas.util.Properties;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
@@ -74,11 +72,6 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public WebClient.Builder webClientBuilder() {
-        return WebClient.builder();
-    }
-
-    @Bean
     public CreateGraphService createGraphService() {
         return new CreateGraphService();
     }
@@ -99,8 +92,8 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public GetStoreTypesService getStoreTypesService() {
-        return new GetStoreTypesService();
+    public GetGaaSGraphConfigsService getStoreTypesService() {
+        return new GetGaaSGraphConfigsService();
     }
 
     @Bean
@@ -126,5 +119,10 @@ public class UnitTestConfig {
     @Bean
     public GraphCommandExecutor graphCommandExecutor() {
         return new GraphCommandExecutor();
+    }
+
+    @Bean
+    public GaaSGraphConfigsLoader propertiesLoader() {
+        return new GaaSGraphConfigsLoader();
     }
 }

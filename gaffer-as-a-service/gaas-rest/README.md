@@ -13,7 +13,7 @@ mvn clean install -DbuildType=dockerBuild -DimageName= -DuserName= -DcredHelper=
 
 
 # To build docker image and push to docker repository
-mvn clean install -DbuildType=build -DimageName= -DuserName= -DcredHelper=
+mvn clean install -DbuildType=build -DimageName=[IMAGE_NAME] -DuserName=[YOUR_DOCKER_USERNAME] -DcredHelper=
 
 
 ## Swagger UI

@@ -24,13 +24,13 @@ import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
+import uk.gov.gchq.gaffer.gaas.factories.GafferFactory;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import java.util.ArrayList;
 import java.util.List;
-import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
 
 @Service
 public class CreateFederatedStoreGraphService {
@@ -47,7 +47,7 @@ public class CreateFederatedStoreGraphService {
         }
 
         validateProxyGraphURLs(request.getProxySubGraphs());
-        final GraphUrl url = crdClient.createCRD(from(new GaaSCreateRequestBody(request.getGraphId(), request.getDescription(), "federatedStore")));
+        final GraphUrl url = crdClient.createCRD(GafferFactory.from(new GaaSCreateRequestBody(request.getGraphId(), request.getDescription(), "federatedStore")));
         addSubGraphsToFederatedStore(url, request);
     }
 

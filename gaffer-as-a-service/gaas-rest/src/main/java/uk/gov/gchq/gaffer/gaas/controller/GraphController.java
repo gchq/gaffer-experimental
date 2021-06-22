@@ -33,15 +33,16 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-import uk.gov.gchq.gaffer.gaas.services.GetStoreTypesService;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +66,7 @@ public class GraphController {
     @Autowired
     private GetNamespacesService getNamespacesService;
     @Autowired
-    private GetStoreTypesService getStoreTypesService;
+    private GetGaaSGraphConfigsService getStoreTypesService;
 
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
@@ -92,9 +93,10 @@ public class GraphController {
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
-    public ResponseEntity<StoreTypesEndpointResponse> getEndpoints() {
-        final StoreTypesEndpointResponse response = getStoreTypesService.getStoreTypes();
-        return new ResponseEntity(response, HttpStatus.OK);
+    public ResponseEntity<List<GaaSGraphConfigSpec>> getEndpoints() throws GaaSRestApiException {
+        final Map<String, Object> body = new HashMap<>();
+        body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
+        return new ResponseEntity(body, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
