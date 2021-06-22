@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * <b>GaaS: Create Gaffer Request Body</b>
  */
-public class GaaSCreateRequestBody {
+public class GaaSCreateRequestBody implements CreateRequestBody {
 
     @NotNull(message = "Graph id should not be null")
     @NotBlank(message = "Graph id should not be null")
@@ -46,20 +46,23 @@ public class GaaSCreateRequestBody {
         this.schema = schema;
     }
 
+    @Override
     public String getGraphId() {
         return graphId;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public Map<String, Object> getSchema() {
         return schema;
     }
 
+    @Override
     public String getConfigName() {
         return configName;
     }
-
 }

@@ -18,11 +18,12 @@ package uk.gov.gchq.gaffer.gaas.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Request Body for Creating Federated Store Gaffers
  */
-public class FederatedRequestBody {
+public class FederatedRequestBody implements CreateRequestBody {
 
     @JsonProperty("graphId")
     private String graphId;
@@ -43,19 +44,27 @@ public class FederatedRequestBody {
         this.configName = configName;
     }
 
+    @Override
     public String getGraphId() {
         return graphId;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
-    public List<ProxySubGraph> getProxySubGraphs() {
-        return proxySubGraphs;
+    @Override
+    public Map<String, Object> getSchema() {
+        return null;
     }
 
+    @Override
     public String getConfigName() {
         return configName;
+    }
+
+    public List<ProxySubGraph> getProxySubGraphs() {
+        return proxySubGraphs;
     }
 }
