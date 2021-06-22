@@ -60,7 +60,7 @@ public class CreateFederatedStoreGraphService {
         final GafferSpec config = loader.getConfig(CLASSPATH_CONFIG_YAML, request.getConfigName());
 
         // TODO #2: Validate if the Config returned is a Federated store one, else throw BadRequest error
-        if(!isFederatedStoreConfig(config)){
+        if (!isFederatedStoreConfig(config)) {
             throw new GaaSRestApiException("Bad Request", "Graph is not a federated store", 400);
         }
 
