@@ -18,6 +18,7 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,7 +75,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
         assertEquals(400, result.getStatus());
     }
 
-    @Test
+    @AfterAll
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
         final String group = "gchq.gov.uk"; // String | the custom resource's group
