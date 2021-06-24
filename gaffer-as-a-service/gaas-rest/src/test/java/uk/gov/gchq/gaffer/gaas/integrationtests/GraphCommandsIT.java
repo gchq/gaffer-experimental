@@ -23,7 +23,7 @@ import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class GraphCommandsIT {
 
     private final GraphUrl validFederatedStoreURL = new GraphUrl("localhost:8080", "/rest/v2");
-    private final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("validgraph", "graph-kubernetes.cluster.cloud", "/rest"));
+    private final List<ProxySubGraph> subGraphs = Collections.singletonList(new ProxySubGraph("validgraph", "graph-kubernetes.cluster.cloud", "/rest"));
 
     @Test
     public void addGraphs_shouldNotThrowAnything_whenSuccessfullyAddsGraph() {
@@ -51,7 +51,7 @@ public class GraphCommandsIT {
 
         final GraphOperationException exception = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
-        assertEquals("Get Status request for 'notfoundroot' returned: 404 Not Found at http://localhost:8080/not-found-root/graph/status", exception.getMessage());
+        assertEquals("Get Status request for 'notfoundroot' failed. Reason: Connection refused at http://localhost:8080/not-found-root/graph/status", exception.getMessage());
     }
 
     @Test
