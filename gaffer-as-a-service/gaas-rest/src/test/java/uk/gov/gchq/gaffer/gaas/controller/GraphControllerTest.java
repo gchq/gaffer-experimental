@@ -22,23 +22,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
-import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsOperation;
-import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
-import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
-import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
+import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
@@ -46,6 +40,7 @@ import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,9 +68,7 @@ public class GraphControllerTest extends AbstractTest {
     @MockBean
     private CreateGraphService createGraphService;
     @MockBean
-    private GraphCommandExecutor graphCommandExecutor;
-    @MockBean
-    private CRDClient crdClient;
+    private CreateFederatedStoreGraphService createFederatedStoreGraphService;
     @MockBean
     private DeleteGraphService deleteGraphService;
     @MockBean
@@ -423,7 +416,7 @@ public class GraphControllerTest extends AbstractTest {
     public void createFedGraph_shouldReturnBadRequest_whenEmptyProxyStoresRequested() throws Exception {
         final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(), "federated");
 
-        final MvcResult result = mvc.perform(post("/graphs/federated")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(mapToJson(request)))
@@ -434,13 +427,13 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void createFedGraph_shouldReturnBadRequest_whenProxyStoreUrlIsInvalid() throws Exception {
-        doThrow(new GraphOperationException("The request to proxygraph returned: 404 Not Found"))
-                .when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
+    public void createFedGraph_shouldReturnBadRequest_whenServiceThrows404GaasException() throws Exception {
+        doThrow(new GaaSRestApiException("Not Found", "Config not found", 404))
+                .when(createFederatedStoreGraphService).createFederatedStore(any(FederatedRequestBody.class));
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
         final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph), "federated");
 
-        final MvcResult result = mvc.perform(post("/graphs/federated")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(mapToJson(request)))
@@ -451,39 +444,18 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void createFedGraph_shouldReturnBadRequest_whenKubernetesClientReturnsErrorResponse() throws Exception {
-        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
-        doThrow(new GaaSRestApiException("Kubernetes Error", "Invalid values", 400)).when(crdClient).createCRD(any(Gaffer.class));
+    public void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestIsFedStore() throws Exception {
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph), "federated");
+        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Collections.singletonList(subGraph), "federated");
 
-        final MvcResult result = mvc.perform(post("/graphs/federated")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(mapToJson(request)))
                 .andReturn();
 
-        assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"title\":\"Kubernetes Error\",\"detail\":\"Invalid values\"}", result.getResponse().getContentAsString());
-    }
-
-    @Test
-    public void createFedGraph_shouldReturn502BadGateway_whenFedStoreUnableToAddGraphs() throws Exception {
-        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
-        when(crdClient.createCRD(any(Gaffer.class))).thenReturn(new GraphUrl("localhost:8080", "/rest"));
-        doThrow(new GraphOperationException("Graph: Internal Server Error, cause...")).when(graphCommandExecutor).execute(any(AddGraphsOperation.class));
-
-        final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph), "federated");
-
-        final MvcResult result = mvc.perform(post("/graphs/federated")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token)
-                .content(mapToJson(request)))
-                .andReturn();
-
-        assertEquals(502, result.getResponse().getStatus());
-        assertEquals("{\"title\":\"Failed to Add Graph(s) to \\\"fedgraph\\\"\",\"detail\":\"Graph: Internal Server Error, cause...\"}", result.getResponse().getContentAsString());
+        verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(FederatedRequestBody.class));
+        assertEquals(201, result.getResponse().getStatus());
     }
 
     private LinkedHashMap<String, Object> getSchema() {

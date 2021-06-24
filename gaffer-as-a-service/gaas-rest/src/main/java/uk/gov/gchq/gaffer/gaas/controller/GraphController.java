@@ -75,14 +75,16 @@ public class GraphController {
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> addGraph(@Valid @RequestBody final GaaSCreateRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
-        createGraphService.createGraph(gaaSCreateRequestBody);
-        return new ResponseEntity(HttpStatus.CREATED);
-    }
-
-    @PostMapping(path = "/graphs/federated", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> createGraph(@Valid @RequestBody final FederatedRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
-        createFederatedStoreGraphService.createFederatedStore(gaaSCreateRequestBody);
+    public ResponseEntity<?> createGraph(@Valid @RequestBody final Object requestBody) throws GaaSRestApiException {
+        if (((Map) requestBody).containsKey("schema")) {
+            createGraphService.createGraph((GaaSCreateRequestBody) requestBody);
+        }
+        else if (((Map) requestBody).containsKey("proxySubGraphs")) {
+            createFederatedStoreGraphService.createFederatedStore((FederatedRequestBody) requestBody);
+        }
+        else {
+            // TODO: throw or return bad request error, as schema or proxies missing in request
+        }
         return new ResponseEntity(HttpStatus.CREATED);
     }
 

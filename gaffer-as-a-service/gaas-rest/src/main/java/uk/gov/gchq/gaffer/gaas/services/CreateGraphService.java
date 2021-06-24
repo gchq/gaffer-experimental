@@ -40,6 +40,7 @@ public class CreateGraphService {
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
 
         final GafferSpec config = loader.getConfig("/config", gaaSCreateRequestBodyInput.getConfigName());
+
         crdClient.createCRD(overrideConfig(config, gaaSCreateRequestBodyInput));
     }
 

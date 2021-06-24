@@ -37,17 +37,15 @@ import java.util.List;
 @Service
 public class CreateFederatedStoreGraphService {
 
-    @Autowired
-    private CRDClient crdClient;
-
-    @Autowired
-    private GaaSGraphConfigsLoader loader;
-
-    @Autowired
-    private GraphCommandExecutor graphCommandExecutor;
-
     private static final String CLASSPATH_CONFIG_YAML = "/config";
     private static final String[] GAFFER_STORE_CLASS_NESTED_KEYS = {"graph", "storeProperties", "gaffer.store.class"};
+
+    @Autowired
+    private CRDClient crdClient;
+    @Autowired
+    private GaaSGraphConfigsLoader loader;
+    @Autowired
+    private GraphCommandExecutor graphOperationExecutor;
 
     public void createFederatedStore(final FederatedRequestBody request) throws GaaSRestApiException {
         if (request.getProxySubGraphs().isEmpty()) {
@@ -74,7 +72,7 @@ public class CreateFederatedStoreGraphService {
         proxySubGraphs.stream()
                 .forEach((proxySubGraph) -> {
                     try {
-                        graphCommandExecutor.execute(new ValidateGraphHostOperation(proxySubGraph));
+                        graphOperationExecutor.execute(new ValidateGraphHostOperation(proxySubGraph));
                     } catch (final GraphOperationException e) {
                         errorNotifications.add(proxySubGraph.getGraphId() + ": " + e.getMessage());
                     }
@@ -86,7 +84,7 @@ public class CreateFederatedStoreGraphService {
 
     private void addSubGraphsToFederatedStore(final GraphUrl url, final FederatedRequestBody request) throws GaaSRestApiException {
         try {
-            graphCommandExecutor.execute(new AddGraphsOperation(url, request.getProxySubGraphs()));
+            graphOperationExecutor.execute(new AddGraphsOperation(url, request.getProxySubGraphs()));
         } catch (final GraphOperationException e) {
             throw new GaaSRestApiException("Failed to Add Graph(s) to \"" + request.getGraphId() + "\"", e.getMessage(), 502);
         }
