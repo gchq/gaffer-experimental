@@ -16,53 +16,79 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 import java.util.Map;
 
 /**
  * <b>GaaS: Create Gaffer Request Body</b>
  */
-public class GaaSCreateRequestBody implements CreateRequestBody {
+public class GaaSCreateRequestBody {
 
+    @JsonProperty("graphId")
     @NotNull(message = "Graph id should not be null")
     @NotBlank(message = "Graph id should not be null")
     @Pattern(regexp = "[a-z0-9]*$", message = "Graph ID can contain only digits or lowercase letters")
     private String graphId;
+
+    @JsonProperty("description")
     @NotBlank(message = "Description should not be empty")
     private String description;
+
+    @JsonProperty("configName")
     @NotNull(message = "\"configName\" must be defined. Valid config names can be found at /storetypes endpoint")
     private String configName;
+
+    @JsonProperty("schema")
     private Map<String, Object> schema;
+
+    @JsonProperty("proxySubGraphs")
+    private List<ProxySubGraph> proxySubGraphs;
 
     public GaaSCreateRequestBody() {
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final Map<String, Object> schema, final String configName) {
+    private GaaSCreateRequestBody(final String graphId, final String description, final String configName) {
         this.graphId = graphId;
         this.description = description;
         this.configName = configName;
+    }
+
+    public GaaSCreateRequestBody(final String graphId, final String description, final Map<String, Object> schema, final String configName) {
+        this(graphId, description, configName);
         this.schema = schema;
     }
 
-    @Override
+    // Federated Store Request Body Constructor
+    public GaaSCreateRequestBody(final String graphId, final String description, final String configName, final List<ProxySubGraph> proxySubGraphs) {
+        this(graphId, description, configName);
+        this.proxySubGraphs = proxySubGraphs;
+    }
+
     public String getGraphId() {
         return graphId;
     }
 
-    @Override
     public String getDescription() {
         return description;
     }
 
-    @Override
     public Map<String, Object> getSchema() {
         return schema;
     }
 
-    @Override
     public String getConfigName() {
         return configName;
+    }
+
+    public List<ProxySubGraph> getProxySubGraphs() {
+        return proxySubGraphs;
+    }
+
+    public boolean isFederatedStoreRequest() {
+        return proxySubGraphs != null;
     }
 }

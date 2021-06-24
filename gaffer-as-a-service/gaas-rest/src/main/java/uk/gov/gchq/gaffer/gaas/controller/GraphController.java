@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
@@ -52,17 +51,17 @@ import java.util.Map;
 public class GraphController {
 
     @Autowired
+    private ApiClient apiClient;
+    @Autowired
+    private AuthService authService;
+    @Autowired
     private GetGafferService gafferService;
     @Autowired
     private CreateGraphService createGraphService;
     @Autowired
     private CreateFederatedStoreGraphService createFederatedStoreGraphService;
     @Autowired
-    private AuthService authService;
-    @Autowired
     private DeleteGraphService deleteGraphService;
-    @Autowired
-    private ApiClient apiClient;
     @Autowired
     private GetNamespacesService getNamespacesService;
     @Autowired
@@ -75,15 +74,11 @@ public class GraphController {
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> createGraph(@Valid @RequestBody final Object requestBody) throws GaaSRestApiException {
-        if (((Map) requestBody).containsKey("schema")) {
-            createGraphService.createGraph((GaaSCreateRequestBody) requestBody);
-        }
-        else if (((Map) requestBody).containsKey("proxySubGraphs")) {
-            createFederatedStoreGraphService.createFederatedStore((FederatedRequestBody) requestBody);
-        }
-        else {
-            // TODO: throw or return bad request error, as schema or proxies missing in request
+    public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody) throws GaaSRestApiException {
+        if (requestBody.isFederatedStoreRequest()) {
+            createFederatedStoreGraphService.createFederatedStore(requestBody);
+        } else {
+            createGraphService.createGraph(requestBody);
         }
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -95,7 +90,7 @@ public class GraphController {
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
-    public ResponseEntity<List<GaaSGraphConfigSpec>> getEndpoints() throws GaaSRestApiException {
+    public ResponseEntity<List<GaaSGraphConfigSpec>> getGafferConfigSpecs() throws GaaSRestApiException {
         final Map<String, Object> body = new HashMap<>();
         body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
         return new ResponseEntity(body, HttpStatus.OK);

@@ -313,10 +313,12 @@ public class GraphControllerTest extends AbstractTest {
     @Test
     public void namespaces_shouldReturn200AndEmptyArrayWhenNoNamespacesExist() throws Exception {
         when(getNamespacesService.getNamespaces()).thenReturn(new ArrayList(0));
+
         final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
         assertEquals(200, namespacesResponse.getResponse().getStatus());
         assertEquals("[]", namespacesResponse.getResponse().getContentAsString());
     }
@@ -413,23 +415,9 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void createFedGraph_shouldReturnBadRequest_whenEmptyProxyStoresRequested() throws Exception {
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(), "federated");
-
-        final MvcResult result = mvc.perform(post("/graphs")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token)
-                .content(mapToJson(request)))
-                .andReturn();
-
-        assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"title\":\"Bad Request\",\"detail\":\"There are no sub-graphs to add\"}", result.getResponse().getContentAsString());
-    }
-
-    @Test
     public void createFedGraph_shouldReturnBadRequest_whenServiceThrows404GaasException() throws Exception {
         doThrow(new GaaSRestApiException("Not Found", "Config not found", 404))
-                .when(createFederatedStoreGraphService).createFederatedStore(any(FederatedRequestBody.class));
+                .when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
         final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph), "federated");
 
@@ -439,14 +427,15 @@ public class GraphControllerTest extends AbstractTest {
                 .content(mapToJson(request)))
                 .andReturn();
 
-        assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"title\":\"Bad Request\",\"detail\":\"Invalid Proxy Graph URL(s): [proxygraph: The request to proxygraph returned: 404 Not Found]\"}", result.getResponse().getContentAsString());
+        assertEquals(404, result.getResponse().getStatus());
+        assertEquals("{\"title\":\"Not Found\",\"detail\":\"Config not found\"}", result.getResponse().getContentAsString());
     }
 
     @Test
     public void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestIsFedStore() throws Exception {
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
         final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Collections.singletonList(subGraph), "federated");
+        doNothing().when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -454,7 +443,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(mapToJson(request)))
                 .andReturn();
 
-        verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(FederatedRequestBody.class));
+        verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
         assertEquals(201, result.getResponse().getStatus());
     }
 

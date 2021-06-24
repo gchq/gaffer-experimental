@@ -21,7 +21,7 @@ import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
-import uk.gov.gchq.gaffer.gaas.model.CreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,7 +55,7 @@ public final class GafferFactory {
     private static final String KIND = "Gaffer";
     private static final String DEFAULT_SYSTEM_USER = "GAAS_SYSTEM_USER";
 
-    public static Gaffer from(final GafferSpec gafferSpecConfig, final CreateRequestBody createGraphRequest) {
+    public static Gaffer from(final GafferSpec gafferSpecConfig, final GaaSCreateRequestBody createGraphRequest) {
 
         // TODO: Validate only - and . special characters, see Kubernetes metadata regex
 
@@ -73,7 +73,7 @@ public final class GafferFactory {
                 .spec(overrideGafferSpecConfig(gafferSpecConfig, createGraphRequest));
     }
 
-    private static GafferSpec overrideGafferSpecConfig(final GafferSpec config, final CreateRequestBody overrides) {
+    private static GafferSpec overrideGafferSpecConfig(final GafferSpec config, final GaaSCreateRequestBody overrides) {
         config.putNestedObject(overrides.getGraphId(), GRAPH_ID_KEY);
         config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
 
