@@ -28,6 +28,7 @@ public final class Constants {
     public static final String[] INGRESS_API_PATH_KEY = {"ingress", "pathPrefix", "api"};
     public static final String[] INGRESS_UI_PATH_KEY = {"ingress", "pathPrefix", "ui"};
     public static final String CONFIG_NAME_K8S_METADATA_LABEL = "configName";
+    public static final String CONFIG_YAML_CLASSPATH = "/config";
 
     private Constants() {
         // prevents calls from subclass

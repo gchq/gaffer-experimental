@@ -26,6 +26,7 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferFactory.from;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_YAML_CLASSPATH;
 
 @Service
 public class CreateGraphService {
@@ -39,7 +40,7 @@ public class CreateGraphService {
     @Timed(value = "createGraph.time", description = "Time taken to create graph", percentiles = 0)
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
 
-        final GafferSpec config = loader.getConfig("/config", gaaSCreateRequestBodyInput.getConfigName());
+        final GafferSpec config = loader.getConfig(CONFIG_YAML_CLASSPATH, gaaSCreateRequestBodyInput.getConfigName());
 
         crdClient.createCRD(overrideConfig(config, gaaSCreateRequestBodyInput));
     }

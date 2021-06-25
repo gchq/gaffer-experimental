@@ -33,12 +33,11 @@ import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
 import java.util.ArrayList;
 import java.util.List;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_YAML_CLASSPATH;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
 
 @Service
 public class CreateFederatedStoreGraphService {
-
-    private static final String CLASSPATH_CONFIG_YAML = "/config";
-    private static final String[] GAFFER_STORE_CLASS_NESTED_KEYS = {"graph", "storeProperties", "gaffer.store.class"};
 
     @Autowired
     private CRDClient crdClient;
@@ -55,7 +54,7 @@ public class CreateFederatedStoreGraphService {
         validateProxyGraphURLs(request.getProxySubGraphs());
 
         // TODO #1: Get the GafferSpec config from GaaSGraphConfigsLoader by name
-        final GafferSpec config = loader.getConfig(CLASSPATH_CONFIG_YAML, request.getConfigName());
+        final GafferSpec config = loader.getConfig(CONFIG_YAML_CLASSPATH, request.getConfigName());
 
         // TODO #2: Validate if the Config returned is a Federated store one, else throw BadRequest error
         if (!isFederatedStoreConfig(config)) {
@@ -64,6 +63,7 @@ public class CreateFederatedStoreGraphService {
 
         // TODO #3: Pass config in to the GafferFactory, more tests around this
         final GraphUrl url = crdClient.createCRD(GafferFactory.from(config, request));
+
         addSubGraphsToFederatedStore(url, request);
     }
 
@@ -92,6 +92,6 @@ public class CreateFederatedStoreGraphService {
 
     private boolean isFederatedStoreConfig(final GafferSpec gafferSpec) {
         return gafferSpec != null
-                && FederatedStore.class.getName().equals(gafferSpec.getNestedObject(GAFFER_STORE_CLASS_NESTED_KEYS));
+                && FederatedStore.class.getName().equals(gafferSpec.getNestedObject(GAFFER_STORE_CLASS_KEY));
     }
 }
