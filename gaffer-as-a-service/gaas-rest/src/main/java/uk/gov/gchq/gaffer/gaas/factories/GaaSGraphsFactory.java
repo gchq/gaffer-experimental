@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_K8S_METADATA_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
@@ -36,7 +37,6 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 
 public final class GaaSGraphsFactory {
 
-  private static final String URL_PROTOCOL = "http://";
   private static final String DEFAULT_VALUE = "n/a";
 
   public static Map<String, List<GaaSGraph>> from(final Object response) {
@@ -61,8 +61,8 @@ public final class GaaSGraphsFactory {
 
   private static String getConfigName(final Gaffer gaffer) {
     final V1ObjectMeta metadata = gaffer.getMetadata();
-    if (metadata != null && metadata.getLabels() != null && metadata.getLabels().containsKey("configName")) {
-      return metadata.getLabels().get("configName");
+    if (metadata != null && metadata.getLabels() != null && metadata.getLabels().containsKey(CONFIG_NAME_K8S_METADATA_LABEL)) {
+      return metadata.getLabels().get(CONFIG_NAME_K8S_METADATA_LABEL);
     }
     return DEFAULT_VALUE;
   }
