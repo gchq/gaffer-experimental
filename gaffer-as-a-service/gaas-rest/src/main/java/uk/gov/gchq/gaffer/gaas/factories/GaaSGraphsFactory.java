@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
+import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferList;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
@@ -59,11 +60,11 @@ public final class GaaSGraphsFactory {
   }
 
   private static String getConfigName(final Gaffer gaffer) {
-    String configName = "";
-    if (gaffer.getMetadata() != null && gaffer.getMetadata().getLabels() != null) {
-      configName = gaffer.getMetadata().getLabels().get("configName");
+    final V1ObjectMeta metadata = gaffer.getMetadata();
+    if (metadata != null && metadata.getLabels() != null && metadata.getLabels().containsKey("configName")) {
+      return metadata.getLabels().get("configName");
     }
-    return configName;
+    return DEFAULT_VALUE;
   }
 
   private static String getDescription(final Gaffer gaffer) {

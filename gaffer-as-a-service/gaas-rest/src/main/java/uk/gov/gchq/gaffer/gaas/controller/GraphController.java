@@ -90,7 +90,7 @@ public class GraphController {
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
-    public ResponseEntity<List<GaaSGraphConfigSpec>> getGafferConfigSpecs() throws GaaSRestApiException {
+    public ResponseEntity<List<GaaSGraphConfigSpec>> getGraphConfigSpecs() throws GaaSRestApiException {
         final Map<String, Object> body = new HashMap<>();
         body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
         return new ResponseEntity(body, HttpStatus.OK);

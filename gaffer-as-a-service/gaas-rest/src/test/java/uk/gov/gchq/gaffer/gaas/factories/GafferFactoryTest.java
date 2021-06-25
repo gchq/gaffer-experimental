@@ -65,7 +65,6 @@ public class GafferFactoryTest {
         assertEquals(expected, gson.toJson(requestBody));
     }
 
-
     @Test
     public void federatedBigStoreRequest_shouldReturnFederatedRequestBody() {
         final GafferSpec federatedConfig = new GafferSpec();
