@@ -85,8 +85,9 @@ public class GraphController {
 
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
-        final Map<String, List<GaaSGraph>> list = gafferService.getAllGraphs();
-        return new ResponseEntity(list, HttpStatus.OK);
+        final Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("graphs", gafferService.getAllGraphs());
+        return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")

@@ -31,7 +31,6 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
@@ -68,7 +67,7 @@ public class  CRDClient {
         }
     }
 
-    public Map<String, List<GaaSGraph>> listAllCRDs() throws GaaSRestApiException {
+    public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
         try {
             final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null);
             return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));

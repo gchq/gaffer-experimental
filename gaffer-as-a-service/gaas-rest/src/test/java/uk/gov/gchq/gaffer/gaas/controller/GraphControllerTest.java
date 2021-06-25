@@ -41,10 +41,8 @@ import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -101,9 +99,7 @@ public class GraphControllerTest extends AbstractTest {
                 .status(RestApiStatus.UP);
         final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
         gaaSGraphs.add(graph);
-        Map<String, List<GaaSGraph>> graphList = new HashMap<>();
-        graphList.put("graphs", gaaSGraphs);
-        when(getGafferService.getAllGraphs()).thenReturn(graphList);
+        when(getGafferService.getAllGraphs()).thenReturn(gaaSGraphs);
 
         final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

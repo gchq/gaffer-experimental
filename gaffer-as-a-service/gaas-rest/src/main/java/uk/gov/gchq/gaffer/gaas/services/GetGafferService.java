@@ -23,7 +23,6 @@ import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class GetGafferService {
@@ -31,9 +30,8 @@ public class GetGafferService {
     @Autowired
     private CRDClient crdClient;
 
-
     @Timed(value = "getAllGraphs.time", description = "Time taken to get all graphs", percentiles = 0)
-    public Map<String, List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
+    public List<GaaSGraph> getAllGraphs() throws GaaSRestApiException {
         return crdClient.listAllCRDs();
     }
 }

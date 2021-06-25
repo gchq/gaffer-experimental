@@ -23,11 +23,8 @@ import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
-import uk.gov.gchq.gaffer.gaas.util.JsonObjectWrapper;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_K8S_METADATA_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
@@ -37,57 +34,56 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 
 public final class GaaSGraphsFactory {
 
-  private static final String DEFAULT_VALUE = "n/a";
+    private static final String DEFAULT_VALUE = "n/a";
 
-  public static Map<String, List<GaaSGraph>> from(final Object response) {
-    final GafferList gafferList = CommonUtil.convertToCustomObject(response, GafferList.class);
+    public static List<GaaSGraph> from(final Object response) {
+        final GafferList gafferList = CommonUtil.convertToCustomObject(response, GafferList.class);
 
-    final List<Gaffer> gaffers = (List<Gaffer>) gafferList.getItems();
-    if (gaffers != null) {
-      List<GaaSGraph> collect = gaffers.stream()
-              .filter(gaffer -> gaffer.getSpec() != null && gaffer.getSpec().getNestedObject(GRAPH_ID_KEY) != null)
-              .map(gaffer -> new GaaSGraph()
-                      .graphId(gaffer.getSpec().getNestedObject(GRAPH_ID_KEY).toString())
-                      .description(getDescription(gaffer))
-                      .url(getUrl(gaffer))
-                      .configName(getConfigName(gaffer))
-                      .status(getStatus(gaffer))
-                      .problems(getProblems(gaffer)))
-              .collect(Collectors.toList());
-      return JsonObjectWrapper.withLabel("graphs", collect);
+        final List<Gaffer> gaffers = (List<Gaffer>) gafferList.getItems();
+        if (gaffers != null) {
+            return gaffers.stream()
+                    .filter(gaffer -> gaffer.getSpec() != null && gaffer.getSpec().getNestedObject(GRAPH_ID_KEY) != null)
+                    .map(gaffer -> new GaaSGraph()
+                            .graphId(gaffer.getSpec().getNestedObject(GRAPH_ID_KEY).toString())
+                            .description(getDescription(gaffer))
+                            .url(getUrl(gaffer))
+                            .configName(getConfigName(gaffer))
+                            .status(getStatus(gaffer))
+                            .problems(getProblems(gaffer)))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
-    return new HashMap<>();
-  }
 
-  private static String getConfigName(final Gaffer gaffer) {
-    final V1ObjectMeta metadata = gaffer.getMetadata();
-    if (metadata != null && metadata.getLabels() != null && metadata.getLabels().containsKey(CONFIG_NAME_K8S_METADATA_LABEL)) {
-      return metadata.getLabels().get(CONFIG_NAME_K8S_METADATA_LABEL);
+    private static String getConfigName(final Gaffer gaffer) {
+        final V1ObjectMeta metadata = gaffer.getMetadata();
+        if (metadata != null && metadata.getLabels() != null && metadata.getLabels().containsKey(CONFIG_NAME_K8S_METADATA_LABEL)) {
+            return metadata.getLabels().get(CONFIG_NAME_K8S_METADATA_LABEL);
+        }
+        return DEFAULT_VALUE;
     }
-    return DEFAULT_VALUE;
-  }
 
-  private static String getDescription(final Gaffer gaffer) {
-    return gaffer.getSpec().getNestedObject(DESCRIPTION_KEY) != null ? gaffer.getSpec().getNestedObject(DESCRIPTION_KEY).toString() : DEFAULT_VALUE;
-  }
-
-  private static String getUrl(final Gaffer gaffer) {
-    if (gaffer.getSpec().getNestedObject(INGRESS_HOST_KEY) == null || gaffer.getSpec().getNestedObject(INGRESS_API_PATH_KEY) == null) {
-      return DEFAULT_VALUE;
+    private static String getDescription(final Gaffer gaffer) {
+        return gaffer.getSpec().getNestedObject(DESCRIPTION_KEY) != null ? gaffer.getSpec().getNestedObject(DESCRIPTION_KEY).toString() : DEFAULT_VALUE;
     }
-    return GraphUrl.from(gaffer).buildUrl();
-  }
 
-  private static RestApiStatus getStatus(final Gaffer gaffer) {
-    return gaffer.getStatus() != null && gaffer.getStatus().getRestApiStatus() != null ? gaffer.getStatus().getRestApiStatus() : RestApiStatus.DOWN;
-  }
+    private static String getUrl(final Gaffer gaffer) {
+        if (gaffer.getSpec().getNestedObject(INGRESS_HOST_KEY) == null || gaffer.getSpec().getNestedObject(INGRESS_API_PATH_KEY) == null) {
+            return DEFAULT_VALUE;
+        }
+        return GraphUrl.from(gaffer).buildUrl();
+    }
 
-  private static List<String> getProblems(final Gaffer gaffer) {
-    return gaffer.getStatus() != null && gaffer.getStatus().getProblems() != null ? gaffer.getStatus().getProblems() : new ArrayList();
-  }
+    private static RestApiStatus getStatus(final Gaffer gaffer) {
+        return gaffer.getStatus() != null && gaffer.getStatus().getRestApiStatus() != null ? gaffer.getStatus().getRestApiStatus() : RestApiStatus.DOWN;
+    }
 
-  private GaaSGraphsFactory() {
-    // prevents calls from subclass
-    throw new UnsupportedOperationException();
-  }
+    private static List<String> getProblems(final Gaffer gaffer) {
+        return gaffer.getStatus() != null && gaffer.getStatus().getProblems() != null ? gaffer.getStatus().getProblems() : new ArrayList();
+    }
+
+    private GaaSGraphsFactory() {
+        // prevents calls from subclass
+        throw new UnsupportedOperationException();
+    }
 }
