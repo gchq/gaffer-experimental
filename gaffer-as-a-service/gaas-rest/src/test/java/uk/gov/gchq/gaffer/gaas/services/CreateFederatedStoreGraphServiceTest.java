@@ -89,7 +89,8 @@ class CreateFederatedStoreGraphServiceTest {
     }
 
     @Test
-    void shouldThrowInvalidUrlMessageForSingleUrl_WhenASingleSubGraphHasInvalidURL() throws GraphOperationException {
+    void shouldThrowInvalidUrlMessageForSingleUrl_WhenASingleSubGraphHasInvalidURL() throws GraphOperationException, GaaSRestApiException {
+        when(loader.getConfig("/config", "federated")).thenReturn(getFederatedStoreGafferSpec());
         doThrow(new GraphOperationException("Invalid Proxy Graph URL")).when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph);
 
@@ -101,7 +102,8 @@ class CreateFederatedStoreGraphServiceTest {
     }
 
     @Test
-    void shouldThrowInvalidURLExceptionForAllUrls_WhenAllSubGraphsHaveInvalidURLs() throws GraphOperationException {
+    void shouldThrowInvalidURLExceptionForAllUrls_WhenAllSubGraphsHaveInvalidURLs() throws GraphOperationException, GaaSRestApiException {
+        when(loader.getConfig("/config", "federated")).thenReturn(getFederatedStoreGafferSpec());
         doThrow(new GraphOperationException("The request to testGraph returned: 500 Internal Server Error"))
                 .doThrow(new GraphOperationException("TestGraph2 has invalid host. Reason: connection refused at TestGraph2"))
                 .when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
@@ -156,7 +158,8 @@ class CreateFederatedStoreGraphServiceTest {
     }
 
     @Test
-    void shouldThrowInvalidURLExceptionForUrl_WhenOneOfMultipleSubGraphsHasInvalidURL() throws GraphOperationException {
+    void shouldThrowInvalidURLExceptionForUrl_WhenOneOfMultipleSubGraphsHasInvalidURL() throws GraphOperationException, GaaSRestApiException {
+        when(loader.getConfig("/config", "federated")).thenReturn(getFederatedStoreGafferSpec());
         doThrow(new GraphOperationException("The request to testGraph returned: 500 Internal Server Error"))
                 .doNothing()
                 .when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));

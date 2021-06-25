@@ -51,15 +51,12 @@ public class CreateFederatedStoreGraphService {
             throw new GaaSRestApiException("Bad Request", "There are no sub-graphs to add", 400);
         }
 
-        validateProxyGraphURLs(request.getProxySubGraphs());
-
-        // TODO #1: Get the GafferSpec config from GaaSGraphConfigsLoader by name
         final GafferSpec config = loader.getConfig(CONFIG_YAML_CLASSPATH, request.getConfigName());
-
-        // TODO #2: Validate if the Config returned is a Federated store one, else throw BadRequest error
         if (!isFederatedStoreConfig(config)) {
             throw new GaaSRestApiException("Bad Request", "Graph is not a federated store", 400);
         }
+
+        validateProxyGraphURLs(request.getProxySubGraphs());
 
         // TODO #3: Pass config in to the GafferFactory, more tests around this
         final GraphUrl url = crdClient.createCRD(GafferFactory.from(config, request));
