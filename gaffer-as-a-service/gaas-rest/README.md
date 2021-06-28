@@ -4,6 +4,18 @@ GaaS REST
 The Gaffer-as-a-Service REST API services requests to create, get and delete graphs.
 
 
+## Using jib plugin to build and push images
+The docker image built by Jib plugin you can change the default image using configuration
+
+#To build docker image locally
+
+mvn clean install -DbuildType=dockerBuild -DimageName= -DuserName= -DcredHelper=
+
+
+# To build docker image and push to docker repository
+mvn clean install -DbuildType=build -DimageName=[IMAGE_NAME] -DuserName=[YOUR_DOCKER_USERNAME] -DcredHelper=
+
+
 ## Swagger UI
 
 Run the Spring Boot app locally and access the Swagger dashboard at 
@@ -70,7 +82,7 @@ all test classes whose name starts or ends with <i>IT</i>.
 
 1. Ensure prerequisites are met
 2. Login to the oc client using the `oc login` command via terminal
-2. Add the available OpenShift namespace name to /application.properties for the value `namespace`
+3. Add the available OpenShift namespace name to /application.properties for the value `namespace`
 3. Run `mvn clean install -pl :gaas-rest -Popenshift-deploy`
 
 ## Deploying Prometheus to OpenShift

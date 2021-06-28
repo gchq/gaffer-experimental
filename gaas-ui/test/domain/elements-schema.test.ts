@@ -13,7 +13,7 @@ describe("Elements Validation", () => {
 
         expect(notifications.errorMessage()).toBe("Elements Schema is not valid JSON");
     });
-    it("should return Elements Schema does not contain entities when Elements doesnt have entities", () => {
+    it("should return no error when Elements doesnt have entities", () => {
         const rawElementsSchema = JSON.stringify({
             edges: {
                 RoadUse: {
@@ -34,9 +34,9 @@ describe("Elements Validation", () => {
 
         const notifications = new ElementsSchema(rawElementsSchema).validate();
 
-        expect(notifications.errorMessage()).toBe("Elements Schema does not contain property entities");
+        expect(notifications.isEmpty()).toBe(true);
     });
-    it("should return Elements Schema does not contain edges when Elements doesnt have edges", () => {
+    it("should return no error when Elements doesnt have edges", () => {
         const rawElementsSchema = JSON.stringify({
             entities: {
                 Cardinality: {
@@ -54,7 +54,7 @@ describe("Elements Validation", () => {
 
         const notifications = new ElementsSchema(rawElementsSchema).validate();
 
-        expect(notifications.errorMessage()).toBe("Elements Schema does not contain property edges");
+        expect(notifications.isEmpty()).toBe(true);
     });
     it("should return invalid properties notification when invalid properties is in Elements schema", () => {
         const rawSchema = JSON.stringify({

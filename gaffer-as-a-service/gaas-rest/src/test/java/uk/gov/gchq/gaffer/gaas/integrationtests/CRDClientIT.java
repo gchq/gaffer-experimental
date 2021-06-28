@@ -38,11 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
+import static uk.gov.gchq.gaffer.gaas.util.GafferKubernetesObjectFactory.from;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
-import static uk.gov.gchq.gaffer.gaas.utilities.GafferKubernetesObjectFactory.from;
 
 @SpringBootTest
 public class CRDClientIT {
+
+    private static final String TEST_GRAPH_ID = "testgraphid";
+    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
+    private static final String ACCUMULO_ENABLED = "accumulo";
 
     @Autowired
     private CreateGraphService createGraphService;
@@ -51,20 +55,9 @@ public class CRDClientIT {
     @Autowired
     private ApiClient apiClient;
 
-//    @Value("${gaffer.namespace}")
-//    private String namespace;
-//    @Value("${group}")
-//    private String group;
-//    @Value("${version}")
-//    private String version;
-
-    private static final String TEST_GRAPH_ID = "testgraphid";
-    private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
-    private static final String ACCUMULO_ENABLED = "accumuloStore";
-
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {
-        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema()));
+        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED));
         assertDoesNotThrow(() -> crdClient.createCRD(gafferRequest));
     }
 
@@ -79,7 +72,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenGraphIdHasUppercase_throws422GaasException() {
-        final Gaffer gafferRequest = from(new GaaSCreateRequestBody("UPPERCASEgraph", "A description", ACCUMULO_ENABLED, getSchema()));
+        final Gaffer gafferRequest = from(new GaaSCreateRequestBody("UPPERCASEgraph", "A description", getSchema(), ACCUMULO_ENABLED));
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
         assertEquals(422, exception.getStatusCode());
         assertEquals("Unprocessable Entity", exception.getTitle());
@@ -89,7 +82,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenGraphIdHasSpecialChars_throws422GaasException() {
-        final Gaffer gafferRequest = from(new GaaSCreateRequestBody("sp£ci@l_char$", "A description", ACCUMULO_ENABLED, getSchema()));
+        final Gaffer gafferRequest = from(new GaaSCreateRequestBody("sp£ci@l_char$", "A description", getSchema(), ACCUMULO_ENABLED));
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
         assertEquals(422, exception.getStatusCode());
         assertEquals("Unprocessable Entity", exception.getTitle());
@@ -109,15 +102,14 @@ public class CRDClientIT {
 
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
-        crdClient.createCRD(from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema())));
-        System.out.println(crdClient.listAllCRDs().toString());
+        crdClient.createCRD(from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED)));
         assertTrue(crdClient.listAllCRDs().toString().contains("testgraphid"));
     }
 
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
         final List<GraphConfig> list = new ArrayList<>();
-        assertEquals(list, crdClient.listAllCRDs());
+        assertEquals(list, crdClient.listAllCRDs().get("graphs"));
     }
 
     @Test
@@ -131,7 +123,7 @@ public class CRDClientIT {
     @Test
     public void deleteCRD_whenGraphDoesExist_doesNotThrowException() throws GaaSRestApiException {
         final String existingGraph = "existing-graph";
-        crdClient.createCRD(from(new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION, ACCUMULO_ENABLED, getSchema())));
+        crdClient.createCRD(from(new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED)));
         assertDoesNotThrow(() -> crdClient.deleteCRD(existingGraph));
     }
 

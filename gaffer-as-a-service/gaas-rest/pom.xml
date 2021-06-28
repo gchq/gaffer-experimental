@@ -21,6 +21,11 @@
         <io.jsonwebtoken.version>0.9.1</io.jsonwebtoken.version>
         <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
         <fasterxml.jackson.version>2.11.2</fasterxml.jackson.version>
+        <buildType>buildTar</buildType>
+        <credHelper></credHelper>
+        <userName>gchq</userName>
+        <maven.build.timestamp.format>yyyy-MM-dd.HH-mm-ss</maven.build.timestamp.format>
+        <imageName>${project.artifactId}-${project.version}-${maven.build.timestamp}</imageName>
     </properties>
 
     <dependencyManagement>
@@ -73,6 +78,12 @@
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>federated-store</artifactId>
             <version>${gaffer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.gov.gchq.gaffer</groupId>
+            <artifactId>map-store</artifactId>
+            <version>${gaffer.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.kubernetes</groupId>
@@ -145,6 +156,11 @@
             <artifactId>junit-vintage-engine</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.28</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -296,4 +312,49 @@
             </build>
         </profile>
     </profiles>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>${buildType}</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <from>
+                        <image>adoptopenjdk/openjdk8:jdk8u172-b11</image>
+                    </from>
+                    <to>
+                        <image>${userName}/${imageName}</image>
+                        <credHelper>${credHelper}</credHelper>
+                    </to>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <rerunFailingTestsCount>3</rerunFailingTestsCount>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

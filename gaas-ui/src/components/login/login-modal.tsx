@@ -85,7 +85,7 @@ class LoginModal extends React.Component<IProps, IState> {
                 >
                     Sign out
                 </Button>
-                <Dialog id="login-modal" fullScreen open={status === UserStatus.SIGNED_OUT}>
+                <Dialog id="login-modal-dialog" fullScreen open={status === UserStatus.SIGNED_OUT}>
                     <DialogContent style={{ padding: 30 }}>
                         <Logo />
                         {formType === FormType.EXISTING_USER_LOGIN && (

@@ -20,7 +20,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -34,39 +33,18 @@ public class GaaSCreateRequestBody implements Serializable {
     private String graphId;
     @NotBlank(message = "Description should not be empty")
     private String description;
-    @NotNull(message = "\"storeType\" must be defined. Valid Store Types supported are federatedStore, accumuloStore, proxyStore or mapStore")
-    private String storeType;
-    private String proxyHost;
-    private String proxyContextRoot;
+    @NotNull(message = "\"configName\" must be defined. Valid config names can be found at /storetypes endpoint")
+    private String configName;
     private Map<String, Object> schema;
-    private Map<String, Object> storeProperties = new HashMap<>();
-
-    public Map<String, Object> getStoreProperties() {
-        return storeProperties;
-    }
-
 
     public GaaSCreateRequestBody() {
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType) {
+    public GaaSCreateRequestBody(final String graphId, final String description, final Map<String, Object> schema, final String configName) {
         this.graphId = graphId;
         this.description = description;
-        this.storeType = storeType;
-    }
-
-    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final Map<String, Object> schema, final Map<String, Object> storeProperties) {
-        this.graphId = graphId;
-        this.description = description;
-        this.storeType = storeType;
+        this.configName = configName;
         this.schema = schema;
-        this.storeProperties = storeProperties;
-    }
-    public GaaSCreateRequestBody(final String graphId, final String description, final String storeType, final Map<String, Object> storeProperties) {
-        this.graphId = graphId;
-        this.description = description;
-        this.storeType = storeType;
-        this.storeProperties = storeProperties;
     }
 
     public String getGraphId() {
@@ -81,16 +59,8 @@ public class GaaSCreateRequestBody implements Serializable {
         return schema;
     }
 
-    public String getStoreType() {
-        return storeType;
-    }
-
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    public String getProxyContextRoot() {
-        return proxyContextRoot;
+    public String getConfigName() {
+        return configName;
     }
 
 }
