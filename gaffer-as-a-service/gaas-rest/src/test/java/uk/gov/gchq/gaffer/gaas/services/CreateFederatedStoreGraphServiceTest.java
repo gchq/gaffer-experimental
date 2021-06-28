@@ -31,7 +31,7 @@ import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
-import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
+import uk.gov.gchq.gaffer.gaas.util.GafferSpecConfigsLoader;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +60,7 @@ class CreateFederatedStoreGraphServiceTest {
     @MockBean
     private GraphCommandExecutor graphCommandExecutor;
     @MockBean
-    private GaaSGraphConfigsLoader loader;
+    private GafferSpecConfigsLoader loader;
     @MockBean
     private GraphUrl url;
 

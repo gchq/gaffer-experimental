@@ -23,7 +23,7 @@ import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
-import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
+import uk.gov.gchq.gaffer.gaas.util.GafferSpecConfigsLoader;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import uk.gov.gchq.gaffer.mapstore.MapStore;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class GetGaaSGraphConfigsServiceTest {
     private GetGaaSGraphConfigsService service;
 
     @MockBean
-    private GaaSGraphConfigsLoader loader;
+    private GafferSpecConfigsLoader loader;
 
     @Test
     void whenGaasGraphConfigHasFederatedStore_returnGaasGraphConfigSpecWithProxiesParameter() throws GaaSRestApiException {

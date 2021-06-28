@@ -26,7 +26,6 @@ import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
@@ -36,7 +35,7 @@ import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
-import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +59,7 @@ public class GraphControllerTest extends AbstractTest {
     @MockBean
     private ApiClient apiClient;
     @MockBean
-    private GetGafferService getGafferService;
+    private GetGaffersService getGafferService;
     @MockBean
     private AuthService authService;
     @MockBean
@@ -415,7 +414,7 @@ public class GraphControllerTest extends AbstractTest {
         doThrow(new GaaSRestApiException("Not Found", "Config not found", 404))
                 .when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Collections.singletonList(subGraph), "federated");
+        final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description", "federated", Collections.singletonList(subGraph));
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -430,7 +429,7 @@ public class GraphControllerTest extends AbstractTest {
     @Test
     public void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestIsFedStore() throws Exception {
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Collections.singletonList(subGraph), "federated");
+        final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description", "federated", Collections.singletonList(subGraph));
         doNothing().when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
 
         final MvcResult result = mvc.perform(post("/graphs")

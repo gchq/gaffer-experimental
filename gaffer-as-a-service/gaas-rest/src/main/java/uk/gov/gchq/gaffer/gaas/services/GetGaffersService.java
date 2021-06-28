@@ -25,7 +25,7 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import java.util.List;
 
 @Service
-public class GetGafferService {
+public class GetGaffersService {
 
     @Autowired
     private CRDClient crdClient;

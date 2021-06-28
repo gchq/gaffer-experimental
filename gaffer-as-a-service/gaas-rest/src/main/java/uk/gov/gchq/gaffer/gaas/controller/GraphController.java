@@ -38,7 +38,7 @@ import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
-import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -55,7 +55,7 @@ public class GraphController {
     @Autowired
     private AuthService authService;
     @Autowired
-    private GetGafferService gafferService;
+    private GetGaffersService getGaffersService;
     @Autowired
     private CreateGraphService createGraphService;
     @Autowired
@@ -86,7 +86,8 @@ public class GraphController {
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
         final Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("graphs", gafferService.getAllGraphs());
+        responseBody.put("graphs", getGaffersService.getAllGraphs());
+
         return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
@@ -94,6 +95,7 @@ public class GraphController {
     public ResponseEntity<List<GaaSGraphConfigSpec>> getGraphConfigSpecs() throws GaaSRestApiException {
         final Map<String, Object> body = new HashMap<>();
         body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
+
         return new ResponseEntity(body, HttpStatus.OK);
     }
 

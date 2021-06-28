@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @UnitTest
-class GetGafferServiceTest {
+class GetGaffersServiceTest {
 
     private static final String TEST_GRAPH_ID = "testgraphid";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
@@ -40,7 +40,7 @@ class GetGafferServiceTest {
     private static final List<String> TEST_GRAPH_PROBLEMS = new ArrayList<String>(Arrays.asList("There is problem with this Graph"));
 
     @Autowired
-    private GetGafferService getGafferService;
+    private GetGaffersService getGafferService;
     @MockBean
     private CRDClient crdClient;
 

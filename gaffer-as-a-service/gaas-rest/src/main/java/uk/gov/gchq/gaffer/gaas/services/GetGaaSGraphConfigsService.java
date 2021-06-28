@@ -22,7 +22,7 @@ import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
-import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
+import uk.gov.gchq.gaffer.gaas.util.GafferSpecConfigsLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class GetGaaSGraphConfigsService {
     private static final String[] GAFFER_STORE_CLASS_NESTED_KEYS = {"graph", "storeProperties", "gaffer.store.class"};
 
     @Autowired
-    private GaaSGraphConfigsLoader loader;
+    private GafferSpecConfigsLoader loader;
 
     public List<GaaSGraphConfigSpec> getGafferConfigSpecs() throws GaaSRestApiException {
         final Map<String, GafferSpec> gafferSpecMap = loader.listConfigSpecs(CLASSPATH_CONFIG_YAML);

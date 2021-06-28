@@ -24,7 +24,7 @@ import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
+import uk.gov.gchq.gaffer.gaas.util.GafferSpecConfigsLoader;
 import static uk.gov.gchq.gaffer.gaas.factories.GafferFactory.from;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_YAML_CLASSPATH;
 
@@ -32,7 +32,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_YAML_CLASSPATH;
 public class CreateGraphService {
 
     @Autowired
-    private GaaSGraphConfigsLoader loader;
+    private GafferSpecConfigsLoader loader;
 
     @Autowired
     private CRDClient crdClient;

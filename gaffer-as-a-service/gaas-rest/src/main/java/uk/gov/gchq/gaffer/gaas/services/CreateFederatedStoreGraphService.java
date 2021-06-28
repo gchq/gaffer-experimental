@@ -30,7 +30,7 @@ import uk.gov.gchq.gaffer.gaas.factories.GafferFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
-import uk.gov.gchq.gaffer.gaas.util.GaaSGraphConfigsLoader;
+import uk.gov.gchq.gaffer.gaas.util.GafferSpecConfigsLoader;
 import java.util.ArrayList;
 import java.util.List;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_YAML_CLASSPATH;
@@ -42,7 +42,7 @@ public class CreateFederatedStoreGraphService {
     @Autowired
     private CRDClient crdClient;
     @Autowired
-    private GaaSGraphConfigsLoader loader;
+    private GafferSpecConfigsLoader loader;
     @Autowired
     private GraphCommandExecutor graphOperationExecutor;
 

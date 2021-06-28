@@ -25,7 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
-import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import java.util.Arrays;
 import java.util.List;
@@ -44,7 +44,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("bgraph", VALID_GRAPH_HOST, VALID_ROOT));
-        final FederatedRequestBody federatedRequestBody = new FederatedRequestBody("igraph", TEST_GRAPH_DESCRIPTION, subGraphs, "federated");
+        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody("igraph", TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 
         final MockHttpServletResponse response = mvc.perform(post("/graphs/federated")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -60,7 +60,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
     @Test
     public void whenSubGraphURLIsInvalid_shouldReturnBadRequest() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("TestGraph", "http://invalid.url", "/rest"));
-        final FederatedRequestBody federatedRequestBody = new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, subGraphs, "federated");
+        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 
         final MockHttpServletResponse result = mvc.perform(post("/graphs/federated")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
