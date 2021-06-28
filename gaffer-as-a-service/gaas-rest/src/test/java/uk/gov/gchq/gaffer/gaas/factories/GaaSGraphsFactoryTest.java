@@ -225,6 +225,7 @@ public class GaaSGraphsFactoryTest {
         final V1ObjectMeta metadata = new V1ObjectMeta()
                 .name("test")
                 .labels(labels);
+
         gaffers.add(new Gaffer().spec(graphSpec).metaData(metadata));
         gafferList.put("items", gaffers);
         return CommonUtil.convertToCustomObject(gafferList, GafferList.class);
@@ -238,6 +239,7 @@ public class GaaSGraphsFactoryTest {
         final V1ObjectMeta metadata = new V1ObjectMeta()
                 .name("test")
                 .labels(labels);
+
         gaffers.add(new Gaffer().spec(graphSpec).status(gafferStatus).metaData(metadata));
         gafferList.put("items", gaffers);
         return CommonUtil.convertToCustomObject(gafferList, GafferList.class);
@@ -246,6 +248,7 @@ public class GaaSGraphsFactoryTest {
     private GafferList makeGafferList(final GafferSpec graphSpec, final GafferStatus gafferStatus, final V1ObjectMeta metadata) {
         final Map<String, Object> gafferList = new LinkedHashMap<>();
         final List<Gaffer> gaffers = new ArrayList<>();
+
         gaffers.add(new Gaffer().spec(graphSpec).status(gafferStatus).metaData(metadata));
         gafferList.put("items", gaffers);
         return CommonUtil.convertToCustomObject(gafferList, GafferList.class);
