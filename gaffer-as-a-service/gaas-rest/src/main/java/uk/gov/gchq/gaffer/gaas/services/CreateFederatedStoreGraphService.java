@@ -66,14 +66,13 @@ public class CreateFederatedStoreGraphService {
 
     private void validateProxyGraphURLs(final List<ProxySubGraph> proxySubGraphs) throws GaaSRestApiException {
         final List<String> errorNotifications = new ArrayList<>();
-        proxySubGraphs.stream()
-                .forEach((proxySubGraph) -> {
-                    try {
-                        graphOperationExecutor.execute(new ValidateGraphHostOperation(proxySubGraph));
-                    } catch (final GraphOperationException e) {
-                        errorNotifications.add(proxySubGraph.getGraphId() + ": " + e.getMessage());
-                    }
-                });
+        proxySubGraphs.forEach((proxySubGraph) -> {
+            try {
+                graphOperationExecutor.execute(new ValidateGraphHostOperation(proxySubGraph));
+            } catch (final GraphOperationException e) {
+                errorNotifications.add(proxySubGraph.getGraphId() + ": " + e.getMessage());
+            }
+        });
         if (errorNotifications.size() > 0) {
             throw new GaaSRestApiException("Bad Request", "Invalid Proxy Graph URL(s): " + errorNotifications.toString(), 400);
         }

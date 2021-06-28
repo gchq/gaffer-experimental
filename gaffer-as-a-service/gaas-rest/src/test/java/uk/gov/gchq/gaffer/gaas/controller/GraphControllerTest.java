@@ -415,7 +415,7 @@ public class GraphControllerTest extends AbstractTest {
         doThrow(new GaaSRestApiException("Not Found", "Config not found", 404))
                 .when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph), "federated");
+        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Collections.singletonList(subGraph), "federated");
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -439,8 +439,29 @@ public class GraphControllerTest extends AbstractTest {
                 .content(mapToJson(request)))
                 .andReturn();
 
-        verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
         assertEquals(201, result.getResponse().getStatus());
+        verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
+    }
+
+    @Test
+    public void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestHasProxiesAndSchema() throws Exception {
+        final String request = "{" +
+                "\"graphId\":\"graphid\"," +
+                "\"description\":\"Schema and proxies\"," +
+                "\"configName\":\"fedStoreConfig\"," +
+                "\"proxySubGraphs\":[]," +
+                "\"schema\":{\"types\":{}}" +
+                "}";
+        doNothing().when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
+
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(request))
+                .andReturn();
+
+        assertEquals(201, result.getResponse().getStatus());
+        verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
     }
 
     private LinkedHashMap<String, Object> getSchema() {
