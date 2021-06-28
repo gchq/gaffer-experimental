@@ -58,7 +58,6 @@ public class CreateFederatedStoreGraphService {
 
         validateProxyGraphURLs(request.getProxySubGraphs());
 
-        // TODO #3: Pass config in to the GafferFactory, more tests around this
         final GraphUrl url = crdClient.createCRD(GafferFactory.from(config, request));
 
         addSubGraphsToFederatedStore(url, request);

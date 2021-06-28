@@ -79,7 +79,6 @@ public final class GafferFactory {
 
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
             config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook()), HOOKS_KEY);
-//            TODO: Add operation declaration here for GetUrlOperation - so that AddGraph requests can reference the path it in the container
         } else {
             config.putNestedObject(overrides.getSchema(), SCHEMA_FILE_KEY);
         }
