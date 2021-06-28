@@ -83,7 +83,7 @@ all test classes whose name starts or ends with <i>IT</i>.
 1. Ensure prerequisites are met
 2. Login to the oc client using the `oc login` command via terminal
 3. Add the available OpenShift namespace name to /application.properties for the value `namespace`
-3. Run `mvn clean install -pl :gaas-rest -Popenshift-deploy`
+4. Run `mvn clean install -pl :gaas-rest -Popenshift-deploy`
 
 ## Deploying Prometheus to OpenShift
 1. Go to gaffer-as-a-service/gaas-common/prometheus/
