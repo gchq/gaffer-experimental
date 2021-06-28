@@ -23,7 +23,7 @@ import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,17 +32,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 public class GraphCommandsIT {
 
-    private final GraphUrl validUrl = new GraphUrl("localhost:8080", "/rest/v2");
-    private final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("validgraph", "graph-kubernetes.cluster.cloud", "/rest"));
+    private final GraphUrl validFederatedStoreURL = new GraphUrl("localhost:8080", "/rest/v2");
+    private final List<ProxySubGraph> subGraphs = Collections.singletonList(new ProxySubGraph("validgraph", "graph-kubernetes.cluster.cloud", "/rest"));
 
     @Test
     public void addGraphs_shouldNotThrowAnything_whenSuccessfullyAddsGraph() {
-        assertDoesNotThrow(() -> new AddGraphsOperation(validUrl, subGraphs).execute());
+        assertDoesNotThrow(() -> new AddGraphsOperation(validFederatedStoreURL, subGraphs).execute());
     }
 
     @Test
     public void addGraphs_shouldThrowGraphOpException_whenUrlIsInvalid() {
-        assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(validUrl, subGraphs).execute());
+        assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(validFederatedStoreURL, subGraphs).execute());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class GraphCommandsIT {
 
         final GraphOperationException exception = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
-        assertEquals("", exception.getMessage());
+        assertEquals("Get Status request for 'notfoundroot' failed. Reason: Connection refused at http://localhost:8080/not-found-root/graph/status", exception.getMessage());
     }
 
     @Test
@@ -60,6 +60,6 @@ public class GraphCommandsIT {
 
         final GraphOperationException exception = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
-        assertEquals("'invalidhost' graph has invalid host. Reason: Connection refused at http://localhost:8082/rest/graph/status/rest", exception.getMessage());
+        assertEquals("Get Status request for 'invalidhost' failed. Reason: Connection refused at http://localhost:8082/rest/graph/status", exception.getMessage());
     }
 }

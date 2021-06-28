@@ -30,18 +30,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.model.StoreTypesEndpointResponse;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
-import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-import uk.gov.gchq.gaffer.gaas.services.GetStoreTypesService;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,21 +51,21 @@ import java.util.Map;
 public class GraphController {
 
     @Autowired
-    private GetGafferService gafferService;
+    private ApiClient apiClient;
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private GetGaffersService getGaffersService;
     @Autowired
     private CreateGraphService createGraphService;
     @Autowired
     private CreateFederatedStoreGraphService createFederatedStoreGraphService;
     @Autowired
-    private AuthService authService;
-    @Autowired
     private DeleteGraphService deleteGraphService;
-    @Autowired
-    private ApiClient apiClient;
     @Autowired
     private GetNamespacesService getNamespacesService;
     @Autowired
-    private GetStoreTypesService getStoreTypesService;
+    private GetGaaSGraphConfigsService getStoreTypesService;
 
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
@@ -74,27 +74,29 @@ public class GraphController {
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> addGraph(@Valid @RequestBody final GaaSCreateRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
-        createGraphService.createGraph(gaaSCreateRequestBody);
-        return new ResponseEntity(HttpStatus.CREATED);
-    }
-
-    @PostMapping(path = "/graphs/federated", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> createGraph(@Valid @RequestBody final FederatedRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
-        createFederatedStoreGraphService.createFederatedStore(gaaSCreateRequestBody);
+    public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody) throws GaaSRestApiException {
+        if (requestBody.isFederatedStoreRequest()) {
+            createFederatedStoreGraphService.createFederatedStore(requestBody);
+        } else {
+            createGraphService.createGraph(requestBody);
+        }
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
-        final Map<String, List<GaaSGraph>> list = gafferService.getAllGraphs();
-        return new ResponseEntity(list, HttpStatus.OK);
+        final Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("graphs", getGaffersService.getAllGraphs());
+
+        return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
-    public ResponseEntity<StoreTypesEndpointResponse> getEndpoints() {
-        final StoreTypesEndpointResponse response = getStoreTypesService.getStoreTypes();
-        return new ResponseEntity(response, HttpStatus.OK);
+    public ResponseEntity<List<GaaSGraphConfigSpec>> getGraphConfigSpecs() throws GaaSRestApiException {
+        final Map<String, Object> body = new HashMap<>();
+        body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
+
+        return new ResponseEntity(body, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")

@@ -16,36 +16,22 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
+import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 @UnitTest
-class GetGafferServiceTest {
-
-    @Autowired
-    private GetGafferService getGafferService;
-
-    @MockBean
-    private CRDClient crdClient;
+class GetGaffersServiceTest {
 
     private static final String TEST_GRAPH_ID = "testgraphid";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
@@ -53,22 +39,13 @@ class GetGafferServiceTest {
     private static final RestApiStatus TEST_GRAPH_STATUS = RestApiStatus.UP;
     private static final List<String> TEST_GRAPH_PROBLEMS = new ArrayList<String>(Arrays.asList("There is problem with this Graph"));
 
+    @Autowired
+    private GetGaffersService getGafferService;
     @MockBean
-    private Counter mockCounter;
-
-    @MockBean
-    private MeterRegistry meterRegistry;
-
-    @BeforeEach
-    void beforeEach() {
-       reset(mockCounter);
-    }
-
+    private CRDClient crdClient;
 
     @Test
     void testGetGraphs_whenGraphRequestIsNotEmpty() throws GaaSRestApiException {
-        when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
-
         final GaaSGraph graph = new GaaSGraph()
                 .graphId(TEST_GRAPH_ID)
                 .description(TEST_GRAPH_DESCRIPTION)
@@ -77,30 +54,25 @@ class GetGafferServiceTest {
                 .problems(TEST_GRAPH_PROBLEMS);
         final List<GaaSGraph> graphList = new ArrayList<>();
         graphList.add(graph);
-        Map<String, List<GaaSGraph>> graphs = new HashMap<>();
-        graphs.put("graphs", graphList);
-        when(crdClient.listAllCRDs()).thenReturn(graphs);
+        when(crdClient.listAllCRDs()).thenReturn(graphList);
 
-        final Map<String, List<GaaSGraph>> actual = getGafferService.getAllGraphs();
+        final List<GaaSGraph> actual = getGafferService.getAllGraphs();
 
-        assertEquals(TEST_GRAPH_ID, actual.get("graphs").get(0).getGraphId());
-        assertEquals(TEST_GRAPH_DESCRIPTION, actual.get("graphs").get(0).getDescription());
-        assertEquals(TEST_GRAPH_URL, actual.get("graphs").get(0).getUrl());
-        assertEquals(TEST_GRAPH_STATUS, actual.get("graphs").get(0).getStatus());
-        assertEquals(TEST_GRAPH_PROBLEMS, actual.get("graphs").get(0).getProblems());
-        assertEquals(1, actual.get("graphs").size());
+        assertEquals(TEST_GRAPH_ID, actual.get(0).getGraphId());
+        assertEquals(TEST_GRAPH_DESCRIPTION, actual.get(0).getDescription());
+        assertEquals(TEST_GRAPH_URL, actual.get(0).getUrl());
+        assertEquals(TEST_GRAPH_STATUS, actual.get(0).getStatus());
+        assertEquals(TEST_GRAPH_PROBLEMS, actual.get(0).getProblems());
+        assertEquals(1, actual.size());
     }
 
     @Test
     void testGetGraphs_whenGraphRequestIsEmpty() throws GaaSRestApiException {
-        when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final List<GaaSGraph> graphList = new ArrayList<>();
-        Map<String, List<GaaSGraph>> graphs = new HashMap<>();
-        graphs.put("graphs", graphList);
-        when(crdClient.listAllCRDs()).thenReturn(graphs);
+        when(crdClient.listAllCRDs()).thenReturn(graphList);
 
-        final Map<String, List<GaaSGraph>> actual = getGafferService.getAllGraphs();
+        final List<GaaSGraph> actual = getGafferService.getAllGraphs();
 
-        assertEquals(0, actual.get("graphs").size());
+        assertEquals(0, actual.size());
     }
 }

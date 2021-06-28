@@ -18,13 +18,14 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
-import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import java.util.Arrays;
 import java.util.List;
@@ -43,7 +44,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("bgraph", VALID_GRAPH_HOST, VALID_ROOT));
-        final FederatedRequestBody federatedRequestBody = new FederatedRequestBody("igraph", TEST_GRAPH_DESCRIPTION, subGraphs);
+        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody("igraph", TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 
         final MockHttpServletResponse response = mvc.perform(post("/graphs/federated")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -59,7 +60,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
     @Test
     public void whenSubGraphURLIsInvalid_shouldReturnBadRequest() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("TestGraph", "http://invalid.url", "/rest"));
-        final FederatedRequestBody federatedRequestBody = new FederatedRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, subGraphs);
+        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 
         final MockHttpServletResponse result = mvc.perform(post("/graphs/federated")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -68,13 +69,13 @@ public class CreateFederatedGraphIT extends AbstractTest {
                 .andReturn()
                 .getResponse();
 
-        final String expected = "{\"title\":\"Bad Request\",\"detail\":\"Invalid Proxy Graph URL(s): " +
-                "[TestGraph: TestGraph has invalid host. Reason: failed to resolve 'http' after 4 queries  at http://invalid/rest]\"}";
+        final String expected = "{\"title\":\"Bad Request\",\"detail\":\"Invalid Proxy Graph URL(s):" +
+                " [TestGraph: Get Status request for 'TestGraph' failed. Reason: failed to resolve 'http' after 2 queries  at http://http/invalid.url/rest/graph/status]\"}";
         assertEquals(expected, result.getContentAsString());
         assertEquals(400, result.getStatus());
     }
 
-    @Test
+    @AfterAll
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
         final String group = "gchq.gov.uk"; // String | the custom resource's group
