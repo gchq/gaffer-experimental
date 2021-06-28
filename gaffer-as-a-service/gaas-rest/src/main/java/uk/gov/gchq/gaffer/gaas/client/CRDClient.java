@@ -40,7 +40,7 @@ import static uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory.from;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 @Repository
-public class  CRDClient {
+public class CRDClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
     private static final String PRETTY = null;
