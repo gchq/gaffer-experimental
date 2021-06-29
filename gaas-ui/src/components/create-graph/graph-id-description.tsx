@@ -47,7 +47,7 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
                     setErrorHelperText("");
                 }
                 else {
-                    setErrorHelperText("Graph ID can contain only digits or letters and _")
+                    setErrorHelperText("Graph ID can only contain digits, letters and _")
                 }
             }}
             helperText={errorHelperText }
