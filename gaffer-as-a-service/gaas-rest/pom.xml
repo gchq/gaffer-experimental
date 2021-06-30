@@ -65,6 +65,12 @@
        </dependency>
         <dependency>
             <groupId>uk.gov.gchq.gaffer</groupId>
+            <artifactId>gaffer-as-a-service-tools</artifactId>
+            <version>${gaffer.version}</version>
+            <scope>compile</scope>
+       </dependency>
+        <dependency>
+            <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>proxy-store</artifactId>
             <version>${gaffer.version}</version>
             <scope>compile</scope>
@@ -94,10 +100,6 @@
             <groupId>io.kubernetes</groupId>
             <artifactId>client-java-extended</artifactId>
             <version>${kubernetes.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>

@@ -17,6 +17,7 @@
 package uk.gov.gchq.gaffer.gaas.services;
 
 import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
@@ -36,9 +37,12 @@ public class CreateGraphService {
     @Autowired
     private CRDClient crdClient;
 
+    @Autowired
+    private MeterRegistry meterRegistry;
+
     @Timed(value = "createGraph.time", description = "Time taken to create graph", percentiles = 0)
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
-
+        meterRegistry.counter("CreateGraphService", "action", "create").increment();
         final GafferSpec config = loader.getConfig("/config", gaaSCreateRequestBodyInput.getConfigName());
         crdClient.createCRD(overrideConfig(config, gaaSCreateRequestBodyInput));
     }
