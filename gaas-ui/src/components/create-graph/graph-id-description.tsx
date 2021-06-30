@@ -42,12 +42,12 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
             name="graph-id"
             onChange={(event) => {
                 onChangeGraphId(event.target.value);
-                const regex = new RegExp("^[a-zA-Z0-9_]*$")
+                const regex = new RegExp("^[a-z0-9]*$")
                 if(regex.test(event.target.value)) {
                     setErrorHelperText("");
                 }
                 else {
-                    setErrorHelperText("Graph ID can only contain digits, letters and _")
+                    setErrorHelperText("Graph ID can only contain numbers and lowercase letters")
                 }
             }}
             helperText={errorHelperText }
