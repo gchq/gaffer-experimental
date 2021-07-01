@@ -79,6 +79,7 @@ public final class GafferFactory {
 
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
             config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook()), HOOKS_KEY);
+            config.putNestedObject(createOperationDeclaration(), "operationDeclarations");
         } else {
             config.putNestedObject(overrides.getSchema(), SCHEMA_FILE_KEY);
         }
@@ -99,6 +100,20 @@ public final class GafferFactory {
         opAuthoriser.put("auths", auths);
 
         return opAuthoriser;
+    }
+
+    private static Object[] createOperationDeclaration() {
+        HashMap<String, Object> contents = new HashMap<>();
+        HashMap<String, String> contentsOfHandler = new HashMap<>();
+
+        contentsOfHandler.put("class", "uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler");
+
+        contents.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl");
+        contents.put("handler", contentsOfHandler);
+
+        Object[] objects = {contents};
+
+        return objects;
     }
 
     private GafferFactory() {
