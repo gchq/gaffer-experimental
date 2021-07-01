@@ -63,6 +63,15 @@ public class GaaSGraphConfigsLoaderTest {
     }
 
     @Test
+    public void getConfig_shouldReturnConfigAsYamlTreeMap_whenFileNameExists2() throws GaaSRestApiException {
+        final GafferSpec actual = loader.getConfig("/testconfigs", "federatedopdec");
+
+        final GafferSpec expected = new GafferSpec();
+        expected.putNestedObject(true, "accumulo", "enabled");
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void getConfig_shouldThrowNotFoundGaaSException_whenConfigFileDoesNotExist() {
         final GaaSRestApiException
                 exception = assertThrows(GaaSRestApiException.class, () -> loader.getConfig("/testconfigs", "doesnotexist_config"));
