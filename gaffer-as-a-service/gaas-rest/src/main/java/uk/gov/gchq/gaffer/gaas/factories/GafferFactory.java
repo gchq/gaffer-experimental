@@ -105,7 +105,10 @@ public final class GafferFactory {
     }
 
     private static ArrayList<Object> createOperationDeclaration(final GafferSpec config) {
-        ArrayList<Object> operations = (ArrayList<Object>) config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY);
+        ArrayList<Object> operations = new ArrayList<>();
+        if(config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null){
+            operations.add(config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY));
+        }
         HashMap<String, Object> contents = new HashMap<>();
         HashMap<String, String> contentsOfHandler = new HashMap<>();
 
@@ -116,8 +119,11 @@ public final class GafferFactory {
 
         ArrayList<Object> objects = new ArrayList<>();
         objects.add(contents);
-        for(Object operation: operations){
-            objects.add(operation);
+        if( !operations.isEmpty()){
+            for(Object operation: operations){
+                objects.add(operation);
+            }
+
         }
 
 

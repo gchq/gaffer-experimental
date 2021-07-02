@@ -63,8 +63,8 @@ public class GraphControllerIT extends AbstractTest {
         assertEquals(201, mvcResult.getResponse().getStatus());
     }
     @Test
-    public void testAddFederatedGraph_WithSchema_Returns201OnSuccess2() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "federatedopdec");
+    public void testAddFederatedGraph_WithOperationDeclarations_Returns201OnSuccess() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "federatedOpDeclaration");
         final Gson gson = new Gson();
         final String inputJson = gson.toJson(gaaSCreateRequestBody);
 

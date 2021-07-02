@@ -63,15 +63,6 @@ public class GaaSGraphConfigsLoaderTest {
     }
 
     @Test
-    public void getConfig_shouldReturnConfigAsYamlTreeMap_whenFileNameExists2() throws GaaSRestApiException {
-        final GafferSpec actual = loader.getConfig("/testconfigs", "federatedopdec");
-
-        final GafferSpec expected = new GafferSpec();
-        expected.putNestedObject(true, "accumulo", "enabled");
-        assertEquals(expected, actual);
-    }
-
-    @Test
     public void getConfig_shouldThrowNotFoundGaaSException_whenConfigFileDoesNotExist() {
         final GaaSRestApiException
                 exception = assertThrows(GaaSRestApiException.class, () -> loader.getConfig("/testconfigs", "doesnotexist_config"));
@@ -97,6 +88,12 @@ public class GaaSGraphConfigsLoaderTest {
         gafferSpecFederatedStore.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", GAFFER_STORE_PROPERTIES_CLASS_NESTED_KEYS);
         gafferSpecFederatedStore.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", GAFFER_SERIALISER_JSON_NESTED_KEYS);
         expected.put("federated", gafferSpecFederatedStore);
+
+        final GafferSpec gafferSpecFederatedOpDeclarationStore = new GafferSpec();
+        gafferSpecFederatedStore.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", GAFFER_STORE_CLASS_NESTED_KEYS);
+        gafferSpecFederatedStore.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", GAFFER_STORE_PROPERTIES_CLASS_NESTED_KEYS);
+        gafferSpecFederatedStore.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", GAFFER_SERIALISER_JSON_NESTED_KEYS);
+        expected.put("federatedOpDeclaration", gafferSpecFederatedOpDeclarationStore);
 
         final GafferSpec gafferSpecAccumulo = new GafferSpec();
         gafferSpecAccumulo.putNestedObject(true, "accumulo", "enabled");
