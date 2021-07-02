@@ -62,19 +62,6 @@ public class GraphControllerIT extends AbstractTest {
 
         assertEquals(201, mvcResult.getResponse().getStatus());
     }
-    @Test
-    public void testAddFederatedGraph_WithOperationDeclarations_Returns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "federatedOpDeclaration");
-        final Gson gson = new Gson();
-        final String inputJson = gson.toJson(gaaSCreateRequestBody);
-
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token)
-                .content(inputJson)).andReturn();
-
-        assertEquals(201, mvcResult.getResponse().getStatus());
-    }
 
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
