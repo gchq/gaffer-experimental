@@ -30,6 +30,7 @@ import java.util.Map;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_OPERATION_DECLARATION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.HOOKS_KEY;
@@ -79,7 +80,7 @@ public final class GafferFactory {
 
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
             config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook()), HOOKS_KEY);
-            config.putNestedObject(createOperationDeclaration(), "operationDeclarations");
+            config.putNestedObject(createOperationDeclaration(),  GAFFER_OPERATION_DECLARATION_KEY);
         } else {
             config.putNestedObject(overrides.getSchema(), SCHEMA_FILE_KEY);
         }
