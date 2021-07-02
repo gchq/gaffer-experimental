@@ -23,6 +23,7 @@ import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -80,7 +81,7 @@ public final class GafferFactory {
 
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
             config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook()), HOOKS_KEY);
-            config.putNestedObject(createOperationDeclaration(),  GAFFER_OPERATION_DECLARATION_KEY);
+            config.putNestedObject(createOperationDeclaration(config),  GAFFER_OPERATION_DECLARATION_KEY);
         } else {
             config.putNestedObject(overrides.getSchema(), SCHEMA_FILE_KEY);
         }
@@ -103,7 +104,8 @@ public final class GafferFactory {
         return opAuthoriser;
     }
 
-    private static Object[] createOperationDeclaration() {
+    private static ArrayList<Object> createOperationDeclaration(final GafferSpec config) {
+        ArrayList<Object> operations = (ArrayList<Object>) config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY);
         HashMap<String, Object> contents = new HashMap<>();
         HashMap<String, String> contentsOfHandler = new HashMap<>();
 
@@ -112,7 +114,12 @@ public final class GafferFactory {
         contents.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl");
         contents.put("handler", contentsOfHandler);
 
-        Object[] objects = {contents};
+        ArrayList<Object> objects = new ArrayList<>();
+        objects.add(contents);
+        for(Object operation: operations){
+            objects.add(operation);
+        }
+
 
         return objects;
     }
