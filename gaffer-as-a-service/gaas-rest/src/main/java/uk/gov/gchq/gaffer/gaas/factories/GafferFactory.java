@@ -26,8 +26,10 @@ import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
@@ -104,7 +106,7 @@ public final class GafferFactory {
         return opAuthoriser;
     }
 
-    private static ArrayList<Object> createOperationDeclaration(final GafferSpec config) {
+    private static Set<Object> createOperationDeclaration(final GafferSpec config) {
         ArrayList<Object> operations = new ArrayList<>();
         if (config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
             operations.add(config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY));
@@ -117,7 +119,7 @@ public final class GafferFactory {
         proxyUrlDeclaration.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl");
         proxyUrlDeclaration.put("handler", proxyUrlClass);
 
-        ArrayList<Object> objects = new ArrayList<>();
+        Set<Object> objects = new HashSet<>();
         objects.add(proxyUrlDeclaration);
 
         for (final Object operation : operations) {
