@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,8 +33,8 @@ public class GaaSGraphConfigsLoaderTest {
     private static final String[] GAFFER_STORE_JOB_TRACKER_ENABLED_NESTED_KEYS = {"graph", "storeProperties", "gaffer.store.job.tracker.enabled"};
     private static final String[] GAFFER_CACHE_SERVICE_CLASS_NESTED_KEYS = {"graph", "storeProperties", "gaffer.cache.service.class"};
 
-    private static final String[] GAFFER_STORE_PROPERTIES_CLASS_NESTED_KEYS = {"graph", "storeProperties", "uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties"};
-    private static final String[] GAFFER_SERIALISER_JSON_NESTED_KEYS = {"graph", "storeProperties", "uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules"};
+    private static final String[] GAFFER_STORE_PROPERTIES_CLASS_NESTED_KEYS = {"graph", "storeProperties", "gaffer.store.properties.class"};
+    private static final String[] GAFFER_SERIALISER_JSON_NESTED_KEYS = {"graph", "storeProperties", "gaffer.serialiser.json.modules"};
 
     private static final String[] GAFFER_INVALID_STORE_CLASS_NESTED_KEYS = {"graph", "invalidStoreProperties", "gaffer.store.class"};
     private static final String[] GAFFER_INVALID_STORE_JOB_TRACKER_ENABLED_NESTED_KEYS = {"graph", "invalidStoreProperties", "gaffer.store.job.tracker.enabled"};
@@ -77,10 +78,14 @@ public class GaaSGraphConfigsLoaderTest {
 
         final HashMap<String, GafferSpec> expected = new HashMap();
 
+        final GafferSpec gafferSpecAccumulo = new GafferSpec();
+        gafferSpecAccumulo.putNestedObject(true, "accumulo", "enabled");
+        expected.put("accumulo", gafferSpecAccumulo);
+
         final GafferSpec gafferSpecProxyStore = new GafferSpec();
-        gafferSpecProxyStore.putNestedObject("uk.gov.gchq.gaffer.proxystore.ProxyStore", GAFFER_STORE_CLASS_NESTED_KEYS);
         gafferSpecProxyStore.putNestedObject("http://my.graph.co.uk", GAFFER_HOST_NESTED_KEYS);
         gafferSpecProxyStore.putNestedObject("/rest", GAFFER_CONTEXT_ROOT_NESTED_KEYS);
+        gafferSpecProxyStore.putNestedObject("uk.gov.gchq.gaffer.proxystore.ProxyStore", GAFFER_STORE_CLASS_NESTED_KEYS);
         expected.put("proxy", gafferSpecProxyStore);
 
         final GafferSpec gafferSpecFederatedStore = new GafferSpec();
@@ -88,10 +93,6 @@ public class GaaSGraphConfigsLoaderTest {
         gafferSpecFederatedStore.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", GAFFER_STORE_PROPERTIES_CLASS_NESTED_KEYS);
         gafferSpecFederatedStore.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", GAFFER_SERIALISER_JSON_NESTED_KEYS);
         expected.put("federated", gafferSpecFederatedStore);
-
-        final GafferSpec gafferSpecAccumulo = new GafferSpec();
-        gafferSpecAccumulo.putNestedObject(true, "accumulo", "enabled");
-        expected.put("accumulo", gafferSpecAccumulo);
 
         final GafferSpec gafferSpecMapStore = new GafferSpec();
         gafferSpecMapStore.putNestedObject("uk.gov.gchq.gaffer.mapstore.MapStore", GAFFER_STORE_CLASS_NESTED_KEYS);
@@ -104,6 +105,37 @@ public class GaaSGraphConfigsLoaderTest {
         gafferSpecNoContextProxyStore.putNestedObject("http://my.graph.co.uk", GAFFER_HOST_NESTED_KEYS);
         expected.put("proxyNoContextRoot", gafferSpecNoContextProxyStore);
 
+        final GafferSpec gafferSpecFederatedOpDeclarationStore = new GafferSpec();
+        gafferSpecFederatedOpDeclarationStore.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", GAFFER_STORE_CLASS_NESTED_KEYS);
+        gafferSpecFederatedOpDeclarationStore.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", GAFFER_STORE_PROPERTIES_CLASS_NESTED_KEYS);
+        gafferSpecFederatedOpDeclarationStore.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", GAFFER_SERIALISER_JSON_NESTED_KEYS);
+
+        HashMap<String, Object> generateElementsDeclaration = new HashMap<>();
+        HashMap<String, String> generateElementsClass = new HashMap<>();
+
+        generateElementsClass.put("class", "uk.gov.gchq.gaffer.store.operation.handler.generate.GenerateElementsHandler");
+
+        generateElementsDeclaration.put("operation", "uk.gov.gchq.gaffer.operation.impl.generate.GenerateElements");
+        generateElementsDeclaration.put("handler", generateElementsClass);
+
+        HashMap<String, Object> generateTestDeclaration = new HashMap<>();
+        HashMap<String, String> generateTestClass = new HashMap<>();
+
+        generateTestClass.put("class", "uk.gov.gchq.gaffer.store.operation.handler.generate.GenerateTestHandler");
+
+        generateTestDeclaration.put("operation", "uk.gov.gchq.gaffer.operation.impl.generate.GenerateTest");
+        generateTestDeclaration.put("handler", generateTestClass);
+
+        ArrayList<Object> operationDeclarations = new ArrayList<>();
+        operationDeclarations.add(generateElementsDeclaration);
+        operationDeclarations.add(generateTestDeclaration);
+
+        gafferSpecFederatedOpDeclarationStore.putNestedObject(operationDeclarations, "graph", "operationDeclarations");
+
+        expected.put("federatedOpDeclaration", gafferSpecFederatedOpDeclarationStore);
+
+
+        assertEquals(expected.entrySet(), specs.entrySet());
         assertEquals(expected.keySet(), specs.keySet());
     }
 
