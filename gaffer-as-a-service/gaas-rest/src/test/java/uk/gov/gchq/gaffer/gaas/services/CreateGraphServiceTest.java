@@ -16,8 +16,11 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
@@ -28,8 +31,10 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @UnitTest
 public class CreateGraphServiceTest {
@@ -40,10 +45,16 @@ public class CreateGraphServiceTest {
     @MockBean
     private CRDClient crdClient;
 
+    @MockBean
+    private MeterRegistry meterRegistry;
+
+    @MockBean
+    private Counter mockCounter;
+
     @Test
     public void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
+        when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", getSchema(), "accumulo"));
-
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
         final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();

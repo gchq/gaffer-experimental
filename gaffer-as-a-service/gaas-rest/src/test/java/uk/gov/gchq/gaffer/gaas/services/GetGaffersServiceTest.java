@@ -16,7 +16,11 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
@@ -28,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 @UnitTest
@@ -43,9 +49,19 @@ class GetGaffersServiceTest {
     private GetGaffersService getGafferService;
     @MockBean
     private CRDClient crdClient;
+    @MockBean
+    private Counter mockCounter;
+    @MockBean
+    private MeterRegistry meterRegistry;
+
+    @BeforeEach
+    void beforeEach() {
+        reset(mockCounter);
+    }
 
     @Test
     void testGetGraphs_whenGraphRequestIsNotEmpty() throws GaaSRestApiException {
+        when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final GaaSGraph graph = new GaaSGraph()
                 .graphId(TEST_GRAPH_ID)
                 .description(TEST_GRAPH_DESCRIPTION)
@@ -68,6 +84,7 @@ class GetGaffersServiceTest {
 
     @Test
     void testGetGraphs_whenGraphRequestIsEmpty() throws GaaSRestApiException {
+        when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final List<GaaSGraph> graphList = new ArrayList<>();
         when(crdClient.listAllCRDs()).thenReturn(graphList);
 
