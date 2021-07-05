@@ -109,16 +109,16 @@ public final class GafferFactory {
         if (config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
             operations.add(config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY));
         }
-        HashMap<String, Object> contents = new HashMap<>();
-        HashMap<String, String> contentsOfHandler = new HashMap<>();
+        HashMap<String, Object> proxyUrlDeclaration = new HashMap<>();
+        HashMap<String, String> proxyUrlClass = new HashMap<>();
 
-        contentsOfHandler.put("class", "uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler");
+        proxyUrlClass.put("class", "uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler");
 
-        contents.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl");
-        contents.put("handler", contentsOfHandler);
+        proxyUrlDeclaration.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl");
+        proxyUrlDeclaration.put("handler", proxyUrlClass);
 
         ArrayList<Object> objects = new ArrayList<>();
-        objects.add(contents);
+        objects.add(proxyUrlDeclaration);
         if (!operations.isEmpty()) {
             for (final Object operation: operations) {
                 objects.add(operation);
