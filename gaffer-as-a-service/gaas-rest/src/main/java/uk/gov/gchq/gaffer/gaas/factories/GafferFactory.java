@@ -81,7 +81,7 @@ public final class GafferFactory {
 
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
             config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook()), HOOKS_KEY);
-            config.putNestedObject(createOperationDeclaration(config),  GAFFER_OPERATION_DECLARATION_KEY);
+            config.putNestedObject(createOperationDeclaration(config), GAFFER_OPERATION_DECLARATION_KEY);
         } else {
             config.putNestedObject(overrides.getSchema(), SCHEMA_FILE_KEY);
         }
@@ -119,11 +119,9 @@ public final class GafferFactory {
 
         ArrayList<Object> objects = new ArrayList<>();
         objects.add(proxyUrlDeclaration);
-        if (!operations.isEmpty()) {
-            for (final Object operation: operations) {
-                objects.add(operation);
-            }
 
+        for (final Object operation : operations) {
+            objects.add(operation);
         }
 
 
