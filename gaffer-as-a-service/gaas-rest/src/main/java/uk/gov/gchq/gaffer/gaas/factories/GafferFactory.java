@@ -100,7 +100,7 @@ public final class GafferFactory {
     if (existingAuths != null) {
       final List<Object> configResult = (ArrayList) existingAuths;
       for (final Object key : configResult) {
-        if (((LinkedHashMap) key).get("class").equals(OperationAuthoriser.class.getName())) {
+        if (((LinkedHashMap) key).get("class") != null && ((LinkedHashMap) key).get("class").equals(OperationAuthoriser.class.getName())) {
           auths2 = (LinkedHashMap) ((LinkedHashMap) key).get("auths");
         }
       }

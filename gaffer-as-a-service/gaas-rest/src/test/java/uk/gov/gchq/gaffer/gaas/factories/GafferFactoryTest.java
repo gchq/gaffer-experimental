@@ -250,6 +250,21 @@ public class GafferFactoryTest {
     assertEquals(expected, gson.toJson(requestBody));
   }
 
+  @Test
+  public void federatedBigStoreWithoutRequestOperationAuthorisationor_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
+    final GafferSpec federatedConfig = new GafferSpec();
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
+    federatedConfig.putNestedObject(getOperationAuthorizerHookWithoutOperationAuthorizerClass(), "graph", "config", "hooks");
+
+    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
+
+    final String expected =
+            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+    assertEquals(expected, gson.toJson(requestBody));
+  }
+
   private LinkedHashMap<String, Object> getSchema() {
     final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
     elementsSchema.put("entities", new Object());
@@ -300,6 +315,15 @@ public class GafferFactoryTest {
     return opAuthoriser;
   }
 
+  private static List<Object> getOperationAuthorizerHookWithoutOperationAuthorizerClass() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
+    auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("SuperUser")));
+    final List<Object> opAuthoriser = getOperationAuthorizerHookWithNoOperationAuthorizerClass(auths);
+    return opAuthoriser;
+  }
+
+  //
+
   private static List<Object> getOperationAuthorizerHookWithEmptyStringValueUser() {
     final Map<String, ArrayList> auths = new LinkedHashMap<>();
     auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("")));
@@ -330,6 +354,15 @@ public class GafferFactoryTest {
   private static List<Object> getOperationAuthoriserHook(final Map<String, ArrayList> auths) {
     final Map<String, Object> opAuthoriser = new LinkedHashMap();
     opAuthoriser.put("class", OperationAuthoriser.class.getName());
+    opAuthoriser.put("auths", auths);
+
+    final List<Object> opAuthoriser2 = new ArrayList<>();
+    opAuthoriser2.add(opAuthoriser);
+    return opAuthoriser2;
+  }
+
+  private static List<Object> getOperationAuthorizerHookWithNoOperationAuthorizerClass(final Map<String, ArrayList> auths) {
+    final Map<String, Object> opAuthoriser = new LinkedHashMap();
     opAuthoriser.put("auths", auths);
 
     final List<Object> opAuthoriser2 = new ArrayList<>();
