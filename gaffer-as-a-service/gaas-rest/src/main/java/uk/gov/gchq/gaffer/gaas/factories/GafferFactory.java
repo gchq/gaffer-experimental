@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.AUTHS_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
@@ -82,7 +81,7 @@ public final class GafferFactory {
     config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
 
     if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
-      config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(AUTHS_KEY))), HOOKS_KEY);
+      config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(HOOKS_KEY))), HOOKS_KEY);
     } else {
       config.putNestedObject(overrides.getSchema(), SCHEMA_FILE_KEY);
     }
@@ -94,19 +93,31 @@ public final class GafferFactory {
     return config;
   }
 
-  private static Map<String, Object> getOperationAuthoriserHook(Object existingAuths) {
+  private static Map<String, Object> getOperationAuthoriserHook(final Object existingAuths) {
     final Map<String, String[]> auths = new LinkedHashMap<>();
-    final Map<String, String[]> configResult = (LinkedHashMap) existingAuths;
-    if (configResult != null) {
-      configResult.forEach((key, value) -> {
-        String[] result = checkValue(key, value);
-        if (key != null && result != null && result.length != 0) {
-          auths.put(key, result);
+    Map<String, Object> auths2 = new LinkedHashMap<>();
+
+    if (existingAuths != null) {
+      final List<Object> configResult = (ArrayList) existingAuths;
+      for (final Object key : configResult) {
+        if (((LinkedHashMap) key).get("class").equals(OperationAuthoriser.class.getName())) {
+          auths2 = (LinkedHashMap) ((LinkedHashMap) key).get("auths");
         }
-      });
+      }
+      if (auths2 != null) {
+        auths2.forEach((key, value) -> {
+          String[] result = checkValue(key, value);
+          if (key != null && result != null && result.length != 0) {
+            auths.put(key, result);
+          }
+        });
+        if (!auths2.containsKey(AddGraph.class.getName())) {
+          auths.put(AddGraph.class.getName(), new String[] {DEFAULT_SYSTEM_USER});
+        }
+      }
     }
 
-    if (auths.isEmpty() || !configResult.containsKey(AddGraph.class.getName())) {
+    if (auths.isEmpty()) {
       auths.put(AddGraph.class.getName(), new String[] {DEFAULT_SYSTEM_USER});
     }
     final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
@@ -116,13 +127,16 @@ public final class GafferFactory {
     return opAuthoriser;
   }
 
-  private static String[] checkValue(String key, String[] value) {
+  private static String[] checkValue(final String key, final Object value) {
     if (value != null) {
       final List<String> result = new ArrayList();
-      for (int i = 0; i < value.length; i++) {
-        if (value[i] != "" && value[i] != "null" && value[i] != null) {
-          result.add(value[i]);
+      if (value instanceof List) {
+        List<String> resultAuths = (ArrayList) value;
+      for (int i = 0; i < resultAuths.size(); i++) {
+        if (resultAuths.get(i) != "" && resultAuths.get(i) != "null" && resultAuths.get(i) != null) {
+          result.add(resultAuths.get(i));
         }
+      }
       }
       if (key.equals(AddGraph.class.getName()) && !result.contains(DEFAULT_SYSTEM_USER)) {
         result.add(DEFAULT_SYSTEM_USER);

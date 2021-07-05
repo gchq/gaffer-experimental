@@ -1,4 +1,11 @@
 graph:
+  config:
+    hooks:
+      - auths:
+          uk.gov.gchq.gaffer.federatedstore.operation.AddGraph:
+            - GAAS_SYSTEM_USER
+            - USER
+        class: uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser
   storeProperties:
     gaffer.store.class: uk.gov.gchq.gaffer.federatedstore.FederatedStore
     gaffer.store.properties.class: uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties

@@ -26,7 +26,10 @@ import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import uk.gov.gchq.gaffer.operation.Operation;
 import uk.gov.gchq.gaffer.operation.impl.get.GetAllElements;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -187,21 +190,6 @@ public class GafferFactoryTest {
   }
 
   @Test
-  public void federatedBigStoreRequestOperationAuthorisationWithNullValueUser_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
-    final GafferSpec federatedConfig = new GafferSpec();
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthorizerHookWithNullValueUser(), "graph", "config", "hooks");
-
-    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
-
-    final String expected =
-            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
-    assertEquals(expected, gson.toJson(requestBody));
-  }
-
-  @Test
   public void federatedBigStoreRequestOperationAuthorisationWithNullStringValueUser_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
     final GafferSpec federatedConfig = new GafferSpec();
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
@@ -270,87 +258,82 @@ public class GafferFactoryTest {
     return elementsSchema;
   }
 
-  private static Map<String, Object> getOperationAuthoriserHook() {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
-    auths.put(Operation.class.getName(), new String[] {"User"});
-    auths.put(GetAllElements.class.getName(), new String[] {"AdminUser", "SuperUser"});
-    final Map<String, Object> opAuthoriser = getOperationAuthoriserHook(auths);
+  private static List<Object> getOperationAuthoriserHook() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
+    auths.put(Operation.class.getName(), new ArrayList<>(Arrays.asList("User")));
+    auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("AdminUser", "SuperUser")));
+    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
 
     return opAuthoriser;
   }
 
-  private static Map<String, Object> getOperationAuthorizerHookForAddGraphClassWithDefaultSystemUserValueAndOtherUsers() {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
-    auths.put(AddGraph.class.getName(), new String[] {"GAAS_SYSTEM_USER", "User"});
-    auths.put(Operation.class.getName(), new String[] {"User"});
-    auths.put(GetAllElements.class.getName(), new String[] {"AdminUser", "SuperUser"});
-    final Map<String, Object> opAuthoriser = getOperationAuthoriserHook(auths);
+  private static List<Object> getOperationAuthorizerHookForAddGraphClassWithDefaultSystemUserValueAndOtherUsers() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
+    auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("GAAS_SYSTEM_USER", "User")));
+    auths.put(Operation.class.getName(), new ArrayList<>(Arrays.asList("User")));
+    auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("AdminUser", "SuperUser")));
+    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static Map<String, Object> getOperationAuthorizerHookForNoAddGraphsClassesWithNullUserOrUserWithEmptyStringValue() {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
+  private static List<Object> getOperationAuthorizerHookForNoAddGraphsClassesWithNullUserOrUserWithEmptyStringValue() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
     auths.put(Operation.class.getName(), null);
-    auths.put(GetAllElements.class.getName(), new String[] {""});
-    final Map<String, Object> opAuthoriser = getOperationAuthoriserHook(auths);
+    auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("")));
+    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static Map<String, Object> getOperationAuthorizerHookForAddGraphClassWithEmptyDefaultSystemUserValueAndOtherUsers() {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
-    auths.put(AddGraph.class.getName(), new String[] {"", "User"});
-    auths.put(Operation.class.getName(), new String[] {"User"});
-    auths.put(GetAllElements.class.getName(), new String[] {"AdminUser", "SuperUser"});
-    final Map<String, Object> opAuthoriser = getOperationAuthoriserHook(auths);
+  private static List<Object> getOperationAuthorizerHookForAddGraphClassWithEmptyDefaultSystemUserValueAndOtherUsers() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
+    auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("", "User")));
+    auths.put(Operation.class.getName(), new ArrayList<>(Arrays.asList("User")));
+    auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("AdminUser", "SuperUser")));
+    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static Map<String, Object> getOperationAuthorizerHookForNoAddGraphClassUserWithEmptyStringValue() {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
-    auths.put(GetAllElements.class.getName(), new String[] {"", "SuperUser"});
-    final Map<String, Object> opAuthoriser = getOperationAuthoriserHook(auths);
+  private static List<Object> getOperationAuthorizerHookForNoAddGraphClassUserWithEmptyStringValue() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
+    auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("", "SuperUser")));
+    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static Map<String, Object> getOperationAuthorizerHookWithEmptyStringValueUser() {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
-    auths.put(AddGraph.class.getName(), new String[] {""});
-    final Map<String, Object> opAuthoriser = getOperationAuthoriserHook(auths);
+  private static List<Object> getOperationAuthorizerHookWithEmptyStringValueUser() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
+    auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("")));
+    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static Map<String, Object> getOperationAuthorizerHookWithNullUser() {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
+  private static List<Object> getOperationAuthorizerHookWithNullUser() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
     auths.put(AddGraph.class.getName(), null);
-    final Map<String, Object> opAuthoriser = getOperationAuthoriserHook(auths);
+    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static Map<String, Object> getOperationAuthorizerHookWithNullAuths() {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
-    auths.put(AddGraph.class.getName(), null);
-    final Map<String, Object> opAuthoriser = getOperationAuthoriserHook(auths);
+  private static List<Object> getOperationAuthorizerHookWithNullAuths() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
+    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static Map<String, Object> getOperationAuthorizerHookWithNullValueUser() {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
-    auths.put(AddGraph.class.getName(), new String[] {null});
-    final Map<String, Object> opAuthoriser = getOperationAuthoriserHook(auths);
+  private static List<Object> getOperationAuthorizerHookWithNullStringValueUser() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
+    auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("null")));
+    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static Map<String, Object> getOperationAuthorizerHookWithNullStringValueUser() {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
-    auths.put(AddGraph.class.getName(), new String[] {"null"});
-    final Map<String, Object> opAuthoriser = getOperationAuthoriserHook(auths);
-    return opAuthoriser;
-  }
-
-  private static Map<String, Object> getOperationAuthoriserHook(Map<String, String[]> auths) {
-    final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
+  private static List<Object> getOperationAuthoriserHook(final Map<String, ArrayList> auths) {
+    final Map<String, Object> opAuthoriser = new LinkedHashMap();
     opAuthoriser.put("class", OperationAuthoriser.class.getName());
     opAuthoriser.put("auths", auths);
-    return opAuthoriser;
+
+    final List<Object> opAuthoriser2 = new ArrayList<>();
+    opAuthoriser2.add(opAuthoriser);
+    return opAuthoriser2;
   }
 }
