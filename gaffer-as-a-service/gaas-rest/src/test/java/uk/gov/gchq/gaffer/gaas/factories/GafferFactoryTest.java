@@ -115,12 +115,12 @@ public class GafferFactoryTest {
   }
 
   @Test
-  public void federatedBigStoreRequestOperationAuthorisation_shouldOverrideToOneConfiguredinGafferSpecConfig() {
+  public void federatedBigStoreRequestWithValidOpAuthsInTheConfigYamlWithoutAddGraphClass_shouldOverrideToOneConfiguredInGafferSpecConfig() {
     final GafferSpec federatedConfig = new GafferSpec();
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthoriserHook(), "graph", "config", "hooks");
+    federatedConfig.putNestedObject(getOperationAuthorizerHookWithValidOpAuthsInTheConfigYamlWithoutAddGraphClass(), "graph", "config", "hooks");
 
     final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
 
@@ -130,133 +130,119 @@ public class GafferFactoryTest {
   }
 
   @Test
-  public void federatedBigStoreRequestOperationAuthorisationWithEmptyStringValueUser_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
-    final GafferSpec federatedConfig = new GafferSpec();
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthorizerHookWithEmptyStringValueUser(), "graph", "config", "hooks");
-
-    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
-
-    final String expected =
-            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
-    assertEquals(expected, gson.toJson(requestBody));
-  }
-
-  @Test
-  public void federatedBigStoreRequestOperationAuthorisationWithNullUserOrUserWithEmptyStringValue_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
-    final GafferSpec federatedConfig = new GafferSpec();
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthorizerHookForNoAddGraphsClassesWithNullUserOrUserWithEmptyStringValue(), "graph", "config", "hooks");
-
-    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
-
-    final String expected =
-            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
-    assertEquals(expected, gson.toJson(requestBody));
-  }
-
-  @Test
-  public void federatedBigStoreRequestOperationAuthorisationWithNullUser_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
-    final GafferSpec federatedConfig = new GafferSpec();
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthorizerHookWithNullUser(), "graph", "config", "hooks");
-
-    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
-
-    final String expected =
-            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
-    assertEquals(expected, gson.toJson(requestBody));
-  }
-
-  @Test
-  public void federatedBigStoreRequestOperationAuthorisationWithNullAuths_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
-    final GafferSpec federatedConfig = new GafferSpec();
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthorizerHookWithNullAuths(), "graph", "config", "hooks");
-
-    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
-
-    final String expected =
-            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
-    assertEquals(expected, gson.toJson(requestBody));
-  }
-
-  @Test
-  public void federatedBigStoreRequestOperationAuthorisationWithNullStringValueUser_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
-    final GafferSpec federatedConfig = new GafferSpec();
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
-    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthorizerHookWithNullStringValueUser(), "graph", "config", "hooks");
-
-    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
-
-    final String expected =
-            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
-    assertEquals(expected, gson.toJson(requestBody));
-  }
-
-  @Test
   public void federatedBigStoreRequestOperationAuthorisationForAddGraphClassWithDefaultSystemUserValueAndOtherUsers_shouldOverrideToOneConfiguredinGafferSpecConfig() {
     final GafferSpec federatedConfig = new GafferSpec();
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthorizerHookForAddGraphClassWithDefaultSystemUserValueAndOtherUsers(), "graph", "config", "hooks");
+    federatedConfig.putNestedObject(getOperationAuthorizerHookWithValidOpAuthsInTheConfigYamlWithAddGraphClass(), "graph", "config", "hooks");
 
     final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
 
     final String expected =
-            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\",\"User\"],\"uk.gov.gchq.gaffer.operation.Operation\":[\"User\"],\"uk.gov.gchq.gaffer.operation.impl.get.GetAllElements\":[\"AdminUser\",\"SuperUser\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"],\"uk.gov.gchq.gaffer.operation.Operation\":[\"User\"],\"uk.gov.gchq.gaffer.operation.impl.get.GetAllElements\":[\"AdminUser\",\"SuperUser\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
     assertEquals(expected, gson.toJson(requestBody));
   }
 
 
   @Test
-  public void federatedBigStoreRequestOperationAuthorisationForAddGraphClassWithEmptyDefaultSystemUserValueAndOtherUsers_shouldOverrideToOneConfiguredinGafferSpecConfig() {
+  public void federatedBigStoreRequestWithAddGraphClassEmptyStringValueInOpAuthsConfigYaml_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
     final GafferSpec federatedConfig = new GafferSpec();
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthorizerHookForAddGraphClassWithEmptyDefaultSystemUserValueAndOtherUsers(), "graph", "config", "hooks");
+    federatedConfig.putNestedObject(getOperationAuthorizerHookWithEmptyStringValueInAddGraphClass(), "graph", "config", "hooks");
 
     final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
 
     final String expected =
-            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"User\",\"GAAS_SYSTEM_USER\"],\"uk.gov.gchq.gaffer.operation.Operation\":[\"User\"],\"uk.gov.gchq.gaffer.operation.impl.get.GetAllElements\":[\"AdminUser\",\"SuperUser\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
     assertEquals(expected, gson.toJson(requestBody));
   }
 
   @Test
-  public void federatedBigStoreRequestOperationAuthorisationorNoAddGraphClassUserWithEmptyStringValues_shouldOverrideToOneConfiguredinGafferSpecConfig() {
+  public void federatedBigStoreRequestWithIncorrectUserValuesOpAuthsInTheConfigYaml_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
     final GafferSpec federatedConfig = new GafferSpec();
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthorizerHookForNoAddGraphClassUserWithEmptyStringValue(), "graph", "config", "hooks");
+    federatedConfig.putNestedObject(getOperationAuthorizerHookWithIncorrectUserValues(), "graph", "config", "hooks");
 
     final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
 
     final String expected =
-            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.operation.impl.get.GetAllElements\":[\"SuperUser\"],\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
     assertEquals(expected, gson.toJson(requestBody));
   }
 
   @Test
-  public void federatedBigStoreWithoutRequestOperationAuthorisationor_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
+  public void federatedBigStoreRequestOperationAuthorisationWithNullValueInAddGraphClass_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
     final GafferSpec federatedConfig = new GafferSpec();
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(getOperationAuthorizerHookWithoutOperationAuthorizerClass(), "graph", "config", "hooks");
+    federatedConfig.putNestedObject(getOperationAuthorizerHookWithNullValueInAddGraphClass(), "graph", "config", "hooks");
+
+    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
+
+    final String expected =
+            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+    assertEquals(expected, gson.toJson(requestBody));
+  }
+
+  @Test
+  public void federatedBigStoreRequestOperationAuthorisationWithEmptyAuths_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
+    final GafferSpec federatedConfig = new GafferSpec();
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
+    federatedConfig.putNestedObject(getOperationAuthorizerHookWithEmptyAuths(), "graph", "config", "hooks");
+
+    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
+
+    final String expected =
+            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+    assertEquals(expected, gson.toJson(requestBody));
+  }
+
+  @Test
+  public void federatedBigStoreRequestOperationAuthorisationWithAddGraphClassInvalidUserValue_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
+    final GafferSpec federatedConfig = new GafferSpec();
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
+    federatedConfig.putNestedObject(getOperationAuthorizerHookWithAddGraphClassInvalidUserValue(), "graph", "config", "hooks");
+
+    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
+
+    final String expected =
+            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+    assertEquals(expected, gson.toJson(requestBody));
+  }
+
+  @Test
+  public void federatedBigStoreRequestOperationAuthorisationForAddGraphClassWithInvalidDefaultSystemUserValue_shouldOverrideToOneConfiguredInGafferSpecConfig() {
+    final GafferSpec federatedConfig = new GafferSpec();
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
+    federatedConfig.putNestedObject(getOperationAuthorizerHookForAddGraphClassWithInvalidDefaultSystemUserValue(), "graph", "config", "hooks");
+
+    final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
+
+    final String expected =
+            "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"federatedBig\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"storeProperties\":{\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\"},\"config\":{\"description\":\"Another description\",\"graphId\":\"MyGraph\",\"hooks\":[{\"class\":\"uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser\",\"auths\":{\"uk.gov.gchq.gaffer.federatedstore.operation.AddGraph\":[\"User\",\"GAAS_SYSTEM_USER\"]}}]}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
+    assertEquals(expected, gson.toJson(requestBody));
+  }
+
+
+  @Test
+  public void federatedBigStoreRequestWithoutOperationAuthorisationClass_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
+    final GafferSpec federatedConfig = new GafferSpec();
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
+    federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
+    federatedConfig.putNestedObject(withoutOperationAuthorisationClass(), "graph", "config", "hooks");
 
     final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
 
@@ -273,81 +259,71 @@ public class GafferFactoryTest {
     return elementsSchema;
   }
 
-  private static List<Object> getOperationAuthoriserHook() {
+  private static List<Object> getOperationAuthorizerHookWithValidOpAuthsInTheConfigYamlWithoutAddGraphClass() {
     final Map<String, ArrayList> auths = new LinkedHashMap<>();
     auths.put(Operation.class.getName(), new ArrayList<>(Arrays.asList("User")));
     auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("AdminUser", "SuperUser")));
-    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
+    final List<Object> opAuthorizer = getOperationAuthoriserHook(auths);
 
-    return opAuthoriser;
+    return opAuthorizer;
   }
 
-  private static List<Object> getOperationAuthorizerHookForAddGraphClassWithDefaultSystemUserValueAndOtherUsers() {
+  private static List<Object> getOperationAuthorizerHookWithValidOpAuthsInTheConfigYamlWithAddGraphClass() {
     final Map<String, ArrayList> auths = new LinkedHashMap<>();
-    auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("GAAS_SYSTEM_USER", "User")));
+    auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList(DEFAULT_SYSTEM_USER)));
     auths.put(Operation.class.getName(), new ArrayList<>(Arrays.asList("User")));
     auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("AdminUser", "SuperUser")));
-    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
-    return opAuthoriser;
+    final List<Object> opAuthorizer = getOperationAuthoriserHook(auths);
+    return opAuthorizer;
   }
 
-  private static List<Object> getOperationAuthorizerHookForNoAddGraphsClassesWithNullUserOrUserWithEmptyStringValue() {
+  private static List<Object> getOperationAuthorizerHookWithIncorrectUserValues() {
     final Map<String, ArrayList> auths = new LinkedHashMap<>();
     auths.put(Operation.class.getName(), null);
     auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("")));
-    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
-    return opAuthoriser;
+    final List<Object> opAuthorizer = getOperationAuthoriserHook(auths);
+    return opAuthorizer;
   }
 
-  private static List<Object> getOperationAuthorizerHookForAddGraphClassWithEmptyDefaultSystemUserValueAndOtherUsers() {
+  private static List<Object> getOperationAuthorizerHookForAddGraphClassWithInvalidDefaultSystemUserValue() {
     final Map<String, ArrayList> auths = new LinkedHashMap<>();
     auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("", "User")));
-    auths.put(Operation.class.getName(), new ArrayList<>(Arrays.asList("User")));
-    auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("AdminUser", "SuperUser")));
     final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static List<Object> getOperationAuthorizerHookForNoAddGraphClassUserWithEmptyStringValue() {
-    final Map<String, ArrayList> auths = new LinkedHashMap<>();
-    auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("", "SuperUser")));
-    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
-    return opAuthoriser;
-  }
 
-  private static List<Object> getOperationAuthorizerHookWithoutOperationAuthorizerClass() {
-    final Map<String, ArrayList> auths = new LinkedHashMap<>();
-    auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("SuperUser")));
-    final List<Object> opAuthoriser = getOperationAuthorizerHookWithNoOperationAuthorizerClass(auths);
-    return opAuthoriser;
-  }
-
-  //
-
-  private static List<Object> getOperationAuthorizerHookWithEmptyStringValueUser() {
+  private static List<Object> getOperationAuthorizerHookWithEmptyStringValueInAddGraphClass() {
     final Map<String, ArrayList> auths = new LinkedHashMap<>();
     auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("")));
-    final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
-    return opAuthoriser;
+    final List<Object> opAuthorizer = getOperationAuthoriserHook(auths);
+    return opAuthorizer;
   }
 
-  private static List<Object> getOperationAuthorizerHookWithNullUser() {
+  private static List<Object> getOperationAuthorizerHookWithNullValueInAddGraphClass() {
     final Map<String, ArrayList> auths = new LinkedHashMap<>();
     auths.put(AddGraph.class.getName(), null);
     final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static List<Object> getOperationAuthorizerHookWithNullAuths() {
+  private static List<Object> getOperationAuthorizerHookWithEmptyAuths() {
     final Map<String, ArrayList> auths = new LinkedHashMap<>();
     final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
     return opAuthoriser;
   }
 
-  private static List<Object> getOperationAuthorizerHookWithNullStringValueUser() {
+  private static List<Object> getOperationAuthorizerHookWithAddGraphClassInvalidUserValue() {
     final Map<String, ArrayList> auths = new LinkedHashMap<>();
     auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("null")));
     final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
+    return opAuthoriser;
+  }
+
+  private static List<Object> withoutOperationAuthorisationClass() {
+    final Map<String, ArrayList> auths = new LinkedHashMap<>();
+    auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("null")));
+    final List<Object> opAuthoriser = getOperationAuthorizerHookWithoutOperationAuthorisationClass(auths);
     return opAuthoriser;
   }
 
@@ -356,17 +332,17 @@ public class GafferFactoryTest {
     opAuthoriser.put("class", OperationAuthoriser.class.getName());
     opAuthoriser.put("auths", auths);
 
-    final List<Object> opAuthoriser2 = new ArrayList<>();
-    opAuthoriser2.add(opAuthoriser);
-    return opAuthoriser2;
+    final List<Object> opAuthoriserList = new ArrayList<>();
+    opAuthoriserList.add(opAuthoriser);
+    return opAuthoriserList;
   }
 
-  private static List<Object> getOperationAuthorizerHookWithNoOperationAuthorizerClass(final Map<String, ArrayList> auths) {
+  private static List<Object> getOperationAuthorizerHookWithoutOperationAuthorisationClass(final Map<String, ArrayList> auths) {
     final Map<String, Object> opAuthoriser = new LinkedHashMap();
     opAuthoriser.put("auths", auths);
 
-    final List<Object> opAuthoriser2 = new ArrayList<>();
-    opAuthoriser2.add(opAuthoriser);
-    return opAuthoriser2;
+    final List<Object> opAuthoriserList = new ArrayList<>();
+    opAuthoriserList.add(opAuthoriser);
+    return opAuthoriserList;
   }
 }
