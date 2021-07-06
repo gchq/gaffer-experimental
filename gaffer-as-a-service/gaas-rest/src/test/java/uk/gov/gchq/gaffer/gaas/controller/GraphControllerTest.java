@@ -28,7 +28,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
+import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
@@ -75,9 +75,9 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void getStoretypes_ReturnsStoretypesAsList_whenSuccessful() throws Exception {
-        final List<GaaSGraphConfigSpec> specs = Arrays.asList(
-                new GaaSGraphConfigSpec("accumulo", new String[] {"schema"}),
-                new GaaSGraphConfigSpec("federated", new String[] {"proxies"}));
+        final List<GafferConfigSpec> specs = Arrays.asList(
+                new GafferConfigSpec("accumulo", new String[] {"schema"}),
+                new GafferConfigSpec("federated", new String[] {"proxies"}));
         when(getStoreTypesService.getGafferConfigSpecs()).thenReturn(specs);
 
         final MvcResult getStoretypeResponse = mvc.perform(get("/storetypes")

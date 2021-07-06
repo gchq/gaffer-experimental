@@ -22,7 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
+import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
 import uk.gov.gchq.gaffer.gaas.util.GafferSpecConfigsLoader;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import uk.gov.gchq.gaffer.mapstore.MapStore;
@@ -48,9 +48,9 @@ public class GetGaaSGraphConfigsServiceTest {
         gafferSpecsMap.put("federated_config", getFederatedStoreGafferSpec());
         when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
-        final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
+        final List<GafferConfigSpec> actual = service.getGafferConfigSpecs();
 
-        final List<GaaSGraphConfigSpec> expected = Arrays.asList(new GaaSGraphConfigSpec("federated_config", new String[] {"proxies"}));
+        final List<GafferConfigSpec> expected = Arrays.asList(new GafferConfigSpec("federated_config", new String[] {"proxies"}));
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
@@ -61,11 +61,11 @@ public class GetGaaSGraphConfigsServiceTest {
         gafferSpecsMap.put("mapStore_config", getMapStoreGafferSpec());
         when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
-        final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
+        final List<GafferConfigSpec> actual = service.getGafferConfigSpecs();
 
-        final List<GaaSGraphConfigSpec> expected = Arrays.asList(
-                new GaaSGraphConfigSpec("mapStore_config", new String[] {"schema"}),
-                new GaaSGraphConfigSpec("federated_config", new String[] {"proxies"})
+        final List<GafferConfigSpec> expected = Arrays.asList(
+                new GafferConfigSpec("mapStore_config", new String[] {"schema"}),
+                new GafferConfigSpec("federated_config", new String[] {"proxies"})
         );
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
@@ -76,10 +76,10 @@ public class GetGaaSGraphConfigsServiceTest {
         gafferSpecsMap.put("mapStore", getMapStoreGafferSpec());
         when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
-        final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
+        final List<GafferConfigSpec> actual = service.getGafferConfigSpecs();
 
-        final List<GaaSGraphConfigSpec> expected = Arrays.asList(
-                new GaaSGraphConfigSpec("mapStore", new String[] {"schema"})
+        final List<GafferConfigSpec> expected = Arrays.asList(
+                new GafferConfigSpec("mapStore", new String[] {"schema"})
         );
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
@@ -90,10 +90,10 @@ public class GetGaaSGraphConfigsServiceTest {
         gafferSpecsMap.put("empty_config_as_null", null);
         when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
-        final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
+        final List<GafferConfigSpec> actual = service.getGafferConfigSpecs();
 
-        final List<GaaSGraphConfigSpec> expected = Arrays.asList(
-                new GaaSGraphConfigSpec("empty_config_as_null", new String[] {"schema"})
+        final List<GafferConfigSpec> expected = Arrays.asList(
+                new GafferConfigSpec("empty_config_as_null", new String[] {"schema"})
         );
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
@@ -104,10 +104,10 @@ public class GetGaaSGraphConfigsServiceTest {
         gafferSpecsMap.put("empty_config", new GafferSpec());
         when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
-        final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
+        final List<GafferConfigSpec> actual = service.getGafferConfigSpecs();
 
-        final List<GaaSGraphConfigSpec> expected = Arrays.asList(
-                new GaaSGraphConfigSpec("empty_config", new String[] {"schema"})
+        final List<GafferConfigSpec> expected = Arrays.asList(
+                new GafferConfigSpec("empty_config", new String[] {"schema"})
         );
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
@@ -118,10 +118,10 @@ public class GetGaaSGraphConfigsServiceTest {
         gafferSpecsMap.put("nullStoreClass_config", getNullStoreClassValueGafferSpec());
         when(loader.listConfigSpecs("/config")).thenReturn(gafferSpecsMap);
 
-        final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
+        final List<GafferConfigSpec> actual = service.getGafferConfigSpecs();
 
-        final List<GaaSGraphConfigSpec> expected = Arrays.asList(
-                new GaaSGraphConfigSpec("nullStoreClass_config", new String[] {"schema"})
+        final List<GafferConfigSpec> expected = Arrays.asList(
+                new GafferConfigSpec("nullStoreClass_config", new String[] {"schema"})
         );
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
@@ -130,7 +130,7 @@ public class GetGaaSGraphConfigsServiceTest {
     void whenEmptyMapOfGafferSpecs_returnEmptyList() throws GaaSRestApiException {
         when(loader.listConfigSpecs("/config")).thenReturn(new HashMap<>());
 
-        final List<GaaSGraphConfigSpec> actual = service.getGafferConfigSpecs();
+        final List<GafferConfigSpec> actual = service.getGafferConfigSpecs();
 
         assertArrayEquals(new ArrayList().toArray(), actual.toArray());
     }
