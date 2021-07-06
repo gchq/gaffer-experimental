@@ -60,7 +60,7 @@
        <dependency>
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>gaas-common</artifactId>
-            <version>${gaffer.version}</version>
+            <version>1.16.0</version>
             <scope>compile</scope>
        </dependency>
         <dependency>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>gaffer-as-a-service-tools</artifactId>
-            <version>${gaffer.version}</version>
+            <version>1.16.0</version>
             <scope>compile</scope>
        </dependency>
         <dependency>

@@ -58,6 +58,7 @@
         <dependency>
             <groupId>uk.gov.gchq.gaffer</groupId>
             <artifactId>gaas-common</artifactId>
+            <version>1.16.0</version>
         </dependency>
     </dependencies>
 
