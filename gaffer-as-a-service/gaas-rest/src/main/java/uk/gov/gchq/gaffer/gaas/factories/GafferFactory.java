@@ -27,12 +27,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_OPERATION_DECLARATION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.HOOKS_KEY;
@@ -80,12 +83,13 @@ public final class GafferFactory {
     final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
     config.putNestedObject(overrides.getGraphId(), GRAPH_ID_KEY);
     config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
+        if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
+            config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(HOOKS_KEY))), HOOKS_KEY);
+            config.putNestedObject(createOperationDeclaration(config), GAFFER_OPERATION_DECLARATION_KEY);
+        } else {
+            config.putNestedObject(overrides.getSchema(), SCHEMA_FILE_KEY);
+        }
 
-    if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
-      config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(HOOKS_KEY))), HOOKS_KEY);
-    } else {
-      config.putNestedObject(overrides.getSchema(), SCHEMA_FILE_KEY);
-    }
 
     // Mandatory Ingress values
     config.putNestedObject(overrides.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
@@ -101,7 +105,6 @@ public final class GafferFactory {
     if (formattedAuths.isEmpty() || (formattedAuths != null && !formattedAuths.containsKey(AddGraph.class.getName()))) {
       formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList(DEFAULT_SYSTEM_USER)));
     }
-
     final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
     opAuthoriser.put("class", OperationAuthoriser.class.getName());
     opAuthoriser.put("auths", formattedAuths);
@@ -130,6 +133,30 @@ public final class GafferFactory {
     }
     return formattedAuths;
   }
+    private static Set<Object> createOperationDeclaration(final GafferSpec config) {
+        ArrayList<Object> operations = new ArrayList<>();
+        if (config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
+            operations.add(config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY));
+        }
+        HashMap<String, Object> proxyUrlDeclaration = new HashMap<>();
+        HashMap<String, String> proxyUrlClass = new HashMap<>();
+
+        proxyUrlClass.put("class", "uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler");
+
+        proxyUrlDeclaration.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl");
+        proxyUrlDeclaration.put("handler", proxyUrlClass);
+
+        Set<Object> objects = new HashSet<>();
+        objects.add(proxyUrlDeclaration);
+
+        for (final Object operation : operations) {
+            objects.add(operation);
+        }
+
+
+        return objects;
+    }
+
 
   private static List<String> formatExistingAuths(final String key, final Object exsistingAuths) {
     if (exsistingAuths != null) {
