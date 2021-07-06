@@ -242,7 +242,7 @@ public class GafferFactoryTest {
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
     federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties", "graph", "storeProperties", "gaffer.store.properties.class");
-    federatedConfig.putNestedObject(withoutOperationAuthorisationClass(), "graph", "config", "hooks");
+    federatedConfig.putNestedObject(getOperationAuthorizerHookWithoutOperationAuthorisationClass(), "graph", "config", "hooks");
 
     final Gaffer requestBody = GafferFactory.from(federatedConfig, new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedBig"));
 
@@ -320,7 +320,7 @@ public class GafferFactoryTest {
     return opAuthoriser;
   }
 
-  private static List<Object> withoutOperationAuthorisationClass() {
+  private static List<Object> getOperationAuthorizerHookWithoutOperationAuthorisationClass() {
     final Map<String, ArrayList> auths = new LinkedHashMap<>();
     auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("null")));
     final List<Object> opAuthoriser = getOperationAuthorizerHookWithoutOperationAuthorisationClass(auths);

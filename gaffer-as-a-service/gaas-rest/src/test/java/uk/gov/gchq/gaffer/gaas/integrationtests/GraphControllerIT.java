@@ -207,9 +207,6 @@ public class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
 
-
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-
         assertEquals(201, mvcResult.getResponse().getStatus());
     }
 

@@ -24,6 +24,7 @@ import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -94,54 +95,57 @@ public final class GafferFactory {
   }
 
   private static Map<String, Object> getOperationAuthoriserHook(final Object existingAuths) {
-    final Map<String, String[]> auths = new LinkedHashMap<>();
-    Map<String, Object> auths2 = new LinkedHashMap<>();
 
-    if (existingAuths != null) {
-      final List<Object> configResult = (ArrayList) existingAuths;
-      for (final Object key : configResult) {
-        if (((LinkedHashMap) key).get("class") != null && ((LinkedHashMap) key).get("class").equals(OperationAuthoriser.class.getName())) {
-          auths2 = (LinkedHashMap) ((LinkedHashMap) key).get("auths");
-        }
-      }
-      if (auths2 != null) {
-        auths2.forEach((key, value) -> {
-          String[] result = checkValue(key, value);
-          if (key != null && result != null && result.length != 0) {
-            auths.put(key, result);
-          }
-        });
-        if (!auths2.containsKey(AddGraph.class.getName())) {
-          auths.put(AddGraph.class.getName(), new String[] {DEFAULT_SYSTEM_USER});
-        }
-      }
+    final Map<String, List> formattedAuths = getFormattedAuths(existingAuths);
+
+    if (formattedAuths.isEmpty() || (formattedAuths != null && !formattedAuths.containsKey(AddGraph.class.getName()))) {
+      formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList(DEFAULT_SYSTEM_USER)));
     }
 
-    if (auths.isEmpty()) {
-      auths.put(AddGraph.class.getName(), new String[] {DEFAULT_SYSTEM_USER});
-    }
     final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
     opAuthoriser.put("class", OperationAuthoriser.class.getName());
-    opAuthoriser.put("auths", auths);
+    opAuthoriser.put("auths", formattedAuths);
 
     return opAuthoriser;
   }
 
-  private static String[] checkValue(final String key, final Object value) {
-    if (value != null) {
-      final List<String> result = new ArrayList();
-      if (value instanceof List) {
-        List<String> resultAuths = (ArrayList) value;
-      for (int i = 0; i < resultAuths.size(); i++) {
-        if (resultAuths.get(i) != "" && resultAuths.get(i) != "null" && resultAuths.get(i) != null) {
-          result.add(resultAuths.get(i));
+  private static Map<String, List> getFormattedAuths(final Object existingAuths) {
+    final Map<String, List> formattedAuths = new LinkedHashMap<>();
+    Map<String, Object> notFormattedAuths = new LinkedHashMap<>();
+    if (existingAuths != null) {
+      final List<Object> configResult = (ArrayList) existingAuths;
+      for (final Object key : configResult) {
+        if (((LinkedHashMap) key).get("class") != null && ((LinkedHashMap) key).get("class").equals(OperationAuthoriser.class.getName())) {
+          notFormattedAuths = (LinkedHashMap) ((LinkedHashMap) key).get("auths");
         }
       }
+      if (notFormattedAuths != null) {
+        notFormattedAuths.forEach((key, value) -> {
+          List<String> auths = formatExistingAuths(key, value);
+          if (key != null && auths != null && auths.size() != 0) {
+            formattedAuths.put(key, auths);
+          }
+        });
+      }
+    }
+    return formattedAuths;
+  }
+
+  private static List<String> formatExistingAuths(final String key, final Object exsistingAuths) {
+    if (exsistingAuths != null) {
+      final List<String> result = new ArrayList();
+      if (exsistingAuths instanceof List) {
+        List<String> authsResult = (ArrayList) exsistingAuths;
+        for (int i = 0; i < authsResult.size(); i++) {
+          if (authsResult.get(i) != "" && authsResult.get(i) != "null" && authsResult.get(i) != null) {
+            result.add(authsResult.get(i));
+          }
+        }
       }
       if (key.equals(AddGraph.class.getName()) && !result.contains(DEFAULT_SYSTEM_USER)) {
         result.add(DEFAULT_SYSTEM_USER);
       }
-      return result.toArray(new String[result.size()]);
+      return result;
     }
     return null;
   }
