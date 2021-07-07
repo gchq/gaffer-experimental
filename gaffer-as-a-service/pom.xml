@@ -35,8 +35,10 @@
     </modules>
 
     <properties>
-        <gaffer.version>1.17.0</gaffer.version>
+        <springboot.version>2.4.2</springboot.version>
         <kubernetes.version>11.0.0</kubernetes.version>
+        <fasterxml.jackson.version>2.11.2</fasterxml.jackson.version>
+        <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
         <slf4j.api.version>1.7.25</slf4j.api.version>
         <junit.version>5.7.0</junit.version>
         <apache.commons.text.version>1.9</apache.commons.text.version>

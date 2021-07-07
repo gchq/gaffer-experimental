@@ -37,7 +37,7 @@
     </modules>
 
     <properties>
-        <gaffer.version>1.17.0</gaffer.version>
+        <gaffer.version>1.16.0</gaffer.version>
         <scm.url>
             https://github.com/gchq/gaffer-experimental
         </scm.url>
