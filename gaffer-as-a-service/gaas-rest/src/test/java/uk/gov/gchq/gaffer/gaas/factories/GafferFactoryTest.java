@@ -289,74 +289,63 @@ public class GafferFactoryTest {
     }
 
     private static List<Object> getOperationAuthorizerHookWithValidOpAuthsInTheConfigYamlWithoutAddGraphClass() {
-        final Map<String, ArrayList> auths = new LinkedHashMap<>();
+        final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
         auths.put(Operation.class.getName(), new ArrayList<>(Arrays.asList("User")));
         auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("AdminUser", "SuperUser")));
-        final List<Object> opAuthorizer = getOperationAuthoriserHook(auths);
-
-        return opAuthorizer;
+        return getOperationAuthoriserHook(auths);
     }
 
     private static List<Object> getOperationAuthorizerHookWithValidOpAuthsInTheConfigYamlWithAddGraphClass() {
-        final Map<String, ArrayList> auths = new LinkedHashMap<>();
+        final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
         auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList(DEFAULT_SYSTEM_USER)));
         auths.put(Operation.class.getName(), new ArrayList<>(Arrays.asList("User")));
         auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("AdminUser", "SuperUser")));
-        final List<Object> opAuthorizer = getOperationAuthoriserHook(auths);
-        return opAuthorizer;
+        return getOperationAuthoriserHook(auths);
     }
 
     private static List<Object> getOperationAuthorizerHookWithIncorrectUserValues() {
-        final Map<String, ArrayList> auths = new LinkedHashMap<>();
+        final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
         auths.put(Operation.class.getName(), null);
         auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("")));
-        final List<Object> opAuthorizer = getOperationAuthoriserHook(auths);
-        return opAuthorizer;
+        return getOperationAuthoriserHook(auths);
     }
 
     private static List<Object> getOperationAuthorizerHookForAddGraphClassWithInvalidDefaultSystemUserValue() {
-        final Map<String, ArrayList> auths = new LinkedHashMap<>();
+        final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
         auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("", "User")));
-        final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
-        return opAuthoriser;
+        return getOperationAuthoriserHook(auths);
     }
 
-
     private static List<Object> getOperationAuthorizerHookWithEmptyStringValueInAddGraphClass() {
-        final Map<String, ArrayList> auths = new LinkedHashMap<>();
+        final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
         auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("")));
-        final List<Object> opAuthorizer = getOperationAuthoriserHook(auths);
-        return opAuthorizer;
+        return getOperationAuthoriserHook(auths);
     }
 
     private static List<Object> getOperationAuthorizerHookWithNullValueInAddGraphClass() {
-        final Map<String, ArrayList> auths = new LinkedHashMap<>();
+        final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
         auths.put(AddGraph.class.getName(), null);
-        final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
-        return opAuthoriser;
+        return getOperationAuthoriserHook(auths);
     }
 
     private static List<Object> getOperationAuthorizerHookWithEmptyAuths() {
-        final Map<String, ArrayList> auths = new LinkedHashMap<>();
-        final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
-        return opAuthoriser;
+        final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
+        return getOperationAuthoriserHook(auths);
     }
 
     private static List<Object> getOperationAuthorizerHookWithAddGraphClassInvalidUserValue() {
-        final Map<String, ArrayList> auths = new LinkedHashMap<>();
+        final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
         auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("null")));
-        final List<Object> opAuthoriser = getOperationAuthoriserHook(auths);
-        return opAuthoriser;
+        return getOperationAuthoriserHook(auths);
     }
 
     private static List<Object> getOperationAuthorizerHookWithoutOperationAuthorisationClass() {
-        final Map<String, ArrayList> auths = new LinkedHashMap<>();
+        final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
         auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("null")));
-        final List<Object> opAuthoriser = getOperationAuthorizerHookWithoutOperationAuthorisationClass(auths);
-        return opAuthoriser;
+        return getOperationAuthorizerHookWithoutOperationAuthorisationClass(auths);
     }
 
-    private static List<Object> getOperationAuthoriserHook(final Map<String, ArrayList> auths) {
+    private static List<Object> getOperationAuthoriserHook(final Map<String, ArrayList<String>> auths) {
         final Map<String, Object> opAuthoriser = new LinkedHashMap();
         opAuthoriser.put("class", OperationAuthoriser.class.getName());
         opAuthoriser.put("auths", auths);
@@ -366,7 +355,7 @@ public class GafferFactoryTest {
         return opAuthoriserList;
     }
 
-    private static List<Object> getOperationAuthorizerHookWithoutOperationAuthorisationClass(final Map<String, ArrayList> auths) {
+    private static List<Object> getOperationAuthorizerHookWithoutOperationAuthorisationClass(final Map<String, ArrayList<String>> auths) {
         final Map<String, Object> opAuthoriser = new LinkedHashMap();
         opAuthoriser.put("auths", auths);
 
