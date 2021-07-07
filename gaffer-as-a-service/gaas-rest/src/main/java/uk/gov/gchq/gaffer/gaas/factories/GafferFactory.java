@@ -24,10 +24,12 @@ import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
@@ -56,56 +58,81 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
  */
 public final class GafferFactory {
 
-    private static final String KIND = "Gaffer";
-    private static final String DEFAULT_SYSTEM_USER = "GAAS_SYSTEM_USER";
+  private static final String KIND = "Gaffer";
+  private static final String DEFAULT_SYSTEM_USER = "GAAS_SYSTEM_USER";
 
-    public static Gaffer from(final GafferSpec gafferSpecConfig, final GaaSCreateRequestBody createGraphRequest) {
+  public static Gaffer from(final GafferSpec gafferSpecConfig, final GaaSCreateRequestBody createGraphRequest) {
 
-        // TODO: Validate only - and . special characters, see Kubernetes metadata regex
+    // TODO: Validate only - and . special characters, see Kubernetes metadata regex
 
-        HashMap<String, String> labels = new HashMap<>();
-        labels.put("configName", createGraphRequest.getConfigName());
+    HashMap<String, String> labels = new HashMap<>();
+    labels.put("configName", createGraphRequest.getConfigName());
 
-        final V1ObjectMeta metadata = new V1ObjectMeta()
-                .name(createGraphRequest.getGraphId())
-                .labels(labels);
+    final V1ObjectMeta metadata = new V1ObjectMeta()
+            .name(createGraphRequest.getGraphId())
+            .labels(labels);
 
-        return new Gaffer()
-                .apiVersion(GROUP + "/" + VERSION)
-                .kind(KIND)
-                .metaData(metadata)
-                .spec(overrideGafferSpecConfig(gafferSpecConfig, createGraphRequest));
-    }
+    return new Gaffer()
+            .apiVersion(GROUP + "/" + VERSION)
+            .kind(KIND)
+            .metaData(metadata)
+            .spec(overrideGafferSpecConfig(gafferSpecConfig, createGraphRequest));
+  }
 
-    private static GafferSpec overrideGafferSpecConfig(final GafferSpec config, final GaaSCreateRequestBody overrides) {
-        config.putNestedObject(overrides.getGraphId(), GRAPH_ID_KEY);
-        config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
-
+  private static GafferSpec overrideGafferSpecConfig(final GafferSpec config, final GaaSCreateRequestBody overrides) {
+    final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
+    config.putNestedObject(overrides.getGraphId(), GRAPH_ID_KEY);
+    config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
-            config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook()), HOOKS_KEY);
+            config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(HOOKS_KEY))), HOOKS_KEY);
             config.putNestedObject(createOperationDeclaration(config), GAFFER_OPERATION_DECLARATION_KEY);
         } else {
             config.putNestedObject(overrides.getSchema(), SCHEMA_FILE_KEY);
         }
 
-        // Mandatory Ingress values
-        config.putNestedObject(overrides.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
-        config.putNestedObject("/rest", INGRESS_API_PATH_KEY);
-        config.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
-        return config;
+
+    // Mandatory Ingress values
+    config.putNestedObject(overrides.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
+    config.putNestedObject("/rest", INGRESS_API_PATH_KEY);
+    config.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
+    return config;
+  }
+
+  private static Map<String, Object> getOperationAuthoriserHook(final Object existingAuths) {
+
+    final Map<String, List> formattedAuths = getFormattedAuths(existingAuths);
+
+    if (formattedAuths.isEmpty() || (formattedAuths != null && !formattedAuths.containsKey(AddGraph.class.getName()))) {
+      formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList(DEFAULT_SYSTEM_USER)));
     }
+    final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
+    opAuthoriser.put("class", OperationAuthoriser.class.getName());
+    opAuthoriser.put("auths", formattedAuths);
 
-    private static Map<String, Object> getOperationAuthoriserHook() {
-        final Map<String, String[]> auths = new LinkedHashMap<>();
-        auths.put(AddGraph.class.getName(), new String[] {DEFAULT_SYSTEM_USER});
+    return opAuthoriser;
+  }
 
-        final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
-        opAuthoriser.put("class", OperationAuthoriser.class.getName());
-        opAuthoriser.put("auths", auths);
-
-        return opAuthoriser;
+  private static Map<String, List> getFormattedAuths(final Object existingAuths) {
+    final Map<String, List> formattedAuths = new LinkedHashMap<>();
+    Map<String, Object> notFormattedAuths = new LinkedHashMap<>();
+    if (existingAuths != null) {
+      final List<Object> configResult = (ArrayList) existingAuths;
+      for (final Object key : configResult) {
+        if (((LinkedHashMap) key).get("class") != null && ((LinkedHashMap) key).get("class").equals(OperationAuthoriser.class.getName())) {
+          notFormattedAuths = (LinkedHashMap) ((LinkedHashMap) key).get("auths");
+        }
+      }
+      if (notFormattedAuths != null) {
+        notFormattedAuths.forEach((key, value) -> {
+          List<String> auths = formatExistingAuths(key, value);
+          if (key != null && auths != null && auths.size() != 0) {
+            formattedAuths.put(key, auths);
+          }
+        });
+      }
     }
-
+    return formattedAuths;
+  }
     private static Set<Object> createOperationDeclaration(final GafferSpec config) {
         ArrayList<Object> operations = new ArrayList<>();
         if (config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
@@ -130,8 +157,29 @@ public final class GafferFactory {
         return objects;
     }
 
-    private GafferFactory() {
-        // prevents calls from subclass
-        throw new UnsupportedOperationException();
+
+  private static List<String> formatExistingAuths(final String key, final Object exsistingAuths) {
+    if (exsistingAuths != null) {
+      final List<String> result = new ArrayList();
+      if (exsistingAuths instanceof List) {
+        List<String> authsResult = (ArrayList) exsistingAuths;
+        for (int i = 0; i < authsResult.size(); i++) {
+          if (authsResult.get(i) != "" && authsResult.get(i) != "null" && authsResult.get(i) != null) {
+            result.add(authsResult.get(i));
+          }
+        }
+      }
+      if (key.equals(AddGraph.class.getName()) && !result.contains(DEFAULT_SYSTEM_USER)) {
+        result.add(DEFAULT_SYSTEM_USER);
+      }
+      return result;
     }
+    return null;
+  }
+
+
+  private GafferFactory() {
+    // prevents calls from subclass
+    throw new UnsupportedOperationException();
+  }
 }
