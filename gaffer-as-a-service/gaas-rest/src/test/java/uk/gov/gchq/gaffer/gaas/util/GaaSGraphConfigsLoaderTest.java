@@ -65,7 +65,7 @@ public class GaaSGraphConfigsLoaderTest {
 
     @Test
     public void listConfigSpecs_shouldReturnProxiesConfigSpec_whenStorePropStoreClassIsFederatedStore() throws GaaSRestApiException {
-        final Map<String, GafferSpec> specs = loader.listConfigSpecs("/testconfigOD");
+        final Map<String, GafferSpec> specs = loader.listConfigSpecs("/testConfigOD");
         final String expected = "{\"federatedOpDeclaration\":{\"graph\":{\"storeProperties\":{\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\"},\"operationDeclarations\":[{\"operation\":\"uk.gov.gchq.gaffer.operation.impl.generate.GenerateElements\",\"handler\":{\"class\":\"uk.gov.gchq.gaffer.store.operation.handler.generate.GenerateElementsHandler\"}},{\"operation\":\"uk.gov.gchq.gaffer.operation.impl.generate.GenerateTest\",\"handler\":{\"class\":\"uk.gov.gchq.gaffer.store.operation.handler.generate.GenerateTestHandler\"}}]}}}";
 
         Gson gson = new Gson();
