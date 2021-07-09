@@ -1,5 +1,6 @@
 import { Graph } from "../../domain/graph";
 import { GraphType } from "../../domain/graph-type";
+import { getStoreType } from "../../domain/store-type";
 import { IApiResponse, RestClient } from "../clients/rest-client";
 import { Config } from "../config";
 import {

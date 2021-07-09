@@ -36,9 +36,6 @@ items:
       app.kubernetes.io/component: prometheus
       app.kubernetes.io/instance: prometheus
     name: prometheus
-    resourceVersion: "30495790"
-    selfLink: /apis/apps/v1/namespaces/kai-dev/deployments/prometheus
-    uid: 7fbe5440-dd6a-4100-a18e-de614b4363e0
   spec:
     progressDeadlineSeconds: 600
     replicas: 1
@@ -60,7 +57,7 @@ items:
           deployment: prometheus
       spec:
         containers:
-        - image: prom/prometheus@sha256:3e6f1ebc047ec30971c92e86aa3b879b07d39327a7744cce8aa0b1076d4c94d6
+        - image: prom/prometheus
           imagePullPolicy: IfNotPresent
           name: prometheus
           ports:
@@ -92,8 +89,6 @@ items:
       app.kubernetes.io/component: prometheus
       app.kubernetes.io/instance: prometheus
     name: prometheus
-    resourceVersion: "29460365"
-    uid: 12ab184b-ad9f-4b5a-bf53-240e37dcad55
   spec:
     port:
       targetPort: 9090-tcp

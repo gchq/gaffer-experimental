@@ -32,7 +32,6 @@ public class DeleteGraphService {
     @Autowired
     private MeterRegistry meterRegistry;
 
-
     @Timed(value = "deleteGraph.time", description = "Time taken to delete graph", percentiles = 0)
     public void deleteGraph(final String graphId) throws GaaSRestApiException {
         meterRegistry.counter("DeleteGraphService", "action", "delete").increment();

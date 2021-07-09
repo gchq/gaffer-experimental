@@ -1,5 +1,5 @@
 
-import React, {ReactElement, useState} from "react";
+import React, { ReactElement } from "react";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import {InputLabel} from "@material-ui/core";
@@ -19,7 +19,6 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
       onChangeGraphId,
       onChangeDescription,
     } = props;
-    const [errorHelperText, setErrorHelperText] = useState("");
 
     return (
       <>
@@ -35,22 +34,11 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
             aria-label="graph-id-input"
             variant="outlined"
             value={graphIdValue}
-            error={errorHelperText.length > 0}
             required
             fullWidth
             autoFocus
             name="graph-id"
-            onChange={(event) => {
-                onChangeGraphId(event.target.value);
-                const regex = new RegExp("^[a-z0-9]*$")
-                if(regex.test(event.target.value)) {
-                    setErrorHelperText("");
-                }
-                else {
-                    setErrorHelperText("Graph ID can only contain numbers and lowercase letters")
-                }
-            }}
-            helperText={errorHelperText }
+            onChange={(event) => onChangeGraphId(event.target.value)}
           />
         </Grid>
         <Grid

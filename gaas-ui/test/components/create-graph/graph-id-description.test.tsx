@@ -30,20 +30,6 @@ describe("Graph ID & Description", () => {
 
     expect(graphIdMockCallBack).toHaveBeenLastCalledWith("id");
   });
-  it("should display error message when invalid graph id entered - special characters", () => {
-    component.find("input#graph-id-input").simulate("change", {
-      target: { value: "id+" },
-    });
-
-    expect(component.find("p#graph-id-helper-text").text()).toBe("Graph ID can only contain numbers and lowercase letters")
-  });
-  it("should display error message when invalid graph id entered - capital letters", () => {
-    component.find("input#graph-id-input").simulate("change", {
-      target: { value: "idA" },
-    });
-
-    expect(component.find("p#graph-id-helper-text").text()).toBe("Graph ID can only contain numbers and lowercase letters")
-  });
   it("should call back with graph id when character inputted", () => {
     component.find("textarea#graph-description-input").simulate("change", {
       target: { value: "Some description" },

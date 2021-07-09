@@ -1,0 +1,3 @@
+graph:
+  storeProperties:
+    gaffer.store.class:

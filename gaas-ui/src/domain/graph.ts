@@ -1,4 +1,5 @@
 import { GraphType } from "./graph-type";
+import { StoreType } from "./store-type";
 
 export class Graph {
     private readonly graphId: string;
