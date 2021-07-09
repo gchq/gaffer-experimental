@@ -35,7 +35,7 @@ describe("Graph ID & Description", () => {
       target: { value: "id+" },
     });
 
-    expect(component.find("p#graph-id-helper-text").text()).toBe("Graph ID can only contain digits, letters and _")
+    expect(component.find("p#graph-id-helper-text").text()).toBe("Graph ID can only contain numbers and lowercase letters")
   });
   it("should call back with graph id when character inputted", () => {
     component.find("textarea#graph-description-input").simulate("change", {
