@@ -1,6 +1,10 @@
 name: semgrep-action
 
-on: [ pull_request, push ]
+on:
+  pull_request: {}
+  push:
+    branches:
+      - master
 
 jobs:
   run-maven-build:
@@ -23,7 +27,7 @@ jobs:
     if: (github.actor != 'dependabot[bot]')
     steps:
     - uses: actions/checkout@v2
-
     - uses: returntocorp/semgrep-action@v1
       with:
+        config: p/r2c
         auditOn: push
