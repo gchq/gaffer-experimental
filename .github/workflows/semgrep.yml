@@ -29,3 +29,4 @@ jobs:
         config: >- # more at semgrep.dev/explore
           p/security-audit
           p/secrets
+        auditOn: push
