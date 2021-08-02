@@ -1,0 +1,27 @@
+name: semgrep-action
+
+on: [ pull_request, push ]
+
+jobs:
+  run-maven-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+
+    - name: Run build
+      run: mvn clean install
+      
+  run-semgrep:
+    name: Scan 
+    runs-on: ubuntu-latest
+    # Skip any PR created by dependabot to avoid permission issues    
+    if: (github.actor != 'dependabot[bot]')
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: returntocorp/semgrep-action@v1
