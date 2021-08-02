@@ -25,7 +25,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - uses: returntocorp/semgrep-action@v1
-        with:
-          config: >- # more at semgrep.dev/explore
-            p/security-audit
-            p/secrets
+      with:
+        config: >- # more at semgrep.dev/explore
+          p/security-audit
+          p/secrets
