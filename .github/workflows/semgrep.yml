@@ -32,4 +32,5 @@ jobs:
         config:
             p/r2c
             p/owasp-top-ten
+            p/r2c-ci
         auditOn: push
