@@ -1,4 +1,4 @@
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createProxyMiddleware } = require("http-proxy-middleware");
 
 /**
  *  Here is access to the development expressjs server to hook up your own middleware proxy.
@@ -7,25 +7,25 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
  */
 module.exports = function (app) {
     app.use(
-        '/graphs',
+        "/graphs",
         createProxyMiddleware({
-            target: 'http://localhost:4000',
+            target: "http://localhost:4000",
             changeOrigin: true,
         })
     );
 
     app.use(
-        '/namespaces',
+        "/namespaces",
         createProxyMiddleware({
-            target: 'http://localhost:4000',
+            target: "http://localhost:4000",
             changeOrigin: true,
         })
     );
 
     app.use(
-        '/auth',
+        "/auth",
         createProxyMiddleware({
-            target: 'http://localhost:4000',
+            target: "http://localhost:4000",
             changeOrigin: true,
         })
     );
