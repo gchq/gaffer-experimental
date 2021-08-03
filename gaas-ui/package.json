@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "concurrently --names \"KAI_UI,MOCK_API\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run client\" \"npm run server\"",
+    "start": "concurrently --names \"KAI_UI,MOCK_API\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run client\" \"npm run server\" ",
+    "start-with-jwt-secret":" JWT_SECRET=my-dev-secret npm run start",
     "client": "react-scripts start",
     "server": "node server/middleware.js",
     "build": "react-scripts build",
