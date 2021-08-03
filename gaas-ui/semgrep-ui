@@ -1,0 +1,144 @@
+server/middleware.js
+severity:error rule:ajinabraham.njsscan.hardcoded_secrets.node_secret: A hardcoded secret is identified. Store it properly in an environment variable.
+21:const jwtSecret = "my-dev-secret";
+--------------------------------------------------------------------------------
+severity:warning rule:ajinabraham.njsscan.header_cors_star.express_cors: Access-Control-Allow-Origin response header is set to "*". This will disable CORS Same Origin Policy restrictions.
+14:    res.header("Access-Control-Allow-Origin", "*");
+--------------------------------------------------------------------------------
+14:    res.header("Access-Control-Allow-Origin", "*");
+--------------------------------------------------------------------------------
+24:app.options("*", cors());
+--------------------------------------------------------------------------------
+severity:error rule:ajinabraham.njsscan.jwt_hardcoded.hardcoded_jwt_secret: Hardcoded JWT secret was found. Store it properly in an environment variable.
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+-------- [hid 24 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+------- [hid 155 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+------- [hid 145 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+------- [hid 134 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+------- [hid 120 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+-------- [hid 45 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+-------- [hid 24 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+------- [hid 155 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+------- [hid 145 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+------- [hid 134 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+------- [hid 120 additional lines, adjust with --max-lines-per-finding] --------
+2:const jwt = require("jsonwebtoken");
+3:const users = require("./users");
+4:var cors = require("cors");
+5:
+6:// app
+7:const app = express();
+8:const port = process.env.PORT || 4000;
+9:const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+10:
+11:app.use(express.json());
+-------- [hid 45 additional lines, adjust with --max-lines-per-finding] --------

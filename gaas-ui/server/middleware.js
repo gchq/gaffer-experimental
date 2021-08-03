@@ -18,14 +18,13 @@ app.use((req, res, next) => {
 });
 
 // Token
-const jwtSecret = "my-dev-secret";
+const jwtSecret = process.env.JWT_SECRET;
 let token;
 
 app.options("*", cors());
 // Sign in
 app.post("/auth", (req, res) => {
     const username = String(req.body.username).toLowerCase();
-
     if (users.has(username) && users.get(username) === req.body.password) {
         token = jwt.sign({ data: username }, jwtSecret, { expiresIn: "1 week" });
         res.status(200).send(token);
