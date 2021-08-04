@@ -35,10 +35,6 @@ export class ElementsSchema {
     }
 
     private validateElements(notes: Notifications): void {
-        // if(this.elements.entities !== undefined && this.elements.edges !== undefined){
-        //     this.validateEntities(notes);
-        //     this.validateEdges(notes);
-        // }
         if(this.elements.edges !== undefined){
             this.validateEdges(notes);
         }
@@ -60,8 +56,8 @@ export class ElementsSchema {
             notes.addError(`Entities is type ${typeof this.elements.entities} and not an object of Entity objects`);
             return;
         }
-        Object.keys(this.elements.entities).forEach((entityName: string) => {
-            const entity: IEntity = this.elements.entities[entityName];
+        Object.entries(this.elements.entities).forEach(([entityName,value]) => {
+            const entity: IEntity = <IEntity>value;
 
             const missingProps: Array<string> = [];
             if (entity.description === undefined) {
@@ -92,9 +88,9 @@ export class ElementsSchema {
             return;
         }
 
-        Object.keys(this.elements.edges).forEach((edgeName: string) => {
+        Object.entries(this.elements.edges).forEach(([edgeName, value]) => {
             if (edgeName !== "groupBy") {
-                const edge: IEdge = this.elements.edges[edgeName];
+                const edge: IEdge = <IEdge>value;
                 const missingProps: Array<string> = [];
                 if (edge.description === undefined) {
                     missingProps.push('"description"');
