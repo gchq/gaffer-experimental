@@ -7,6 +7,8 @@ afterEach(() => {
     server.close();
 });
 
+beforeEach(() => (process.env = Object.assign(process.env, { JWT_SECRET: "my-dev-secret" })))
+afterAll(() => (process.env = Object.assign(process.env, { JWT_SECRET: "" })));
 describe("Auth", () => {
     it("Should respond to the POST method with a 200 status code when the username and password is correct", async () => {
         await request(server)
