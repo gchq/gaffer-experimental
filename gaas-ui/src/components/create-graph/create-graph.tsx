@@ -34,6 +34,7 @@ import AddProxyGraphInput from "./add-proxy-graph-input";
 import ProxyGraphsTable from "./proxy-graphs-table";
 import {GetStoreTypesRepo, IStoreTypes} from "../../rest/repositories/get-store-types-repo";
 import {CreateFederatedGraphRepo} from "../../rest/repositories/create-federated-graph-repo";
+import { Copyright } from "../copyright/copyright";
 
 interface IState {
   graphId: string;
@@ -486,6 +487,9 @@ export default class CreateGraph extends React.Component<{}, IState> {
                           Create Graph
                       </Button>
                   </Grid>
+                  <Box pt={4}>
+                        <Copyright />
+                    </Box>
               </Grid>
           </main>
       );
