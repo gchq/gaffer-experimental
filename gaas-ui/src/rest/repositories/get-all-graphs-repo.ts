@@ -1,6 +1,5 @@
 import { Graph } from "../../domain/graph";
 import { GraphType } from "../../domain/graph-type";
-import { getStoreType } from "../../domain/store-type";
 import { IApiResponse, RestClient } from "../clients/rest-client";
 import { Config } from "../config";
 import {
@@ -15,14 +14,13 @@ export class GetAllGraphsRepo {
       .get()
       .graphs()
       .execute();
-
-    return response.data.map((jsonObject: IGraphByIdResponse) =>
+    return response.data.graphs.map((jsonObject: IGraphByIdResponse) =>
         new Graph(
           jsonObject.graphId,
           jsonObject.description,
           jsonObject.url,
           jsonObject.status,
-          getStoreType(jsonObject.storeType),
+          jsonObject.configName,
           GraphType.GAAS_GRAPH
         )
     );
