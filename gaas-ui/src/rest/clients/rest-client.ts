@@ -27,29 +27,29 @@ export class RestClient<T> {
         this.data = undefined;        
     }
     
-    public create() {
-        return this.methodSpec;
+    public create():any {
+        return this.methodSpec(this);
     }
     
     public baseUrl(baseURL: string) {
         this.baseURL = baseURL;
-        return this.methodSpec;
+        return this.methodSpec(this);
     }
 
-    private methodSpec = {
+    private methodSpec = (restClient: RestClient<any>) => ({
         get: () => { 
-            this.method = "get";
-            return this.uriSpec;
+        restClient.method = "get";
+        return restClient.uriSpec;
          },
         post: () => { 
-            this.method = "post";
-            return this.requestBodySpec;
+            restClient.method = "post";
+            return restClient.requestBodySpec;
         },
         delete: () => { 
-            this.method = "delete";
-            return this.uriSpec;
+            restClient.method = "delete";
+            return restClient.uriSpec;
         }
-    }
+    })
 
     private requestBodySpec = {
         requestBody: (requestBody?: T) => {

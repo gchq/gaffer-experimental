@@ -21,6 +21,7 @@
     "quotes": [2, "double", "avoid-escape"],
     "new-cap": "error",
     "prefer-const": "error",
+    "no-invalid-this": "error",
     "no-eval": "error",
     "no-implied-eval": "error",
     "no-with": "error",
