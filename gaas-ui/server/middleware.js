@@ -57,76 +57,78 @@ app.post("/graphs", (req, res) => {
 app.get("/graphs", (req, res) => {
     try {
         jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
-            res.send([
-                {
-                    graphId: "roadTraffic",
-                    description: "Road traffic graph. This graphs uses a federated store of proxy stores",
-                    url: "http://localhost:4000/rest",
-                    configName: "federated",
-                    status: "UP",
-                },
-                {
-                    graphId: "exampleGraphId",
-                    description: "Example Graph description",
-                    url: "http://road-traffic.k8s.cluster/rest",
-                    configName: "mapStore",
-                    status: "UP",
-                },
-                {
-                    graphId: "accEntitiesClashingGraph",
-                    description: "Clashing entities on an Accumulo Store graph",
-                    url: "http://acc-entities-2.k8s.cluster/rest",
-                    configName: "accumuloStore",
-                    status: "DOWN",
-                },
-                {
-                    graphId: "mapEdges",
-                    description: "Map of edge",
-                    url: "http://map-edges.k8s.cluster/rest",
-                    configName: "mapStore",
-                    status: "UP",
-                },
-                {
-                    graphId: "accEntities",
-                    description: "Accumulo graph of entities",
-                    url: "http://acc-entities-1.k8s.cluster/rest",
-                    configName: "accumuloStore",
-                    status: "UP",
-                },
-                {
-                    graphId: "basicGraph",
-                    description: "Basic graph instance using Accumulo",
-                    url: "http://basic-graph.k8s.cluster/rest",
-                    configName: "accumuloStore",
-                    status: "UP"
-                },
-                {
-                    graphId: "devGraph",
-                    description: "Primary dev environment graph",
-                    url: "http://dev-environment-1.k8s.cluster/rest",
-                    configName: "mapStore",
-                    status: "DOWN"
-                },
-                {
-                    graphId: "devGraph2",
-                    description: "Secondary development mode graph",
-                    url: "http://dev-environment-2.k8s.cluster/rest",
-                    configName: "mapStore",
-                    status: "UP"
-                },
-                {
-                    graphId: "testGaffer",
-                    description: "Test instance of Gaffer",
-                    url: "http://test-gaffer.k8s.cluster/rest",
-                    configName: "mapStore",
-                    status: "UP"
-                },
-            ]});
+            res.send({
+                graphs: [
+                    {
+                        graphId: "roadTraffic",
+                        description: "Road traffic graph. This graphs uses a federated store of proxy stores",
+                        url: "http://localhost:4000/rest",
+                        configName: "federated",
+                        status: "UP",
+                    },
+                    {
+                        graphId: "exampleGraphId",
+                        description: "Example Graph description",
+                        url: "http://road-traffic.k8s.cluster/rest",
+                        configName: "mapStore",
+                        status: "UP",
+                    },
+                    {
+                        graphId: "accEntitiesClashingGraph",
+                        description: "Clashing entities on an Accumulo Store graph",
+                        url: "http://acc-entities-2.k8s.cluster/rest",
+                        configName: "accumuloStore",
+                        status: "DOWN",
+                    },
+                    {
+                        graphId: "mapEdges",
+                        description: "Map of edge",
+                        url: "http://map-edges.k8s.cluster/rest",
+                        configName: "mapStore",
+                        status: "UP",
+                    },
+                    {
+                        graphId: "accEntities",
+                        description: "Accumulo graph of entities",
+                        url: "http://acc-entities-1.k8s.cluster/rest",
+                        configName: "accumuloStore",
+                        status: "UP",
+                    },
+                    {
+                        graphId: "basicGraph",
+                        description: "Basic graph instance using Accumulo",
+                        url: "http://basic-graph.k8s.cluster/rest",
+                        configName: "accumuloStore",
+                        status: "UP"
+                    },
+                    {
+                        graphId: "devGraph",
+                        description: "Primary dev environment graph",
+                        url: "http://dev-environment-1.k8s.cluster/rest",
+                        configName: "mapStore",
+                        status: "DOWN"
+                    },
+                    {
+                        graphId: "devGraph2",
+                        description: "Secondary development mode graph",
+                        url: "http://dev-environment-2.k8s.cluster/rest",
+                        configName: "mapStore",
+                        status: "UP"
+                    },
+                    {
+                        graphId: "testGaffer",
+                        description: "Test instance of Gaffer",
+                        url: "http://test-gaffer.k8s.cluster/rest",
+                        configName: "mapStore",
+                        status: "UP"
+                    },
+                ]});
         });
     } catch (e) {
         res.status(403).end();
     }
 });
+
 
 // Get graph by ID
 app.get("/graphs/:graphId", (req, res) => {
@@ -164,7 +166,7 @@ app.get("/namespaces", (req, res) => {
 });
 app.get("/storetypes", (req, res) => {
     try {
-        jwt.verify(req.get("Authorization"), jwtSecret, () => {
+        jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
             res.status(200).send({
                 storeTypes: [
                     {
