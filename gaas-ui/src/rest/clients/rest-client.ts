@@ -27,93 +27,93 @@ export class RestClient<T> {
         this.data = undefined;        
     }
     
-    public create() {
-        return this.methodSpec;
+    public create():any {
+        return this.methodSpec(this);
     }
     
     public baseUrl(baseURL: string) {
         this.baseURL = baseURL;
-        return this.methodSpec;
+        return this.methodSpec(this);
     }
 
-    private methodSpec = {
+    private methodSpec = (restClient: RestClient<any>) => ({
         get: () => { 
-            this.method = "get";
-            return this.uriSpec;
+        restClient.method = "get";
+        return restClient.uriSpec(restClient);
          },
         post: () => { 
-            this.method = "post";
-            return this.requestBodySpec;
+            restClient.method = "post";
+            return restClient.requestBodySpec(restClient);
         },
         delete: () => { 
-            this.method = "delete";
-            return this.uriSpec;
+            restClient.method = "delete";
+            return restClient.uriSpec(restClient);
         }
-    }
+    })
 
-    private requestBodySpec = {
+    private requestBodySpec = (restClient: RestClient<any>) => ({
         requestBody: (requestBody?: T) => {
-            this.data = requestBody;
-            return this.uriSpec;
+            restClient.data = requestBody;
+            return restClient.uriSpec(restClient);
         }
-    }
+    })
 
-    private uriSpec = {
+    private uriSpec = (restClient: RestClient<any>) => ({
         uri: (uri: string) => { 
-            this.url = uri;
-            return this.executeSpec;
+            restClient.url = uri;
+            return restClient.executeSpec(restClient);
          },
          graphs: (pathVariable?: string) => {
             const _pathVariable = pathVariable ? `/${pathVariable}` : "";
-            this.url = `/graphs${_pathVariable}`;
-            this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
-            return this.executeSpec;
+            restClient.url = `/graphs${_pathVariable}`;
+            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            return restClient.executeSpec(restClient);
         },
         status: () => {
-            this.url = "/graph/status";
-            return this.executeSpec;
+            restClient.url = "/graph/status";
+            return restClient.executeSpec(restClient);
         },
         description: () => {
-            this.url = "/graph/config/description";
-            return this.executeSpec;
+            restClient.url = "/graph/config/description";
+            return restClient.executeSpec(restClient);
         },
         graphId: () => {
-            this.url = "/graph/config/graphId";
-            return this.executeSpec;
+            restClient.url = "/graph/config/graphId";
+            return restClient.executeSpec(restClient);
         },
         namespaces: () =>  {
-            this.url = "/namespaces";
-            this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
-            return this.executeSpec;
+            restClient.url = "/namespaces";
+            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            return restClient.executeSpec(restClient);
         },
         authentication: (pathVariable?: string) => {
             const _pathVariable = pathVariable ? `/${pathVariable}` : "";
-            this.url = `/auth${_pathVariable}`;
-            return this.executeSpec;
+            restClient.url = `/auth${_pathVariable}`;
+            return restClient.executeSpec(restClient);
         },
         storeTypes: () => {
-            this.url="/storetypes"
-            this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
-            return this.executeSpec;
+            restClient.url="/storetypes"
+            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            return restClient.executeSpec(restClient);
         }
-    }
+    })
 
-    private executeSpec = {
+    private executeSpec = (restClient: RestClient<any>) => ({
         execute: async () => {
             try {
                 const response: AxiosResponse<any> = await axios({
-                    baseURL: this.baseURL,
-                    url: this.url,
-                    method: this.method,
-                    headers: this.headers,
-                    data: this.data,
+                    baseURL: restClient.baseURL,
+                    url: restClient.url,
+                    method: restClient.method,
+                    headers: restClient.headers,
+                    data: restClient.data,
                 });
                 return RestClient.convert(response);
             } catch (e) {
                 throw RestClient.fromError(e);
             }
         }
-    }
+    })
 
     private static async convert(response: AxiosResponse<any>): Promise<IApiResponse> {
         return {
