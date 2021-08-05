@@ -59,71 +59,72 @@ app.post("/graphs", (req, res) => {
 app.get("/graphs", (req, res) => {
     try {
         jwt.verify(req.get("Authorization"), jwtSecret, () => {
-            res.send([
+            res.send({
+                graphs: [
                 {
                     graphId: "roadTraffic",
                     description: "Road traffic graph. This graphs uses a federated store of proxy stores",
-                    url: "http://road-traffic.k8s.cluster/rest",
-                    storeType: "federatedStore",
+                    url: "http://localhost:4000/rest",
+                    configName: "federated",
                     status: "UP",
                 },
                 {
                     graphId: "exampleGraphId",
                     description: "Example Graph description",
                     url: "http://road-traffic.k8s.cluster/rest",
-                    storeType: "mapStore",
+                    configName: "mapStore",
                     status: "UP",
                 },
                 {
                     graphId: "accEntitiesClashingGraph",
                     description: "Clashing entities on an Accumulo Store graph",
                     url: "http://acc-entities-2.k8s.cluster/rest",
-                    storeType: "accumuloStore",
+                    configName: "accumuloStore",
                     status: "DOWN",
                 },
                 {
                     graphId: "mapEdges",
                     description: "Map of edge",
                     url: "http://map-edges.k8s.cluster/rest",
-                    storeType: "mapStore",
+                    configName: "mapStore",
                     status: "UP",
                 },
                 {
                     graphId: "accEntities",
                     description: "Accumulo graph of entities",
                     url: "http://acc-entities-1.k8s.cluster/rest",
-                    storeType: "accumuloStore",
+                    configName: "accumuloStore",
                     status: "UP",
                 },
                 {
                     graphId: "basicGraph",
                     description: "Basic graph instance using Accumulo",
                     url: "http://basic-graph.k8s.cluster/rest",
-                    storeType: "accumuloStore",
+                    configName: "accumuloStore",
                     status: "UP"
                 },
                 {
                     graphId: "devGraph",
                     description: "Primary dev environment graph",
                     url: "http://dev-environment-1.k8s.cluster/rest",
-                    storeType: "mapStore",
+                    configName: "mapStore",
                     status: "DOWN"
                 },
                 {
                     graphId: "devGraph2",
                     description: "Secondary development mode graph",
                     url: "http://dev-environment-2.k8s.cluster/rest",
-                    storeType: "mapStore",
+                    configName: "mapStore",
                     status: "UP"
                 },
                 {
                     graphId: "testGaffer",
                     description: "Test instance of Gaffer",
                     url: "http://test-gaffer.k8s.cluster/rest",
-                    storeType: "mapStore",
+                    configName: "mapStore",
                     status: "UP"
                 },
-            ]);
+            ]});
         });
     } catch (e) {
         res.status(403).end();
@@ -164,20 +165,73 @@ app.get("/namespaces", (req, res) => {
         res.status(403).end();
     }
 });
+app.get("/storetypes", (req, res) => {
+    try {
+        jwt.verify(req.get("Authorization"), jwtSecret, () => {
+            res.status(200).send({
+                storeTypes: [
+                    {
+                      name: "accumuloSmall",
+                      parameters: [
+                        "schema"
+                      ]
+                    },
+                    {
+                        name: "accumulo",
+                        parameters: [
+                          "schema"
+                        ]
+                      },
+                      {
+                        name: "proxy",
+                        parameters: [
+                          "schema"
+                        ]
+                      },
+                      {
+                        name: "mapStore",
+                        parameters: [
+                          "schema"
+                        ]
+                      },
+                    {
+                      name: "accumuloBig",
+                      parameters: [
+                        "schema"
+                      ]
+                    },
+                    {
+                      name: "federated",
+                      parameters: [
+                        "proxies"
+                      ]
+                    }
+                  ]
+            });
+        });
+    } catch (e) {
+        res.status(403).end();
+    }
+});
 
 app.get("/up/graph/status", (req, res) => {
-    console.log(req.url)
     res.status(200).send({ status: "UP" });
 });
 
+app.get("/up/graph/config/graphId", (req, res) => {
+    res.status(200).send("middleware.js-graph");
+});
+
 app.get("/up/graph/config/description", (req, res) => {
-    console.log(req.url)
     res.status(200).send("This stubbed graph can be found in middleware.js");
 });
 
 app.get("/down/graph/status", (req, res) => {
-    console.log(req.url)
     res.status(200).send({ status: "DOWN" });
+});
+
+app.post("/rest/graph/operations/execute", (req, res) => {
+    res.status(200).send([ "mapEdges", "accEntities" ]);
 });
 
 module.exports = server;

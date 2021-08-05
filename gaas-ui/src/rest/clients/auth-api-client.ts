@@ -17,8 +17,8 @@ export class AuthApiClient implements IAuthClient {
             const token: IApiResponse<string> = await new RestClient<IAuthRequest>()
                 .baseUrl(Config.REACT_APP_AUTH_ENDPOINT)
                 .post()
-                .authentication()
                 .requestBody(requestBody)
+                .authentication()
                 .execute();
             RestClient.setJwtToken(token.data);
             onSuccess();
@@ -43,8 +43,8 @@ export class AuthApiClient implements IAuthClient {
             const token: IApiResponse<string> = await new RestClient<IAuthRequest>()
                 .baseUrl(Config.REACT_APP_AUTH_ENDPOINT)
                 .post()
-                .authentication()
                 .requestBody(requestBody)
+                .authentication()
                 .execute();
             RestClient.setJwtToken(token.data);
             onSuccess();
@@ -55,7 +55,7 @@ export class AuthApiClient implements IAuthClient {
 
     public async signOut(onSuccess: Function, onError: Function): Promise<void> {
         try {
-            await new RestClient().post().authentication("signout").execute();
+            await new RestClient().baseUrl(Config.REACT_APP_AUTH_ENDPOINT).post().requestBody("signout").authentication().execute();
             onSuccess();
         } catch (e) {
             onError(e.message);

@@ -15,6 +15,9 @@ import {
 import RefreshOutlinedIcon from "@material-ui/icons/RefreshOutlined";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { GetAllNamespacesRepo } from "../../rest/repositories/get-all-namespaces-repo";
+import Paper from "@material-ui/core/Paper";
+import Box from "@material-ui/core/Box";
+import { Copyright } from "../copyright/copyright";
 
 interface IState {
     namespaces: Array<string>;
@@ -62,29 +65,31 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
             <main aria-label="Cluster-Namespace-Page">
                 {errorMessage && <NotificationAlert alertType={AlertType.FAILED} message={errorMessage} />}
                 <Toolbar />
-                <Grid container justify="center">
-                    <Container maxWidth="sm">
-                        <TableContainer>
-                            <Table size="medium" className={this.classes.table} aria-label="Namespaces Table">
-                                <TableHead>
-                                    <TableRow style={{ background: "#F4F2F2" }}>
-                                        <TableCell>Namespaces</TableCell>
-                                    </TableRow>
-                                </TableHead>
-
-                                <TableBody>
-                                    {namespaces.map((namespace: string, index) => (
-                                        <TableRow key={index} hover>
-                                            <TableCell component="th" scope="row">
-                                                {namespace}
-                                            </TableCell>
+                <Container maxWidth="lg">
+                    <Grid container spacing={3} justify="center" alignItems="center">
+                        <Grid item xs={12}>
+                            <TableContainer component={Paper}>
+                                <Table size="medium" className={this.classes.table} aria-label="Namespaces Table">
+                                    <TableHead>
+                                        <TableRow style={{ background: "#F4F2F2" }}>
+                                            <TableCell>Namespaces</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                                {namespaces.length === 0 && <caption>No Namespaces</caption>}
-                            </Table>
-                        </TableContainer>
-                        <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
+                                    </TableHead>
+
+                                    <TableBody>
+                                        {namespaces.map((namespace: string, index) => (
+                                            <TableRow key={index} hover>
+                                                <TableCell component="th" scope="row">
+                                                    {namespace}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                    {namespaces.length === 0 && <caption>No Namespaces</caption>}
+                                </Table>
+                            </TableContainer>
+                        </Grid>
+                        <Grid item>
                             <Button
                                 id="namespaces-refresh-button"
                                 startIcon={<RefreshOutlinedIcon />}
@@ -96,8 +101,11 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
                                 Refresh Table
                             </Button>
                         </Grid>
-                    </Container>
-                </Grid>
+                    </Grid>
+                    <Box pt={4}>
+                        <Copyright />
+                    </Box>
+                </Container>
             </main>
         );
     }

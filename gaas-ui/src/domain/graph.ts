@@ -1,20 +1,19 @@
 import { GraphType } from "./graph-type";
-import { StoreType } from "./store-type";
 
 export class Graph {
-    private graphId: string;
-    private description: string;
-    private url: string;
-    private status: string;
-    private storeType: StoreType;
-    private type: GraphType;
+    private readonly graphId: string;
+    private readonly description: string;
+    private readonly url: string;
+    private readonly status: "UP" | "DOWN";
+    private readonly configName: string;
+    private readonly type: GraphType;
 
-    constructor(graphId: string, description: string, url: string, status: string, storeType: StoreType, type: GraphType) {
+    constructor(graphId: string, description: string, url: string, status: "UP" | "DOWN", configName: string, type: GraphType) {
         this.graphId = graphId;
         this.description = description;
         this.url = url;
         this.status = status;
-        this.storeType = storeType;
+        this.configName = configName;
         this.type = type;
     }
 
@@ -34,8 +33,8 @@ export class Graph {
         return this.status;
     }
 
-    public getStoreType(): StoreType {
-        return this.storeType;
+    public getConfigName(): string {
+        return this.configName;
     }
 
     public getType(): GraphType {
