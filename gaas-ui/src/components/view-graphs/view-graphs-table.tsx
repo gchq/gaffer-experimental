@@ -108,6 +108,7 @@ function StatusChip(graph: { status: string }) {
               style={{color: "#ffffff", backgroundColor: "#EB0052"}}/>;
 }
 
+
 function MainGraphTableRow(props: IGraphRow) {
     const {graph, index, federatedStores, onClickDelete} = props;
     const classes = useStyles();
@@ -129,6 +130,10 @@ function MainGraphTableRow(props: IGraphRow) {
         }
     }
 
+    function getGraphUrl(): string{
+        return sanitizeHtml(graph.getUrl());
+    }
+
     return (
         <React.Fragment>
             <TableRow className={classes.root} hover aria-label={"view-graphs-table"}>
@@ -147,7 +152,7 @@ function MainGraphTableRow(props: IGraphRow) {
                     }}> {graph.getConfigName().charAt(0).toUpperCase()}</Avatar></TableCell>
                 <TableCell aria-label={"graph-status"}>
                     <StatusChip status={graph.getStatus()}/></TableCell>
-                <TableCell aria-label={"graph-url"}><a href={sanitizeHtml(graph.getUrl())} target="_blank"
+                <TableCell aria-label={"graph-url"}><a href={getGraphUrl()} target="_blank"
                                                        rel="noopener noreferrer">{graph.getUrl()}</a></TableCell>
                 <TableCell aria-label={"delete-graph"}>
                     <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
