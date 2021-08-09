@@ -23,6 +23,7 @@
     "@types/node": "^14.14.10",
     "@types/react": "^16.14.2",
     "@types/react-dom": "^16.9.10",
+    "@types/validator": "^13.6.3",
     "amazon-cognito-identity-js": "^4.5.5",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
@@ -44,7 +45,8 @@
     "react-testing-library": "latest",
     "react-toastify": "^6.1.0",
     "reaviz": "^10.1.0",
-    "statuses": "^2.0.1"
+    "statuses": "^2.0.1",
+    "validator": "^13.6.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.7",
