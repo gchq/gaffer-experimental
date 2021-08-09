@@ -36,12 +36,7 @@ jobs:
             p/nodejsscan
         auditOn: push
         generateSarif: "1"
-  github-dashborad:
-    name: Security Dashboard
-    needs: run-semgrep
-    runs-on: ubuntu-latest
-    steps:
     - name: Github Security Dashboard
       uses: github/codeql-action/upload-sarif@v1
       with:
-       sarif_file: semgrep.sarif
+        sarif_file: semgrep.sarif
