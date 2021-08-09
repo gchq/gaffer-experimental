@@ -1,6 +1,6 @@
 name: semgrep-action
 
-on: [pull_request, push]
+on: [push, pull_request ]
 
 jobs:
   run-maven-build:
