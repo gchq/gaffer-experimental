@@ -32,6 +32,8 @@ jobs:
             p/xss
             p/ci
             p/jwt
+            p/nodejs
+            p/nodejsscan
         auditOn: push
         generateSarif: "1"
     - name: Github Security Dashboard
