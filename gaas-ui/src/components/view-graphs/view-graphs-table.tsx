@@ -26,7 +26,7 @@ import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
-import validator from "validator";
+import sanitizeHtml from "sanitize-html";
 
 interface IProps {
     graphs: Graph [];
@@ -147,7 +147,7 @@ function MainGraphTableRow(props: IGraphRow) {
                     }}> {graph.getConfigName().charAt(0).toUpperCase()}</Avatar></TableCell>
                 <TableCell aria-label={"graph-status"}>
                     <StatusChip status={graph.getStatus()}/></TableCell>
-                <TableCell aria-label={"graph-url"}><a href={graph.getUrl()} target="_blank"
+                <TableCell aria-label={"graph-url"}><a href={sanitizeHtml(graph.getUrl())} target="_blank"
                                                        rel="noopener noreferrer">{graph.getUrl()}</a></TableCell>
                 <TableCell aria-label={"delete-graph"}>
                     <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
