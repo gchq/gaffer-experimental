@@ -33,7 +33,6 @@ jobs:
             p/ci
         auditOn: push
         generateSarif: "1"
-   - name: Upload SARIF file for GitHub Advanced Security Dashboard
-     uses: github/codeql-action/upload-sarif@v1
-     with:
-     sarif_file: semgrep.sarif
+    - uses: github/codeql-action/upload-sarif@v1
+      with:
+       sarif_file: semgrep.sarif
