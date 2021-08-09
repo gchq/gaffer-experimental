@@ -31,6 +31,7 @@ jobs:
             p/r2c-ci
             p/xss
             p/ci
+            p/jwt
         auditOn: push
         generateSarif: "1"
     - name: Github Security Dashboard
