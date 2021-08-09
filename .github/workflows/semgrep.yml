@@ -38,7 +38,7 @@ jobs:
         generateSarif: "1"
   github-dashborad:
     name: Security Dashboard
-    needs: Scan
+    needs: run-semgrep
     runs-on: ubuntu-latest
     steps:
     - name: Github Security Dashboard
