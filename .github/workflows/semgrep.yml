@@ -29,4 +29,5 @@ jobs:
             p/r2c
             p/owasp-top-ten
             p/r2c-ci
+            p/xss
         auditOn: push
