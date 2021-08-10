@@ -18,7 +18,7 @@ import {
     Paper,
     IconButton,
     Tooltip,
-    Zoom
+    Zoom, Link
 } from "@material-ui/core";
 import RefreshOutlinedIcon from "@material-ui/icons/RefreshOutlined";
 import CheckRoundedIcon from "@material-ui/icons/CheckRounded";
@@ -116,6 +116,7 @@ function MainGraphTableRow(props: IGraphRow) {
     const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>("");
 
     useEffect(() => {
+        setGraphUrl();
         if (federatedStores.includes(graph.getConfigName())) {
             getAllGraphIds();
         }
@@ -129,9 +130,11 @@ function MainGraphTableRow(props: IGraphRow) {
             setAllGraphIdsText(`Federated Graphs: [GetAllGraphIds Operation - ${e}]`);
         }
     }
-
-    function getGraphUrl(): string{
-        return sanitizeHtml(graph.getUrl());
+    function setGraphUrl() {
+        const tableCellLinkElement = document.getElementById(graph.getId());
+        if(tableCellLinkElement !== null){
+            tableCellLinkElement.setAttribute("href",graph.getUrl());
+        }
     }
 
     return (
@@ -152,8 +155,8 @@ function MainGraphTableRow(props: IGraphRow) {
                     }}> {graph.getConfigName().charAt(0).toUpperCase()}</Avatar></TableCell>
                 <TableCell aria-label={"graph-status"}>
                     <StatusChip status={graph.getStatus()}/></TableCell>
-                <TableCell aria-label={"graph-url"}><a href={getGraphUrl()} target="_blank"
-                                                       rel="noopener noreferrer">{graph.getUrl()}</a></TableCell>
+                <TableCell aria-label={"graph-url"}>
+                    <a id={graph.getId()} target="_blank" rel="noopener noreferrer">{graph.getUrl()}</a></TableCell>
                 <TableCell aria-label={"delete-graph"}>
                     <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
                         <IconButton
