@@ -61,8 +61,7 @@ interface IState {
 const Transition = React.forwardRef(
   (
       props: TransitionProps & { children?: React.ReactElement<any, any> },
-      ref: React.Ref<unknown>
-  ) => <Slide direction="up" ref={ref} {...props} />
+  ) => <Slide direction="up"  {...props} />
 );
 
 export default class CreateGraph extends React.Component<{}, IState> {
