@@ -19,7 +19,7 @@ jobs:
   run-semgrep:
     name: Scan
     runs-on: ubuntu-latest
-    # Skip any PR created by dependabot to avoid permission issues    
+    # Skip any PR created by dependabot to avoid permission issues
     if: (github.actor != 'dependabot[bot]')
     steps:
       - uses: actions/checkout@v2
@@ -34,7 +34,7 @@ jobs:
             p/jwt
             p/nodejs
             p/nodejsscan
-          auditOn: push, pull_request
+          auditOn: push
           generateSarif: "1"
       - name: Github Security Dashboard
         uses: github/codeql-action/upload-sarif@v1
