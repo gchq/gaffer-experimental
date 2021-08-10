@@ -67,6 +67,7 @@ From the `gaas-ui` directory you can run the following in the terminal:
 * Common JWT security mistakes: `semgrep --config "p/jwt"`
 * Secure defaults for XSS prevention: `semgrep --config "p/xss"`
 * Scan for runtime errors, logic bugs, and high-confidence security vulnerabilities: `semgrep --config "p/ci"`
+* Scan against OWASP security standards: `semgrep --config "p/owasp-top-ten"`
 
 Official documentation - (https://semgrep.dev/docs/)
 ## Docker
