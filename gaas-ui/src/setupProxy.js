@@ -6,6 +6,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
  *  By default, the development server is set up to proxy to the mock GaaS REST API found in ./server/middleware.js
  */
 module.exports = function (app) {
+
     app.use(
         "/graphs",
         createProxyMiddleware({
