@@ -152,7 +152,7 @@ function MainGraphTableRow(props: IGraphRow) {
                     }}> {graph.getConfigName().charAt(0).toUpperCase()}</Avatar></TableCell>
                 <TableCell aria-label={"graph-status"}>
                     <StatusChip status={graph.getStatus()}/></TableCell>
-                <TableCell aria-label={"graph-url"}><a href={getGraphUrl()} target="_blank"
+                <TableCell aria-label={"graph-url"}><a href={getGraphUrl()+"/test"} target="_blank"
                                                        rel="noopener noreferrer">{graph.getUrl()}</a></TableCell>
                 <TableCell aria-label={"delete-graph"}>
                     <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
