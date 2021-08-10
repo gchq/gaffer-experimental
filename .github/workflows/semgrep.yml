@@ -34,7 +34,7 @@ jobs:
             p/jwt
             p/nodejs
             p/nodejsscan
-          auditOn: pull_request, push
+          auditOn: push
           generateSarif: "1"
     - name: Github Security Dashboard
       uses: github/codeql-action/upload-sarif@v1
