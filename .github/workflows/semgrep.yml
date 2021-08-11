@@ -1,5 +1,4 @@
 name: semgrep-action
-
 on: [push, pull_request ]
 
 jobs:

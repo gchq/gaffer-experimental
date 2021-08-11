@@ -18,7 +18,7 @@ import {
     Paper,
     IconButton,
     Tooltip,
-    Zoom, Link
+    Zoom, 
 } from "@material-ui/core";
 import RefreshOutlinedIcon from "@material-ui/icons/RefreshOutlined";
 import CheckRoundedIcon from "@material-ui/icons/CheckRounded";
@@ -26,7 +26,6 @@ import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
-import sanitizeHtml from "sanitize-html";
 
 interface IProps {
     graphs: Graph [];
