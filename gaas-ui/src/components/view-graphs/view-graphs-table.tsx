@@ -155,7 +155,7 @@ function MainGraphTableRow(props: IGraphRow) {
                 <TableCell aria-label={"graph-status"}>
                     <StatusChip status={graph.getStatus()}/></TableCell>
                 <TableCell aria-label={"graph-url"}>
-                    <a id={graph.getId()} target="_blank" rel="noopener noreferrer">{graph.getUrl()}</a></TableCell>
+                    <a id={graph.getId()} href="placeholder" target="_blank" rel="noopener noreferrer">{graph.getUrl()}</a></TableCell>
                 <TableCell aria-label={"delete-graph"}>
                     <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
                         <IconButton
