@@ -120,6 +120,7 @@ export default class UserGuide extends React.Component<{}, {}> {
                                 variant="contained"
                                 color="primary"
                                 target="_blank"
+                                rel="noopener noreferrer"
                                 href="https://gchq.github.io/gaffer-doc/summaries/getting-started.html"
                             >
                                 Gaffer Documentation
