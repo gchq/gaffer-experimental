@@ -22,7 +22,7 @@
     <parent>
         <groupId>uk.gov.gchq.gaffer</groupId>
         <artifactId>gaffer-experimental</artifactId>
-        <version>1.16.0</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>gaffer-as-a-service</artifactId>
@@ -35,6 +35,7 @@
     </modules>
 
     <properties>
+        <gaffer.version>1.17.1</gaffer.version>
         <springboot.version>2.4.2</springboot.version>
         <kubernetes.version>11.0.0</kubernetes.version>
         <fasterxml.jackson.version>2.11.2</fasterxml.jackson.version>

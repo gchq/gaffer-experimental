@@ -7,7 +7,7 @@
     <parent>
         <groupId>uk.gov.gchq.gaffer</groupId>
         <artifactId>gaffer-as-a-service</artifactId>
-        <version>1.16.0</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>gaffer-controller</artifactId>

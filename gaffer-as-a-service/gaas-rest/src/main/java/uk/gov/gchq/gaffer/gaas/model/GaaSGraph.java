@@ -22,6 +22,7 @@ import java.util.List;
 public class GaaSGraph {
 
     private String graphId;
+
     private String description;
     private String url;
     private RestApiStatus status;

@@ -3,13 +3,12 @@ import React from "react";
 import ProxyGraphsTable from "../../../src/components/create-graph/proxy-graphs-table";
 import { Graph } from "../../../src/domain/graph";
 import { GraphType } from "../../../src/domain/graph-type";
-import { StoreType } from "../../../src/domain/store-type";
 
 let component: ReactWrapper;
 const graphs = [
-  new Graph("test-graph", "A description", "", "UP", StoreType.MAPSTORE, GraphType.GAAS_GRAPH),
-  new Graph("test-graph2", "Another description", "", "UP", StoreType.FEDERATED_STORE, GraphType.GAAS_GRAPH),
-  new Graph("another-graph3", "Some description", "", "", StoreType.ACCUMULO, GraphType.GAAS_GRAPH),
+  new Graph("test-graph", "A description", "", "UP", "mapStore", GraphType.GAAS_GRAPH),
+  new Graph("test-graph2", "Another description", "", "UP", "federated", GraphType.GAAS_GRAPH),
+  new Graph("another-graph3", "Some description", "", "DOWN", "accumulo", GraphType.GAAS_GRAPH),
 ];
 const selectedGraphs = ["test-graph"];
 const onClickCheckboxMockCallback = jest.fn();
@@ -68,7 +67,7 @@ describe("GraphsTable UI Component", () => {
   });
 });
 
-describe("Hide graphs table if federated store is not selected", () => {
+describe("Hide graphs", () => {
   const component = mount(
     <ProxyGraphsTable
       hide={true}

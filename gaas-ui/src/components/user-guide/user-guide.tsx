@@ -2,6 +2,7 @@ import { Box, Button, Card, CardActions, CardContent, Grid, makeStyles, Toolbar,
 import GitHubIcon from "@material-ui/icons/GitHub";
 import React from "react";
 import ReactJson from "react-json-view";
+import { Copyright } from "../copyright/copyright";
 import { exampleElementsSchema } from "./example-elements-schema";
 import { exampleTypesSchema } from "./example-types-schema";
 
@@ -119,6 +120,7 @@ export default class UserGuide extends React.Component<{}, {}> {
                                 variant="contained"
                                 color="primary"
                                 target="_blank"
+                                rel="noopener noreferrer"
                                 href="https://gchq.github.io/gaffer-doc/summaries/getting-started.html"
                             >
                                 Gaffer Documentation
@@ -126,6 +128,9 @@ export default class UserGuide extends React.Component<{}, {}> {
                         </CardActions>
                     </Card>
                 </Grid>
+                <Box pt={4}>
+                        <Copyright />
+                    </Box>
             </main>
         );
     }

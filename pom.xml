@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>gaffer-experimental</artifactId>
-    <version>1.16.0</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -37,7 +37,8 @@
     </modules>
 
     <properties>
-        <gaffer.version>1.16.0</gaffer.version>
+        <revision>1.17.1</revision>
+        <gaffer.version>1.17.1</gaffer.version>
         <scm.url>
             https://github.com/gchq/gaffer-experimental
         </scm.url>

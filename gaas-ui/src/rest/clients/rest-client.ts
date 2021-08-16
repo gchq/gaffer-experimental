@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosResponse, Method } from "axios";
 import status from "statuses";
-import { GaaSRestApiErrorResponse } from "../http-message-interfaces/error-response-interface";
 import { RestApiError } from "../RestApiError";
 
 export interface IApiResponse<T = any> {
@@ -25,79 +24,108 @@ export class RestClient<T> {
         this.url = "";
         this.method = "get";
         this.headers = {};
-        this.data = undefined;
+        this.data = undefined;        
     }
     
-    public baseUrl(baseURL: string): RestClient<T> {
+    public create():any {
+        return this.methodSpec(this);
+    }
+    
+    public baseUrl(baseURL: string) {
         this.baseURL = baseURL;
-        return this;
-    }
-    
-    public get(): RestClient<T> {
-        this.method = "get";
-        return this;
-    }
-    
-    public post(): RestClient<T> {
-        this.method = "post";
-        return this;
-    }
-    
-    public delete(): RestClient<T> {
-        this.method = "delete";
-        return this;
+        return this.methodSpec(this);
     }
 
-    public graphs(pathVariable?: string): RestClient<T> {
-        const _pathVariable = pathVariable ? `/${pathVariable}` : "";
-        this.url = `/graphs${_pathVariable}`;
-        this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
-        return this;
-    }
-
-    public status(): RestClient<T>{
-        this.url = "/graph/status";
-        return this;
-    }
-
-    public description(): RestClient<T>{
-        this.url = "/graph/config/description";
-        return this;
-    }
-
-    public namespaces(): RestClient<T> {
-        this.url = "/namespaces";
-        this.headers = { Authorization: "Bearer " + RestClient.jwtToken };
-        return this;
-    }
-
-    public authentication(pathVariable?: string): RestClient<T> {
-        const _pathVariable = pathVariable ? `/${pathVariable}` : "";
-        this.url = `/auth${_pathVariable}`;
-        return this;
-    }
-
-    public requestBody(requestBody: T): RestClient<T> {
-        this.data = requestBody;
-        return this;
-    }
-
-    public async execute(): Promise<IApiResponse> {
-        try {
-            const response: AxiosResponse<any> = await axios({
-                baseURL: this.baseURL,
-                url: this.url,
-                method: this.method,
-                headers: this.headers,
-                data: this.data,
-            });
-            return RestClient.convert(response);
-        } catch (e) {
-            throw RestClient.fromError(e);
+    private methodSpec = (restClient: RestClient<any>) => ({
+        get: () => { 
+        restClient.method = "get";
+        return restClient.uriSpec(restClient);
+         },
+        post: () => { 
+            restClient.method = "post";
+            return restClient.requestBodySpec(restClient);
+        },
+        delete: () => { 
+            restClient.method = "delete";
+            return restClient.uriSpec(restClient);
         }
+    })
+
+    private requestBodySpec = (restClient: RestClient<any>) => ({
+        requestBody: (requestBody?: T) => {
+            restClient.data = requestBody;
+            return restClient.uriSpec(restClient);
+        }
+    })
+
+    private uriSpec = (restClient: RestClient<any>) => ({
+        uri: (uri: string) => { 
+            restClient.url = uri;
+            return restClient.executeSpec(restClient);
+         },
+         graphs: (pathVariable?: string) => {
+            const _pathVariable = pathVariable ? `/${pathVariable}` : "";
+            restClient.url = `/graphs${_pathVariable}`;
+            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            return restClient.executeSpec(restClient);
+        },
+        status: () => {
+            restClient.url = "/graph/status";
+            return restClient.executeSpec(restClient);
+        },
+        description: () => {
+            restClient.url = "/graph/config/description";
+            return restClient.executeSpec(restClient);
+        },
+        graphId: () => {
+            restClient.url = "/graph/config/graphId";
+            return restClient.executeSpec(restClient);
+        },
+        namespaces: () =>  {
+            restClient.url = "/namespaces";
+            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            return restClient.executeSpec(restClient);
+        },
+        authentication: (pathVariable?: string) => {
+            const _pathVariable = pathVariable ? `/${pathVariable}` : "";
+            restClient.url = `/auth${_pathVariable}`;
+            return restClient.executeSpec(restClient);
+        },
+        storeTypes: () => {
+            restClient.url="/storetypes"
+            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            return restClient.executeSpec(restClient);
+        }
+    })
+
+    private executeSpec = (restClient: RestClient<any>) => ({
+        execute: async () => {
+            try {
+                const response: AxiosResponse<any> = await axios({
+                    baseURL: restClient.baseURL,
+                    url: restClient.url,
+                    method: restClient.method,
+                    headers: restClient.headers,
+                    data: restClient.data,
+                });
+                return RestClient.convert(response);
+            } catch (e) {
+                throw RestClient.fromError(e);
+            }
+        }
+    })
+
+    private static async convert(response: AxiosResponse<any>): Promise<IApiResponse> {
+        return {
+            status: response.status,
+            data: response.data,
+        };
     }
 
-    private static fromError(e: AxiosError<GaaSRestApiErrorResponse>): RestApiError {
+    private static fromError(e: AxiosError<any>): RestApiError {
+        if (e.response && RestClient.isInstanceOfGafferApiErrorResponseBody(e.response.data)) { 
+            return new RestApiError(e.response.data.status, e.response.data.simpleMessage);
+        }
         if (e.response && e.response.data) {
             return new RestApiError(e.response.data.title, e.response.data.detail);
         }
@@ -108,10 +136,7 @@ export class RestClient<T> {
         return new RestApiError("Unknown Error", "Unable to make request");
     }
 
-    private static async convert(response: AxiosResponse<any>): Promise<IApiResponse> {
-        return {
-            status: response.status,
-            data: response.data,
-        };
+    private static isInstanceOfGafferApiErrorResponseBody(responseBody: object) {
+        return responseBody && responseBody.hasOwnProperty("status") && responseBody.hasOwnProperty("simpleMessage");
     }
 }
