@@ -61,7 +61,7 @@ export class TypesSchema {
             return;
         }
         Object.entries(this.types.types).forEach(([typeName, value]) => {
-            const type: IType = <IType>value;
+            const type: IType = value as IType;
             if (type.description !== undefined && typeof type.description !== "string") {
                 notes.addError(
                     `description in ${typeName} type is a ${typeof type.description}, it needs to be a string`

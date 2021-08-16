@@ -57,7 +57,7 @@ export class ElementsSchema {
             return;
         }
         Object.entries(this.elements.entities).forEach(([entityName,value]) => {
-            const entity: IEntity = <IEntity>value;
+            const entity: IEntity = value as IEntity;
 
             const missingProps: Array<string> = [];
             if (entity.description === undefined) {
@@ -90,7 +90,7 @@ export class ElementsSchema {
 
         Object.entries(this.elements.edges).forEach(([edgeName, value]) => {
             if (edgeName !== "groupBy") {
-                const edge: IEdge = <IEdge>value;
+                const edge: IEdge = value as IEdge;
                 const missingProps: Array<string> = [];
                 if (edge.description === undefined) {
                     missingProps.push('"description"');
