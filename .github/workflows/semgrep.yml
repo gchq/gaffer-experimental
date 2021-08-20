@@ -18,6 +18,7 @@ jobs:
   run-semgrep:
     name: Scan
     runs-on: ubuntu-latest
+    
     # Skip any PR created by dependabot to avoid permission issues
     if: (github.actor != 'dependabot[bot]')
     steps:
