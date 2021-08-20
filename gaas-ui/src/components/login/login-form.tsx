@@ -1,11 +1,12 @@
 import React from "react";
-import { Button, CssBaseline, Grid, TextField, Link, InputLabel } from "@material-ui/core";
+import { Button, CssBaseline, Grid, TextField, Link, InputLabel, Box } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { FormType } from "./login-modal";
 import { IAuthClient } from "../../rest/clients/authclient";
 import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
+import { Copyright } from "../copyright/copyright";
 
 interface IProps {
     onChangeForm(fromType: FormType): void;
@@ -150,6 +151,9 @@ export default class LoginForm extends React.Component<IProps, IState> {
                             </Typography>
                         </Grid>
                     </div>
+                    <Box pt={4}>
+                        <Copyright />
+                    </Box>
                 </Container>
             </main>
         );

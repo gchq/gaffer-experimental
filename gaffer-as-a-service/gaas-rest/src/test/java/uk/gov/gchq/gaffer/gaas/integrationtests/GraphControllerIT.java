@@ -196,6 +196,20 @@ public class GraphControllerIT extends AbstractTest {
         assertTrue(namespacesResponse.getResponse().getContentAsString().contains(namespace));
     }
 
+    @Test
+    public void testAddGraphFederatedStoreWithHook_WithSchema_Returns201OnSuccess() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, null, "federated");
+        final Gson gson = new Gson();
+        final String inputJson = gson.toJson(gaaSCreateRequestBody);
+
+        final MvcResult mvcResult = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(inputJson)).andReturn();
+
+        assertEquals(201, mvcResult.getResponse().getStatus());
+    }
+
 
     @AfterEach
     void tearDown() {

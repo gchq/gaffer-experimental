@@ -16,7 +16,6 @@ describe("Notification Alert", () => {
         const component = mount(<NotificationAlert {...successProps} />);
 
         expect(component.text()).toBe("Was a success");
-        expect(component.html()).toContain("MuiAlert-standardSuccess");
     });
     it("should render sucess message and M-UI icon from props", () => {
         const failProps: INotificationAlertProps = {
@@ -27,6 +26,5 @@ describe("Notification Alert", () => {
         const component = mount(<NotificationAlert {...failProps} />);
 
         expect(component.text()).toBe("Did not work");
-        expect(component.html()).toContain("MuiAlert-standardError");
     });
 });
