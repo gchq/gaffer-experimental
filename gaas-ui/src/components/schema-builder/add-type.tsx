@@ -8,7 +8,7 @@ export default function AddType(): ReactElement {
             direction="column"
             justify="center"
             alignItems="center"
-            id={"add-types-inputs"}
+            id={"add-type-inputs"}
         >
             <TextField
                 id={"type-name-input"}
