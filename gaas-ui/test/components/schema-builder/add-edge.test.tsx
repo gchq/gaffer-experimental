@@ -21,20 +21,27 @@ describe("Add Edge UI Component", () => {
             expect(descriptionInputField.props().name).toBe("Edge Description")
         });
         it("should have a Source select",() => {
-            const sourceInputField = wrapper.find("div#edge-source-formcontrol");
+            const sourceSelect = wrapper.find("label#edge-source-select-label");
 
-            expect(sourceInputField.props().name).toBe("Edge Source")
+            expect(sourceSelect.text()).toBe("Source")
         });
         it("should have a Destination select",() => {
-            const destinationInputField = wrapper.find("div#edge-destination-formcontrol");
+            const destinationSelect = wrapper.find("label#edge-destination-select-label");
 
-            expect(destinationInputField.props().name).toBe("Edge Destination")
+            expect(destinationSelect.text()).toBe("Destination")
         });
         it("should have a Directed select",() => {
             const directedSelect = wrapper.find("label#edge-directed-select-label");
-            console.log(wrapper.html())
+
             expect(directedSelect.text()).toBe("Directed")
         });
         //TODO: Properties and Group by
+        describe("Add Edge Button", () => {
+            it("should have an Add Edge button", () => {
+                const addEdgeButton = wrapper.find("button#add-edge-button");
+
+                expect(addEdgeButton.text()).toBe("Add Edge");
+            })
+        })
     })
 })
