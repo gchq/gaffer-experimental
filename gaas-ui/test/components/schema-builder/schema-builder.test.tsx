@@ -43,20 +43,12 @@ describe("schema-builder UI component", () => {
                     "class":"test class"
                 },
         }}} />)  
-        it("should callback types JSON when input", ()=>{
+        xit("should callback types JSON when input", ()=>{
 
         })
         it("should display the types schema that is passed in", ()=>{
-            const expectedResult: object = 
-            
-            {"types":{
-                "test name":
-                    {
-                        "description": "test description",
-                        "class":"test class"
-                    },
-            }}
-            expect(component.find("div#json-schema-viewer").text()).toEqual(expectedResult);
+            expect(component.find("div#json-schema-viewer").text()).toEqual( "{\"types\":{\"test name\":{\"description\":\"test description\"\"class\":\"test class\"}}}"
+            );
         })
     })
 })
