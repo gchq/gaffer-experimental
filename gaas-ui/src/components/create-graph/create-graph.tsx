@@ -99,7 +99,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
       try {
           const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
           this.setState({graphs});
-      } catch (e) {
+      } catch (e:any) {
           this.setState({
               outcome: AlertType.FAILED,
               outcomeMessage: `Failed to get all graphs. ${(e as Error)}`,
@@ -114,7 +114,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                   storeTypes: storeTypes.storeTypes,
                   federatedStoreTypes: storeTypes.federatedStoreTypes
               });
-      } catch (e) {
+      } catch (e:any) {
           this.setState({
               outcome: AlertType.FAILED,
               outcomeMessage: `Storetypes unavailable: ${(e as Error)}`,
@@ -158,7 +158,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
               outcomeMessage: `${graphId} was successfully added`,
           });
           this.resetForm();
-      } catch (e) {
+      } catch (e:any) {
           this.setState({
               outcome: AlertType.FAILED,
               outcomeMessage: `Failed to Add '${graphId}' Graph. ${(e as Error).message}`,
