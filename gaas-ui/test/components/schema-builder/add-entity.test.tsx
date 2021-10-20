@@ -15,11 +15,25 @@ describe("Add Entity UI Component", () => {
 
             expect(entityNameInputField.props().name).toBe("Entity Name")
         });
+        it("should display error message when invalid entity name entered", () => {
+            wrapper.find("input#entity-name-input").simulate("change", {
+              target: { value: "entity name 1" },
+            });
+        
+            expect(wrapper.find("p#entity-name-input-helper-text").text()).toBe("Entity name can only contain lowercase letters")
+          });
         it("should have a Entity Description input", () => {
             const descriptionInputField = wrapper.find("input#entity-description-input");
 
             expect(descriptionInputField.props().name).toBe("Entity Description")
         });
+        it("should display error message when invalid entity description entered", () => {
+            wrapper.find("input#entity-description-input").simulate("change", {
+              target: { value: "Entity description +" },
+            });
+        
+            expect(wrapper.find("p#entity-description-input-helper-text").text()).toBe("Entity description can only contain numbers and lowercase letters")
+          });
         it("should have a Entity Vertex select", () => {
             const vertexSelect = wrapper.find("label#entity-vertex-select-label");
 
