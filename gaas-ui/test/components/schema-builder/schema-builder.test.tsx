@@ -50,5 +50,8 @@ describe("schema-builder UI component", () => {
             expect(component.find("div#json-schema-viewer").text()).toEqual( "{\"types\":{\"test name\":{\"description\":\"test description\"\"class\":\"test class\"}}}"
             );
         })
+        it("should display the new type appended to the old types, when a new type is added", () => {
+            
+        })
     })
 })
