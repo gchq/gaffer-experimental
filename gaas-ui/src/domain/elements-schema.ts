@@ -129,14 +129,14 @@ export interface IElements {
     edges: object;
 }
 
-interface IEntity {
+export interface IEntity {
     description: string;
     vertex: string;
     properties: object;
     groupBy: Array<string>;
 }
 
-interface IEdge {
+export interface IEdge {
     description: string;
     source: string;
     destination: string;
