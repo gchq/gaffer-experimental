@@ -3,17 +3,19 @@ import {Button, Dialog, DialogContent, DialogTitle, Grid} from "@material-ui/cor
 import AddType from "./add-type";
 import AddEdge from "./add-edge";
 import AddEntity from "./add-entity";
-import {IType} from "../../domain/types-schema";
-import {IEdge, IEntity} from "../../domain/elements-schema";
 import ReactJson from "react-json-view";
+
 interface IProps {
-    onCreateTypesSchema(typesSchema: object) : void;
+    onCreateTypesSchema(typesSchema: object): void;
+
     typesSchema: object;
     elements: object;
 }
-export default function SchemaBuilder(props: IProps): ReactElement{
+
+export default function SchemaBuilder(props: IProps): ReactElement {
     const {
-        onCreateTypesSchema, typesSchema
+        onCreateTypesSchema,
+        typesSchema
     } = props;
     const [types, setTypes] = React.useState(typesSchema);
     const [openTypes, setOpenTypes] = React.useState(false);
@@ -40,7 +42,7 @@ export default function SchemaBuilder(props: IProps): ReactElement{
     const handleCloseEntities = () => {
         setOpenEntities(false);
     };
-    return(
+    return (
         <Grid>
             <Grid
                 item
@@ -63,7 +65,9 @@ export default function SchemaBuilder(props: IProps): ReactElement{
                             {"Add Type"}
                         </DialogTitle>
                         <DialogContent>
-                            <AddType onAddType={(typesObject)=>{setTypes(typesObject)}}/>
+                            <AddType onAddType={(typesObject) => {
+                                setTypes(typesObject);
+                            }}/>
                         </DialogContent>
                     </Dialog>
                 </Grid>
@@ -107,20 +111,21 @@ export default function SchemaBuilder(props: IProps): ReactElement{
 
             </Grid>
             <Grid id={"json-schema-viewer"}>
-            <ReactJson
-                src={types}
-                theme="bright"
-                // onEdit={(event) => {
-                //     this.setState({ typesSchema: event.updated_src });
-                //     console.log(this.state.typesSchema);
-                // }}
-                // onDelete={(event) => {
-                //     this.setState({ typesSchema: event.updated_src });
-                // }}
-                displayDataTypes={false}
-                displayObjectSize={false}
+                <ReactJson
+                    src={types}
+                    name={false}
+                    theme="bright"
+                    // onEdit={(event) => {
+                    //     this.setState({ typesSchema: event.updated_src });
+                    //     console.log(this.state.typesSchema);
+                    // }}
+                    // onDelete={(event) => {
+                    //     this.setState({ typesSchema: event.updated_src });
+                    // }}
+                    displayDataTypes={false}
+                    displayObjectSize={false}
                 />
             </Grid>
         </Grid>
-    )
+    );
 }
