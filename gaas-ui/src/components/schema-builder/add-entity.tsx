@@ -1,7 +1,8 @@
-import React, {ReactElement} from "react";
+import React, {ReactElement, useState} from "react";
 import {Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
 
 export default function AddEntity(): ReactElement {
+    const [errorHelperText, setErrorHelperText] = useState("");
     return (
         <Grid
             container
@@ -20,6 +21,23 @@ export default function AddEntity(): ReactElement {
                     "aria-label": "entity-name-input"
                 }}
                 name={"entity-name"}
+                variant="outlined"
+                value=""
+                error={errorHelperText.length > 0}
+                required
+                fullWidth
+                autoFocus
+                onChange={(event) => {
+                    const regex = new RegExp("^[a-z]*$")
+                    if(regex.test(event.target.value)) {
+                        setErrorHelperText("");
+                    }
+                    else {
+                        setErrorHelperText("Entity name can only contain lowercase letters")
+                    }
+                }}
+                helperText={errorHelperText }
+            
             />
             <TextField
                 id={"entity-description-input"}
@@ -31,6 +49,23 @@ export default function AddEntity(): ReactElement {
                     "aria-label": "entity-description-input"
                 }}
                 name={"entity-description"}
+                variant="outlined"
+                value=""
+                error={errorHelperText.length > 0}
+                required
+                fullWidth
+                autoFocus
+                onChange={(event) => {
+                    const regex = new RegExp("^[a-z0-9]*$")
+                    if(regex.test(event.target.value)) {
+                        setErrorHelperText("");
+                    }
+                    else {
+                        setErrorHelperText("Entity description can only contain numbers and lowercase letters")
+                    }
+                }}
+                helperText={errorHelperText }
+          
             />
             <FormControl fullWidth id={"entity-vertex-formcontrol"}>
                 <InputLabel id="entity-vertex-select-label">Vertex</InputLabel>
