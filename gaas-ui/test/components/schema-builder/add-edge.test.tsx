@@ -32,7 +32,7 @@ describe("Add Edge UI Component", () => {
               target: { value: "Edge description +" },
             });
         
-            expect(wrapper.find("p#edge-description-input-helper-text").text()).toBe("Edge Description can only contain numbers and lowercase letters")
+            expect(wrapper.find("p#edge-description-input-helper-text").text()).toBe("Edge description can only contain numbers and lowercase letters")
           });
         it("should have a Source select",() => {
             const sourceSelect = wrapper.find("label#edge-source-select-label");

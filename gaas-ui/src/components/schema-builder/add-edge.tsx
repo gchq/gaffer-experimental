@@ -1,3 +1,4 @@
+
 import React, {ReactElement, useState} from "react";
 import {Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
 
@@ -62,7 +63,7 @@ export default function AddEdge(): ReactElement {
                         setErrorHelperText("");
                     }
                     else {
-                        setErrorHelperText("Edge Description can only contain numbers and lowercase letters")
+                        setErrorHelperText("Edge description can only contain numbers and lowercase letters")
                     }
                 }}
                 helperText={errorHelperText }
