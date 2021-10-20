@@ -77,7 +77,7 @@ export default function SchemaBuilder(props: IProps): ReactElement{
                     </Dialog>
                 </Grid>
                 <Grid item>
-                    <Button variant="outlined" onClick={handleClickOpenEdges} id={"add-entity-button"}>
+                    <Button variant="outlined" onClick={handleClickOpenEntities} id={"add-entity-button"}>
                         Add Entity
                     </Button>
                     <Dialog
