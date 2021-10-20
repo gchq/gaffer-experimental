@@ -29,7 +29,7 @@ export default function SchemaBuilderDialog() {
                     {"Schema Builder"}
                 </DialogTitle>
                 <DialogContent>
-                    <SchemaBuilder/>
+                    <SchemaBuilder elements={{}} types={{}}/>
                 </DialogContent>
             </Dialog>
         </div>

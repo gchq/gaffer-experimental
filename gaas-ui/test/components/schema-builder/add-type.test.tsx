@@ -1,3 +1,4 @@
+import React from "react";
 import {mount, ReactWrapper} from "enzyme";
 import AddType from "../../../src/components/schema-builder/add-type";
 
