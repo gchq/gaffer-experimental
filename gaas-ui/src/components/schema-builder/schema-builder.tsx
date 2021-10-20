@@ -7,14 +7,15 @@ import {IType} from "../../domain/types-schema";
 import {IEdge, IEntity} from "../../domain/elements-schema";
 import ReactJson from "react-json-view";
 interface IProps {
-    types: object;
+    onCreateTypesSchema(typesSchema: object) : void;
+    typesSchema: object;
     elements: object;
 }
 export default function SchemaBuilder(props: IProps): ReactElement{
-    // const {
-    //     types,
-    // } = props;
-    const [types, setTypes] = React.useState({});
+    const {
+        onCreateTypesSchema, typesSchema
+    } = props;
+    const [types, setTypes] = React.useState(typesSchema);
     const [openTypes, setOpenTypes] = React.useState(false);
     const [openEdges, setOpenEdges] = React.useState(false);
     const [openEntities, setOpenEntities] = React.useState(false);
@@ -62,7 +63,7 @@ export default function SchemaBuilder(props: IProps): ReactElement{
                             {"Add Type"}
                         </DialogTitle>
                         <DialogContent>
-                            <AddType onAddType={(types)=>{setTypes(types)}}/>
+                            <AddType onAddType={(typesObject)=>{setTypes(typesObject)}}/>
                         </DialogContent>
                     </Dialog>
                 </Grid>
