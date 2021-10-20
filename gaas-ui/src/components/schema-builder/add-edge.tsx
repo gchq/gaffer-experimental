@@ -1,7 +1,10 @@
-import React, {ReactElement} from "react";
+import React, {ReactElement, useState} from "react";
 import {Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
 
 export default function AddEdge(): ReactElement {
+
+    const [errorHelperText, setErrorHelperText] = useState("");
+    
     return (
         <Grid
             container
@@ -20,6 +23,22 @@ export default function AddEdge(): ReactElement {
                     "aria-label": "edge-name-input"
                 }}
                 name={"edge-name"}
+                variant="outlined"
+                value=""
+                error={errorHelperText.length > 0}
+                required
+                fullWidth
+                autoFocus
+                onChange={(event) => {
+                    const regex = new RegExp("^[a-z]*$")
+                    if(regex.test(event.target.value)) {
+                        setErrorHelperText("");
+                    }
+                    else {
+                        setErrorHelperText("Edge name can only contain lowercase letters")
+                    }
+                }}
+                helperText={errorHelperText }
             />
             <TextField
                 id={"edge-description-input"}
@@ -31,6 +50,22 @@ export default function AddEdge(): ReactElement {
                     "aria-label": "edge-description-input"
                 }}
                 name={"edge-description"}
+                variant="outlined"
+                value=""
+                error={errorHelperText.length > 0}
+                required
+                fullWidth
+                autoFocus
+                onChange={(event) => {
+                    const regex = new RegExp("^[a-z0-9]*$")
+                    if(regex.test(event.target.value)) {
+                        setErrorHelperText("");
+                    }
+                    else {
+                        setErrorHelperText("Edge Description can only contain numbers and lowercase letters")
+                    }
+                }}
+                helperText={errorHelperText }
             />
             <FormControl fullWidth id={"edge-source-formcontrol"}>
                 <InputLabel id="edge-source-select-label">Source</InputLabel>
