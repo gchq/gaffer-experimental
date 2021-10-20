@@ -43,7 +43,7 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
         try {
             const namespaces: Array<string> = await new GetAllNamespacesRepo().getAll();
             this.setState({ namespaces: namespaces, errorMessage: "" });
-        } catch (e) {
+        } catch (e:any) {
             this.setState({ errorMessage: `Failed to get all namespaces. ${e.toString()}` });
         }
     }
