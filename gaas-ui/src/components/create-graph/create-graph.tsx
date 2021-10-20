@@ -35,6 +35,7 @@ import ProxyGraphsTable from "./proxy-graphs-table";
 import {GetStoreTypesRepo, IStoreTypes} from "../../rest/repositories/get-store-types-repo";
 import {CreateFederatedGraphRepo} from "../../rest/repositories/create-federated-graph-repo";
 import { Copyright } from "../copyright/copyright";
+import SchemaBuilderDialog from "./schema-builder-dialog";
 
 interface IState {
   graphId: string;
@@ -308,6 +309,13 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                           >
                                               <Tooltip
                                                   TransitionComponent={Zoom}
+                                                  title="Use Schema builder"
+                                              >
+                                                  <SchemaBuilderDialog/>
+
+                                              </Tooltip>
+                                              <Tooltip
+                                                  TransitionComponent={Zoom}
                                                   title="Add Empty Elements and Types Schema Templates"
                                               >
                                                   <IconButton
@@ -349,7 +357,6 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                       <ClearIcon/>
                                                   </IconButton>
                                               </Tooltip>
-
                                               <Dialog
                                                   id="dropzone"
                                                   open={this.state.dialogIsOpen}
