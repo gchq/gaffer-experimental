@@ -5,12 +5,16 @@ import AddEdge from "./add-edge";
 import AddEntity from "./add-entity";
 import {IType} from "../../domain/types-schema";
 import {IEdge, IEntity} from "../../domain/elements-schema";
+import ReactJson from "react-json-view";
 interface IProps {
-    types: Array<IType>;
-    entities: Array<IEntity>;
-    edges: Array<IEdge>;
+    types: object;
+    elements: object;
 }
 export default function SchemaBuilder(props: IProps): ReactElement{
+    // const {
+    //     types,
+    // } = props;
+    const [types, setTypes] = React.useState({});
     const [openTypes, setOpenTypes] = React.useState(false);
     const [openEdges, setOpenEdges] = React.useState(false);
     const [openEntities, setOpenEntities] = React.useState(false);
@@ -58,7 +62,7 @@ export default function SchemaBuilder(props: IProps): ReactElement{
                             {"Add Type"}
                         </DialogTitle>
                         <DialogContent>
-                            <AddType/>
+                            <AddType onAddType={(types)=>{setTypes(types)}}/>
                         </DialogContent>
                     </Dialog>
                 </Grid>
@@ -100,6 +104,21 @@ export default function SchemaBuilder(props: IProps): ReactElement{
                 </Grid>
 
 
+            </Grid>
+            <Grid id={"json-schema-viewer"}>
+            <ReactJson
+                src={types}
+                theme="bright"
+                // onEdit={(event) => {
+                //     this.setState({ typesSchema: event.updated_src });
+                //     console.log(this.state.typesSchema);
+                // }}
+                // onDelete={(event) => {
+                //     this.setState({ typesSchema: event.updated_src });
+                // }}
+                displayDataTypes={false}
+                displayObjectSize={false}
+                />
             </Grid>
         </Grid>
     )
