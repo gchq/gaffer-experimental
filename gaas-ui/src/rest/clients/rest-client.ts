@@ -109,7 +109,7 @@ export class RestClient<T> {
                     data: restClient.data,
                 });
                 return RestClient.convert(response);
-            } catch (e) {
+            } catch (e:any) {
                 throw RestClient.fromError(e);
             }
         }

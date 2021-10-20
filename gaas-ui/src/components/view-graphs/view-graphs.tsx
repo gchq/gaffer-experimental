@@ -45,7 +45,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
             const allStoreTypes = await new GetStoreTypesRepo().get();
             this.setState({federatedStores: allStoreTypes.federatedStoreTypes});
             this.setState({otherStores: allStoreTypes.storeTypes})
-        } catch (e) {
+        } catch (e:any) {
             this.setState({errorMessage: `Failed to get federated store types. ${e.toString()}`});
         }
     }
@@ -54,7 +54,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
         try {
             const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
             this.setState({graphs, errorMessage: ""});
-        } catch (e) {
+        } catch (e:any) {
             this.setState({errorMessage: `Failed to get all graphs. ${e.toString()}`});
         }
     }
@@ -63,7 +63,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
         try {
             await new DeleteGraphRepo().delete(graphName);
             await this.getGraphs();
-        } catch (e) {
+        } catch (e:any) {
             this.setState({errorMessage: `Failed to delete graph "${graphName}". ${e.toString()}`});
         }
     }
