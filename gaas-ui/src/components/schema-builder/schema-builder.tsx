@@ -3,8 +3,12 @@ import {Button, Dialog, DialogContent, DialogTitle, Grid} from "@material-ui/cor
 import AddType from "./add-type";
 import AddEdge from "./add-edge";
 import AddEntity from "./add-entity";
+import {IType} from "../../domain/types-schema";
+import {IEdge, IEntity} from "../../domain/elements-schema";
 interface IProps {
-
+    types: Array<IType>;
+    entities: Array<IEntity>;
+    edges: Array<IEdge>;
 }
 export default function SchemaBuilder(props: IProps): ReactElement{
     const [openTypes, setOpenTypes] = React.useState(false);

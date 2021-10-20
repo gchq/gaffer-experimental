@@ -4,7 +4,7 @@ export interface ITypesSchema {
     types: object;
 }
 
-interface IType {
+export interface IType {
     class: string;
     description?: string;
     validateFunctions?: Array<IValidateFunction>;

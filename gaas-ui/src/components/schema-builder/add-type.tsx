@@ -1,7 +1,25 @@
-import React, {ReactElement} from "react";
+import React, {ReactElement, useState} from "react";
 import {Button, Grid, TextField} from "@material-ui/core";
 
-export default function AddType(): ReactElement {
+interface IProps {
+    onAddType(type: object) : void;
+}
+export default function AddType(props: IProps): ReactElement {
+    const {
+        onAddType,
+    } = props;
+    const [typeName, setTypeName] = useState("");
+    const [typeDescription, setTypeDescription]= useState("");
+    const [typeClass, setTypeClass] = useState("");
+
+    function addTypeSubmit() {
+        const typeToAdd: any = {};
+        typeToAdd[typeName] = {
+            description: typeDescription,
+            class: typeClass,
+        }
+        onAddType(typeToAdd);
+    }
     return(
         <Grid
             container
@@ -19,6 +37,9 @@ export default function AddType(): ReactElement {
                     id: "type-name-input",
                     "aria-label": "type-name-input"
                 }}
+                onChange={(event) => {
+                    setTypeName(event.target.value as string);
+                }}
                 name={"type-name"}
             />
             <TextField
@@ -29,6 +50,9 @@ export default function AddType(): ReactElement {
                     name: "Type Description",
                     id: "type-description-input",
                     "aria-label": "type-description-input"
+                }}
+                onChange={(event) => {
+                    setTypeDescription(event.target.value as string);
                 }}
                 name={"type-description"}
             />
@@ -41,11 +65,15 @@ export default function AddType(): ReactElement {
                     id: "type-class-input",
                     "aria-label": "type-class-input"
                 }}
+                onChange={(event) => {
+                    setTypeClass(event.target.value as string);
+                }}
                 name={"type-class"}
             />
             <Button
                 id={"add-type-button"}
                 name={"Add Type"}
+                onClick={addTypeSubmit}
             >
                 Add Type
             </Button>
