@@ -68,7 +68,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                             <AddType onAddType={(typesObject) => {
                                 const updatedTypes = Object.assign(types, typesObject );
                                 setTypes(updatedTypes);
-                            }}/>
+                            }} onTypesClose={handleCloseTypes}/>
                         </DialogContent>
                     </Dialog>
                 </Grid>
