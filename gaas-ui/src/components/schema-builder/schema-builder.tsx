@@ -125,6 +125,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                     // }}
                     displayDataTypes={false}
                     displayObjectSize={false}
+                    collapsed={false}
                 />
             </Grid>
         </Grid>
