@@ -1,12 +1,14 @@
 import React, {ReactElement, useState} from "react";
-import {Button, Grid, TextField} from "@material-ui/core";
+import {Button, Grid, IconButton, TextField} from "@material-ui/core";
+import ClearIcon from "@material-ui/icons/Clear";
 
 interface IProps {
     onAddType(type: object) : void;
+    onTypesClose() : void
 }
 export default function AddType(props: IProps): ReactElement {
     const {
-        onAddType,
+        onAddType, onTypesClose
     } = props;
     const [typeName, setTypeName] = useState("");
     const [typeDescription, setTypeDescription]= useState("");
@@ -21,6 +23,13 @@ export default function AddType(props: IProps): ReactElement {
         onAddType(typeToAdd);
     }
     return(
+        <Grid>
+            <IconButton
+            id="close-add-type-button"
+            onClick={onTypesClose}
+            >
+            <ClearIcon/>
+            </IconButton>
         <Grid
             container
             direction="column"
@@ -78,6 +87,7 @@ export default function AddType(props: IProps): ReactElement {
                 Add Type
             </Button>
             
+        </Grid>
         </Grid>
     )
 }
