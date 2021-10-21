@@ -1,4 +1,4 @@
-import { fireEvent, getByDisplayValue, getByLabelText, getByRole, getByTestId, getByText, screen } from "@testing-library/react";
+import { fireEvent, getAllByRole, getByDisplayValue, getByLabelText, getByRole, getByTestId, getByText, screen } from "@testing-library/react";
 import {mount, ReactWrapper} from "enzyme";
 import React, { Component } from "react";
 import SchemaBuilder from "../../../src/components/schema-builder/schema-builder";
@@ -50,7 +50,8 @@ describe("schema-builder UI component", () => {
             const typeNameInputText = getByLabelText(dialog, "Type Name");
             const typeDescriptionInputText = getByLabelText(dialog, "Description");
             const typeClassInputText = getByLabelText(dialog, "Class");
-            const buttonClick = getByRole(dialog, "button")
+            const buttons = getAllByRole(dialog,"button");
+            const addTypesButtonClick = buttons[1]
 
             fireEvent.change(typeNameInputText, {target: {value: "someName"}})
             expect(getByDisplayValue(dialog, "someName")).toBeTruthy()
@@ -63,7 +64,8 @@ describe("schema-builder UI component", () => {
 
             expect(getByLabelText(dialog, "Type Name")).toBeTruthy()
 
-            fireEvent.click(buttonClick)
+            fireEvent.click(addTypesButtonClick)
+            fireEvent.click(buttons[0])
             await wrapper.update()
             await wrapper.update()
             await wrapper.update()

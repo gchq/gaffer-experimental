@@ -52,7 +52,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                 id={"add-schema-element-buttons"}
             >
                 <Grid item>
-                    <Button variant="outlined" onClick={handleClickOpenTypes} id={"add-type-button"}>
+                    <Button data-testid="add-type-button" variant="outlined" onClick={handleClickOpenTypes} id={"add-type-button"}>
                         Add Type
                     </Button>
                     <Dialog
