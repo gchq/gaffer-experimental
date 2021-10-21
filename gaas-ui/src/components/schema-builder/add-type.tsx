@@ -4,11 +4,10 @@ import ClearIcon from "@material-ui/icons/Clear";
 
 interface IProps {
     onAddType(type: object) : void;
-    onTypesClose() : void
 }
 export default function AddType(props: IProps): ReactElement {
     const {
-        onAddType, onTypesClose
+        onAddType
     } = props;
     const [typeName, setTypeName] = useState("");
     const [typeDescription, setTypeDescription]= useState("");
@@ -21,17 +20,14 @@ export default function AddType(props: IProps): ReactElement {
             class: typeClass,
         }
         onAddType(typeToAdd);
+        setTypeName("");
+        setTypeDescription("");
+        setTypeClass("");
     }
     return(
         <Grid
             id={"add-type-component"}
         >
-            <IconButton
-            id="close-add-type-button"
-            onClick={onTypesClose}
-            >
-            <ClearIcon/>
-            </IconButton>
         <Grid
             container
             direction="column"
