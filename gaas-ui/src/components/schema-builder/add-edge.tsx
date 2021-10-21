@@ -27,7 +27,8 @@ export default function AddEdge(): ReactElement {
                 draft.edgename.hassErrors = false
                 draft.edgename.value = action.value
                 draft.edgename.message = ""
-                if(draft.edgename.value && !/^[a-zA-Z]*$/.test(draft.edgename.value)){
+
+                if(!/^[a-zA-Z]*$/.test(draft.edgename.value)){
                     draft.edgename.hassErrors = true
                     draft.edgename.message = "Edge name can only contain letters"
                 }
@@ -36,6 +37,7 @@ export default function AddEdge(): ReactElement {
                 draft.edgeDescription.hassErrors = false
                 draft.edgeDescription.value = action.value
                 draft.edgeDescription.message=""
+               
               if(draft.edgeDescription.value && !/^[a-zA-Z0-9\s]*$/.test(draft.edgeDescription.value)){
                     draft.edgeDescription.hassErrors = true
                     draft.edgeDescription.message = "Edge description can only contain alpha numeric letters and spaces"
@@ -46,6 +48,14 @@ export default function AddEdge(): ReactElement {
 
     const [state, dispatch] = useImmerReducer(ourReducer,instialState)
 
+  
+    function disableAddEdgeButton(): boolean {
+        return (
+            (state.edgename.value.length === 0 || state.edgename.hassErrors) ||
+            (state.edgeDescription.value.length === 0 || state.edgeDescription.hassErrors)
+        )
+    }
+  
     
     return (
         <Grid
@@ -81,6 +91,7 @@ export default function AddEdge(): ReactElement {
                     "aria-label": "edge-description-input"
                 }}
                 name={"edge-description"}
+                variant="outlined"
                 error={state.edgeDescription.hassErrors}
                 required
                 onChange={(e) => dispatch({type: "validateEdgeDescription", value: e.target.value})}
@@ -119,9 +130,11 @@ export default function AddEdge(): ReactElement {
                     <MenuItem value={"False"}>False</MenuItem>
                 </Select>
             </FormControl>
-            <Button
+            <Button 
                 id={"add-edge-button"}
                 name={"Add Edge"}
+                color="primary"
+                disabled={disableAddEdgeButton()}
             >
                 Add Edge
             </Button>

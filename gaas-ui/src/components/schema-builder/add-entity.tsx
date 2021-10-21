@@ -44,7 +44,12 @@ export default function AddEntity(): ReactElement {
 
     const [state, dispatch] = useImmerReducer(ourReducer,instialState)
 
-    
+    function disableAddEntityButton(): boolean {
+        return (
+            (state.entityname.value.length === 0 || state.entityname.hassErrors) ||
+            (state.entityDescription.value.length === 0 || state.entityDescription.hassErrors)
+        )
+    }
     
     return (
         <Grid
@@ -100,6 +105,7 @@ export default function AddEntity(): ReactElement {
             <Button
                 id={"add-entity-button"}
                 name={"Add Entity"}
+                disabled={disableAddEntityButton()}
             >
                 Add Entity
             </Button>
