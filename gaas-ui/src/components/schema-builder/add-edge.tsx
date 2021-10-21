@@ -1,7 +1,8 @@
 
 import React, {ReactElement, useState} from "react";
 import {Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
-import {useImmerReducer} from 'use-immer'
+import {useImmerReducer} from "use-immer"
+
 export default function AddEdge(): ReactElement {
 
 
@@ -23,19 +24,21 @@ export default function AddEdge(): ReactElement {
 
         switch(action.type){
             case "validateEdgeName":
-                draft.edgename.hasErrrors = false
+                draft.edgename.hassErrors = false
                 draft.edgename.value = action.value
+                draft.edgename.message = ""
                 if(draft.edgename.value && !/^[a-zA-Z]*$/.test(draft.edgename.value)){
-                    draft.edgename.hasErrrors = false
-                    draft.edgename.message = "Edge name can only contain lowercase letters"
+                    draft.edgename.hassErrors = true
+                    draft.edgename.message = "Edge name can only contain letters"
                 }
                 return
             case "validateEdgeDescription":
-                draft.edgeDescription.hasErrrors = false
+                draft.edgeDescription.hassErrors = false
                 draft.edgeDescription.value = action.value
-              if(draft.edgeDescription.value && !/^[a-zA-Z0-9]*$/.test(draft.edgeDescription.value)){
-                    draft.edgeDescription.hasErrrors = false
-                    draft.edgeDescription.message = "Edge description can only contain numbers and lowercase letters"
+                draft.edgeDescription.message=""
+              if(draft.edgeDescription.value && !/^[a-zA-Z0-9\s]*$/.test(draft.edgeDescription.value)){
+                    draft.edgeDescription.hassErrors = true
+                    draft.edgeDescription.message = "Edge description can only contain alpha numeric letters and spaces"
                 }
                 return
         }
@@ -63,11 +66,9 @@ export default function AddEdge(): ReactElement {
                 }}
                 name={"edge-name"}
                 variant="outlined"
-                error={state.edgename.message.length > 0}
+                error={state.edgename.hassErrors}
                 required
-                fullWidth
-                autoFocus
-                onChange={e => dispatch({type: "validateEdgeName", value: e.target.value})}
+                onChange={(e) => dispatch({type: "validateEdgeName", value: e.target.value})}
                 helperText={state.edgename.message}
             />
             <TextField
@@ -80,11 +81,9 @@ export default function AddEdge(): ReactElement {
                     "aria-label": "edge-description-input"
                 }}
                 name={"edge-description"}
-                error={state.edgeDescription.message.length > 0}
+                error={state.edgeDescription.hassErrors}
                 required
-                fullWidth
-                autoFocus
-                onChange={e => dispatch({type: "validateEdgeDescription", value: e.target.value})}
+                onChange={(e) => dispatch({type: "validateEdgeDescription", value: e.target.value})}
                 helperText={state.edgeDescription.message}
             />
             <FormControl fullWidth id={"edge-source-formcontrol"}>

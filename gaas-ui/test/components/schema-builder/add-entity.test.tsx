@@ -20,7 +20,7 @@ describe("Add Entity UI Component", () => {
               target: { value: "entity name 1" },
             });
         
-            expect(wrapper.find("p#entity-name-input-helper-text").text()).toBe("Entity name can only contain lowercase letters")
+            expect(wrapper.find("p#entity-name-input-helper-text").text()).toBe("Entity name can only contain letters")
           });
         it("should have a Entity Description input", () => {
             const descriptionInputField = wrapper.find("input#entity-description-input");
@@ -32,7 +32,7 @@ describe("Add Entity UI Component", () => {
               target: { value: "Entity description +" },
             });
         
-            expect(wrapper.find("p#entity-description-input-helper-text").text()).toBe("Entity description can only contain numbers and lowercase letters")
+            expect(wrapper.find("p#entity-description-input-helper-text").text()).toBe("Entity description can only contain alpha numeric letters and spaces")
           });
         it("should have a Entity Vertex select", () => {
             const vertexSelect = wrapper.find("label#entity-vertex-select-label");
