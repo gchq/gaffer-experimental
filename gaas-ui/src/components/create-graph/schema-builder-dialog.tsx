@@ -21,7 +21,6 @@ export default function SchemaBuilderDialog() {
             </Button>
             <Dialog
                 fullWidth={true}
-                fullScreen
                 open={open}
                 onClose={handleClose}
                 id={"schema-builder-dialog"}

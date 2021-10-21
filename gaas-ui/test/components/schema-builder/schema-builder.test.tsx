@@ -16,15 +16,14 @@ let wrapper: ReactWrapper;
 const onCreateSchemaMockCallBack = jest.fn();
 beforeEach(() => {
     wrapper = mount(<SchemaBuilder elements={{}} onCreateTypesSchema={onCreateSchemaMockCallBack}
-                                   typesSchema={{
-                                       "types": {
-                                           "test name":
+                                   typesSchema={ {
+                                           "name":
                                                {
                                                    "description": "test description",
-                                                   "class": "test class"
+                                                   "class": "test.class"
                                                },
                                        }
-                                   }}
+                                   }
     />);
 });
 afterEach(() => {
@@ -79,18 +78,13 @@ describe("schema-builder UI wrapper", () => {
 
         });
         fit("should update the json viewer with the added type", async() => {
-            await wrapper.find("button#add-type-button").simulate("click");
+            wrapper.find("button#add-type-button").simulate("click");
             addTypeName("testName");
             addTypeDescription("testDescription");
             addTypeClass("testClass");
-            await wrapper.update();
-            await wrapper.update();
-            await wrapper.update();
-            await clickAddType();
-            await wrapper.update();
-            await wrapper.update();
-            await wrapper.update();
-            console.log(wrapper.find("div#json-schema-viewer").text());
+
+            clickAddType();
+
             await clickCloseAddType();
             await wrapper.update();
             await wrapper.update();

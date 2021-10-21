@@ -1,9 +1,10 @@
 import React, {ReactElement} from "react";
-import {Button, Dialog, DialogContent, DialogTitle, Grid} from "@material-ui/core";
+import {Button, Dialog, DialogContent, DialogTitle, Grid, IconButton} from "@material-ui/core";
 import AddType from "./add-type";
 import AddEdge from "./add-edge";
 import AddEntity from "./add-entity";
 import ReactJson from "react-json-view";
+import ClearIcon from "@material-ui/icons/Clear";
 
 interface IProps {
     onCreateTypesSchema(typesSchema: object): void;
@@ -52,7 +53,8 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                 id={"add-schema-element-buttons"}
             >
                 <Grid item>
-                    <Button data-testid="add-type-button" variant="outlined" onClick={handleClickOpenTypes} id={"add-type-button"}>
+                    <Button data-testid="add-type-button" variant="outlined" onClick={handleClickOpenTypes}
+                            id={"add-type-button"}>
                         Add Type
                     </Button>
                     <Dialog
@@ -61,14 +63,22 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         id={"add-type-dialog"}
                         aria-labelledby="add-type-dialog"
                     >
+                        <IconButton
+                            id="close-add-type-button"
+                            onClick={handleCloseTypes}
+                        >
+                            <ClearIcon/>
+                        </IconButton>
                         <DialogTitle id="add-type-dialog-title">
                             {"Add Type"}
                         </DialogTitle>
                         <DialogContent>
-                            <AddType onAddType={(typesObject) => {
-                                const updatedTypes = Object.assign(types, typesObject );
-                                setTypes(updatedTypes);
-                            }} onTypesClose={handleCloseTypes}/>
+                            <AddType
+                                onAddType={(typesObject) => {
+                                    const updatedTypes = Object.assign(types, typesObject);
+                                    setTypes(updatedTypes);
+                                }}
+                            />
                         </DialogContent>
                     </Dialog>
                 </Grid>
@@ -114,7 +124,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             <Grid id={"json-schema-viewer"}>
                 <ReactJson
                     src={types}
-                    name={false}
+                    name={"types"}
                     theme="bright"
                     // onEdit={(event) => {
                     //     this.setState({ typesSchema: event.updated_src });
