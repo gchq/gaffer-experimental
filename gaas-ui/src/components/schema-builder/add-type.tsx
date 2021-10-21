@@ -23,7 +23,9 @@ export default function AddType(props: IProps): ReactElement {
         onAddType(typeToAdd);
     }
     return(
-        <Grid>
+        <Grid
+            id={"add-type-component"}
+        >
             <IconButton
             id="close-add-type-button"
             onClick={onTypesClose}
@@ -38,9 +40,10 @@ export default function AddType(props: IProps): ReactElement {
             id={"add-type-inputs"}
         >
             <TextField
-                id={"type-name-input"}
+                id={"type-name-textfield"}
                 label={"Type Name"}
-                aria-label="type-name-input"
+                value={typeName}
+                aria-label="type-name-textfield"
                 inputProps={{
                     name: "Type Name",
                     id: "type-name-input",
@@ -50,10 +53,12 @@ export default function AddType(props: IProps): ReactElement {
                     setTypeName(event.target.value as string);
                 }}
                 name={"type-name"}
+                autoComplete="type-name"
             />
             <TextField
-                id={"type-description-input"}
+                id={"type-description-textfield"}
                 label={"Description"}
+                value={typeDescription}
                 aria-label="type-description-input"
                 inputProps={{
                     name: "Type Description",
@@ -64,10 +69,12 @@ export default function AddType(props: IProps): ReactElement {
                     setTypeDescription(event.target.value as string);
                 }}
                 name={"type-description"}
+                autoComplete="type-description"
             />
             <TextField
-                id={"type-class-input"}
+                id={"type-class-textfield"}
                 label={"Class"}
+                value={typeClass}
                 aria-label="type-class-input"
                 inputProps={{
                     name: "Type Class",
@@ -78,6 +85,7 @@ export default function AddType(props: IProps): ReactElement {
                     setTypeClass(event.target.value as string);
                 }}
                 name={"type-class"}
+                autoComplete="type-class"
             />
             <Button
                 id={"add-type-button"}
