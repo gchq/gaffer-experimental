@@ -1,6 +1,6 @@
 import React, {ReactElement, useState} from "react";
 import {Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
-import {useImmerReducer} from 'use-immer'
+import {useImmerReducer} from "use-immer"
 
 export default function AddEntity(): ReactElement {
 
@@ -22,19 +22,21 @@ export default function AddEntity(): ReactElement {
 
         switch(action.type){
             case "validateEntityeName":
-                draft.entityname.hasErrrors = false
+                draft.entityname.hassErrors = false
                 draft.entityname.value = action.value
+                draft.entityname.message="";
                 if(draft.entityname.value && !/^[a-zA-Z]*$/.test(draft.entityname.value)){
-                    draft.entityname.hasErrrors = false
-                    draft.entityname.message = "Entity name can only contain lowercase letters"
+                    draft.entityname.hassErrors = true
+                    draft.entityname.message = "Entity name can only contain letters"
                 }
                 return
             case "validateEntityDescription":
-                draft.entityDescription.hasErrrors = false
+                draft.entityDescription.hassErrors = false
                 draft.entityDescription.value = action.value
-              if(draft.entityDescription.value && !/^[a-zA-Z0-9]*$/.test(draft.entityDescription.value)){
-                    draft.entityDescription.hasErrrors = false
-                    draft.entityDescription.message = "Entity description can only contain numbers and lowercase letters"
+                draft.entityDescription.message=""
+              if(draft.entityDescription.value  && !/^[a-zA-Z0-9\s]*$/.test(draft.entityDescription.value)){
+                    draft.entityDescription.hassErrors = true
+                    draft.entityDescription.message = "Entity description can only contain alpha numeric letters and spaces"
                 }
                 return
         }
@@ -62,12 +64,10 @@ export default function AddEntity(): ReactElement {
                     "aria-label": "entity-name-input"
                 }}
                 name={"entity-name"}
-                variant="outlined"
-                error={state.entityname.message.length > 0}
+                error={state.entityname.hassErrors}
                 required
-                fullWidth
                 autoFocus
-                onChange={e => dispatch({type: "validateEntityeName", value: e.target.value})}
+                onChange={(e) => dispatch({type: "validateEntityeName", value: e.target.value})}
                 helperText={state.entityname.message}
             />
             <TextField
@@ -80,12 +80,10 @@ export default function AddEntity(): ReactElement {
                     "aria-label": "entity-description-input"
                 }}
                 name={"entity-description"}
-                variant="outlined"
-                error={state.entityDescription.message.length > 0}
+                error={state.entityDescription.hassErrors}
                 required
-                fullWidth
                 autoFocus
-                onChange={e => dispatch({type: "validateEntityDescription", value: e.target.value})}
+                onChange={(e) => dispatch({type: "validateEntityDescription", value: e.target.value})}
                 helperText={state.entityDescription.message}
             />
             <FormControl fullWidth id={"entity-vertex-formcontrol"}>
