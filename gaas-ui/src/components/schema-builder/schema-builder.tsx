@@ -44,7 +44,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
         setOpenEntities(false);
     };
     return (
-        <Grid>
+        <Grid id={"schema-builder-component"}>
             <Grid
                 item
                 direction="row"
