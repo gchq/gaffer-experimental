@@ -1,5 +1,6 @@
 import {mount, ReactWrapper} from "enzyme";
 import AddEdge from "../../../src/components/schema-builder/add-edge";
+import React from "react";
 
 let wrapper: ReactWrapper;
 beforeEach(() => {

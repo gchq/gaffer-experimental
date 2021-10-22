@@ -1,62 +1,62 @@
-import React, { ReactElement, useState } from "react"
+import React, { ReactElement } from "react"
 import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@material-ui/core"
 import { useImmerReducer } from "use-immer"
 
 export default function AddEntity(): ReactElement {
-  const instialState = {
-    entityname: {
+  const initialState = {
+    entityName: {
       value: "",
-      hassErrors: false,
+      hasErrors: false,
       message: ""
     },
 
     entityDescription: {
       value: "",
-      hassErrors: false,
+      hasErrors: false,
       message: ""
     },
 
     entityVertex: {
       value: "",
-      hassErrors: false
+      hasErrors: false
     }
   }
 
   function addEntityReducer(draft: any, action: any) {
     switch (action.type) {
-      case "validateEntityeName":
-        draft.entityname.hassErrors = false
-        draft.entityname.value = action.value
-        draft.entityname.message = ""
-        if (draft.entityname.value && !/^[a-zA-Z]*$/.test(draft.entityname.value)) {
-          draft.entityname.hassErrors = true
-          draft.entityname.message = "Entity name can only contain letters"
+      case "validateEntityName":
+        draft.entityName.hasErrors = false
+        draft.entityName.value = action.value
+        draft.entityName.message = ""
+        if (draft.entityName.value && !/^[a-zA-Z]*$/.test(draft.entityName.value)) {
+          draft.entityName.hasErrors = true
+          draft.entityName.message = "Entity name can only contain letters"
         }
         return
       case "validateEntityDescription":
-        draft.entityDescription.hassErrors = false
+        draft.entityDescription.hasErrors = false
         draft.entityDescription.value = action.value
         draft.entityDescription.message = ""
         if (draft.entityDescription.value && !/^[a-zA-Z0-9\s]*$/.test(draft.entityDescription.value)) {
-          draft.entityDescription.hassErrors = true
+          draft.entityDescription.hasErrors = true
           draft.entityDescription.message = "Entity description can only contain alpha numeric letters and spaces"
         }
         return
 
       case "validateEntityVertex":
-        draft.entityVertex.hassErrors = false
+        draft.entityVertex.hasErrors = false
         draft.entityVertex.value = action.value
         if (draft.entityVertex.value.length === 0) {
-          draft.entityVertex.hassErrors = true
+          draft.entityVertex.hasErrors = true
         }
         return
     }
   }
 
-  const [state, dispatch] = useImmerReducer(addEntityReducer, instialState)
+  const [state, dispatch] = useImmerReducer(addEntityReducer, initialState)
 
   function disableAddEntityButton(): boolean {
-    return state.entityname.value.length === 0 || state.entityname.hassErrors || state.entityDescription.value.length === 0 || state.entityDescription.hassErrors || state.entityVertex.value.length === 0 || state.entityVertex.hassErrors
+    return state.entityName.value.length === 0 || state.entityName.hasErrors || state.entityDescription.value.length === 0 || state.entityDescription.hasErrors || state.entityVertex.value.length === 0 || state.entityVertex.hasErrors
   }
 
   return (
@@ -71,11 +71,11 @@ export default function AddEntity(): ReactElement {
           "aria-label": "entity-name-input"
         }}
         name={"entity-name"}
-        error={state.entityname.hassErrors}
+        error={state.entityName.hasErrors}
         required
         autoFocus
-        onChange={(e) => dispatch({ type: "validateEntityeName", value: e.target.value })}
-        helperText={state.entityname.message}
+        onChange={(e) => dispatch({ type: "validateEntityName", value: e.target.value })}
+        helperText={state.entityName.message}
       />
       <TextField
         id={"entity-description-input"}
@@ -87,7 +87,7 @@ export default function AddEntity(): ReactElement {
           "aria-label": "entity-description-input"
         }}
         name={"entity-description"}
-        error={state.entityDescription.hassErrors}
+        error={state.entityDescription.hasErrors}
         required
         autoFocus
         onChange={(e) => dispatch({ type: "validateEntityDescription", value: e.target.value })}

@@ -1,5 +1,6 @@
 import {mount, ReactWrapper} from "enzyme";
 import AddEntity from "../../../src/components/schema-builder/add-entity";
+import React from "react";
 
 let wrapper: ReactWrapper;
 beforeEach(() => {
