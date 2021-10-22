@@ -22,7 +22,7 @@ export default function AddEntity(): ReactElement {
     }
   }
 
-  function ourReducer(draft: any, action: any) {
+  function addEntityReducer(draft: any, action: any) {
     switch (action.type) {
       case "validateEntityeName":
         draft.entityname.hassErrors = false
@@ -53,7 +53,7 @@ export default function AddEntity(): ReactElement {
     }
   }
 
-  const [state, dispatch] = useImmerReducer(ourReducer, instialState)
+  const [state, dispatch] = useImmerReducer(addEntityReducer, instialState)
 
   function disableAddEntityButton(): boolean {
     return state.entityname.value.length === 0 || state.entityname.hassErrors || state.entityDescription.value.length === 0 || state.entityDescription.hassErrors || state.entityVertex.value.length === 0 || state.entityVertex.hassErrors
@@ -95,7 +95,7 @@ export default function AddEntity(): ReactElement {
       />
       <FormControl fullWidth id={"entity-vertex-formcontrol"}>
         <InputLabel id="entity-vertex-select-label">Vertex</InputLabel>
-        <Select labelId="entity-vertex-select-label" id="entity-vertex-select" label="Vertex" onChange={(e) => dispatch({ type: "validateEntityVertex", value: e.target.value })}>
+        <Select labelId="entity-vertex-select-label" id="entity-vertex-select" label="Vertex" required onChange={(e) => dispatch({ type: "validateEntityVertex", value: e.target.value })}>
           <MenuItem value={"type 1"}>Type 1</MenuItem>
           <MenuItem value={"type 2"}>Type 2</MenuItem>
         </Select>
