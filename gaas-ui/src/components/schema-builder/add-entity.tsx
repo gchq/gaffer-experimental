@@ -13,6 +13,16 @@ export default function AddEntity(props: IProps): ReactElement {
         onAddEntity,
         types
     } = props;
+
+    function addEntitySubmit() {
+        const entityToAdd: any = {};
+        entityToAdd[state.entityName.value] = {
+            description: state.entityDescription.value,
+            vertex: state.entityVertex.value
+        };
+        onAddEntity(entityToAdd);
+    }
+
     const initialState = {
         entityName: {
             value: "",
@@ -73,6 +83,7 @@ export default function AddEntity(props: IProps): ReactElement {
     return (
         <Grid container direction="column" justify="center" alignItems="center" id={"add-entity-inputs"}>
             <TextField
+                value={state.entityName.value}
                 id={"entity-name-input"}
                 label={"Entity Name"}
                 aria-label="entity-name-input"
@@ -90,6 +101,7 @@ export default function AddEntity(props: IProps): ReactElement {
             />
             <TextField
                 id={"entity-description-input"}
+                value={state.entityDescription.value}
                 label={"Description"}
                 aria-label="entity-description-input"
                 inputProps={{
@@ -106,8 +118,17 @@ export default function AddEntity(props: IProps): ReactElement {
             />
             <FormControl fullWidth id={"entity-vertex-formcontrol"} required>
                 <InputLabel id="entity-vertex-select-label">Vertex</InputLabel>
-                <Select labelId="entity-vertex-select-label" id="entity-vertex-select" label="Vertex"
-                        onChange={(e) => dispatch({type: "validateEntityVertex", value: e.target.value})}>
+                <Select labelId="entity-vertex-select-label"
+                        id="entity-vertex-select"
+                        label="Vertex"
+                        value={state.entityVertex.value}
+                        inputProps={{
+                            name: "Vertex",
+                            id: "entity-vertex-input",
+                            "aria-label": "entity-vertex-input"
+                        }}
+                        onChange={(e) => dispatch({type: "validateEntityVertex", value: e.target.value})}
+                >
                     {types.map((type: string) => (
                             <MenuItem value={type} aria-label={type + "-menu-item"}
                                       id={type + "-menu-item"} aria-labelledby={"vertex-select-label"}
@@ -118,7 +139,8 @@ export default function AddEntity(props: IProps): ReactElement {
                     )}
                 </Select>
             </FormControl>
-            <Button id={"add-entity-button"} name={"Add Entity"} color="primary" disabled={disableAddEntityButton()}>
+            <Button id={"add-entity-button"} name={"Add Entity"} color="primary" disabled={disableAddEntityButton()}
+                    onClick={addEntitySubmit}>
                 Add Entity
             </Button>
         </Grid>
