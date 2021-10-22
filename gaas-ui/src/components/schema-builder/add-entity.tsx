@@ -1,108 +1,109 @@
-import React, { ReactElement } from "react"
-import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@material-ui/core"
-import { useImmerReducer } from "use-immer"
+import React, {ReactElement} from "react";
+import {Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
+import {useImmerReducer} from "use-immer";
 
 export default function AddEntity(): ReactElement {
-  const initialState = {
-    entityName: {
-      value: "",
-      hasErrors: false,
-      message: ""
-    },
+    const initialState = {
+        entityName: {
+            value: "",
+            hasErrors: false,
+            message: ""
+        },
 
-    entityDescription: {
-      value: "",
-      hasErrors: false,
-      message: ""
-    },
+        entityDescription: {
+            value: "",
+            hasErrors: false,
+            message: ""
+        },
 
-    entityVertex: {
-      value: "",
-      hasErrors: false
+        entityVertex: {
+            value: "",
+            hasErrors: false
+        }
+    };
+
+    function addEntityReducer(draft: any, action: any) {
+        switch (action.type) {
+        case "validateEntityName":
+            draft.entityName.hasErrors = false;
+            draft.entityName.value = action.value;
+            draft.entityName.message = "";
+            if (draft.entityName.value && !/^[a-zA-Z]*$/.test(draft.entityName.value)) {
+                draft.entityName.hasErrors = true;
+                draft.entityName.message = "Entity name can only contain letters";
+            }
+            return;
+        case "validateEntityDescription":
+            draft.entityDescription.hasErrors = false;
+            draft.entityDescription.value = action.value;
+            draft.entityDescription.message = "";
+            if (draft.entityDescription.value && !/^[a-zA-Z0-9\s]*$/.test(draft.entityDescription.value)) {
+                draft.entityDescription.hasErrors = true;
+                draft.entityDescription.message = "Entity description can only contain alpha numeric letters and spaces";
+            }
+            return;
+
+        case "validateEntityVertex":
+            draft.entityVertex.hasErrors = false;
+            draft.entityVertex.value = action.value;
+            if (draft.entityVertex.value.length === 0) {
+                draft.entityVertex.hasErrors = true;
+            }
+            return;
+        }
     }
-  }
 
-  function addEntityReducer(draft: any, action: any) {
-    switch (action.type) {
-      case "validateEntityName":
-        draft.entityName.hasErrors = false
-        draft.entityName.value = action.value
-        draft.entityName.message = ""
-        if (draft.entityName.value && !/^[a-zA-Z]*$/.test(draft.entityName.value)) {
-          draft.entityName.hasErrors = true
-          draft.entityName.message = "Entity name can only contain letters"
-        }
-        return
-      case "validateEntityDescription":
-        draft.entityDescription.hasErrors = false
-        draft.entityDescription.value = action.value
-        draft.entityDescription.message = ""
-        if (draft.entityDescription.value && !/^[a-zA-Z0-9\s]*$/.test(draft.entityDescription.value)) {
-          draft.entityDescription.hasErrors = true
-          draft.entityDescription.message = "Entity description can only contain alpha numeric letters and spaces"
-        }
-        return
+    const [state, dispatch] = useImmerReducer(addEntityReducer, initialState);
 
-      case "validateEntityVertex":
-        draft.entityVertex.hasErrors = false
-        draft.entityVertex.value = action.value
-        if (draft.entityVertex.value.length === 0) {
-          draft.entityVertex.hasErrors = true
-        }
-        return
+    function disableAddEntityButton(): boolean {
+        return state.entityName.value.length === 0 || state.entityName.hasErrors || state.entityDescription.value.length === 0 || state.entityDescription.hasErrors || state.entityVertex.value.length === 0 || state.entityVertex.hasErrors;
     }
-  }
 
-  const [state, dispatch] = useImmerReducer(addEntityReducer, initialState)
-
-  function disableAddEntityButton(): boolean {
-    return state.entityName.value.length === 0 || state.entityName.hasErrors || state.entityDescription.value.length === 0 || state.entityDescription.hasErrors || state.entityVertex.value.length === 0 || state.entityVertex.hasErrors
-  }
-
-  return (
-    <Grid container direction="column" justify="center" alignItems="center" id={"add-entity-inputs"}>
-      <TextField
-        id={"entity-name-input"}
-        label={"Entity Name"}
-        aria-label="entity-name-input"
-        inputProps={{
-          name: "Entity Name",
-          id: "entity-name-input",
-          "aria-label": "entity-name-input"
-        }}
-        name={"entity-name"}
-        error={state.entityName.hasErrors}
-        required
-        autoFocus
-        onChange={(e) => dispatch({ type: "validateEntityName", value: e.target.value })}
-        helperText={state.entityName.message}
-      />
-      <TextField
-        id={"entity-description-input"}
-        label={"Description"}
-        aria-label="entity-description-input"
-        inputProps={{
-          name: "Entity Description",
-          id: "entity-description-input",
-          "aria-label": "entity-description-input"
-        }}
-        name={"entity-description"}
-        error={state.entityDescription.hasErrors}
-        required
-        autoFocus
-        onChange={(e) => dispatch({ type: "validateEntityDescription", value: e.target.value })}
-        helperText={state.entityDescription.message}
-      />
-      <FormControl fullWidth id={"entity-vertex-formcontrol"} required>
-        <InputLabel id="entity-vertex-select-label">Vertex</InputLabel>
-        <Select labelId="entity-vertex-select-label" id="entity-vertex-select" label="Vertex" onChange={(e) => dispatch({ type: "validateEntityVertex", value: e.target.value })}>
-          <MenuItem value={"type 1"}>Type 1</MenuItem>
-          <MenuItem value={"type 2"}>Type 2</MenuItem>
-        </Select>
-      </FormControl>
-      <Button id={"add-entity-button"} name={"Add Entity"} color="primary" disabled={disableAddEntityButton()}>
-        Add Entity
-      </Button>
-    </Grid>
-  )
+    return (
+        <Grid container direction="column" justify="center" alignItems="center" id={"add-entity-inputs"}>
+            <TextField
+                id={"entity-name-input"}
+                label={"Entity Name"}
+                aria-label="entity-name-input"
+                inputProps={{
+                    name: "Entity Name",
+                    id: "entity-name-input",
+                    "aria-label": "entity-name-input"
+                }}
+                name={"entity-name"}
+                error={state.entityName.hasErrors}
+                required
+                autoFocus
+                onChange={(e) => dispatch({type: "validateEntityName", value: e.target.value})}
+                helperText={state.entityName.message}
+            />
+            <TextField
+                id={"entity-description-input"}
+                label={"Description"}
+                aria-label="entity-description-input"
+                inputProps={{
+                    name: "Entity Description",
+                    id: "entity-description-input",
+                    "aria-label": "entity-description-input"
+                }}
+                name={"entity-description"}
+                error={state.entityDescription.hasErrors}
+                required
+                autoFocus
+                onChange={(e) => dispatch({type: "validateEntityDescription", value: e.target.value})}
+                helperText={state.entityDescription.message}
+            />
+            <FormControl fullWidth id={"entity-vertex-formcontrol"} required>
+                <InputLabel id="entity-vertex-select-label">Vertex</InputLabel>
+                <Select labelId="entity-vertex-select-label" id="entity-vertex-select" label="Vertex"
+                        onChange={(e) => dispatch({type: "validateEntityVertex", value: e.target.value})}>
+                    <MenuItem value={"type 1"}>Type 1</MenuItem>
+                    <MenuItem value={"type 2"}>Type 2</MenuItem>
+                </Select>
+            </FormControl>
+            <Button id={"add-entity-button"} name={"Add Entity"} color="primary" disabled={disableAddEntityButton()}>
+                Add Entity
+            </Button>
+        </Grid>
+    );
 }
