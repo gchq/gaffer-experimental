@@ -21,6 +21,7 @@ export default function AddEntity(props: IProps): ReactElement {
             vertex: state.entityVertex.value
         };
         onAddEntity(entityToAdd);
+        dispatch({type: "reset"})
     }
 
     const initialState = {
@@ -45,6 +46,8 @@ export default function AddEntity(props: IProps): ReactElement {
 
     function addEntityReducer(draft: any, action: any) {
         switch (action.type) {
+        case "reset":
+            return initialState;
         case "validateEntityName":
             draft.entityName.hasErrors = false;
             draft.entityName.value = action.value;
