@@ -3,10 +3,10 @@ import {mount, ReactWrapper} from "enzyme";
 import AddType from "../../../src/components/schema-builder/add-type";
 
 let wrapper: ReactWrapper;
-const addTypeMockCallBack = jest.fn();
+const onAddTypeMockCallBack = jest.fn();
 beforeEach(() => {
     wrapper = mount(<AddType
-        onAddType={addTypeMockCallBack}
+        onAddType={onAddTypeMockCallBack}
         />)
 });
 afterEach(() => {
@@ -34,8 +34,8 @@ describe("Add Type UI Component", () => {
 
         });
     })
-    describe("Add Type props", () => {
-        it("should callback with an array of types when a new type has been added", () => {
+    describe("On Add Type", () => {
+        it("should callback with a type object when a new type has been added", () => {
             const expectedResult: object =
             {
                 "test name":
@@ -50,7 +50,7 @@ describe("Add Type UI Component", () => {
             addTypeClass("test class");
             clickAddType();
 
-            expect(addTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
+            expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
         })
     })
     describe("Add Type Button", () => {

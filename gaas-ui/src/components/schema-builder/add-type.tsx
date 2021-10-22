@@ -1,6 +1,5 @@
 import React, {ReactElement, useState} from "react";
-import {Button, Grid, IconButton, TextField} from "@material-ui/core";
-import ClearIcon from "@material-ui/icons/Clear";
+import {Button, Grid, TextField} from "@material-ui/core";
 
 interface IProps {
     onAddType(type: object): void;

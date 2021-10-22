@@ -114,7 +114,9 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                             {"Add Entity"}
                         </DialogTitle>
                         <DialogContent>
-                            <AddEntity/>
+                            <AddEntity onAddEntity={(entityObject) => {
+
+                            }} types={[]}/>
                         </DialogContent>
                     </Dialog>
                 </Grid>

@@ -1,8 +1,15 @@
 import React, {ReactElement} from "react";
 import {Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
 import {useImmerReducer} from "use-immer";
-
-export default function AddEntity(): ReactElement {
+interface IProps {
+    onAddEntity(entity: object): void;
+    types: Array<string>;
+}
+export default function AddEntity(props: IProps): ReactElement {
+    const {
+        onAddEntity,
+        types
+    } = props;
     const initialState = {
         entityName: {
             value: "",
@@ -21,6 +28,7 @@ export default function AddEntity(): ReactElement {
             hasErrors: false
         }
     };
+
 
     function addEntityReducer(draft: any, action: any) {
         switch (action.type) {
