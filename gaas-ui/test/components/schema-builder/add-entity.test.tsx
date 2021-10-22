@@ -5,7 +5,8 @@ import React from "react";
 let wrapper: ReactWrapper;
 const onAddEntityMockCallBack = jest.fn();
 beforeEach(() => {
-    wrapper = mount(<AddEntity onAddEntity={onAddEntityMockCallBack} types={["typeOne", "typeTwo", "typeThree", "typeFour"]}/>);
+    wrapper = mount(<AddEntity onAddEntity={onAddEntityMockCallBack}
+                               types={["typeOne", "typeTwo", "typeThree", "typeFour"]}/>);
 });
 afterEach(() => {
     wrapper.unmount();
@@ -52,33 +53,62 @@ describe("Add Entity UI Component", () => {
         });
     });
     describe("On Add Entity", () => {
-        it("should callback with an entity object when a new type has been added", () => {
+        it("should callback with an entity object when a new type has been added", async() => {
             const expectedResult: object =
                 {
                     "testEntity":
                         {
                             "description": "test entity description",
-                            "vertex":"testType"
+                            "vertex": "typeOne"
                         },
-                }
+                };
+            addEntityName("testEntity");
+            addEntityDescription("test entity description");
+            selectVertex("typeOne");
+            await clickAddEntity();
 
             expect(onAddEntityMockCallBack).toHaveBeenLastCalledWith(expectedResult);
-        })
-    })
+        });
+    });
     describe("Vertex Dropdown", () => {
-        it("Should allow types to be selected when types has been passed into the AddEntity component", () => {
-            selectVertex("accumulo");
-            expect(wrapper.find("div#storetype-formcontrol")
+        it("Should allow a valid type to be selected", () => {
+            selectVertex("typeOne");
+            expect(wrapper.find("div#entity-vertex-formcontrol")
+                .find("input").props().value).toBe("typeOne");
+        });
+        it("should not allow an invalid type to be selected", () => {
+            selectVertex("typeFive");
+            expect(wrapper.find("div#entity-vertex-formcontrol")
                 .find("input").props().value).toBe("");
-
-        })
-    })
+        });
+    });
 });
-function selectVertex(storeType: string) {
+
+function selectVertex(vertex: string) {
     wrapper
         .find("div#entity-vertex-formcontrol")
         .find("input")
         .simulate("change", {
-            target: {value: storeType},
+            target: {value: vertex},
         });
 }
+
+function addEntityName(name: string) {
+    const typeNameInputField = wrapper.find("input#entity-name-input");
+    typeNameInputField.simulate("change", {
+        target: {value: name},
+    });
+}
+
+function addEntityDescription(description: string) {
+    const descriptionInputField = wrapper.find("input#entity-description-input");
+    descriptionInputField.simulate("change", {
+        target: {value: description},
+    });
+}
+
+function clickAddEntity() {
+    const addTypeButton = wrapper.find("button#add-entity-button");
+    addTypeButton.simulate("click");
+}
+
