@@ -61,7 +61,7 @@ describe("CreateGraph UI component", () => {
             expect(select.text()).toBe("Store Type​​");
         });
         it("should have icon button", () => {
-            const fileButton = wrapper.find("button").at(0).find("svg");
+            const fileButton = wrapper.find("button").at(1).find("svg");
             expect(fileButton).toHaveLength(1);
         });
         it("should have an elements text area", () => {
