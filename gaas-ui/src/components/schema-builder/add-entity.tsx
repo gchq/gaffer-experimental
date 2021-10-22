@@ -93,9 +93,9 @@ export default function AddEntity(): ReactElement {
         onChange={(e) => dispatch({ type: "validateEntityDescription", value: e.target.value })}
         helperText={state.entityDescription.message}
       />
-      <FormControl fullWidth id={"entity-vertex-formcontrol"}>
+      <FormControl fullWidth id={"entity-vertex-formcontrol"} required>
         <InputLabel id="entity-vertex-select-label">Vertex</InputLabel>
-        <Select labelId="entity-vertex-select-label" id="entity-vertex-select" label="Vertex" required onChange={(e) => dispatch({ type: "validateEntityVertex", value: e.target.value })}>
+        <Select labelId="entity-vertex-select-label" id="entity-vertex-select" label="Vertex" onChange={(e) => dispatch({ type: "validateEntityVertex", value: e.target.value })}>
           <MenuItem value={"type 1"}>Type 1</MenuItem>
           <MenuItem value={"type 2"}>Type 2</MenuItem>
         </Select>
