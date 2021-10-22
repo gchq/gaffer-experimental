@@ -4,7 +4,6 @@ import AddType from "../../../src/components/schema-builder/add-type";
 
 let wrapper: ReactWrapper;
 const addTypeMockCallBack = jest.fn();
-const closeTypesMockCallBack = jest.fn();
 beforeEach(() => {
     wrapper = mount(<AddType
         onAddType={addTypeMockCallBack}
@@ -59,15 +58,6 @@ describe("Add Type UI Component", () => {
             const addTypeButton = wrapper.find("button#add-type-button");
 
             expect(addTypeButton.text()).toBe("Add Type");
-        })
-    })
-    describe("Close button", ()=>{
-        it("should have a close button", ()=>{
-            expect(wrapper.find("button#close-add-type-button")).toBeTruthy()
-        })
-        it("should close the dialog on button press", ()=>{
-            wrapper.find("button#close-add-type-button").simulate("click")
-            expect(closeTypesMockCallBack).toHaveBeenCalled()
         })
     })
 })
