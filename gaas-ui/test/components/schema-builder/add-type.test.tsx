@@ -8,7 +8,7 @@ const closeTypesMockCallBack = jest.fn();
 beforeEach(() => {
     wrapper = mount(<AddType
         onAddType={addTypeMockCallBack}
-        onTypesClose={closeTypesMockCallBack}/>)
+        />)
 });
 afterEach(() => {
     wrapper.unmount();
