@@ -1,10 +1,13 @@
 import React, {ReactElement} from "react";
 import {Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
 import {useImmerReducer} from "use-immer";
+
 interface IProps {
     onAddEntity(entity: object): void;
+
     types: Array<string>;
 }
+
 export default function AddEntity(props: IProps): ReactElement {
     const {
         onAddEntity,
@@ -105,8 +108,14 @@ export default function AddEntity(props: IProps): ReactElement {
                 <InputLabel id="entity-vertex-select-label">Vertex</InputLabel>
                 <Select labelId="entity-vertex-select-label" id="entity-vertex-select" label="Vertex"
                         onChange={(e) => dispatch({type: "validateEntityVertex", value: e.target.value})}>
-                    <MenuItem value={"type 1"}>Type 1</MenuItem>
-                    <MenuItem value={"type 2"}>Type 2</MenuItem>
+                    {types.map((type: string) => (
+                            <MenuItem value={type} aria-label={type + "-menu-item"}
+                                      id={type + "-menu-item"} aria-labelledby={"vertex-select-label"}
+                            >
+                                {type}
+                            </MenuItem>
+                        )
+                    )}
                 </Select>
             </FormControl>
             <Button id={"add-entity-button"} name={"Add Entity"} color="primary" disabled={disableAddEntityButton()}>
