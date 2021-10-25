@@ -30,7 +30,7 @@ export default function SchemaBuilderDialog() {
                     {"Schema Builder"}
                 </DialogTitle>
                 <DialogContent>
-                    <SchemaBuilder elements={{}} onCreateTypesSchema={() => {}} typesSchema={{}}/>
+                    <SchemaBuilder elementsSchema={{}} onCreateTypesSchema={() => {}} typesSchema={{}}/>
                 </DialogContent>
             </Dialog>
         </div>

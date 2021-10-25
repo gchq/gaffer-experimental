@@ -8,7 +8,7 @@ import {Backdrop} from "@material-ui/core";
 let wrapper: ReactWrapper;
 const onCreateSchemaMockCallBack = jest.fn();
 beforeEach(() => {
-    wrapper = mount(<SchemaBuilder elements={{}} onCreateTypesSchema={onCreateSchemaMockCallBack}
+    wrapper = mount(<SchemaBuilder elementsSchema={{}} onCreateTypesSchema={onCreateSchemaMockCallBack}
                                    typesSchema={{
                                        "name":
                                            {
@@ -39,7 +39,7 @@ describe("schema-builder UI wrapper", () => {
             expect(addEntityButton.text()).toBe("Add Entity");
         });
     });
-    describe("Schema builder props", () => {
+    describe("Types Schema prop", () => {
         //TODO: Test that when a new type is added it is appended to existing types
         it("should update the json viewer with the added type from the add type dialog", async() => {
             wrapper.find("button#add-type-button").simulate("click");
@@ -59,18 +59,24 @@ describe("schema-builder UI wrapper", () => {
             await wrapper.update();
             await wrapper.update();
 
-            expect(wrapper.find("div#json-schema-viewer").text()).toEqual("");
+            expect(wrapper.find("div#json-types-schema-viewer").text()).toEqual("");
 
 
         });
         it("should display the types schema that is passed in", () => {
-            expect(wrapper.find("div#json-schema-viewer").text()).toEqual('"types":{"name":{"description":"test description""class":"test.class"}}'
+            expect(wrapper.find("div#json-types-schema-viewer").text()).toEqual('"types":{"name":{"description":"test description""class":"test.class"}}'
             );
         });
         it("should display the new type appended to the old types, when a new type is added", () => {
 
         });
     });
+    describe("Elements Schema Prop", () => {
+        it("should display the elements schema that is passed in", () => {
+            expect(wrapper.find("div#json-schema-viewer").text()).toEqual('"types":{"name":{"description":"test description""class":"test.class"}}'
+            );
+        });
+    })
 });
 
 async function addTypeName(name: string) {

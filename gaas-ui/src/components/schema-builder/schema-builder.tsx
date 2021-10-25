@@ -11,12 +11,13 @@ interface IProps {
     onCreateTypesSchema(typesSchema: object): void;
 
     typesSchema: object;
-    elements: object;
+    elementsSchema: object;
 }
 
 export default function SchemaBuilder(props: IProps): ReactElement {
-    const {onCreateTypesSchema, typesSchema} = props;
+    const {onCreateTypesSchema, typesSchema, elementsSchema} = props;
     const [types, setTypes] = React.useState(typesSchema);
+    const [elements, setElements] = React.useState(elementsSchema);
 
     const initialState = {
         openTypes: false,
@@ -103,9 +104,26 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                     </Dialog>
                 </Grid>
             </Grid>
-            <Grid id={"json-schema-viewer"}>
+            <Grid id={"json-types-schema-viewer"}>
                 <ReactJson
                     src={types}
+                    name={"types"}
+                    theme="bright"
+                    // onEdit={(event) => {
+                    //     this.setState({ typesSchema: event.updated_src });
+                    //     console.log(this.state.typesSchema);
+                    // }}
+                    // onDelete={(event) => {
+                    //     this.setState({ typesSchema: event.updated_src });
+                    // }}
+                    displayDataTypes={false}
+                    displayObjectSize={false}
+                    collapsed={false}
+                />
+            </Grid>
+            <Grid id={"json-elements-schema-viewer"}>
+                <ReactJson
+                    src={elements}
                     name={"types"}
                     theme="bright"
                     // onEdit={(event) => {
