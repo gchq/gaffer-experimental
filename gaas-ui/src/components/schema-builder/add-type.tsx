@@ -49,7 +49,7 @@ export default function AddType(props: IProps): ReactElement {
         draft.typeDescription.hasErrors = false
         draft.typeDescription.value = action.value
         draft.typeDescription.message = ""
-        if (draft.typeDescription.value && !/^[\w\s\.?_,\'\"-]*$/.test(draft.typeDescription.value)) {
+        if (draft.typeDescription.value && !/^[\w\s.?_,'"-]*$/.test(draft.typeDescription.value)) {
           draft.typeDescription.hasErrors = true
           draft.typeDescription.message = "Type description can only contain alpha numeric letters and spaces"
         }
