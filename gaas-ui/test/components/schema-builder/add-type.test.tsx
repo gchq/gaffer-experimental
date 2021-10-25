@@ -51,7 +51,7 @@ describe("Add Type UI Component", () => {
         target: { value: "Type class 1" }
       })
 
-      expect(wrapper.find("p#type-class-input-helper-text").text()).toBe("Type class can only contain letters")
+      expect(wrapper.find("p#type-class-input-helper-text").text()).toBe("Type class can only contain letters and .")
     })
   })
   describe("On Add Type", () => {

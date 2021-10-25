@@ -11,16 +11,6 @@ interface IProps {
 export default function AddEntity(props: IProps): ReactElement {
   const { onAddEntity, types } = props
 
-  function addEntitySubmit() {
-    const entityToAdd: any = {}
-    entityToAdd[state.entityName.value] = {
-      description: state.entityDescription.value,
-      vertex: state.entityVertex.value
-    }
-    onAddEntity(entityToAdd)
-    dispatch({ type: "reset" })
-  }
-
   const initialState = {
     entityName: {
       value: "",
@@ -43,7 +33,14 @@ export default function AddEntity(props: IProps): ReactElement {
   function addEntityReducer(draft: any, action: any) {
     switch (action.type) {
       case "reset":
+        const entityToAdd: any = {}
+        entityToAdd[draft.entityName.value] = {
+          description: draft.entityDescription.value,
+          vertex: draft.entityVertex.value
+        }
+        onAddEntity(entityToAdd)
         return initialState
+
       case "validateEntityName":
         draft.entityName.hasErrors = false
         draft.entityName.value = action.value
@@ -121,6 +118,7 @@ export default function AddEntity(props: IProps): ReactElement {
           labelId="entity-vertex-select-label"
           id="entity-vertex-select"
           label="Vertex"
+          key="1"
           value={state.entityVertex.value}
           inputProps={{
             name: "Vertex",
@@ -136,7 +134,7 @@ export default function AddEntity(props: IProps): ReactElement {
           ))}
         </Select>
       </FormControl>
-      <Button id={"add-entity-button"} name={"Add Entity"} color="primary" disabled={disableAddEntityButton()} onClick={addEntitySubmit}>
+      <Button id={"add-entity-button"} name={"Add Entity"} color="primary" disabled={disableAddEntityButton()} onClick={(e) => dispatch({ type: "reset" })}>
         Add Entity
       </Button>
     </Grid>

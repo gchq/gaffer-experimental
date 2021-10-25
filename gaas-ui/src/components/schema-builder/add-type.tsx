@@ -61,7 +61,7 @@ export default function AddType(props: IProps): ReactElement {
         draft.typeClass.message = ""
         if (draft.typeClass.value && !/^[a-zA-Z\.]*$/.test(draft.typeClass.value)) {
           draft.typeClass.hasErrors = true
-          draft.typeClass.message = "Type class can only contain letters"
+          draft.typeClass.message = "Type class can only contain letters and ."
         }
         return
     }
