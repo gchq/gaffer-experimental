@@ -137,7 +137,7 @@ export default function AddEdge(): ReactElement {
                     Destination
                 </InputLabel>
                 <Select labelId="edge-destination-select-label" id="edge-destination-select" label="Destination"
-                        onChange={(e) => dispatch({type: "validateEdgeDestnation", value: e.target.value})}>
+                        onChange={(e) => dispatch({type: "validateEdgeDestination", value: e.target.value})}>
                     <MenuItem value={"type 1"}>Type 1</MenuItem>
                     <MenuItem value={"type 2"}>Type 2</MenuItem>
                 </Select>
