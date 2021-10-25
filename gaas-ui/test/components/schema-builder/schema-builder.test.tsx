@@ -2,7 +2,7 @@ import {mount, ReactWrapper} from "enzyme";
 import React from "react";
 import SchemaBuilder from "../../../src/components/schema-builder/schema-builder";
 import {act} from "react-dom/test-utils";
-import {  Backdrop } from "@material-ui/core";
+import {Backdrop} from "@material-ui/core";
 
 
 let wrapper: ReactWrapper;
@@ -64,8 +64,7 @@ describe("schema-builder UI wrapper", () => {
 
         });
         it("should display the types schema that is passed in", () => {
-            expect(wrapper.find("div#json-schema-viewer").text()).toEqual("\"types\":{\"name\":{\"description\":\"test description\"\"class\":\"test.class\"}}"
-
+            expect(wrapper.find("div#json-schema-viewer").text()).toEqual('"types":{"name":{"description":"test description""class":"test.class"}}'
             );
         });
         it("should display the new type appended to the old types, when a new type is added", () => {
