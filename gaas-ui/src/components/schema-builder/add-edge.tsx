@@ -2,7 +2,27 @@ import React, {ReactElement} from "react";
 import {Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
 import {useImmerReducer} from "use-immer";
 
-export default function AddEdge(): ReactElement {
+interface IProps {
+    onAddEdge(edge: object): void;
+
+    types: Array<string>;
+}
+
+export default function AddEdge(props: IProps): ReactElement {
+    const {onAddEdge, types} = props;
+
+    function addEdgeSubmit() {
+        const edgeToAdd: any = {};
+        edgeToAdd[state.edgeName.value] = {
+            description: state.edgeDescription.value,
+            source: state.edgeSource.value,
+            destination: state.edgeDestination.value,
+            directed: state.edgeDirected.value,
+        };
+        onAddEdge(edgeToAdd);
+        dispatch({type: "reset"});
+    }
+
     const initialState = {
         edgeName: {
             value: "",
@@ -26,7 +46,7 @@ export default function AddEdge(): ReactElement {
             hasErrors: false
         },
 
-        entityDirected: {
+        edgeDirected: {
             value: "",
             hasErrors: false
         }
@@ -72,11 +92,11 @@ export default function AddEdge(): ReactElement {
             }
             return;
 
-        case "validateEntityDirected":
-            draft.entityDirected.hasErrors = false;
-            draft.entityDirected.value = action.value;
-            if (draft.entityDirected.value.length === 0) {
-                draft.entityDirected.hasErrors = true;
+        case "validateEdgeDirected":
+            draft.edgeDirected.hasErrors = false;
+            draft.edgeDirected.value = action.value;
+            if (draft.edgeDirected.value.length === 0) {
+                draft.edgeDirected.hasErrors = true;
             }
             return;
         }
@@ -85,7 +105,7 @@ export default function AddEdge(): ReactElement {
     const [state, dispatch] = useImmerReducer(addEdgeReducer, initialState);
 
     function disableAddEdgeButton(): boolean {
-        return state.edgeName.value.length === 0 || state.edgeName.hasErrors || state.edgeDescription.value.length === 0 || state.edgeDescription.hasErrors || state.edgeSource.value.length === 0 || state.edgeDestination.value.length === 0 || state.entityDirected.value.length === 0;
+        return state.edgeName.value.length === 0 || state.edgeName.hasErrors || state.edgeDescription.value.length === 0 || state.edgeDescription.hasErrors || state.edgeSource.value.length === 0 || state.edgeDestination.value.length === 0 || state.edgeDirected.value.length === 0;
     }
 
     return (
@@ -100,6 +120,7 @@ export default function AddEdge(): ReactElement {
                     "aria-label": "edge-name-input"
                 }}
                 name={"edge-name"}
+                value={state.edgeName.value}
                 variant="outlined"
                 error={state.edgeName.hasErrors}
                 required
@@ -116,6 +137,7 @@ export default function AddEdge(): ReactElement {
                     "aria-label": "edge-description-input"
                 }}
                 name={"edge-description"}
+                value={state.edgeDescription.value}
                 variant="outlined"
                 error={state.edgeDescription.hasErrors}
                 required
@@ -126,33 +148,42 @@ export default function AddEdge(): ReactElement {
                 <InputLabel id="edge-source-select-label" required>
                     Source
                 </InputLabel>
-                <Select labelId="edge-source-select-label" id="edge-source-select" label="Source"
+                <Select labelId="edge-source-select-label" id="edge-source-select" label="Source" value={state.edgeSource.value}
                         onChange={(e) => dispatch({type: "validateEdgeSource", value: e.target.value})}>
-                    <MenuItem value={"type 1"}>Type 1</MenuItem>
-                    <MenuItem value={"type 2"}>Type 2</MenuItem>
+                    {types.map((type: string) => (
+                        <MenuItem value={type} aria-label={type + "-menu-item"} id={type + "-menu-item"}
+                                  aria-labelledby={"source-select-label"}>
+                            {type}
+                        </MenuItem>
+                    ))}
                 </Select>
             </FormControl>
             <FormControl fullWidth id={"edge-destination-formcontrol"}>
                 <InputLabel id="edge-destination-select-label" required>
                     Destination
                 </InputLabel>
-                <Select labelId="edge-destination-select-label" id="edge-destination-select" label="Destination"
+                <Select labelId="edge-destination-select-label" id="edge-destination-select" label="Destination" value={state.edgeDestination.value}
                         onChange={(e) => dispatch({type: "validateEdgeDestination", value: e.target.value})}>
-                    <MenuItem value={"type 1"}>Type 1</MenuItem>
-                    <MenuItem value={"type 2"}>Type 2</MenuItem>
+                    {types.map((type: string) => (
+                        <MenuItem value={type} aria-label={type + "-menu-item"} id={type + "-menu-item"}
+                                  aria-labelledby={"destination-select-label"}>
+                            {type}
+                        </MenuItem>
+                    ))}
                 </Select>
             </FormControl>
             <FormControl fullWidth id={"edge-directed-formcontrol"}>
                 <InputLabel id="edge-directed-select-label" required>
                     Directed
                 </InputLabel>
-                <Select labelId="edge-directed-select-label" id="edge-directed-select" label="Directed"
-                        onChange={(e) => dispatch({type: "validateEntityDirected", value: e.target.value})}>
-                    <MenuItem value={"True"}>True</MenuItem>
-                    <MenuItem value={"False"}>False</MenuItem>
+                <Select labelId="edge-directed-select-label" id="edge-directed-select" label="Directed" value={state.edgeDirected.value}
+                        onChange={(e) => dispatch({type: "validateEdgeDirected", value: e.target.value})}>
+                    <MenuItem value={"true"}>True</MenuItem>
+                    <MenuItem value={"false"}>False</MenuItem>
                 </Select>
             </FormControl>
-            <Button id={"add-edge-button"} name={"Add Edge"} color="primary" disabled={disableAddEdgeButton()}>
+            <Button id={"add-edge-button"} name={"Add Edge"} color="primary" disabled={disableAddEdgeButton()}
+                    onClick={addEdgeSubmit}>
                 Add Edge
             </Button>
         </Grid>

@@ -79,7 +79,7 @@ describe("Add Entity UI Component", () => {
       selectVertex("typeFive")
       expect(wrapper.find("div#entity-vertex-formcontrol").find("input").props().value).toBe("")
     })
-    it("No type is selecte", () => {
+    it("No type is selected", () => {
       selectVertex("")
       expect(wrapper.find("div#entity-vertex-formcontrol").find("input").props().value).toBe("")
     })

@@ -79,7 +79,10 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                             id={"add-edge-dialog"} aria-labelledby="add-edge-dialog">
                         <DialogTitle id="add-edge-dialog-title">{"Add Edge"}</DialogTitle>
                         <DialogContent>
-                            <AddEdge/>
+                            <AddEdge onAddEdge={(edgeObject) => {
+
+                            }}
+                                types={Object.keys(typesSchema)}/>
                         </DialogContent>
                     </Dialog>
                 </Grid>
