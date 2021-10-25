@@ -97,7 +97,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                                 setEdges(updatedEdges);
                                 setElements({edges:updatedEdges, entities:entities})
                             }}
-                                types={Object.keys(typesSchema)}/>
+                                     types={Object.keys(typesSchema)}/>
                         </DialogContent>
                     </Dialog>
                 </Grid>
@@ -154,6 +154,12 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                     displayObjectSize={false}
                     collapsed={false}
                 />
+            </Grid>
+            <Grid>
+                <Button id={"create-schema-button"} name={"Create Schema"} color="primary" disabled={}
+                >
+                    Create Schema
+                </Button>
             </Grid>
         </Grid>
     );
