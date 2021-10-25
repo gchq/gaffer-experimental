@@ -124,7 +124,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             <Grid id={"json-elements-schema-viewer"}>
                 <ReactJson
                     src={elements}
-                    name={"types"}
+                    name={null}
                     theme="bright"
                     // onEdit={(event) => {
                     //     this.setState({ typesSchema: event.updated_src });

@@ -8,7 +8,20 @@ import {Backdrop} from "@material-ui/core";
 let wrapper: ReactWrapper;
 const onCreateSchemaMockCallBack = jest.fn();
 beforeEach(() => {
-    wrapper = mount(<SchemaBuilder elementsSchema={{}} onCreateTypesSchema={onCreateSchemaMockCallBack}
+    wrapper = mount(<SchemaBuilder elementsSchema={{
+        "edges":
+        {"TestEdge":{
+            "description":"test", 
+            "source":"A", 
+            "destination":"B", 
+            "directed":"true"
+        },
+        "entities":
+        {"TestEntity":{
+            "description":"test description", 
+            "vertex":"B"
+        }
+    }}}} onCreateTypesSchema={onCreateSchemaMockCallBack}
                                    typesSchema={{
                                        "name":
                                            {
@@ -41,7 +54,7 @@ describe("schema-builder UI wrapper", () => {
     });
     describe("Types Schema prop", () => {
         //TODO: Test that when a new type is added it is appended to existing types
-        it("should update the json viewer with the added type from the add type dialog", async() => {
+        xit("should update the json viewer with the added type from the add type dialog", async() => {
             wrapper.find("button#add-type-button").simulate("click");
             await addTypeName("testName");
             await addTypeDescription("testDescription");
@@ -73,7 +86,7 @@ describe("schema-builder UI wrapper", () => {
     });
     describe("Elements Schema Prop", () => {
         it("should display the elements schema that is passed in", () => {
-            expect(wrapper.find("div#json-schema-viewer").text()).toEqual('"types":{"name":{"description":"test description""class":"test.class"}}'
+            expect(wrapper.find("div#json-elements-schema-viewer").text()).toEqual('{"edges":{"TestEdge":{"description":"test""source":"A""destination":"B""directed":"true"}"entities":{"TestEntity":{"description":"test description""vertex":"B"}}}}'
             );
         });
     })
