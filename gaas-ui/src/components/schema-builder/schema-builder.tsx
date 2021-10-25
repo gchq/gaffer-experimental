@@ -6,6 +6,7 @@ import AddEntity from "./add-entity";
 import ReactJson from "react-json-view";
 import ClearIcon from "@material-ui/icons/Clear";
 import {useImmerReducer} from "use-immer";
+import { IElements } from "../../domain/elements-schema";
 
 interface IProps {
     onCreateTypesSchema(typesSchema: object): void;
@@ -17,13 +18,24 @@ interface IProps {
 export default function SchemaBuilder(props: IProps): ReactElement {
     const {onCreateTypesSchema, typesSchema, elementsSchema} = props;
     const [types, setTypes] = React.useState(typesSchema);
-    const [elements, setElements] = React.useState(elementsSchema);
+    const [elements, setElements] = React.useState<IElements>({
+        edges:{},
+        entities:{},
+    });
+    const [edges, setEdges] = React.useState(castElementsToIElements(elementsSchema).edges);
+    const [entities, setEntities] = React.useState(castElementsToIElements(elementsSchema).entities)
+
 
     const initialState = {
         openTypes: false,
         openEdges: false,
         openEntities: false
     };
+
+    function castElementsToIElements(elementsObject: object): IElements{
+        return elementsObject as IElements
+
+    }
 
     function addSchemaBuilderReducer(draft: any, action: any) {
         switch (action.type) {
@@ -81,7 +93,9 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         <DialogTitle id="add-edge-dialog-title">{"Add Edge"}</DialogTitle>
                         <DialogContent>
                             <AddEdge onAddEdge={(edgeObject) => {
-
+                                const updatedEdges = Object.assign(edges, edgeObject);
+                                setEdges(updatedEdges);
+                                setElements({edges:updatedEdges, entities:entities})
                             }}
                                 types={Object.keys(typesSchema)}/>
                         </DialogContent>
@@ -99,6 +113,9 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         <DialogTitle id="add-entity-dialog-title">{"Add Entity"}</DialogTitle>
                         <DialogContent>
                             <AddEntity onAddEntity={(entityObject) => {
+                                const updatedEntities = Object.assign(entities, entityObject);
+                                setEntities(updatedEntities);
+                                setElements({edges:edges, entities:updatedEntities})
                             }} types={Object.keys(typesSchema)}/>
                         </DialogContent>
                     </Dialog>
