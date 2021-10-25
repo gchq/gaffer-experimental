@@ -48,21 +48,24 @@ describe("Add Entity UI Component", () => {
     it("should have an Add Entity button", () => {
       const addEntityButton = wrapper.find("button#add-entity-button")
 
-      expect(addEntityButton.text()).toBe("Add Entity")
-    })
-  })
-  describe("On Add Entity", () => {
-    it("should callback with an entity object when a new type has been added", async () => {
-      const expectedResult: object = {
-        testEntity: {
-          description: "test entity description",
-          vertex: "typeOne"
-        }
-      }
-      addEntityName("testEntity")
-      addEntityDescription("test entity description")
-      selectVertex("typeOne")
-      await clickAddEntity()
+            expect(addEntityButton.text()).toBe("Add Entity");
+        });
+    });
+    describe("On Add Entity", () => {
+        it("should callback with an entity object when a new entity has been added", async() => {
+            const expectedResult: object =
+                {
+                    "testEntity":
+                        {
+                            "description": "test entity description",
+                            "vertex": "typeOne"
+                        },
+                };
+
+            addEntityName("testEntity");
+            addEntityDescription("test entity description");
+            selectVertex("typeOne");
+            await clickAddEntity();
 
       expect(onAddEntityMockCallBack).toHaveBeenLastCalledWith(expectedResult)
     })
@@ -93,10 +96,10 @@ function selectVertex(vertex: string) {
 }
 
 function addEntityName(name: string) {
-  const typeNameInputField = wrapper.find("input#entity-name-input")
-  typeNameInputField.simulate("change", {
-    target: { value: name }
-  })
+    const nameInputField = wrapper.find("input#entity-name-input");
+    nameInputField.simulate("change", {
+        target: {value: name},
+    });
 }
 
 function addEntityDescription(description: string) {
