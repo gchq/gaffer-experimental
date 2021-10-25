@@ -57,15 +57,15 @@ describe("Add Type UI Component", () => {
   describe("On Add Type", () => {
     it("should callback with a type object when a new type has been added", () => {
       const expectedResult: object = {
-        "test name": {
+        "testName": {
           description: "test description",
-          class: "test class"
+          class: "test.class"
         }
       }
 
-      addTypeName("test name")
+      addTypeName("testName")
       addTypeDescription("test description")
-      addTypeClass("test class")
+      addTypeClass("test.class")
       clickAddType()
 
       expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult)
