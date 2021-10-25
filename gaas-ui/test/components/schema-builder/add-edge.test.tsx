@@ -114,7 +114,7 @@ describe("Add Edge UI Component", () => {
         it("Should allow true to be selected", () => {
             selectDirected("true");
             expect(wrapper.find("div#edge-directed-formcontrol")
-                .find("input").props().value).toBe("false");
+                .find("input").props().value).toBe("true");
         });
         it("should not allow false to be selected", () => {
             selectDirected("false");
@@ -133,7 +133,7 @@ function addEdgeName(name: string) {
 }
 
 function addEdgeDescription(description: string) {
-    const descriptionInputField = wrapper.find("input#entity-description-input");
+    const descriptionInputField = wrapper.find("input#edge-description-input");
     descriptionInputField.simulate("change", {
         target: {value: description},
     });
@@ -167,6 +167,6 @@ function selectDirected(directed: string) {
 }
 
 function clickAddEdge() {
-    const addTypeButton = wrapper.find("button#add-entity-button");
+    const addTypeButton = wrapper.find("button#add-edge-button");
     addTypeButton.simulate("click");
 }
