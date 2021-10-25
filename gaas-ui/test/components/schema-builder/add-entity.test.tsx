@@ -53,7 +53,7 @@ describe("Add Entity UI Component", () => {
         });
     });
     describe("On Add Entity", () => {
-        it("should callback with an entity object when a new type has been added", async() => {
+        it("should callback with an entity object when a new entity has been added", async() => {
             const expectedResult: object =
                 {
                     "testEntity":
@@ -62,6 +62,7 @@ describe("Add Entity UI Component", () => {
                             "vertex": "typeOne"
                         },
                 };
+
             addEntityName("testEntity");
             addEntityDescription("test entity description");
             selectVertex("typeOne");
@@ -94,8 +95,8 @@ function selectVertex(vertex: string) {
 }
 
 function addEntityName(name: string) {
-    const typeNameInputField = wrapper.find("input#entity-name-input");
-    typeNameInputField.simulate("change", {
+    const nameInputField = wrapper.find("input#entity-name-input");
+    nameInputField.simulate("change", {
         target: {value: name},
     });
 }
