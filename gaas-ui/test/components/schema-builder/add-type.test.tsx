@@ -51,17 +51,17 @@ describe("Add Type UI Component", () => {
                 target: {value: "Type class 1"}
             });
 
-            expect(wrapper.find("p#type-class-input-helper-text").text()).toBe("Type class can only contain letters");
-        });
-    });
-    describe("On Add Type", () => {
-        it("should callback with a type object when a new type has been added", () => {
-            const expectedResult: object = {
-                "testName": {
-                    description: "test description",
-                    class: "test.class"
-                }
-            };
+      expect(wrapper.find("p#type-class-input-helper-text").text()).toBe("Type class can only contain letters and .")
+    })
+  })
+  describe("On Add Type", () => {
+    it("should callback with a type object when a new type has been added", () => {
+      const expectedResult: object = {
+        "testName": {
+          description: "test description",
+          class: "test.class"
+        }
+      }
 
             addTypeName("testName");
             addTypeDescription("test description");

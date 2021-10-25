@@ -55,15 +55,13 @@ export default function AddType(props: IProps): ReactElement {
             }
             return;
 
-        case "validateTypeClass":
-            draft.typeClass.hasErrors = false;
-            draft.typeClass.value = action.value;
-            draft.typeClass.message = "";
-            if (draft.typeClass.value && !/^[a-zA-Z.]*$/.test(draft.typeClass.value)) {
-                draft.typeClass.hasErrors = true;
-                draft.typeClass.message = "Type class can only contain letters";
-            }
-            return;
+      case "validateTypeClass":
+        draft.typeClass.hasErrors = false
+        draft.typeClass.value = action.value
+        draft.typeClass.message = ""
+        if (draft.typeClass.value && !/^[a-zA-Z\.]*$/.test(draft.typeClass.value)) {
+          draft.typeClass.hasErrors = true
+          draft.typeClass.message = "Type class can only contain letters and ."
         }
     }
 
