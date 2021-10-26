@@ -8,20 +8,28 @@ import {Backdrop} from "@material-ui/core";
 let wrapper: ReactWrapper;
 const onCreateSchemaMockCallBack = jest.fn();
 beforeEach(() => {
-    wrapper = mount(<SchemaBuilder elementsSchema={{
-        "edges":
-        {"TestEdge":{
-            "description":"test", 
-            "source":"A", 
-            "destination":"B", 
-            "directed":"true"
-        },
-        "entities":
-        {"TestEntity":{
-            "description":"test description", 
-            "vertex":"B"
+    wrapper = mount(<SchemaBuilder elementsSchema={
+        {
+            "edges":
+                {
+                    "TestEdge": {
+                        "description": "test",
+                        "source": "A",
+                        "destination": "B",
+                        "directed": "true"
+                    },
+                },
+            "entities":
+                {
+                    "TestEntity": {
+                        "description": "test description",
+                        "vertex": "B"
+                    }
+                }
         }
-    }}}} onCreateTypesSchema={onCreateSchemaMockCallBack}
+    }
+
+                                   onCreateTypesSchema={onCreateSchemaMockCallBack}
                                    typesSchema={{
                                        "name":
                                            {
@@ -80,16 +88,16 @@ describe("schema-builder UI wrapper", () => {
             expect(wrapper.find("div#json-types-schema-viewer").text()).toEqual('"types":{"name":{"description":"test description""class":"test.class"}}'
             );
         });
-        it("should display the new type appended to the old types, when a new type is added", () => {
+        xit("should display the new type appended to the old types, when a new type is added", () => {
 
         });
     });
     describe("Elements Schema Prop", () => {
         it("should display the elements schema that is passed in", () => {
-            expect(wrapper.find("div#json-elements-schema-viewer").text()).toEqual('{"edges":{"TestEdge":{"description":"test""source":"A""destination":"B""directed":"true"}"entities":{"TestEntity":{"description":"test description""vertex":"B"}}}}'
+            expect(wrapper.find("div#json-elements-schema-viewer").text()).toEqual("{\"edges\":{\"TestEdge\":{\"description\":\"test\"\"source\":\"A\"\"destination\":\"B\"\"directed\":\"true\"}}\"entities\":{\"TestEntity\":{\"description\":\"test description\"\"vertex\":\"B\"}}}"
             );
         });
-    })
+    });
 });
 
 async function addTypeName(name: string) {

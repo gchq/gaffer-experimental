@@ -19,11 +19,10 @@ export default function SchemaBuilder(props: IProps): ReactElement {
     const {onCreateTypesSchema, typesSchema, elementsSchema} = props;
     const [types, setTypes] = React.useState(typesSchema);
     const [elements, setElements] = React.useState<IElements>({
-        edges:{},
-        entities:{},
+        edges:castElementsToIElements(elementsSchema).edges,
+        entities:castElementsToIElements(elementsSchema).entities,
     });
-    const [edges, setEdges] = React.useState(castElementsToIElements(elementsSchema).edges);
-    const [entities, setEntities] = React.useState(castElementsToIElements(elementsSchema).entities)
+
 
 
     const initialState = {
@@ -93,9 +92,8 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         <DialogTitle id="add-edge-dialog-title">{"Add Edge"}</DialogTitle>
                         <DialogContent>
                             <AddEdge onAddEdge={(edgeObject) => {
-                                const updatedEdges = Object.assign(edges, edgeObject);
-                                setEdges(updatedEdges);
-                                setElements({edges:updatedEdges, entities:entities})
+                                const updatedEdges = Object.assign(elements.edges, edgeObject);
+                                setElements({edges:updatedEdges, entities:elements.entities})
                             }}
                                      types={Object.keys(typesSchema)}/>
                         </DialogContent>
@@ -113,9 +111,8 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         <DialogTitle id="add-entity-dialog-title">{"Add Entity"}</DialogTitle>
                         <DialogContent>
                             <AddEntity onAddEntity={(entityObject) => {
-                                const updatedEntities = Object.assign(entities, entityObject);
-                                setEntities(updatedEntities);
-                                setElements({edges:edges, entities:updatedEntities})
+                                const updatedEntities = Object.assign(elements.entities, entityObject);
+                                setElements({edges:elements.edges, entities:updatedEntities})
                             }} types={Object.keys(typesSchema)}/>
                         </DialogContent>
                     </Dialog>
