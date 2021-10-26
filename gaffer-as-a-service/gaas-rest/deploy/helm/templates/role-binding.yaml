@@ -19,7 +19,7 @@ metadata:
 rules:
   - apiGroups: ["gchq.gov.uk"]
     resources: ["gaffers"]
-    verbs: ["get", "list", "view","edit"]
+    verbs: ["get", "list", "view","edit", "create"]
 ---
 
 kind: RoleBinding
