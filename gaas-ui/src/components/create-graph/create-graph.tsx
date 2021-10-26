@@ -1,18 +1,18 @@
 import {
-  Box,
-  Button,
-  Container,
-  CssBaseline,
-  Dialog,
-  DialogContent,
-  Grid,
-  IconButton,
-  makeStyles,
-  Slide,
-  Toolbar,
-  Tooltip,
-  Typography,
-  Zoom,
+    Box,
+    Button,
+    Container,
+    CssBaseline,
+    Dialog,
+    DialogContent,
+    Grid,
+    IconButton,
+    makeStyles,
+    Slide,
+    Toolbar,
+    Tooltip,
+    Typography,
+    Zoom,
 } from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import AddRoundedIcon from "@material-ui/icons/AddRounded";
@@ -34,7 +34,7 @@ import AddProxyGraphInput from "./add-proxy-graph-input";
 import ProxyGraphsTable from "./proxy-graphs-table";
 import {GetStoreTypesRepo, IStoreTypes} from "../../rest/repositories/get-store-types-repo";
 import {CreateFederatedGraphRepo} from "../../rest/repositories/create-federated-graph-repo";
-import { Copyright } from "../copyright/copyright";
+import {Copyright} from "../copyright/copyright";
 import SchemaBuilderDialog from "./schema-builder-dialog";
 
 interface IState {

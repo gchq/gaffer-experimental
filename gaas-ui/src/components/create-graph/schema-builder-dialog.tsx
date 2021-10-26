@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,useMediaQuery } from "@material-ui/core";
+import {Button, Dialog, DialogContent, DialogTitle} from "@material-ui/core";
 import SchemaBuilder from "../schema-builder/schema-builder";
 
 
