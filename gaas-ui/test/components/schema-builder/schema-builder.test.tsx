@@ -3,41 +3,44 @@ import React from "react";
 import SchemaBuilder from "../../../src/components/schema-builder/schema-builder";
 import {act} from "react-dom/test-utils";
 import {Backdrop} from "@material-ui/core";
+import {IType, ITypesSchema} from "../../../src/domain/types-schema";
+import {IElementsSchema} from "../../../src/domain/elements-schema";
 
 
 let wrapper: ReactWrapper;
 const onCreateSchemaMockCallBack = jest.fn();
 beforeEach(() => {
-    wrapper = mount(<SchemaBuilder elementsSchema={
-        {
-            "edges":
-                {
-                    "TestEdge": {
-                        "description": "test",
-                        "source": "A",
-                        "destination": "B",
-                        "directed": "true"
+    wrapper = mount(<SchemaBuilder
+        elementsSchema={
+            {
+                edges:
+                    {
+                        "TestEdge": {
+                            "description": "test",
+                            "source": "A",
+                            "destination": "B",
+                            "directed": "true"
+                        },
                     },
-                },
-            "entities":
-                {
-                    "TestEntity": {
-                        "description": "test description",
-                        "vertex": "B"
+                entities:
+                    {
+                        "TestEntity": {
+                            "description": "test description",
+                            "vertex": "B"
+                        }
                     }
-                }
+            }
         }
-    }
 
-                                   onCreateTypesSchema={onCreateSchemaMockCallBack}
-                                   typesSchema={{
-                                       "name":
-                                           {
-                                               "description": "test description",
-                                               "class": "test.class"
-                                           },
-                                   }
-                                   }
+        onCreateSchema={onCreateSchemaMockCallBack}
+        typesSchema={{
+            "name":
+                {
+                    "description": "test description",
+                    "class": "test.class"
+                },
+        }
+        }
     />);
 });
 afterEach(() => {
@@ -81,21 +84,54 @@ describe("schema-builder UI wrapper", () => {
             await wrapper.update();
 
             expect(wrapper.find("div#json-types-schema-viewer").text()).toEqual("");
-
-
         });
         it("should display the types schema that is passed in", () => {
             expect(wrapper.find("div#json-types-schema-viewer").text()).toEqual('"types":{"name":{"description":"test description""class":"test.class"}}'
             );
         });
         xit("should display the new type appended to the old types, when a new type is added", () => {
-
         });
     });
     describe("Elements Schema Prop", () => {
         it("should display the elements schema that is passed in", () => {
-            expect(wrapper.find("div#json-elements-schema-viewer").text()).toEqual("{\"edges\":{\"TestEdge\":{\"description\":\"test\"\"source\":\"A\"\"destination\":\"B\"\"directed\":\"true\"}}\"entities\":{\"TestEntity\":{\"description\":\"test description\"\"vertex\":\"B\"}}}"
+            expect(wrapper.find("div#json-elements-schema-viewer").text()).toEqual('{"edges":{"TestEdge":{"description":"test""source":"A""destination":"B""directed":"true"}}"entities":{"TestEntity":{"description":"test description""vertex":"B"}}}'
             );
+        });
+    });
+    fdescribe("onCreateSchema Prop", () => {
+        it("should callback with a Types Schema and elements schema when the create schema button is clicked", () => {
+            const expectedResult: { types: ITypesSchema, elements: IElementsSchema } = {
+                types: {
+                    types: {
+                        "name":
+                            {
+                                "description": "test description",
+                                "class": "test.class"
+                            }
+                    }
+                },
+                elements: {
+                    entities: {
+                        "TestEntity": {
+                            "description": "test description",
+                            "vertex": "B"
+                        }
+                    },
+                    edges: {
+                        "TestEdge": {
+                            "description": "test",
+                            "source": "A",
+                            "destination": "B",
+                            "directed": "true"
+                        },
+                    },
+                }
+            };
+
+            clickCreateSchema();
+
+            expect(onCreateSchemaMockCallBack).toHaveBeenLastCalledWith(expectedResult);
+
         });
     });
 });
@@ -141,4 +177,9 @@ async function clickCloseAddTypeDialog() {
         closeAddTypeButton.simulate("click");
     });
     expect(wrapper.find("div#add-type-dialog").html()).toBe(0);
+}
+
+function clickCreateSchema() {
+    const createSchemaButton = wrapper.find("button#create-schema-button");
+    createSchemaButton.simulate("click");
 }

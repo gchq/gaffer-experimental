@@ -6,23 +6,26 @@ import AddEntity from "./add-entity";
 import ReactJson from "react-json-view";
 import ClearIcon from "@material-ui/icons/Clear";
 import {useImmerReducer} from "use-immer";
-import { IElements } from "../../domain/elements-schema";
+import {IElementsSchema} from "../../domain/elements-schema";
+import {ITypesSchema} from "../../domain/types-schema";
 
 interface IProps {
-    onCreateTypesSchema(typesSchema: object): void;
+    onCreateSchema(schema: {
+        types: ITypesSchema,
+        elements: IElementsSchema
+    }): void;
 
     typesSchema: object;
     elementsSchema: object;
 }
 
 export default function SchemaBuilder(props: IProps): ReactElement {
-    const {onCreateTypesSchema, typesSchema, elementsSchema} = props;
+    const {onCreateSchema, typesSchema, elementsSchema} = props;
     const [types, setTypes] = React.useState(typesSchema);
-    const [elements, setElements] = React.useState<IElements>({
-        edges:castElementsToIElements(elementsSchema).edges,
-        entities:castElementsToIElements(elementsSchema).entities,
+    const [elements, setElements] = React.useState<IElementsSchema>({
+        edges: castElementsToIElements(elementsSchema).edges,
+        entities: castElementsToIElements(elementsSchema).entities,
     });
-
 
 
     const initialState = {
@@ -31,9 +34,20 @@ export default function SchemaBuilder(props: IProps): ReactElement {
         openEntities: false
     };
 
-    function castElementsToIElements(elementsObject: object): IElements{
-        return elementsObject as IElements
+    function castElementsToIElements(elementsObject: object): IElementsSchema {
+        return elementsObject as IElementsSchema;
 
+    }
+
+    function createSchemaSubmit() {
+        onCreateSchema({
+            types: {types: types},
+            elements: {
+                entities: elements.entities,
+                edges: elements.edges
+            }
+        });
+        dispatch({type: "reset"});
     }
 
     function addSchemaBuilderReducer(draft: any, action: any) {
@@ -93,7 +107,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         <DialogContent>
                             <AddEdge onAddEdge={(edgeObject) => {
                                 const updatedEdges = Object.assign(elements.edges, edgeObject);
-                                setElements({edges:updatedEdges, entities:elements.entities})
+                                setElements({edges: updatedEdges, entities: elements.entities});
                             }}
                                      types={Object.keys(typesSchema)}/>
                         </DialogContent>
@@ -112,7 +126,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         <DialogContent>
                             <AddEntity onAddEntity={(entityObject) => {
                                 const updatedEntities = Object.assign(elements.entities, entityObject);
-                                setElements({edges:elements.edges, entities:updatedEntities})
+                                setElements({edges: elements.edges, entities: updatedEntities});
                             }} types={Object.keys(typesSchema)}/>
                         </DialogContent>
                     </Dialog>
@@ -154,6 +168,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             </Grid>
             <Grid>
                 <Button id={"create-schema-button"} name={"Create Schema"} color="primary"
+                        onClick={createSchemaSubmit}
                 >
                     Create Schema
                 </Button>
