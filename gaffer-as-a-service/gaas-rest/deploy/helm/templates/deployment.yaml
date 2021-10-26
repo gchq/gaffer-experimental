@@ -28,12 +28,10 @@ spec:
       labels:
         {{- include "helm.selectorLabels" . | nindent 8 }}
     spec:
-      {{ if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "helm.fullname" . }}-service-account
-      {{ end }}
       containers:
-        - image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          name: gaas-rest
-          envFrom:
-            - configMapRef:
-                name: {{ include "helm.fullname" . }}
+          - image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            name: gaas-rest
+            envFrom:
+              - configMapRef:
+                  name: {{ include "helm.fullname" . }}
