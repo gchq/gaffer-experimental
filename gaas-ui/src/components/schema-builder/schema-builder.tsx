@@ -15,13 +15,13 @@ interface IProps {
         elements: IElementsSchema
     }): void;
 
-    typesSchema: object;
-    elementsSchema: object;
+    typesSchema: ITypesSchema;
+    elementsSchema: IElementsSchema;
 }
 
 export default function SchemaBuilder(props: IProps): ReactElement {
     const {onCreateSchema, typesSchema, elementsSchema} = props;
-    const [types, setTypes] = React.useState(typesSchema);
+    const [types, setTypes] = React.useState(typesSchema.types);
     const [elements, setElements] = React.useState<IElementsSchema>({
         edges: castElementsToIElements(elementsSchema).edges,
         entities: castElementsToIElements(elementsSchema).entities,

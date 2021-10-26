@@ -34,11 +34,13 @@ beforeEach(() => {
 
         onCreateSchema={onCreateSchemaMockCallBack}
         typesSchema={{
-            "name":
-                {
-                    "description": "test description",
-                    "class": "test.class"
-                },
+            types: {
+                "name":
+                    {
+                        "description": "test description",
+                        "class": "test.class"
+                    },
+            }
         }
         }
     />);
@@ -98,7 +100,7 @@ describe("schema-builder UI wrapper", () => {
             );
         });
     });
-    fdescribe("onCreateSchema Prop", () => {
+    describe("onCreateSchema Prop", () => {
         it("should callback with a Types Schema and elements schema when the create schema button is clicked", () => {
             const expectedResult: { types: ITypesSchema, elements: IElementsSchema } = {
                 types: {
