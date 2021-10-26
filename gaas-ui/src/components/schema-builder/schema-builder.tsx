@@ -156,7 +156,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                 />
             </Grid>
             <Grid>
-                <Button id={"create-schema-button"} name={"Create Schema"} color="primary" disabled={}
+                <Button id={"create-schema-button"} name={"Create Schema"} color="primary"
                 >
                     Create Schema
                 </Button>
