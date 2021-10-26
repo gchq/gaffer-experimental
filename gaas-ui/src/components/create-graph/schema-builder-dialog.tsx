@@ -1,9 +1,21 @@
 import * as React from "react";
 import {Button, Dialog, DialogContent, DialogTitle} from "@material-ui/core";
 import SchemaBuilder from "../schema-builder/schema-builder";
+import {ITypesSchema} from "../../domain/types-schema";
+import {IElementsSchema} from "../../domain/elements-schema";
 
+interface IProps {
+    onCreateSchema(schema: {
+        types: ITypesSchema,
+        elements: IElementsSchema
+    }): void;
 
-export default function SchemaBuilderDialog() {
+    typesSchema: ITypesSchema;
+    elementsSchema: IElementsSchema;
+}
+
+export default function SchemaBuilderDialog(props: IProps) {
+    const {onCreateSchema, typesSchema, elementsSchema} = props;
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -30,7 +42,9 @@ export default function SchemaBuilderDialog() {
                     {"Schema Builder"}
                 </DialogTitle>
                 <DialogContent>
-                    <SchemaBuilder elementsSchema={{"entities":{},"edges":{}}} onCreateSchema={() => {}} typesSchema={{}}/>
+                    <SchemaBuilder elementsSchema={elementsSchema} onCreateSchema={(schema) => {
+                        onCreateSchema(schema);
+                    }} typesSchema={typesSchema}/>
                 </DialogContent>
             </Dialog>
         </div>
