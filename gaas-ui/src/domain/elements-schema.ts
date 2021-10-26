@@ -6,7 +6,7 @@ export class ElementsSchema {
     constructor(elements: string) {
         this.elements = elements;
     }
-    public getElements(): IElements {
+    public getElements(): IElementsSchema {
         return this.elements;
     }
 
@@ -124,7 +124,7 @@ export class ElementsSchema {
     }
 }
 
-export interface IElements {
+export interface IElementsSchema {
     entities: object;
     edges: object;
 }
