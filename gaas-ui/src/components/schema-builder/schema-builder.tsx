@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { Button, Dialog, DialogContent, DialogTitle, Grid, IconButton } from "@material-ui/core"
+import { Button, Dialog, DialogContent, DialogTitle, Grid, IconButton, Box } from "@material-ui/core"
 import AddType from "./add-type"
 import AddEdge from "./add-edge"
 import AddEntity from "./add-entity"
@@ -74,7 +74,10 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             <IconButton id="close-add-type-button" onClick={(e) => dispatch({ type: "handleClickCloseTypes", value: false })}>
               <ClearIcon />
             </IconButton>
-            <DialogTitle id="add-type-dialog-title">{"Add Type"}</DialogTitle>
+            <Box display="flex" alignItems="center" justifyContent="center">
+              <DialogTitle id="add-type-dialog-title">{"Add Type"}</DialogTitle>
+            </Box>
+
             <DialogContent>
               <AddType
                 onAddType={(typesObject) => {
@@ -90,7 +93,9 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             Add Edge
           </Button>
           <Dialog fullWidth maxWidth="xs" open={state.openEdges} onClose={(e) => dispatch({ type: "handleClickCloseEdges", value: false })} id={"add-edge-dialog"} aria-labelledby="add-edge-dialog">
-            <DialogTitle id="add-edge-dialog-title">{"Add Edge"}</DialogTitle>
+            <Box display="flex" alignItems="center" justifyContent="center">
+              <DialogTitle id="add-edge-dialog-title">{"Add Edge"}</DialogTitle>
+            </Box>
             <DialogContent>
               <AddEdge
                 onAddEdge={(edgeObject) => {
@@ -107,7 +112,9 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             Add Entity
           </Button>
           <Dialog fullWidth maxWidth="xs" open={state.openEntities} onClose={(e) => dispatch({ type: "handleClickCloseEntities", value: false })} id={"add-entity-dialog"} aria-labelledby="add-entity-dialog">
-            <DialogTitle id="add-entity-dialog-title">{"Add Entity"}</DialogTitle>
+            <Box display="flex" alignItems="center" justifyContent="center">
+              <DialogTitle id="add-entity-dialog-title">{"Add Entity"}</DialogTitle>
+            </Box>
             <DialogContent>
               <AddEntity
                 onAddEntity={(entityObject) => {
@@ -156,11 +163,11 @@ export default function SchemaBuilder(props: IProps): ReactElement {
           />
         </Grid>
       </Grid>
-      <Grid item>
-        <Button id={"create-schema-button"} name={"Create Schema"} onClick={createSchemaSubmit}>
+      <Box display="flex" alignItems="center" justifyContent="center">
+        <Button variant="outlined" id={"create-schema-button"} name={"Create Schema"} onClick={createSchemaSubmit}>
           Create Schema
         </Button>
-      </Grid>
+      </Box>
     </Grid>
   )
 }

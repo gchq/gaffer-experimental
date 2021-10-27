@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@material-ui/core"
+import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Box } from "@material-ui/core"
 import { useImmerReducer } from "use-immer"
 
 interface IProps {
@@ -8,21 +8,20 @@ interface IProps {
   types: Array<string>
 }
 interface IState {
-    entityName: {
-        value: string;
-        hasErrors: boolean;
-        message: string;
-    },
-    entityDescription: {
-        value: string;
-        hasErrors: boolean;
-        message: string;
-    },
-    entityVertex: {
-        value: string;
-        hasErrors: boolean;
-    },
-
+  entityName: {
+    value: string
+    hasErrors: boolean
+    message: string
+  }
+  entityDescription: {
+    value: string
+    hasErrors: boolean
+    message: string
+  }
+  entityVertex: {
+    value: string
+    hasErrors: boolean
+  }
 }
 
 export default function AddEntity(props: IProps): ReactElement {
@@ -38,12 +37,12 @@ export default function AddEntity(props: IProps): ReactElement {
     dispatch({ type: "reset" })
   }
 
-    const initialState: IState = {
-        entityName: {
-            value: "",
-            hasErrors: false,
-            message: ""
-        },
+  const initialState: IState = {
+    entityName: {
+      value: "",
+      hasErrors: false,
+      message: ""
+    },
 
     entityDescription: {
       value: "",
@@ -163,9 +162,11 @@ export default function AddEntity(props: IProps): ReactElement {
           </Select>
         </FormControl>
       </Grid>
-      <Button id={"add-entity-button"} name={"Add Entity"} disabled={disableAddEntityButton()} variant="outlined" onClick={addEntitySubmit}>
-        Add Entity
-      </Button>
+      <Box display="flex" alignItems="center" justifyContent="center">
+        <Button variant="outlined" id={"add-entity-button"} name={"Add Entity"} disabled={disableAddEntityButton()} onClick={addEntitySubmit}>
+          Add Entity
+        </Button>
+      </Box>
     </Grid>
   )
 }
