@@ -88,7 +88,7 @@ describe("schema-builder UI wrapper", () => {
             expect(wrapper.find("div#json-types-schema-viewer").text()).toEqual("");
         });
         it("should display the types schema that is passed in", () => {
-            expect(wrapper.find("div#json-types-schema-viewer").text()).toEqual('"types":{"name":{"description":"test description""class":"test.class"}}'
+            expect(wrapper.find("div#json-types-schema-viewer").text()).toEqual("{\"types\":{\"name\":{\"description\":\"test description\"\"class\":\"test.class\"}}}"
             );
         });
         xit("should display the new type appended to the old types, when a new type is added", () => {
