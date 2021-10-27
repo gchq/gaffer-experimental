@@ -7,6 +7,35 @@ interface IProps {
 
     types: Array<string>;
 }
+interface IState {
+    edgeName: {
+        value: string;
+        hasErrors: boolean;
+        message: string;
+    },
+
+    edgeDescription: {
+        value: string;
+        hasErrors: boolean;
+        message: string;
+    },
+
+    edgeSource: {
+        value: string;
+        hasErrors: boolean;
+    },
+
+    edgeDestination: {
+        value: string;
+        hasErrors: boolean;
+    },
+
+    edgeDirected: {
+        value: string;
+        hasErrors: boolean;
+    }
+
+}
 
 export default function AddEdge(props: IProps): ReactElement {
     const {onAddEdge, types} = props;
@@ -23,7 +52,7 @@ export default function AddEdge(props: IProps): ReactElement {
         dispatch({type: "reset"});
     }
 
-    const initialState = {
+    const initialState: IState = {
         edgeName: {
             value: "",
             hasErrors: false,
