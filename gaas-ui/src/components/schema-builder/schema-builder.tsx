@@ -18,6 +18,11 @@ interface IProps {
     typesSchema: ITypesSchema;
     elementsSchema: IElementsSchema;
 }
+interface IState {
+    openTypes: boolean;
+    openEdges: boolean;
+    openEntities: boolean;
+}
 
 export default function SchemaBuilder(props: IProps): ReactElement {
     const {onCreateSchema, typesSchema, elementsSchema} = props;
@@ -28,7 +33,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
     });
 
 
-    const initialState = {
+    const initialState: IState = {
         openTypes: false,
         openEdges: false,
         openEntities: false,
