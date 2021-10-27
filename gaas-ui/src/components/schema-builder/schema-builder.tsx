@@ -102,7 +102,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                   const updatedEdges = Object.assign(elements.edges, edgeObject)
                   setElements({ edges: updatedEdges, entities: elements.entities })
                 }}
-                types={Object.keys(typesSchema)}
+                types={Object.keys(types)}
               />
             </DialogContent>
           </Dialog>
@@ -121,7 +121,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                   const updatedEntities = Object.assign(elements.entities, entityObject)
                   setElements({ edges: elements.edges, entities: updatedEntities })
                 }}
-                types={Object.keys(typesSchema)}
+                types={Object.keys(types)}
               />
             </DialogContent>
           </Dialog>
