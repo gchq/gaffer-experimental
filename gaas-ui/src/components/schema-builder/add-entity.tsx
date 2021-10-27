@@ -7,6 +7,23 @@ interface IProps {
 
     types: Array<string>;
 }
+interface IState {
+    entityName: {
+        value: string;
+        hasErrors: boolean;
+        message: string;
+    },
+    entityDescription: {
+        value: string;
+        hasErrors: boolean;
+        message: string;
+    },
+    entityVertex: {
+        value: string;
+        hasErrors: boolean;
+    },
+
+}
 
 export default function AddEntity(props: IProps): ReactElement {
     const {onAddEntity, types} = props;
@@ -21,7 +38,7 @@ export default function AddEntity(props: IProps): ReactElement {
         dispatch({type: "reset"});
     }
 
-    const initialState = {
+    const initialState: IState = {
         entityName: {
             value: "",
             hasErrors: false,
