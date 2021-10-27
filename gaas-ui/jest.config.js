@@ -4,7 +4,7 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": "ts-jest"
   },
-  transformIgnorePatterns: ["<rootDir>/node_modules/"],
+  transformIgnorePatterns: ["/node_modules/"],
   coverageThreshold: {
     global: {
       branches: 60,
