@@ -77,9 +77,11 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             Add Type
           </Button>
           <Dialog fullWidth maxWidth="xs" open={state.openTypes} onClose={(e) => dispatch({ type: "handleClickCloseTypes", value: false })} id={"add-type-dialog"} aria-labelledby="add-type-dialog">
-            <IconButton id="close-add-type-button" onClick={(e) => dispatch({ type: "handleClickCloseTypes", value: false })}>
-              <ClearIcon />
-            </IconButton>
+            <Box display="flex" alignItems="right" justifyContent="right">
+              <IconButton id="close-add-type-button" onClick={(e) => dispatch({ type: "handleClickCloseTypes", value: false })}>
+                <ClearIcon />
+              </IconButton>
+            </Box>
             <Box display="flex" alignItems="center" justifyContent="center">
               <DialogTitle id="add-type-dialog-title">{"Add Type"}</DialogTitle>
             </Box>
@@ -99,6 +101,12 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             Add Edge
           </Button>
           <Dialog fullWidth maxWidth="xs" open={state.openEdges} onClose={(e) => dispatch({ type: "handleClickCloseEdges", value: false })} id={"add-edge-dialog"} aria-labelledby="add-edge-dialog">
+            <Box display="flex" alignItems="right" justifyContent="right">
+              <IconButton id="close-add-type-button" onClick={(e) => dispatch({ type: "handleClickCloseEdges", value: false })}>
+                <ClearIcon />
+              </IconButton>
+            </Box>
+
             <Box display="flex" alignItems="center" justifyContent="center">
               <DialogTitle id="add-edge-dialog-title">{"Add Edge"}</DialogTitle>
             </Box>
@@ -118,6 +126,11 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             Add Entity
           </Button>
           <Dialog fullWidth maxWidth="xs" open={state.openEntities} onClose={(e) => dispatch({ type: "handleClickCloseEntities", value: false })} id={"add-entity-dialog"} aria-labelledby="add-entity-dialog">
+            <Box display="flex" alignItems="right" justifyContent="right">
+              <IconButton id="close-add-type-button" onClick={(e) => dispatch({ type: "handleClickCloseEntities", value: false })}>
+                <ClearIcon />
+              </IconButton>
+            </Box>
             <Box display="flex" alignItems="center" justifyContent="center">
               <DialogTitle id="add-entity-dialog-title">{"Add Entity"}</DialogTitle>
             </Box>
