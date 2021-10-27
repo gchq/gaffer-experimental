@@ -1,6 +1,7 @@
 import * as React from "react"
-import { Button, Dialog, DialogContent, DialogTitle, Box } from "@material-ui/core"
+import { Button, Dialog, DialogContent, DialogTitle, Box, IconButton } from "@material-ui/core"
 import SchemaBuilder from "../schema-builder/schema-builder"
+import ClearIcon from "@material-ui/icons/Clear"
 import { ITypesSchema } from "../../domain/types-schema"
 import { IElementsSchema } from "../../domain/elements-schema"
 
@@ -29,6 +30,11 @@ export default function SchemaBuilderDialog(props: IProps) {
         Schema Builder
       </Button>
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose} id={"schema-builder-dialog"} aria-labelledby="schema-builder-dialog">
+        <Box display="flex" alignItems="right" justifyContent="right">
+          <IconButton id="close-add-type-button" onClick={handleClose}>
+            <ClearIcon />
+          </IconButton>
+        </Box>
         <Box display="flex" alignItems="center" justifyContent="center">
           <DialogTitle id="schema-builder-dialog-title">{"Schema Builder"}</DialogTitle>
         </Box>
