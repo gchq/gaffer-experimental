@@ -32,7 +32,8 @@ export default function SchemaBuilderDialog(props: IProps) {
                 Schema Builder
             </Button>
             <Dialog
-                fullWidth={true}
+                fullWidth 
+                maxWidth="md"
                 open={open}
                 onClose={handleClose}
                 id={"schema-builder-dialog"}

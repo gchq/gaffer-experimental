@@ -138,7 +138,8 @@ export default function AddEdge(props: IProps): ReactElement {
     }
 
     return (
-        <Grid container direction="column" justify="center" alignItems="center" id={"add-edge-inputs"}>
+        <Grid  container spacing={2} direction="column"   id={"add-edge-inputs"}>
+        <Grid item>
             <TextField
                 id={"edge-name-input"}
                 label={"Edge Name"}
@@ -150,12 +151,15 @@ export default function AddEdge(props: IProps): ReactElement {
                 }}
                 name={"edge-name"}
                 value={state.edgeName.value}
-                variant="outlined"
+                variant="outlined" 
+                fullWidth
                 error={state.edgeName.hasErrors}
                 required
                 onChange={(e) => dispatch({type: "validateEdgeName", value: e.target.value})}
                 helperText={state.edgeName.message}
             />
+            </Grid>
+            <Grid item>
             <TextField
                 id={"edge-description-input"}
                 label={"Description"}
@@ -167,13 +171,16 @@ export default function AddEdge(props: IProps): ReactElement {
                 }}
                 name={"edge-description"}
                 value={state.edgeDescription.value}
-                variant="outlined"
+                variant="outlined" 
+                fullWidth
                 error={state.edgeDescription.hasErrors}
                 required
                 onChange={(e) => dispatch({type: "validateEdgeDescription", value: e.target.value})}
                 helperText={state.edgeDescription.message}
             />
-            <FormControl fullWidth id={"edge-source-formcontrol"}>
+            </Grid>
+            <Grid item>
+            <FormControl variant="outlined" fullWidth id={"edge-source-formcontrol"}>
                 <InputLabel id="edge-source-select-label" required>
                     Source
                 </InputLabel>
@@ -187,7 +194,9 @@ export default function AddEdge(props: IProps): ReactElement {
                     ))}
                 </Select>
             </FormControl>
-            <FormControl fullWidth id={"edge-destination-formcontrol"}>
+            </Grid>
+            <Grid item>
+            <FormControl variant="outlined" fullWidth id={"edge-destination-formcontrol"}>
                 <InputLabel id="edge-destination-select-label" required>
                     Destination
                 </InputLabel>
@@ -201,7 +210,9 @@ export default function AddEdge(props: IProps): ReactElement {
                     ))}
                 </Select>
             </FormControl>
-            <FormControl fullWidth id={"edge-directed-formcontrol"}>
+            </Grid>
+            <Grid item>
+            <FormControl variant="outlined" fullWidth  id={"edge-directed-formcontrol"}>
                 <InputLabel id="edge-directed-select-label" required>
                     Directed
                 </InputLabel>
@@ -211,10 +222,12 @@ export default function AddEdge(props: IProps): ReactElement {
                     <MenuItem value={"false"}>False</MenuItem>
                 </Select>
             </FormControl>
-            <Button id={"add-edge-button"} name={"Add Edge"} color="primary" disabled={disableAddEdgeButton()}
+            </Grid>
+            <Button  id={"add-edge-button"} name={"Add Edge"} variant="outlined"  disabled={disableAddEdgeButton()}
                     onClick={addEdgeSubmit}>
                 Add Edge
             </Button>
+       
         </Grid>
     );
 }
