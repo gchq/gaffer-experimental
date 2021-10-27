@@ -6,7 +6,7 @@ import {Graph} from "../../../src/domain/graph";
 import {DeleteGraphRepo} from "../../../src/rest/repositories/delete-graph-repo";
 import {RestApiError} from "../../../src/rest/RestApiError";
 import {GraphType} from "../../../src/domain/graph-type";
-import {GetStoreTypesRepo} from "../../../src/rest/repositories/get-store-types-repo";
+import {GetStoreTypesRepo, IStoreTypes} from "../../../src/rest/repositories/get-store-types-repo";
 import {GetAllGraphIdsRepo} from "../../../src/rest/repositories/gaffer/get-all-graph-ids-repo";
 import {act} from "@testing-library/react";
 
