@@ -101,7 +101,8 @@ export default function AddType(props: IProps): ReactElement {
 
     return (
         <Grid id={"add-type-component"}>
-            <Grid container direction="column" justify="center" alignItems="center" id={"add-type-inputs"}>
+            <Grid container spacing={2} direction="column"  id={"add-type-inputs"}>
+                <Grid item>
                 <TextField
                     id={"type-name-input"}
                     label={"Type Name"}
@@ -112,12 +113,16 @@ export default function AddType(props: IProps): ReactElement {
                         id: "type-name-input",
                         "aria-label": "type-name-input"
                     }}
+                    variant="outlined" 
+                    fullWidth
                     error={state.typeName.hasErrors}
                     onChange={(e) => dispatch({type: "validateTypeName", value: e.target.value})}
                     helperText={state.typeName.message}
                     name={"type-name"}
                     autoComplete="type-name"
                 />
+                 </Grid>
+                 <Grid item>
                 <TextField
                     id={"type-description-input"}
                     label={"Description"}
@@ -128,12 +133,16 @@ export default function AddType(props: IProps): ReactElement {
                         id: "type-description-input",
                         "aria-label": "type-description-input"
                     }}
+                    variant="outlined" 
+                    fullWidth
                     error={state.typeDescription.hasErrors}
                     onChange={(e) => dispatch({type: "validateTypeDescription", value: e.target.value})}
                     helperText={state.typeDescription.message}
                     name={"type-description"}
                     autoComplete="type-description"
                 />
+                 </Grid>
+                 <Grid item>
                 <TextField
                     id={"type-class-input"}
                     label={"Class"}
@@ -144,13 +153,16 @@ export default function AddType(props: IProps): ReactElement {
                         id: "type-class-input",
                         "aria-label": "type-class-input"
                     }}
+                    variant="outlined" 
+                    fullWidth
                     error={state.typeClass.hasErrors}
                     onChange={(e) => dispatch({type: "validateTypeClass", value: e.target.value})}
                     helperText={state.typeClass.message}
                     name={"type-class"}
                     autoComplete="type-class"
                 />
-                <Button id={"add-type-button"} name={"Add Type"} disabled={disableAddTypeButton()}
+                 </Grid>
+                <Button  variant="outlined" id={"add-type-button"} name={"Add Type"} disabled={disableAddTypeButton()}
                         onClick={addTypeSubmit}>
                     Add Type
                 </Button>
