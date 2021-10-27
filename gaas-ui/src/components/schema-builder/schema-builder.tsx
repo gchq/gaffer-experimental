@@ -16,6 +16,12 @@ interface IProps {
   elementsSchema: IElementsSchema
 }
 
+interface IState {
+  openTypes: boolean
+  openEdges: boolean
+  openEntities: boolean
+}
+
 export default function SchemaBuilder(props: IProps): ReactElement {
   const { onCreateSchema, typesSchema, elementsSchema } = props
   const [types, setTypes] = React.useState(typesSchema.types)
@@ -24,7 +30,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
     entities: castElementsToIElements(elementsSchema).entities
   })
 
-  const initialState = {
+  const initialState: IState = {
     openTypes: false,
     openEdges: false,
     openEntities: false
