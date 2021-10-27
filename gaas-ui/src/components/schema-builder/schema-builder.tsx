@@ -21,7 +21,7 @@ interface IProps {
 
 export default function SchemaBuilder(props: IProps): ReactElement {
     const {onCreateSchema, typesSchema, elementsSchema} = props;
-    const [types, setTypes] = React.useState(typesSchema.types);
+    const [types, setTypes] = React.useState<ITypesSchema>(typesSchema);
     const [elements, setElements] = React.useState<IElementsSchema>({
         edges: castElementsToIElements(elementsSchema).edges,
         entities: castElementsToIElements(elementsSchema).entities,
@@ -31,7 +31,8 @@ export default function SchemaBuilder(props: IProps): ReactElement {
     const initialState = {
         openTypes: false,
         openEdges: false,
-        openEntities: false
+        openEntities: false,
+
     };
 
     function castElementsToIElements(elementsObject: object): IElementsSchema {
@@ -41,7 +42,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
 
     function createSchemaSubmit() {
         onCreateSchema({
-            types: {types: types},
+            types: {types: types.types},
             elements: {
                 entities: elements.entities,
                 edges: elements.edges
@@ -135,7 +136,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             <Grid id={"json-types-schema-viewer"}>
                 <ReactJson
                     src={types}
-                    name={"types"}
+                    name={null}
                     theme="bright"
                     // onEdit={(event) => {
                     //     this.setState({ typesSchema: event.updated_src });

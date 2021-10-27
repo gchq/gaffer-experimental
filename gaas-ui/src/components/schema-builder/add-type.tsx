@@ -5,11 +5,29 @@ import {useImmerReducer} from "use-immer";
 interface IProps {
     onAddType(type: object): void;
 }
+interface IState {
+    typeName: {
+        value: string;
+        hasErrors: boolean;
+        message: string;
+    },
+    typeDescription: {
+        value: string;
+        hasErrors: boolean;
+        message: string;
+    },
+    typeClass: {
+        value: string;
+        hasErrors: boolean;
+        message: string;
+    },
+
+}
 
 export default function AddType(props: IProps): ReactElement {
     const {onAddType} = props;
 
-    const initialState = {
+    const initialState: IState = {
         typeName: {
             value: "",
             hasErrors: false,
