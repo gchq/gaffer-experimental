@@ -5,7 +5,7 @@ module.exports = {
     "^.+\\.tsx?$": "ts-jest"
   },
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
-  transformIgnorePatterns: ["/node_modules/(?!(d3-array))"],
+  transformIgnorePatterns: ["/node_modules/d3-array"],
   coverageThreshold: {
     global: {
       branches: 60,
