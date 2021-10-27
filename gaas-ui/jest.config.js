@@ -4,6 +4,7 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": "ts-jest"
   },
+  testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   transformIgnorePatterns: ["/node_modules/"],
   coverageThreshold: {
     global: {
