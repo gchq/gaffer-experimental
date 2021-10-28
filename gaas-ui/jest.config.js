@@ -2,10 +2,9 @@ module.exports = {
   roots: ["<rootDir>/test"],
   verbose: true,
   transform: {
-    "^.+\\.tsx?$": "ts-jest"
+    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.(js|jsx)?$": "babel-jest"
   },
-  testPathIgnorePatterns: ["<rootDir>/node_modules/"],
-  transformIgnorePatterns: ["node_modules/(?!d3-array)"],
   coverageThreshold: {
     global: {
       branches: 60,
