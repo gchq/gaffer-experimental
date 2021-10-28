@@ -67,6 +67,10 @@ export default function SchemaBuilder(props: IProps): ReactElement {
     }
   }
 
+  function disableNonTypeButtons(): boolean {
+    return Object.keys(types).length === 0
+  }
+
   const [state, dispatch] = useImmerReducer(addSchemaBuilderReducer, initialState)
 
   return (
@@ -97,7 +101,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
           </Dialog>
         </Grid>
         <Grid item>
-          <Button variant="outlined" onClick={(e) => dispatch({ type: "handleClickCloseEdges", value: true })} id={"add-edge-button"}>
+          <Button variant="outlined" onClick={(e) => dispatch({ type: "handleClickCloseEdges", value: true })} id={"add-edge-button"} disabled={disableNonTypeButtons()}>
             Add Edge
           </Button>
           <Dialog fullWidth maxWidth="xs" open={state.openEdges} onClose={(e) => dispatch({ type: "handleClickCloseEdges", value: false })} id={"add-edge-dialog"} aria-labelledby="add-edge-dialog">
@@ -122,7 +126,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
           </Dialog>
         </Grid>
         <Grid item>
-          <Button variant="outlined" onClick={(e) => dispatch({ type: "handleClickCloseEntities", value: true })} id={"add-entity-button"}>
+          <Button variant="outlined" onClick={(e) => dispatch({ type: "handleClickCloseEntities", value: true })} id={"add-entity-button"} disabled={disableNonTypeButtons()}>
             Add Entity
           </Button>
           <Dialog fullWidth maxWidth="xs" open={state.openEntities} onClose={(e) => dispatch({ type: "handleClickCloseEntities", value: false })} id={"add-entity-dialog"} aria-labelledby="add-entity-dialog">
@@ -183,7 +187,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
         </Grid>
       </Grid>
       <Box display="flex" alignItems="center" justifyContent="center">
-        <Button variant="outlined" id={"create-schema-button"} name={"Create Schema"} onClick={createSchemaSubmit}>
+        <Button variant="outlined" id={"create-schema-button"} name={"Create Schema"} onClick={createSchemaSubmit} disabled={disableNonTypeButtons()}>
           Create Schema
         </Button>
       </Box>
