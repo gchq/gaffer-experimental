@@ -159,11 +159,10 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             name={null}
             theme="bright"
             onEdit={(e) => {
-              setTypes({ types: e.updated_src })
+              setTypes(e.updated_src)
             }}
             onDelete={(e) => {
-              setTypes({ types: e.updated_src })
-              console.log("e.updated_src: " + e.updated_src)
+              setTypes(e.updated_src)
             }}
             displayDataTypes={false}
             displayObjectSize={false}
@@ -176,10 +175,10 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             name={null}
             theme="bright"
             // onEdit={(e) => {
-            //   setTypes({ types: e.updated_src })
+            //   setElements({ edges: e.updated_src, entities: e.updated_src })
             // }}
             // onDelete={(e) => {
-            //   setElements({ elements: e.updated_src })
+            //   setElements({ edges: e.updated_src, entities: e.updated_src })
             // }}
             displayDataTypes={false}
             displayObjectSize={false}
