@@ -53,6 +53,8 @@ export default function SchemaBuilder(props: IProps): ReactElement {
 
   function addSchemaBuilderReducer(draft: any, action: any) {
     switch (action.type) {
+      case "reset":
+        return initialState
       case "handleClickCloseTypes":
         draft.openTypes = action.value
         return
@@ -154,15 +156,15 @@ export default function SchemaBuilder(props: IProps): ReactElement {
         <Grid id={"json-types-schema-viewer"}>
           <ReactJson
             src={types}
-            name={"types"}
+            name={null}
             theme="bright"
-            // onEdit={(event) => {
-            //     this.setState({ typesSchema: event.updated_src });
-            //     console.log(this.state.typesSchema);
-            // }}
-            // onDelete={(event) => {
-            //     this.setState({ typesSchema: event.updated_src });
-            // }}
+            onEdit={(e) => {
+              setTypes({ types: e.updated_src })
+            }}
+            onDelete={(e) => {
+              setTypes({ types: e.updated_src })
+              console.log("e.updated_src: " + e.updated_src)
+            }}
             displayDataTypes={false}
             displayObjectSize={false}
             collapsed={false}
@@ -173,12 +175,11 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             src={elements}
             name={null}
             theme="bright"
-            // onEdit={(event) => {
-            //     this.setState({ typesSchema: event.updated_src });
-            //     console.log(this.state.typesSchema);
+            // onEdit={(e) => {
+            //   setTypes({ types: e.updated_src })
             // }}
-            // onDelete={(event) => {
-            //     this.setState({ typesSchema: event.updated_src });
+            // onDelete={(e) => {
+            //   setElements({ elements: e.updated_src })
             // }}
             displayDataTypes={false}
             displayObjectSize={false}
