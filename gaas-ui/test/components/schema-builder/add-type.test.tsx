@@ -54,23 +54,8 @@ describe("Add Type UI Component", () => {
       expect(wrapper.find("p#type-class-input-helper-text").text()).toBe("Type class can only contain letters")
     })
   })
-  describe("On Add Type", () => {
-    it("should callback with a type object when a new type has been added", () => {
-      const expectedResult: object = {
-        testName: {
-          description: "test description",
-          class: "test.class"
-        }
-      }
 
-      addTypeName("testName")
-      addTypeDescription("test description")
-      addTypeClass("test.class")
-      clickAddType()
-
-      expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult)
-    })
-
+  describe("Disbale | Enable Add Type Button", () => {
     it("should be disabled when Type Name field is empty", () => {
       addTypeDescription("test description")
       addTypeClass("test.class")
@@ -101,6 +86,23 @@ describe("Add Type UI Component", () => {
       addTypeDescription("test description")
       addTypeClass("test.class")
       expect(wrapper.find("button#add-type-button").props().disabled).toBe(false)
+    })
+  })
+  describe("On Add Type", () => {
+    it("should callback with a type object when a new type has been added", () => {
+      const expectedResult: object = {
+        testName: {
+          description: "test description",
+          class: "test.class"
+        }
+      }
+
+      addTypeName("testName")
+      addTypeDescription("test description")
+      addTypeClass("test.class")
+      clickAddType()
+
+      expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult)
     })
   })
   describe("Add Type Button", () => {
