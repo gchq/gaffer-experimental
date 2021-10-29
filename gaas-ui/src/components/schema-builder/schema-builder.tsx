@@ -169,17 +169,33 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             collapsed={false}
           />
         </Grid>
-        <Grid id={"json-elements-schema-viewer"}>
+        <Grid id={"json-entities-schema-viewer"}>
           <ReactJson
-            src={elements}
-            name={null}
+            src={elements.entities}
+            name={"entities"}
             theme="bright"
-            // onEdit={(e) => {
-            //   setElements({ edges: e.updated_src, entities: e.updated_src })
-            // }}
-            // onDelete={(e) => {
-            //   setElements({ edges: e.updated_src, entities: e.updated_src })
-            // }}
+            onEdit={(e) => {
+              setElements({ edges: elements.edges, entities: e.updated_src })
+            }}
+            onDelete={(e) => {
+              setElements({ edges: elements.edges, entities: e.updated_src })
+            }}
+            displayDataTypes={false}
+            displayObjectSize={false}
+            collapsed={false}
+          />
+        </Grid>
+        <Grid id={"json-edges-schema-viewer"}>
+          <ReactJson
+            src={elements.edges}
+            name={"edges"}
+            theme="bright"
+            onEdit={(e) => {
+              setElements({ edges: e.updated_src, entities: elements.entities })
+            }}
+            onDelete={(e) => {
+              setElements({ edges: e.updated_src, entities: elements.entities })
+            }}
             displayDataTypes={false}
             displayObjectSize={false}
             collapsed={false}
