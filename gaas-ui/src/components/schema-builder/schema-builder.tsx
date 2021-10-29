@@ -20,21 +20,21 @@ interface IState {
   openEdges: boolean
   openEntities: boolean
   types: {}
+  elements: IElementsSchema
 }
 
 export default function SchemaBuilder(props: IProps): ReactElement {
   const { onCreateSchema, typesSchema, elementsSchema } = props
-  //const [types, setTypes] = React.useState(typesSchema.types)
-  const [elements, setElements] = React.useState<IElementsSchema>({
-    edges: castElementsToIElements(elementsSchema).edges,
-    entities: castElementsToIElements(elementsSchema).entities
-  })
 
   const initialState: IState = {
     openTypes: false,
     openEdges: false,
     openEntities: false,
-    types: typesSchema.types
+    types: typesSchema.types,
+    elements: {
+      edges: castElementsToIElements(elementsSchema).edges,
+      entities: castElementsToIElements(elementsSchema).entities
+    }
   }
 
   function castElementsToIElements(elementsObject: object): IElementsSchema {
@@ -44,10 +44,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
   function createSchemaSubmit() {
     onCreateSchema({
       types: { types: state.types },
-      elements: {
-        entities: elements.entities,
-        edges: elements.edges
-      }
+      elements: { edges: state.elements.edges, entities: state.elements.entities }
     })
     dispatch({ type: "reset" })
   }
@@ -68,6 +65,13 @@ export default function SchemaBuilder(props: IProps): ReactElement {
         draft.types = action.value
         return
 
+      case "handleUpdateEdges":
+        draft.elements.edges = action.value
+        return
+
+      case "handleUpdateEntities":
+        draft.elements.entities = action.value
+        return
       case "handleClickCloseEntities":
         draft.openEntities = action.value
         return
@@ -98,14 +102,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             </Box>
 
             <DialogContent>
-              <AddType
-                onAddType={
-                  (typesObject) => dispatch({ type: "handleUpdateTypes", value: typesObject })
-                  //  const updatedTypes = Object.assign(state.types, typesObject)
-
-                  //setTypes(updatedTypes)
-                }
-              />
+              <AddType onAddType={(typesObject) => dispatch({ type: "handleUpdateTypes", value: typesObject })} />
             </DialogContent>
           </Dialog>
         </Grid>
@@ -124,13 +121,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
               <DialogTitle id="add-edge-dialog-title">{"Add Edge"}</DialogTitle>
             </Box>
             <DialogContent>
-              <AddEdge
-                onAddEdge={(edgeObject) => {
-                  const updatedEdges = Object.assign(elements.edges, edgeObject)
-                  setElements({ edges: updatedEdges, entities: elements.entities })
-                }}
-                types={Object.keys(state.types)}
-              />
+              <AddEdge onAddEdge={(edgeObject) => dispatch({ type: "handleUpdateEdges", value: edgeObject })} types={Object.keys(state.types)} />
             </DialogContent>
           </Dialog>
         </Grid>
@@ -148,13 +139,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
               <DialogTitle id="add-entity-dialog-title">{"Add Entity"}</DialogTitle>
             </Box>
             <DialogContent>
-              <AddEntity
-                onAddEntity={(entityObject) => {
-                  const updatedEntities = Object.assign(elements.entities, entityObject)
-                  setElements({ edges: elements.edges, entities: updatedEntities })
-                }}
-                types={Object.keys(state.types)}
-              />
+              <AddEntity onAddEntity={(entityObject) => dispatch({ type: "handleUpdateEntities", value: entityObject })} types={Object.keys(state.types)} />
             </DialogContent>
           </Dialog>
         </Grid>
@@ -178,14 +163,14 @@ export default function SchemaBuilder(props: IProps): ReactElement {
         </Grid>
         <Grid id={"json-entities-schema-viewer"}>
           <ReactJson
-            src={elements.entities}
+            src={state.elements.entities}
             name={"entities"}
             theme="bright"
             onEdit={(e) => {
-              setElements({ edges: elements.edges, entities: e.updated_src })
+              dispatch({ type: "handleUpdateEntities", value: e.updated_src })
             }}
             onDelete={(e) => {
-              setElements({ edges: elements.edges, entities: e.updated_src })
+              dispatch({ type: "handleUpdateEntities", value: e.updated_src })
             }}
             displayDataTypes={false}
             displayObjectSize={false}
@@ -194,14 +179,14 @@ export default function SchemaBuilder(props: IProps): ReactElement {
         </Grid>
         <Grid id={"json-edges-schema-viewer"}>
           <ReactJson
-            src={elements.edges}
+            src={state.elements.edges}
             name={"edges"}
             theme="bright"
             onEdit={(e) => {
-              setElements({ edges: e.updated_src, entities: elements.entities })
+              dispatch({ type: "handleUpdateEdges", value: e.updated_src })
             }}
             onDelete={(e) => {
-              setElements({ edges: e.updated_src, entities: elements.entities })
+              dispatch({ type: "handleUpdateEdges", value: e.updated_src })
             }}
             displayDataTypes={false}
             displayObjectSize={false}
