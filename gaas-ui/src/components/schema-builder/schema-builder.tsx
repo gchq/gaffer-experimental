@@ -11,7 +11,6 @@ import { ITypesSchema } from "../../domain/types-schema"
 
 interface IProps {
   onCreateSchema(schema: { types: ITypesSchema; elements: IElementsSchema }): void
-
   typesSchema: ITypesSchema
   elementsSchema: IElementsSchema
 }
@@ -20,11 +19,12 @@ interface IState {
   openTypes: boolean
   openEdges: boolean
   openEntities: boolean
+  types: {}
 }
 
 export default function SchemaBuilder(props: IProps): ReactElement {
   const { onCreateSchema, typesSchema, elementsSchema } = props
-  const [types, setTypes] = React.useState(typesSchema.types)
+  //const [types, setTypes] = React.useState(typesSchema.types)
   const [elements, setElements] = React.useState<IElementsSchema>({
     edges: castElementsToIElements(elementsSchema).edges,
     entities: castElementsToIElements(elementsSchema).entities
@@ -33,7 +33,8 @@ export default function SchemaBuilder(props: IProps): ReactElement {
   const initialState: IState = {
     openTypes: false,
     openEdges: false,
-    openEntities: false
+    openEntities: false,
+    types: typesSchema.types
   }
 
   function castElementsToIElements(elementsObject: object): IElementsSchema {
@@ -42,7 +43,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
 
   function createSchemaSubmit() {
     onCreateSchema({
-      types: { types: types },
+      types: { types: state.types },
       elements: {
         entities: elements.entities,
         edges: elements.edges
@@ -63,6 +64,10 @@ export default function SchemaBuilder(props: IProps): ReactElement {
         draft.openEdges = action.value
         return
 
+      case "handleUpdateTypes":
+        draft.types = action.value
+        return
+
       case "handleClickCloseEntities":
         draft.openEntities = action.value
         return
@@ -70,7 +75,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
   }
 
   function disableNonTypeButtons(): boolean {
-    return Object.keys(types).length === 0
+    return Object.keys(state.types).length === 0
   }
 
   const [state, dispatch] = useImmerReducer(addSchemaBuilderReducer, initialState)
@@ -94,10 +99,12 @@ export default function SchemaBuilder(props: IProps): ReactElement {
 
             <DialogContent>
               <AddType
-                onAddType={(typesObject) => {
-                  const updatedTypes = Object.assign(types, typesObject)
-                  setTypes(updatedTypes)
-                }}
+                onAddType={
+                  (typesObject) => dispatch({ type: "handleUpdateTypes", value: typesObject })
+                  //  const updatedTypes = Object.assign(state.types, typesObject)
+
+                  //setTypes(updatedTypes)
+                }
               />
             </DialogContent>
           </Dialog>
@@ -122,7 +129,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                   const updatedEdges = Object.assign(elements.edges, edgeObject)
                   setElements({ edges: updatedEdges, entities: elements.entities })
                 }}
-                types={Object.keys(types)}
+                types={Object.keys(state.types)}
               />
             </DialogContent>
           </Dialog>
@@ -146,7 +153,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                   const updatedEntities = Object.assign(elements.entities, entityObject)
                   setElements({ edges: elements.edges, entities: updatedEntities })
                 }}
-                types={Object.keys(types)}
+                types={Object.keys(state.types)}
               />
             </DialogContent>
           </Dialog>
@@ -155,14 +162,14 @@ export default function SchemaBuilder(props: IProps): ReactElement {
       <Grid item>
         <Grid id={"json-types-schema-viewer"}>
           <ReactJson
-            src={types}
+            src={state.types}
             name={null}
             theme="bright"
             onEdit={(e) => {
-              setTypes(e.updated_src)
+              dispatch({ type: "handleUpdateTypes", value: e.updated_src })
             }}
             onDelete={(e) => {
-              setTypes(e.updated_src)
+              dispatch({ type: "handleUpdateTypes", value: e.updated_src })
             }}
             displayDataTypes={false}
             displayObjectSize={false}
