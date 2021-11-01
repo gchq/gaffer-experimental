@@ -31,7 +31,7 @@ public class GaaSCreateRequestBody {
     @JsonProperty("graphId")
     @NotNull(message = "Graph id should not be null")
     @NotBlank(message = "Graph id should not be null")
-    @Pattern(regexp = "[A-Za-z0-9]*$", message = "Graph ID can contain only digits or lowercase letters")
+    @Pattern(regexp = "[a-z0-9]*$", message = "Graph ID can contain only digits or lowercase letters")
     private String graphId;
 
     @JsonProperty("description")
