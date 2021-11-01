@@ -200,18 +200,24 @@ export default class CreateGraph extends React.Component<{}, IState> {
     return this.state.federatedStoreTypes.includes(this.state.storeType)
   }
 
-  private jsonElementResult(): IElementsSchema {
+  private createElementsSchema(): IElementsSchema {
+    let elementsSchema: IElementsSchema = { entities: {}, edges: {} }
     try {
-      return JSON.parse(this.state.elements)
+      if (this.state.elements.length !== 0) {
+        elementsSchema = JSON.parse(this.state.elements)
+      }
     } catch (error) {}
-    return { entities: {}, edges: {} }
+    return elementsSchema
   }
 
-  private jsonTypesResult(): ITypesSchema {
+  private createTypesSchema(): ITypesSchema {
+    let typesSchema: ITypesSchema = { types: {} }
     try {
-      return JSON.parse(this.state.types)
+      if (this.state.types.length !== 0) {
+        typesSchema = JSON.parse(this.state.types)
+      }
     } catch (error) {}
-    return { types: {} }
+    return typesSchema
   }
 
   public render() {
@@ -258,8 +264,8 @@ export default class CreateGraph extends React.Component<{}, IState> {
                       <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center" id={"test"}>
                         <Tooltip TransitionComponent={Zoom} title="Use Schema builder">
                           <SchemaBuilderDialog
-                            typesSchema={this.state.types.length === 0 ? { types: {} } : this.jsonTypesResult()}
-                            elementsSchema={this.state.elements.length === 0 ? { entities: {}, edges: {} } : this.jsonElementResult()}
+                            typesSchema={this.createTypesSchema()}
+                            elementsSchema={this.createElementsSchema()}
                             onCreateSchema={(schema) => {
                               this.setState({
                                 elements: JSON.stringify(schema.elements),
