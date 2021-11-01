@@ -55,17 +55,17 @@ public class GaaSRestApiException extends Exception {
             return false;
         }
 
-        final GaaSRestApiException that = (GaaSRestApiException) o;
+        GaaSRestApiException that = (GaaSRestApiException) o;
 
-        return new EqualsBuilder().append(code, that.code).append(title, that.title).isEquals();
+        return new EqualsBuilder().append(code, that.code).append(title, that.title).append(getMessage(), that.getMessage()).isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(title)
-                .append(getMessage())
                 .append(code)
+                .append(getMessage())
                 .toHashCode();
     }
 
@@ -73,7 +73,7 @@ public class GaaSRestApiException extends Exception {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("title", title)
-                .append("message", getMessage())
+                .append("message", super.getMessage())
                 .append("code", code)
                 .toString();
     }

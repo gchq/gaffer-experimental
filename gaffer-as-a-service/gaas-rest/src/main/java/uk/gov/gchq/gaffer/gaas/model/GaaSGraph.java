@@ -22,10 +22,18 @@ import java.util.List;
 public class GaaSGraph {
 
     private String graphId;
+
     private String description;
     private String url;
     private RestApiStatus status;
     private List<String> problems;
+    private String configName;
+
+    public GaaSGraph configName(final String config) {
+        this.configName = config;
+        return this;
+    }
+
 
     public GaaSGraph graphId(final String graphId) {
         this.graphId = graphId;
@@ -72,12 +80,17 @@ public class GaaSGraph {
         return problems;
     }
 
+    public String getConfigName() {
+        return configName;
+    }
+
     @Override
     public String toString() {
         return "GaaSGraph{" +
                 "graphId='" + graphId + '\'' +
                 ", description='" + description + '\'' +
                 ", url='" + url + '\'' +
+                ", config=" + configName + '\'' +
                 ", status=" + status +
                 ", problems=" + problems +
                 '}';

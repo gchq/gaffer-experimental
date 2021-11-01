@@ -21,27 +21,34 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import static uk.gov.gchq.gaffer.gaas.factories.GafferHelmValuesFactory.from;
+import uk.gov.gchq.gaffer.gaas.util.GafferSpecConfigsLoader;
+import static uk.gov.gchq.gaffer.gaas.factories.GafferFactory.from;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_YAML_CLASSPATH;
 
 @Service
 public class CreateGraphService {
 
     @Autowired
-    private CRDClient crdClient;
-
-    @Autowired
     private MeterRegistry meterRegistry;
+    @Autowired
+    private GafferSpecConfigsLoader loader;
+    @Autowired
+    private CRDClient crdClient;
 
     @Timed(value = "createGraph.time", description = "Time taken to create graph", percentiles = 0)
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
         meterRegistry.counter("CreateGraphService", "action", "create").increment();
-        crdClient.createCRD(makeGafferHelmValues(gaaSCreateRequestBodyInput));
+
+        final GafferSpec config = loader.getConfig(CONFIG_YAML_CLASSPATH, gaaSCreateRequestBodyInput.getConfigName());
+
+        crdClient.createCRD(overrideConfig(config, gaaSCreateRequestBodyInput));
     }
 
-    private Gaffer makeGafferHelmValues(final GaaSCreateRequestBody graph) {
-        return from(graph);
+    private Gaffer overrideConfig(final GafferSpec gafferSpecConfig, final GaaSCreateRequestBody overrides) {
+        return from(gafferSpecConfig, overrides);
     }
 }

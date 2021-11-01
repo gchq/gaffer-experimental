@@ -1,5 +1,5 @@
 import React from "react";
-import { RadialGauge, RadialGaugeArc, RadialGaugeSeries} from "reaviz";
+import { RadialGauge, RadialGaugeArc, RadialGaugeSeries } from "reaviz";
 
 export default function Gauge(props: { data: { key: string, data: number}[], colours: string[], maxValue: number }) {
 

@@ -27,7 +27,7 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
-import uk.gov.gchq.gaffer.gaas.utilities.UnitTest;
+import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import uk.gov.gchq.gaffer.rest.SystemStatus;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

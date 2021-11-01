@@ -22,32 +22,26 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
-import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsOperation;
-import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
-import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
-import uk.gov.gchq.gaffer.gaas.model.FederatedRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
+import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
+import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
-import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -65,28 +59,33 @@ public class GraphControllerTest extends AbstractTest {
     @MockBean
     private ApiClient apiClient;
     @MockBean
-    private GetGafferService getGafferService;
+    private GetGaffersService getGafferService;
     @MockBean
     private AuthService authService;
     @MockBean
     private CreateGraphService createGraphService;
     @MockBean
-    private GraphCommandExecutor graphCommandExecutor;
-    @MockBean
-    private CRDClient crdClient;
+    private CreateFederatedStoreGraphService createFederatedStoreGraphService;
     @MockBean
     private DeleteGraphService deleteGraphService;
     @MockBean
     private GetNamespacesService getNamespacesService;
+    @MockBean
+    private GetGaaSGraphConfigsService getStoreTypesService;
 
     @Test
     public void getStoretypes_ReturnsStoretypesAsList_whenSuccessful() throws Exception {
+        final List<GafferConfigSpec> specs = Arrays.asList(
+                new GafferConfigSpec("accumulo", new String[] {"schema"}),
+                new GafferConfigSpec("federated", new String[] {"proxies"}));
+        when(getStoreTypesService.getGafferConfigSpecs()).thenReturn(specs);
 
         final MvcResult getStoretypeResponse = mvc.perform(get("/storetypes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
-        assertEquals("{\"storeTypes\":[\"accumuloStore\",\"federatedStore\",\"mapStore\",\"proxyStore\"]}", getStoretypeResponse.getResponse().getContentAsString());
+
+        assertEquals("{\"storeTypes\":[{\"name\":\"accumulo\",\"parameters\":[\"schema\"]},{\"name\":\"federated\",\"parameters\":[\"proxies\"]}]}", getStoretypeResponse.getResponse().getContentAsString());
     }
 
     @Test
@@ -95,19 +94,18 @@ public class GraphControllerTest extends AbstractTest {
                 .graphId(TEST_GRAPH_ID)
                 .description(TEST_GRAPH_DESCRIPTION)
                 .url("my-graph-namespace.apps.k8s.cluster")
+                .configName("mapStore")
                 .status(RestApiStatus.UP);
         final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
         gaaSGraphs.add(graph);
-        Map<String, List<GaaSGraph>> graphList = new HashMap<>();
-        graphList.put("graphs", gaaSGraphs);
-        when(getGafferService.getAllGraphs()).thenReturn(graphList);
+        when(getGafferService.getAllGraphs()).thenReturn(gaaSGraphs);
 
         final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
 
-        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster\",\"status\":\"UP\",\"problems\":null}]}";
+        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\"}]}";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
@@ -127,7 +125,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenSuccessful_shouldReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumuloStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -142,7 +140,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdIsNull_shouldReturn400() throws Exception {
-        final String graphRequest = "{\"description\":\"password\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"description\":\"password\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -156,7 +154,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdHasSpaces_isInvalidAndShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -170,7 +168,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdHasDashes_isValidAndShouldReturn201() throws Exception {
-        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -184,7 +182,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_graphIdWithSpecialCharacters_isInvalidAndShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"a description\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"a description\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -198,7 +196,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenGraphIdHasCapitalLetters_shouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -212,7 +210,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_whenDescriptionIsEmptyOnly_return400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"storeType\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"configName\":\"accumuloStore\"}";
 
         final MvcResult response = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -252,7 +250,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_hasSameGraphIdAsExistingOne_shouldReturn409() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumuloStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
@@ -310,17 +308,19 @@ public class GraphControllerTest extends AbstractTest {
     @Test
     public void namespaces_shouldReturn200AndEmptyArrayWhenNoNamespacesExist() throws Exception {
         when(getNamespacesService.getNamespaces()).thenReturn(new ArrayList(0));
+
         final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
         assertEquals(200, namespacesResponse.getResponse().getStatus());
         assertEquals("[]", namespacesResponse.getResponse().getContentAsString());
     }
 
     @Test
     public void createGraph_shouldRequestAnAccumuloStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "accumuloStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -335,7 +335,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_shouldRequestAMapStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "mapStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -350,7 +350,7 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void createGraph_shouldRequestAProxyStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "proxyStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "proxy");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -376,16 +376,15 @@ public class GraphControllerTest extends AbstractTest {
                 .content(gaaSCreateRequestBody)).andReturn();
 
         assertEquals(400, result.getResponse().getStatus());
-        final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"storeType\\\" must be defined. " +
-                "Valid Store Types supported are federatedStore, accumuloStore, proxyStore or mapStore\"}";
+        final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"configName\\\" must be defined. Valid config names can be found at /storetypes endpoint\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
     }
 
     @Test
     public void createGraph_shouldReturn500BadRequestWhenStoreTypeIsInvalidType() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "invalidStore", getSchema());
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "invalidStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
-        doThrow(new RuntimeException("StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore")).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
+        doThrow(new RuntimeException("configName is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore")).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -393,7 +392,7 @@ public class GraphControllerTest extends AbstractTest {
                 .content(inputJson)).andReturn();
 
         assertEquals(500, result.getResponse().getStatus());
-        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"StoreType is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore\"}";
+        final String expected = "{\"title\":\"RuntimeException\",\"detail\":\"configName is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
     }
 
@@ -411,70 +410,57 @@ public class GraphControllerTest extends AbstractTest {
     }
 
     @Test
-    public void createFedGraph_shouldReturnBadRequest_whenEmptyProxyStoresRequested() throws Exception {
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList());
+    public void createFedGraph_shouldReturnBadRequest_whenServiceThrows404GaasException() throws Exception {
+        doThrow(new GaaSRestApiException("Not Found", "Config not found", 404))
+                .when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
+        final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
+        final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description", "federated", Collections.singletonList(subGraph));
 
-        final MvcResult result = mvc.perform(post("/graphs/federated")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(mapToJson(request)))
                 .andReturn();
 
-        assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"title\":\"Bad Request\",\"detail\":\"There are no sub-graphs to add\"}", result.getResponse().getContentAsString());
+        assertEquals(404, result.getResponse().getStatus());
+        assertEquals("{\"title\":\"Not Found\",\"detail\":\"Config not found\"}", result.getResponse().getContentAsString());
     }
 
     @Test
-    public void createFedGraph_shouldReturnBadRequest_whenProxyStoreUrlIsInvalid() throws Exception {
-        doThrow(new GraphOperationException("The request to proxygraph returned: 404 Not Found"))
-                .when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
+    public void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestIsFedStore() throws Exception {
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
+        final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description", "federated", Collections.singletonList(subGraph));
+        doNothing().when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
 
-        final MvcResult result = mvc.perform(post("/graphs/federated")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(mapToJson(request)))
                 .andReturn();
 
-        assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"title\":\"Bad Request\",\"detail\":\"Invalid Proxy Graph URL(s): [proxygraph: The request to proxygraph returned: 404 Not Found]\"}", result.getResponse().getContentAsString());
+        assertEquals(201, result.getResponse().getStatus());
+        verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
     }
 
     @Test
-    public void createFedGraph_shouldReturnBadRequest_whenKubernetesClientReturnsErrorResponse() throws Exception {
-        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
-        doThrow(new GaaSRestApiException("Kubernetes Error", "Invalid values", 400)).when(crdClient).createCRD(any(Gaffer.class));
-        final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
+    public void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestHasProxiesAndSchema() throws Exception {
+        final String request = "{" +
+                "\"graphId\":\"graphid\"," +
+                "\"description\":\"Schema and proxies\"," +
+                "\"configName\":\"fedStoreConfig\"," +
+                "\"proxySubGraphs\":[]," +
+                "\"schema\":{\"types\":{}}" +
+                "}";
+        doNothing().when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
 
-        final MvcResult result = mvc.perform(post("/graphs/federated")
+        final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
-                .content(mapToJson(request)))
+                .content(request))
                 .andReturn();
 
-        assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"title\":\"Kubernetes Error\",\"detail\":\"Invalid values\"}", result.getResponse().getContentAsString());
-    }
-
-    @Test
-    public void createFedGraph_shouldReturn502BadGateway_whenFedStoreUnableToAddGraphs() throws Exception {
-        doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
-        when(crdClient.createCRD(any(Gaffer.class))).thenReturn(new GraphUrl("localhost:8080", "/rest"));
-        doThrow(new GraphOperationException("Graph: Internal Server Error, cause...")).when(graphCommandExecutor).execute(any(AddGraphsOperation.class));
-
-        final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final FederatedRequestBody request = new FederatedRequestBody("fedgraph", "Some description", Arrays.asList(subGraph));
-
-        final MvcResult result = mvc.perform(post("/graphs/federated")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token)
-                .content(mapToJson(request)))
-                .andReturn();
-
-        assertEquals(502, result.getResponse().getStatus());
-        assertEquals("{\"title\":\"Failed to Add Graph(s) to \\\"fedgraph\\\"\",\"detail\":\"Graph: Internal Server Error, cause...\"}", result.getResponse().getContentAsString());
+        assertEquals(201, result.getResponse().getStatus());
+        verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
     }
 
     private LinkedHashMap<String, Object> getSchema() {

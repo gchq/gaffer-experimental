@@ -41,6 +41,7 @@ public class AuthService {
     @Autowired
     private MeterRegistry meterRegistry;
 
+
     @Timed(value = "getToken.time", description = "Time taken to get token", percentiles = 0)
     public String getToken(final JwtRequest authenticationRequest) throws GaaSRestApiException {
         meterRegistry.counter("AuthService", "action", "get").increment();

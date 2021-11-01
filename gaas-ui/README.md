@@ -57,6 +57,19 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+## Semgrep
+Semgrep is a static code analysis tool.
+To use Semgrep locally, install it following the instructions in the official [documentation](https://semgrep.dev/docs/getting-started/).
+
+From the `gaas-ui` directory you can run the following in the terminal:
+* Default ruleset for Node.js - `semgrep --config "p/nodejs"`
+* Rules from the preeminent Node.js security scanner:`semgrep --config "p/nodejsscan"`
+* Common JWT security mistakes: `semgrep --config "p/jwt"`
+* Secure defaults for XSS prevention: `semgrep --config "p/xss"`
+* Scan for runtime errors, logic bugs, and high-confidence security vulnerabilities: `semgrep --config "p/ci"`
+* Scan against OWASP security standards: `semgrep --config "p/owasp-top-ten"`
+
+Official documentation - (https://semgrep.dev/docs/)
 ## Docker
 
 To run the UI React app in a docker container, follow the steps below:

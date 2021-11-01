@@ -39,3 +39,5 @@ gaffer-as-a-service/gaas-common/.classpath
 gaffer-as-a-service/gaas-rest/.classpath
 
 gaffer-as-a-service/gaffer-controller/.classpath
+
+gaas-ui/package-lock.json
