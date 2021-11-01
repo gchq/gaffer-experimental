@@ -60,6 +60,7 @@ export default function AddEntity(props: IProps): ReactElement {
     switch (action.type) {
       case "reset":
         return initialState
+
       case "validateEntityName":
         draft.entityName.hasErrors = false
         draft.entityName.value = action.value
@@ -69,6 +70,7 @@ export default function AddEntity(props: IProps): ReactElement {
           draft.entityName.message = "Entity name can only contain letters"
         }
         return
+
       case "validateEntityDescription":
         draft.entityDescription.hasErrors = false
         draft.entityDescription.value = action.value

@@ -90,8 +90,8 @@ describe("schema-builder UI wrapper", () => {
     it("should display the edges from the elements schema that is passed in", () => {
       expect(wrapper.find("div#json-edges-schema-viewer").text()).toEqual('"edges":{"TestEdge":{"description":"test""source":"A""destination":"B""directed":"true"}}')
     })
-    it("should display the entities from the elements schema that is passed in ", ()=>{
-        expect(wrapper.find("div#json-entities-schema-viewer").text()).toEqual('"entities":{"TestEntity":{"description":"test description""vertex":"B"}}')
+    it("should display the entities from the elements schema that is passed in ", () => {
+      expect(wrapper.find("div#json-entities-schema-viewer").text()).toEqual('"entities":{"TestEntity":{"description":"test description""vertex":"B"}}')
     })
   })
 

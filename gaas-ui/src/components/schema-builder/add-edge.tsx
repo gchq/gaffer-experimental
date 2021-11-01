@@ -82,6 +82,9 @@ export default function AddEdge(props: IProps): ReactElement {
 
   function addEdgeReducer(draft: any, action: any) {
     switch (action.type) {
+      case "reset":
+        return initialState
+
       case "validateEdgeName":
         draft.edgeName.hasErrors = false
         draft.edgeName.value = action.value
