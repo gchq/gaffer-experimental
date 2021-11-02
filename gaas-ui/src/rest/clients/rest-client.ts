@@ -110,7 +110,8 @@ export class RestClient<T> {
                 });
                 return RestClient.convert(response);
             } catch (e) {
-                throw RestClient.fromError(e);
+                const error = e as AxiosError<any>;
+                throw RestClient.fromError(error);
             }
         }
     })

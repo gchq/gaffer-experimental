@@ -28,6 +28,6 @@ service:
 # Set serviceAccount.create to true if User deploying has assign
 # ClusterRoleBinding privileges to enable cluster namespaces endpoint
 serviceAccount:
-  create: false
+  create: true
 
 namespace: kai-dev
