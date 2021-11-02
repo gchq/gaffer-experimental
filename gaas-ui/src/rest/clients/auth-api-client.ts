@@ -24,7 +24,7 @@ export class AuthApiClient implements IAuthClient {
             onSuccess();
             
         } catch (e) {
-            onError(e.message);
+            onError((e as Error).message);
         }
     }
 
@@ -49,7 +49,7 @@ export class AuthApiClient implements IAuthClient {
             RestClient.setJwtToken(token.data);
             onSuccess();
         } catch (e) {
-            onError(e.message);
+            onError((e as Error).message);
         }
     }
 
@@ -58,7 +58,7 @@ export class AuthApiClient implements IAuthClient {
             await new RestClient().baseUrl(Config.REACT_APP_AUTH_ENDPOINT).post().requestBody("signout").authentication().execute();
             onSuccess();
         } catch (e) {
-            onError(e.message);
+            onError((e as Error).message);
         }
     }
 }
