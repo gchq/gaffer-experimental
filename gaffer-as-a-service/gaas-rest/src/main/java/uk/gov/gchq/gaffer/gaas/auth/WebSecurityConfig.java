@@ -32,30 +32,30 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-    @Autowired
-    private UserDetailsService jwtUserDetailsService;
-
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
-
-    public WebSecurityConfig() {
-    }
-
-    @Autowired
-    public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
-        // configure AuthenticationManager so that it knows from where to load
-        // user for matching credentials
-        // Use BCryptPasswordEncoder
-        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Autowired
+//    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+//
+//    @Autowired
+//    private UserDetailsService jwtUserDetailsService;
+//
+//    @Autowired
+//    private JwtRequestFilter jwtRequestFilter;
+//
+//    public WebSecurityConfig() {
+//    }
+//
+//    @Autowired
+//    public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
+//        // configure AuthenticationManager so that it knows from where to load
+//        // user for matching credentials
+//        // Use BCryptPasswordEncoder
+//        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+//    }
+//
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
 
     @Override

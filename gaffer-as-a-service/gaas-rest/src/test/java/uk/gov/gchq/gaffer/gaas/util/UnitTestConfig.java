@@ -24,10 +24,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
-import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
-import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
-import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
@@ -64,10 +61,10 @@ public class UnitTestConfig {
         return new CustomObjectsApi(apiClient());
     }
 
-    @Bean
-    public AuthService authService() {
-        return new AuthService();
-    }
+//    @Bean
+//    public AuthService authService() {
+//        return new AuthService();
+//    }
 
     @Bean
     public CreateGraphService createGraphService() {
@@ -89,15 +86,15 @@ public class UnitTestConfig {
         return new GetGaaSGraphConfigsService();
     }
 
-    @Bean
-    public JwtTokenUtil jwtTokenUtil() {
-        return new JwtTokenUtil();
-    }
-
-    @Bean
-    public JwtUserDetailsService jwtUserDetailsService() {
-        return new JwtUserDetailsService();
-    }
+//    @Bean
+//    public JwtTokenUtil jwtTokenUtil() {
+//        return new JwtTokenUtil();
+//    }
+//
+//    @Bean
+//    public JwtUserDetailsService jwtUserDetailsService() {
+//        return new JwtUserDetailsService();
+//    }
 
     @Bean
     public Properties properties() {

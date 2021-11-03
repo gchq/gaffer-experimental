@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,12 +29,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
-import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
@@ -55,8 +52,8 @@ public class GraphController {
     private GetGafferService gafferService;
     @Autowired
     private CreateGraphService createGraphService;
-    @Autowired
-    private AuthService authService;
+//    @Autowired
+//    private AuthService authService;
     @Autowired
     private DeleteGraphService deleteGraphService;
     @Autowired
@@ -66,11 +63,11 @@ public class GraphController {
     @Autowired
     private GetGaaSGraphConfigsService getStoreTypesService;
 
-    @PostMapping("/auth")
-    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-        final String token = authService.getToken(authenticationRequest);
-        return ResponseEntity.ok(token);
-    }
+//    @PostMapping("/auth")
+//    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
+//        final String token = authService.getToken(authenticationRequest);
+//        return ResponseEntity.ok(token);
+//    }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> addGraph(@Valid @RequestBody final GaaSCreateRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
