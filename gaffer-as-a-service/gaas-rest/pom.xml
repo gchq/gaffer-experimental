@@ -63,12 +63,12 @@
             <version>${gaffer.version}</version>
             <scope>compile</scope>
        </dependency>
-<!--        <dependency>-->
-<!--            <groupId>uk.gov.gchq.gaffer</groupId>-->
-<!--            <artifactId>gaffer-as-a-service-tools</artifactId>-->
-<!--            <version>${gaffer.version}</version>-->
-<!--            <scope>compile</scope>-->
-<!--       </dependency>-->
+        <dependency>
+            <groupId>uk.gov.gchq.gaffer</groupId>
+            <artifactId>gaffer-as-a-service-tools</artifactId>
+            <version>${gaffer.version}</version>
+            <scope>compile</scope>
+       </dependency>
         <dependency>
           <groupId>org.springframework.boot</groupId>
            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
