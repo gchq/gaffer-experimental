@@ -84,6 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                             jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))
                                     )
                     );
+            http.cors();
         } else {
             http.csrf().disable()
                     // dont authenticate this particular request
