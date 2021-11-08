@@ -66,7 +66,7 @@ public class GraphController {
     @Autowired
     private GetGaaSGraphConfigsService getStoreTypesService;
 
-    @Value("${cognito.enabled}")
+    @Value("${cognito.enabled: false}")
     boolean cognitoEnabled;
 
     @PostMapping("/auth")

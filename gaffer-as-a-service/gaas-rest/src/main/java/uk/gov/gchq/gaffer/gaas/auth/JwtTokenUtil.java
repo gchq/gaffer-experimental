@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
-@ConditionalOnProperty(prefix = "cognito", name = "enabled", havingValue = "false")
+@ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "jwt")
 public class JwtTokenUtil implements Serializable {
 
     private static final long serialVersionUID = -2550185165626007488L;

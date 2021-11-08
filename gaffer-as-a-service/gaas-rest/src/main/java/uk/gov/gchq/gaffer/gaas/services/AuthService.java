@@ -31,7 +31,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 
 @Service
-@ConditionalOnProperty(prefix = "cognito", name = "enabled", havingValue = "false")
+@ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "jwt")
 public class AuthService {
 
     @Autowired

@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
 @Component
-@ConditionalOnProperty(prefix = "cognito", name = "enabled", havingValue = "false")
+@ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "jwt")
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
 
     private static final long serialVersionUID = -7858869558953243875L;

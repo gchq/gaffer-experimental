@@ -19,7 +19,7 @@ package uk.gov.gchq.gaffer.gaas.auth;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import java.io.Serializable;
 
-@ConditionalOnProperty(prefix = "cognito", name = "enabled", havingValue = "false")
+@ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "jwt")
 public class JwtResponse implements Serializable {
 
     private static final long serialVersionUID = -8091879091924046844L;

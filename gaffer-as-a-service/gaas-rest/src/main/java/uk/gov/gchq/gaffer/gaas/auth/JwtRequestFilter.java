@@ -32,7 +32,7 @@ import java.io.IOException;
 
 @Component
 
-@ConditionalOnProperty(prefix = "cognito", name = "enabled", havingValue = "false")
+@ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "jwt")
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired

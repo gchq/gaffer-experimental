@@ -37,7 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri: default}")
     String issuerUri;
 
-    @Value("${cognito.enabled}")
+    @Value("${cognito.enabled: false}")
     boolean cognitoEnabled;
 
     @Autowired(required = false)
