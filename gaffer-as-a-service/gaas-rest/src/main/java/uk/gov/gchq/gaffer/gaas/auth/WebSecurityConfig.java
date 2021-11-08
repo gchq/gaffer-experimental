@@ -40,16 +40,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${cognito.enabled}")
     boolean cognitoEnabled;
 
-    @Autowired
+    @Autowired(required = false)
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    @Autowired
+    @Autowired(required = false)
     private UserDetailsService jwtUserDetailsService;
 
-    @Autowired
+    @Autowired(required = false)
     private JwtRequestFilter jwtRequestFilter;
 
-    @Autowired
+    @Autowired(required = false)
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
         // configure AuthenticationManager so that it knows from where to load
         // user for matching credentials

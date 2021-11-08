@@ -17,6 +17,7 @@ package uk.gov.gchq.gaffer.gaas.auth;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+
+@ConditionalOnProperty(prefix = "cognito", name = "enabled", havingValue = "false")
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired

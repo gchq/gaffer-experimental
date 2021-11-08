@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.services;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -30,6 +31,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 
 @Service
+@ConditionalOnProperty(prefix = "cognito", name = "enabled", havingValue = "false")
 public class AuthService {
 
     @Autowired

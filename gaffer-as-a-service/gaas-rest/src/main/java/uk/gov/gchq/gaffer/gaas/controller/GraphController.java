@@ -55,7 +55,7 @@ public class GraphController {
     private GetGafferService gafferService;
     @Autowired
     private CreateGraphService createGraphService;
-    @Autowired
+    @Autowired(required = false)
     private AuthService authService;
     @Autowired
     private DeleteGraphService deleteGraphService;
