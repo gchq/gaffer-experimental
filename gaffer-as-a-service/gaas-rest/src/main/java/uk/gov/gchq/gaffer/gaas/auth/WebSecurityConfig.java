@@ -34,7 +34,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri: default}")
     String issuerUri;
 
     @Value("${cognito.enabled}")
@@ -68,6 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         if (cognitoEnabled) {
@@ -84,7 +85,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                             jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))
                                     )
                     );
-            http.cors();
         } else {
             http.csrf().disable()
                     // dont authenticate this particular request
@@ -106,8 +106,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
             // Add a filter to validate the tokens with every request
             http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-            http.cors();
         }
+        http.cors();
 
     }
 
