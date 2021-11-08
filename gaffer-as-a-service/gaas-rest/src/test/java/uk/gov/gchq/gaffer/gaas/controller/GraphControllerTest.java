@@ -28,19 +28,20 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
+import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
+import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
+import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
-import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -58,11 +59,13 @@ public class GraphControllerTest extends AbstractTest {
     @MockBean
     private ApiClient apiClient;
     @MockBean
-    private GetGafferService getGafferService;
+    private GetGaffersService getGafferService;
     @MockBean
     private AuthService authService;
     @MockBean
     private CreateGraphService createGraphService;
+    @MockBean
+    private CreateFederatedStoreGraphService createFederatedStoreGraphService;
     @MockBean
     private DeleteGraphService deleteGraphService;
     @MockBean
@@ -72,9 +75,9 @@ public class GraphControllerTest extends AbstractTest {
 
     @Test
     public void getStoretypes_ReturnsStoretypesAsList_whenSuccessful() throws Exception {
-        final List<GaaSGraphConfigSpec> specs = Arrays.asList(
-                new GaaSGraphConfigSpec("accumulo", new String[] {"schema"}),
-                new GaaSGraphConfigSpec("federated", new String[] {"proxies"}));
+        final List<GafferConfigSpec> specs = Arrays.asList(
+                new GafferConfigSpec("accumulo", new String[] {"schema"}),
+                new GafferConfigSpec("federated", new String[] {"proxies"}));
         when(getStoreTypesService.getGafferConfigSpecs()).thenReturn(specs);
 
         final MvcResult getStoretypeResponse = mvc.perform(get("/storetypes")
@@ -95,9 +98,7 @@ public class GraphControllerTest extends AbstractTest {
                 .status(RestApiStatus.UP);
         final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
         gaaSGraphs.add(graph);
-        Map<String, List<GaaSGraph>> graphList = new HashMap<>();
-        graphList.put("graphs", gaaSGraphs);
-        when(getGafferService.getAllGraphs()).thenReturn(graphList);
+        when(getGafferService.getAllGraphs()).thenReturn(gaaSGraphs);
 
         final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -307,10 +308,12 @@ public class GraphControllerTest extends AbstractTest {
     @Test
     public void namespaces_shouldReturn200AndEmptyArrayWhenNoNamespacesExist() throws Exception {
         when(getNamespacesService.getNamespaces()).thenReturn(new ArrayList(0));
+
         final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
+
         assertEquals(200, namespacesResponse.getResponse().getStatus());
         assertEquals("[]", namespacesResponse.getResponse().getContentAsString());
     }
@@ -402,9 +405,62 @@ public class GraphControllerTest extends AbstractTest {
                 .header("Authorization", token))
                 .andReturn();
 
-        //verify(deleteGraphService, times(1)).deleteGraph("nonexistentgraphfortestingpurposes");
         assertEquals(500, result.getResponse().getStatus());
         assertEquals("{\"title\":\"NullPointerException\",\"detail\":\"Something was null\"}", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void createFedGraph_shouldReturnBadRequest_whenServiceThrows404GaasException() throws Exception {
+        doThrow(new GaaSRestApiException("Not Found", "Config not found", 404))
+                .when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
+        final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
+        final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description", "federated", Collections.singletonList(subGraph));
+
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        assertEquals(404, result.getResponse().getStatus());
+        assertEquals("{\"title\":\"Not Found\",\"detail\":\"Config not found\"}", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestIsFedStore() throws Exception {
+        final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
+        final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description", "federated", Collections.singletonList(subGraph));
+        doNothing().when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
+
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        assertEquals(201, result.getResponse().getStatus());
+        verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
+    }
+
+    @Test
+    public void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestHasProxiesAndSchema() throws Exception {
+        final String request = "{" +
+                "\"graphId\":\"graphid\"," +
+                "\"description\":\"Schema and proxies\"," +
+                "\"configName\":\"fedStoreConfig\"," +
+                "\"proxySubGraphs\":[]," +
+                "\"schema\":{\"types\":{}}" +
+                "}";
+        doNothing().when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
+
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(request))
+                .andReturn();
+
+        assertEquals(201, result.getResponse().getStatus());
+        verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
     }
 
     private LinkedHashMap<String, Object> getSchema() {

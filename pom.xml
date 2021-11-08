@@ -33,7 +33,6 @@
         <module>graffer-ql</module>
         <module>operation-runner</module>
         <module>gaffer-as-a-service</module>
-        <module>gaffer-as-a-service-tools</module>
     </modules>
 
     <properties>
