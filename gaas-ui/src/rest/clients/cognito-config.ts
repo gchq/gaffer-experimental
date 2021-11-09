@@ -1,7 +1,7 @@
 // Enter the generated IDs after cdk deploymeny and User Pool has been created.
 // If running in production mode the .env variables are defined and will be used.
 
-import { Config } from "../config";
+import { Config } from '../config';
 
 // The following config details can be found at:
 export const poolData = {

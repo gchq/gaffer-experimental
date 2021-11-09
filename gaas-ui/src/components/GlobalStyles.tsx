@@ -1,25 +1,25 @@
-import { withStyles } from "@material-ui/core";
+import { withStyles } from '@material-ui/core';
 
 const GlobalStyles = withStyles({
-    "@global": {
-        "*": {
-            boxSizing: "border-box",
+    '@global': {
+        '*': {
+            boxSizing: 'border-box',
             margin: 0,
             padding: 0,
         },
         html: {
-            "-webkit-font-smoothing": "antialiased",
-            "-moz-osx-font-smoothing": "grayscale",
-            height: "100%",
-            width: "100%",
+            '-webkit-font-smoothing': 'antialiased',
+            '-moz-osx-font-smoothing': 'grayscale',
+            height: '100%',
+            width: '100%',
         },
         body: {
-            height: "100%",
-            width: "100%",
+            height: '100%',
+            width: '100%',
         },
-        "#root": {
-            height: "100%",
-            width: "100%",
+        '#root': {
+            height: '100%',
+            width: '100%',
         },
     },
 })(() => null);
