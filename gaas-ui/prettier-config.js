@@ -6,4 +6,4 @@ module.exports = {
     singleQuote: true,
     bracketSpacing: true,
     eslintIntegration: true,
-}
+};
