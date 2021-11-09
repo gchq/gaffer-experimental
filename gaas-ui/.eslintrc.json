@@ -4,13 +4,15 @@
     "es6": true
   },
   "extends": [
-    "react-app"
+    "react-app",
+    "prettier"
   ],
   "parserOptions": {
     "ecmaVersion": 2018
   },
   "plugins": [
-    "react"
+    "react",
+    "prettier"
   ],
   "rules": {
     "no-new-func": "error",
@@ -18,13 +20,24 @@
     "prefer-arrow-callback": "error",
     "arrow-parens": ["error", "always"],
     "arrow-body-style": ["error", "as-needed"],
-    "quotes": [2, "double", "avoid-escape"],
     "new-cap": "error",
     "prefer-const": "error",
     "no-invalid-this": "error",
     "no-eval": "error",
     "no-implied-eval": "error",
     "no-with": "error",
-    "no-plusplus": "error"
+    "no-plusplus": "error",
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 120,
+        "trailingComma": "es5",
+        "tabWidth": 4,
+        "semi": true,
+        "singleQuote": true,
+        "bracketSpacing": true,
+        "eslintIntegration": true
+      }
+    ]
   }
 }
