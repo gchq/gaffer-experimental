@@ -27,10 +27,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
+import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
-import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import static org.mockito.Mockito.mock;
 
@@ -75,8 +77,13 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public GetGafferService getGafferService() {
-        return new GetGafferService();
+    public CreateFederatedStoreGraphService createFederatedStoreGraphService() {
+        return new CreateFederatedStoreGraphService();
+    }
+
+    @Bean
+    public GetGaffersService getGafferService() {
+        return new GetGaffersService();
     }
 
     @Bean
@@ -110,8 +117,12 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public GaaSGraphConfigsLoader propertiesLoader() {
-        return new GaaSGraphConfigsLoader();
+    public GraphCommandExecutor graphCommandExecutor() {
+        return new GraphCommandExecutor();
     }
 
+    @Bean
+    public GafferSpecConfigsLoader propertiesLoader() {
+        return new GafferSpecConfigsLoader();
+    }
 }

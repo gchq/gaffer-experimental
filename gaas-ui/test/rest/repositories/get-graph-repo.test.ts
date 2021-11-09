@@ -5,7 +5,6 @@ import { Graph } from "../../../src/domain/graph";
 import { IGraphByIdResponse } from "../../../src/rest/http-message-interfaces/response-interfaces";
 import { RestApiError } from "../../../src/rest/RestApiError";
 import { GraphType } from "../../../src/domain/graph-type";
-import { StoreType } from "../../../src/domain/store-type";
 
 const mock = new MockAdapter(axios);
 const repo = new GetGraphRepo();

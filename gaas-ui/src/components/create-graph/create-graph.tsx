@@ -102,7 +102,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
       } catch (e) {
           this.setState({
               outcome: AlertType.FAILED,
-              outcomeMessage: `Failed to get all graphs. ${e.toString()}`,
+              outcomeMessage: `Failed to get all graphs. ${(e as Error)}`,
           });
       }
   }
@@ -117,7 +117,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
       } catch (e) {
           this.setState({
               outcome: AlertType.FAILED,
-              outcomeMessage: `Storetypes unavailable: ${e.toString()}`,
+              outcomeMessage: `Storetypes unavailable: ${(e as Error)}`,
           });
       }
   }
@@ -161,7 +161,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
       } catch (e) {
           this.setState({
               outcome: AlertType.FAILED,
-              outcomeMessage: `Failed to Add '${graphId}' Graph. ${e.toString()}`,
+              outcomeMessage: `Failed to Add '${graphId}' Graph. ${(e as Error).message}`,
           });
       }
   }

@@ -12,17 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-{{ if .Values.serviceAccount.create }}
-kind: ClusterRoleBinding
+kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ include "helm.fullname" . }}-clusterrolebinding
+  name: gaffer-role
+rules:
+  - apiGroups: ["gchq.gov.uk"]
+    resources: ["gaffers"]
+    verbs: ["get", "list", "view","edit", "create"]
+---
+
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gaffer-role
 subjects:
   - kind: ServiceAccount
     name: {{ include "helm.fullname" . }}-service-account
     namespace: {{ .Values.namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-reader
-{{ end }}
+  kind: Role
+  name: gaffer-role
+

@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class GaaSGraphConfigsLoader {
+public class GafferSpecConfigsLoader {
 
     @Autowired
     private ResourceLoader resourceLoader;
