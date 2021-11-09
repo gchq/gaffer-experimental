@@ -1,9 +1,9 @@
-import React from "react";
-import Alert from "@material-ui/lab/Alert";
+import React from 'react';
+import Alert from '@material-ui/lab/Alert';
 
 export enum AlertType {
-    SUCCESS = "success",
-    FAILED = "error",
+    SUCCESS = 'success',
+    FAILED = 'error',
 }
 
 export interface INotificationAlertProps {

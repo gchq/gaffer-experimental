@@ -1,13 +1,13 @@
-import React from "react";
-import { Button, Dialog, DialogContent, DialogTitle, IconButton } from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
-import TempPasswordLoginForm from "./temp-password-login-form";
-import LoginForm from "./login-form";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import { createStyles, withStyles, WithStyles } from "@material-ui/core/styles";
-import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
-import { IAuthClient } from "../../rest/clients/authclient";
-import { Logo } from "../logo";
+import React from 'react';
+import { Button, Dialog, DialogContent, DialogTitle, IconButton } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import TempPasswordLoginForm from './temp-password-login-form';
+import LoginForm from './login-form';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
+import { AuthClientFactory } from '../../rest/clients/auth-client-factory';
+import { IAuthClient } from '../../rest/clients/authclient';
+import { Logo } from '../logo';
 
 function styles(theme: any) {
     return createStyles({
@@ -16,7 +16,7 @@ function styles(theme: any) {
             padding: theme.spacing(2),
         },
         closeButton: {
-            position: "absolute",
+            position: 'absolute',
             right: theme.spacing(1),
             top: theme.spacing(1),
             color: theme.palette.grey[500],
@@ -56,7 +56,7 @@ class LoginModal extends React.Component<IProps, IState> {
             status: UserStatus.SIGNED_OUT,
             formType: FormType.EXISTING_USER_LOGIN,
             openSignOutModal: false,
-            signOutMessage: "",
+            signOutMessage: '',
         };
     }
 

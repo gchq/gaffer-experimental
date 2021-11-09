@@ -2,7 +2,7 @@ export interface IGraphByIdResponse {
     graphId: string;
     description: string;
     url: string;
-    status: "UP" | "DOWN";
+    status: 'UP' | 'DOWN';
     configName: string;
 }
 

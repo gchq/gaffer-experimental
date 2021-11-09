@@ -7,6 +7,6 @@ export class RestApiError {
     }
 
     public toString(): string {
-        return this.title + ": " + this.detail;
+        return this.title + ': ' + this.detail;
     }
 }

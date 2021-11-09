@@ -1,11 +1,11 @@
-import React from "react";
-import { Button, CssBaseline, Grid, TextField, Link } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
-import { AlertType, NotificationAlert } from "../alerts/notification-alert";
-import { FormType } from "./login-modal";
-import { IAuthClient } from "../../rest/clients/authclient";
-import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
+import React from 'react';
+import { Button, CssBaseline, Grid, TextField, Link } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import Container from '@material-ui/core/Container';
+import { AlertType, NotificationAlert } from '../alerts/notification-alert';
+import { FormType } from './login-modal';
+import { IAuthClient } from '../../rest/clients/authclient';
+import { AuthClientFactory } from '../../rest/clients/auth-client-factory';
 
 interface IProps {
     onChangeForm(fromType: FormType): void;
@@ -24,11 +24,11 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
     constructor(props: IProps) {
         super(props);
         this.state = {
-            username: "",
-            oldPassword: "",
-            newPassword: "",
+            username: '',
+            oldPassword: '',
+            newPassword: '',
             outcome: undefined,
-            outcomeMessage: "",
+            outcomeMessage: '',
         };
     }
 
@@ -63,10 +63,10 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                     <CssBaseline />
                     <div
                         style={{
-                            marginTop: "20px",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
+                            marginTop: '20px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
                         }}
                     >
                         <Typography component="h1" variant="h5">
@@ -75,7 +75,7 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                         <Grid item>
                             <form
                                 style={{
-                                    width: "100%",
+                                    width: '100%',
                                 }}
                                 noValidate
                             >
@@ -96,7 +96,7 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                         });
                                     }}
                                     onKeyPress={(ev) => {
-                                        if (ev.key === "Enter") {
+                                        if (ev.key === 'Enter') {
                                             this.resetPassword();
                                             ev.preventDefault();
                                         }
@@ -119,7 +119,7 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                         });
                                     }}
                                     onKeyPress={(ev) => {
-                                        if (ev.key === "Enter") {
+                                        if (ev.key === 'Enter') {
                                             this.resetPassword();
                                             ev.preventDefault();
                                         }
@@ -142,7 +142,7 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                         });
                                     }}
                                     onKeyPress={(ev) => {
-                                        if (ev.key === "Enter") {
+                                        if (ev.key === 'Enter') {
                                             this.resetPassword();
                                             ev.preventDefault();
                                         }
@@ -153,7 +153,7 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                     id="submit-sign-in-button"
                                     variant="contained"
                                     color="primary"
-                                    style={{ marginTop: "20px" }}
+                                    style={{ marginTop: '20px' }}
                                     disabled={this.disableUpdateButton()}
                                     onClick={() => {
                                         this.resetPassword();
@@ -162,7 +162,7 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                     Reset Password And Sign In
                                 </Button>
                             </form>
-                            <Typography style={{ marginTop: "20px" }}>
+                            <Typography style={{ marginTop: '20px' }}>
                                 <Link
                                     id="login-form-link"
                                     onClick={() => this.props.onChangeForm(FormType.EXISTING_USER_LOGIN)}
