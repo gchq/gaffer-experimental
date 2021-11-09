@@ -1,27 +1,27 @@
-import CreateGraph from "../create-graph/create-graph";
-import ClusterNamespaces from "../cluster-namespaces/cluster-namespaces";
-import UserGuide from "../user-guide/user-guide";
-import ViewGraph from "../view-graphs/view-graphs";
+import CreateGraph from '../create-graph/create-graph';
+import ClusterNamespaces from '../cluster-namespaces/cluster-namespaces';
+import UserGuide from '../user-guide/user-guide';
+import ViewGraph from '../view-graphs/view-graphs';
 
 const Routes = [
     {
-        path: "/creategraph",
-        sidebarName: "Create Graph",
+        path: '/creategraph',
+        sidebarName: 'Create Graph',
         component: CreateGraph,
     },
     {
-        path: "/viewgraphs",
-        sidebarName: "View Graphs",
+        path: '/viewgraphs',
+        sidebarName: 'View Graphs',
         component: ViewGraph,
     },
     {
-        path: "/namespaces",
-        sidebarName: "Cluster Namespaces",
+        path: '/namespaces',
+        sidebarName: 'Cluster Namespaces',
         component: ClusterNamespaces,
     },
     {
-        path: "/userguide",
-        sidebarName: "User Guide",
+        path: '/userguide',
+        sidebarName: 'User Guide',
         component: UserGuide,
     },
 ];

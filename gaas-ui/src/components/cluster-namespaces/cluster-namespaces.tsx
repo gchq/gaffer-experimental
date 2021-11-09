@@ -1,5 +1,5 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import {
     Button,
     Container,
@@ -11,13 +11,13 @@ import {
     TableHead,
     TableRow,
     Toolbar,
-} from "@material-ui/core";
-import RefreshOutlinedIcon from "@material-ui/icons/RefreshOutlined";
-import { AlertType, NotificationAlert } from "../alerts/notification-alert";
-import { GetAllNamespacesRepo } from "../../rest/repositories/get-all-namespaces-repo";
-import Paper from "@material-ui/core/Paper";
-import Box from "@material-ui/core/Box";
-import { Copyright } from "../copyright/copyright";
+} from '@material-ui/core';
+import RefreshOutlinedIcon from '@material-ui/icons/RefreshOutlined';
+import { AlertType, NotificationAlert } from '../alerts/notification-alert';
+import { GetAllNamespacesRepo } from '../../rest/repositories/get-all-namespaces-repo';
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
+import { Copyright } from '../copyright/copyright';
 
 interface IState {
     namespaces: Array<string>;
@@ -30,8 +30,8 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
         super(props);
         this.state = {
             namespaces: [],
-            selectedRow: "",
-            errorMessage: "",
+            selectedRow: '',
+            errorMessage: '',
         };
     }
 
@@ -42,15 +42,15 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
     private async getNamespaces() {
         try {
             const namespaces: Array<string> = await new GetAllNamespacesRepo().getAll();
-            this.setState({ namespaces: namespaces, errorMessage: "" });
-        } catch (e:any) {
+            this.setState({ namespaces: namespaces, errorMessage: '' });
+        } catch (e: any) {
             this.setState({ errorMessage: `Failed to get all namespaces. ${e.toString()}` });
         }
     }
 
     private classes: any = makeStyles({
         root: {
-            width: "100%",
+            width: '100%',
             marginTop: 40,
         },
         table: {
@@ -71,7 +71,7 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
                             <TableContainer component={Paper}>
                                 <Table size="medium" className={this.classes.table} aria-label="Namespaces Table">
                                     <TableHead>
-                                        <TableRow style={{ background: "#F4F2F2" }}>
+                                        <TableRow style={{ background: '#F4F2F2' }}>
                                             <TableCell>Namespaces</TableCell>
                                         </TableRow>
                                     </TableHead>

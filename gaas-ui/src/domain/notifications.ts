@@ -6,7 +6,7 @@ export class Notifications {
     }
 
     public errorMessage(): string {
-        return this.errors.join(", ");
+        return this.errors.join(', ');
     }
 
     public isEmpty(): boolean {
