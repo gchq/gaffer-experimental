@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,12 +33,13 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.model.GaaSGraphConfigSpec;
+import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
+import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
-import uk.gov.gchq.gaffer.gaas.services.GetGafferService;
+import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -52,19 +52,21 @@ import java.util.Map;
 public class GraphController {
 
     @Autowired
-    private GetGafferService gafferService;
+    private ApiClient apiClient;
+    @Autowired
+    private GetGaffersService getGaffersService;
     @Autowired
     private CreateGraphService createGraphService;
-    @Autowired(required = false)
-    private AuthService authService;
+    @Autowired
+    private CreateFederatedStoreGraphService createFederatedStoreGraphService;
     @Autowired
     private DeleteGraphService deleteGraphService;
-    @Autowired
-    private ApiClient apiClient;
     @Autowired
     private GetNamespacesService getNamespacesService;
     @Autowired
     private GetGaaSGraphConfigsService getStoreTypesService;
+    @Autowired(required = false)
+    private AuthService authService;
 
     @Value("${cognito.enabled: false}")
     boolean cognitoEnabled;
@@ -76,26 +78,31 @@ public class GraphController {
             return ResponseEntity.ok(token);
         }
         return null;
-
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> addGraph(@Valid @RequestBody final GaaSCreateRequestBody gaaSCreateRequestBody) throws GaaSRestApiException {
-        createGraphService.createGraph(gaaSCreateRequestBody);
+    public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody) throws GaaSRestApiException {
+        if (requestBody.isFederatedStoreRequest()) {
+            createFederatedStoreGraphService.createFederatedStore(requestBody);
+        } else {
+            createGraphService.createGraph(requestBody);
+        }
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/graphs", produces = "application/json")
-    @PreAuthorize("hasAuthority('SCOPE_gaas-rest-resource/graphs')")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
-        final Map<String, List<GaaSGraph>> list = gafferService.getAllGraphs();
-        return new ResponseEntity(list, HttpStatus.OK);
+        final Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("graphs", getGaffersService.getAllGraphs());
+
+        return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
-    public ResponseEntity<List<GaaSGraphConfigSpec>> getEndpoints() throws GaaSRestApiException {
+    public ResponseEntity<List<GafferConfigSpec>> getGafferConfigSpecs() throws GaaSRestApiException {
         final Map<String, Object> body = new HashMap<>();
         body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
+
         return new ResponseEntity(body, HttpStatus.OK);
     }
 

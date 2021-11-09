@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @UnitTest
-public class GaaSGraphConfigsLoaderTest {
+public class GafferSpecConfigsLoaderTest {
 
     private static final String[] GAFFER_STORE_CLASS_NESTED_KEYS = {"graph", "storeProperties", "gaffer.store.class"};
     private static final String[] GAFFER_INVALID_STORE_CLASS_NESTED_KEYS = {"graph", "invalidStoreProperties", "gaffer.store.class"};
@@ -35,7 +35,7 @@ public class GaaSGraphConfigsLoaderTest {
     private static final String[] GAFFER_INVALID_STORE_CACHE_SERVICE_CLASS_NESTED_KEYS = {"graph", "invalidStoreProperties", "gaffer.cache.service.class"};
 
     @Autowired
-    private GaaSGraphConfigsLoader loader;
+    private GafferSpecConfigsLoader loader;
 
     @Test
     public void getConfig_shouldReturnNewGafferSpec_whenFileIsEmpty() throws GaaSRestApiException {

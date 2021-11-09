@@ -40,7 +40,6 @@ public class AuthService {
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private JwtUserDetailsService userDetailsService;
-
     @Autowired
     private MeterRegistry meterRegistry;
 

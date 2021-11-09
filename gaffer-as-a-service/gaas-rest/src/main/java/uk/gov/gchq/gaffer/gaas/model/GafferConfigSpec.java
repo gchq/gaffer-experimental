@@ -22,12 +22,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.io.Serializable;
 
 
-public class GaaSGraphConfigSpec implements Serializable {
+public class GafferConfigSpec implements Serializable {
 
   private String name;
   private String[] parameters;
 
-  public GaaSGraphConfigSpec(final String name, final String[] parameters) {
+  public GafferConfigSpec(final String name, final String[] parameters) {
     this.name = name;
     this.parameters = parameters;
   }
@@ -50,7 +50,7 @@ public class GaaSGraphConfigSpec implements Serializable {
       return false;
     }
 
-    GaaSGraphConfigSpec that = (GaaSGraphConfigSpec) o;
+    GafferConfigSpec that = (GafferConfigSpec) o;
 
     return new EqualsBuilder().append(name, that.name).append(parameters, that.parameters).isEquals();
   }

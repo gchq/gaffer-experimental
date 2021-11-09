@@ -46,7 +46,7 @@ public class GaaSRestApiException extends Exception {
     }
 
     @Override
-    public boolean equals(final  Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -62,7 +62,11 @@ public class GaaSRestApiException extends Exception {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(title).append(code).append(getMessage()).toHashCode();
+        return new HashCodeBuilder(17, 37)
+                .append(title)
+                .append(code)
+                .append(getMessage())
+                .toHashCode();
     }
 
     @Override

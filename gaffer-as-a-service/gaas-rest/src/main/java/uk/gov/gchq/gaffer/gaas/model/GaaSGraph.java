@@ -45,7 +45,6 @@ public class GaaSGraph {
         return this;
     }
 
-
     public GaaSGraph url(final String url) {
         this.url = url;
         return this;
