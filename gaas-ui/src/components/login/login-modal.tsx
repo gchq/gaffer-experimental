@@ -9,6 +9,7 @@ import { AuthClientFactory } from '../../rest/clients/auth-client-factory';
 import { IAuthClient } from '../../rest/clients/authclient';
 import { Logo } from '../logo';
 import LoginOptions from './login-options';
+import { RestClient } from '../../rest/clients/rest-client';
 
 function styles(theme: any) {
     return createStyles({
@@ -100,6 +101,7 @@ class LoginModal extends React.Component<IProps, IState> {
                             <LoginOptions
                                 onSuccess={(token) => {
                                     console.log('token' + token);
+                                    RestClient.setJwtToken(token);
                                     this.setState({ status: UserStatus.SIGNED_IN });
                                 }}
                             />
