@@ -99,7 +99,7 @@ class LoginModal extends React.Component<IProps, IState> {
                             // />
                             <LoginOptions
                                 onSuccess={(token) => {
-                                    console.log(token);
+                                    console.log('token' + token);
                                     this.setState({ status: UserStatus.SIGNED_IN });
                                 }}
                             />
