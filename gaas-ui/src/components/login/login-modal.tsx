@@ -8,6 +8,7 @@ import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
 import { AuthClientFactory } from '../../rest/clients/auth-client-factory';
 import { IAuthClient } from '../../rest/clients/authclient';
 import { Logo } from '../logo';
+import LoginOptions from './login-options';
 
 function styles(theme: any) {
     return createStyles({
@@ -89,11 +90,17 @@ class LoginModal extends React.Component<IProps, IState> {
                     <DialogContent style={{ padding: 30 }}>
                         <Logo />
                         {formType === FormType.EXISTING_USER_LOGIN && (
-                            <LoginForm
-                                onChangeForm={(formType: FormType) => this.setState({ formType })}
-                                onSuccess={(username: string) => {
+                            // <LoginForm
+                            //     onChangeForm={(formType: FormType) => this.setState({ formType })}
+                            //     onSuccess={(username: string) => {
+                            //         this.setState({ status: UserStatus.SIGNED_IN });
+                            //         this.props.onLogin(username);
+                            //     }}
+                            // />
+                            <LoginOptions
+                                onSuccess={(token) => {
+                                    console.log(token);
                                     this.setState({ status: UserStatus.SIGNED_IN });
-                                    this.props.onLogin(username);
                                 }}
                             />
                         )}
