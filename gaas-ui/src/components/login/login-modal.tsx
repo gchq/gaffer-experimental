@@ -99,10 +99,11 @@ class LoginModal extends React.Component<IProps, IState> {
                             //     }}
                             // />
                             <LoginOptions
-                                onSuccess={(token) => {
+                                onSuccess={(token, username) => {
                                     console.log('token' + token);
                                     RestClient.setJwtToken(token);
                                     this.setState({ status: UserStatus.SIGNED_IN });
+                                    this.props.onLogin(username);
                                 }}
                             />
                         )}

@@ -3,8 +3,9 @@ import { FormType } from './login-modal';
 import { BrowserRouter as Router, Switch, Route, Link, useParams, useLocation } from 'react-router-dom';
 import axios, { AxiosResponse } from 'axios';
 import React from 'react';
+import jwt_decode from 'jwt-decode';
 interface IProps {
-    onSuccess(token: string): void;
+    onSuccess(token: string, username: string): void;
 }
 export default function LoginOptions(props: IProps) {
     const url =
@@ -29,7 +30,9 @@ export default function LoginOptions(props: IProps) {
                     // href={url}
                     onClick={async () => {
                         const params = getQueryStringParams(window.location.href.split('#').pop());
-                        props.onSuccess(params['id_token']);
+                        const decode = Object.entries(jwt_decode(params['id_token']));
+                        const username = decode.filter((entry) => entry[0] === 'cognito:username')[0][1];
+                        props.onSuccess(params['id_token'], username as string);
                     }}
                 >
                     {`thing` + window.location.href}
