@@ -27,12 +27,12 @@ export default function LoginOptions(props: IProps) {
                     variant="contained"
                     color="primary"
                     style={{ marginTop: '20px' }}
-                    // href={url}
+                    href={url}
                     onClick={async () => {
-                        const params = getQueryStringParams(window.location.href.split('#').pop());
-                        const decode = Object.entries(jwt_decode(params['id_token']));
+                        const idtoken = getQueryStringParams(window.location.href.split('#').pop())['id_token'];
+                        const decode = Object.entries(jwt_decode(idtoken));
                         const username = decode.filter((entry) => entry[0] === 'cognito:username')[0][1];
-                        props.onSuccess(params['id_token'], username as string);
+                        props.onSuccess(idtoken, username as string);
                     }}
                 >
                     {`thing` + window.location.href}
