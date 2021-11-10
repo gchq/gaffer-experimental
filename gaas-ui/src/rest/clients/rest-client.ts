@@ -12,7 +12,6 @@ export class RestClient<T> {
 
     public static setJwtToken(jwtToken: string) {
         this.jwtToken = jwtToken;
-        console.log('client' + this.jwtToken);
     }
 
     private baseURL: string;

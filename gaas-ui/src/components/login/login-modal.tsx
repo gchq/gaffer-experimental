@@ -10,6 +10,7 @@ import { IAuthClient } from '../../rest/clients/authclient';
 import { Logo } from '../logo';
 import LoginOptions from './login-options';
 import { RestClient } from '../../rest/clients/rest-client';
+import jwt_decode from 'jwt-decode';
 
 function styles(theme: any) {
     return createStyles({
@@ -61,7 +62,24 @@ class LoginModal extends React.Component<IProps, IState> {
             signOutMessage: '',
         };
     }
-
+    getQueryStringParams = (query: any) =>
+        query
+            ? (/^[?#]/.test(query) ? query.slice(1) : query).split('&').reduce((params: any, param: any) => {
+                  const [key, value] = param.split('=');
+                  params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
+                  return params;
+              }, {})
+            : {};
+    public async componentDidMount() {
+        const idToken = this.getQueryStringParams(window.location.href.split('#').pop())['id_token'];
+        if (idToken) {
+            const decode = Object.entries(jwt_decode(idToken));
+            const username = decode.filter((entry) => entry[0] === 'cognito:username')[0][1] as string;
+            RestClient.setJwtToken(idToken);
+            this.setState({ status: UserStatus.SIGNED_IN });
+            this.props.onLogin(username);
+        }
+    }
     private readonly authClient: IAuthClient = new AuthClientFactory().create();
 
     public render() {
@@ -98,14 +116,7 @@ class LoginModal extends React.Component<IProps, IState> {
                             //         this.props.onLogin(username);
                             //     }}
                             // />
-                            <LoginOptions
-                                onSuccess={(token, username) => {
-                                    console.log('token' + token);
-                                    RestClient.setJwtToken(token);
-                                    this.setState({ status: UserStatus.SIGNED_IN });
-                                    this.props.onLogin(username);
-                                }}
-                            />
+                            <LoginOptions />
                         )}
                         {formType === FormType.TEMP_PASSWORD_LOGIN && (
                             <TempPasswordLoginForm
