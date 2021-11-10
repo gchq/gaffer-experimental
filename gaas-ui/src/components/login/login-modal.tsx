@@ -11,6 +11,7 @@ import { Logo } from '../logo';
 import LoginOptions from './login-options';
 import { RestClient } from '../../rest/clients/rest-client';
 import jwt_decode from 'jwt-decode';
+import { Config } from '../../rest/config';
 
 function styles(theme: any) {
     return createStyles({
@@ -108,14 +109,16 @@ class LoginModal extends React.Component<IProps, IState> {
                 <Dialog id="login-modal-dialog" fullScreen open={status === UserStatus.SIGNED_OUT}>
                     <DialogContent style={{ padding: 30 }}>
                         <Logo />
-                        {formType === FormType.EXISTING_USER_LOGIN && (
-                            // <LoginForm
-                            //     onChangeForm={(formType: FormType) => this.setState({ formType })}
-                            //     onSuccess={(username: string) => {
-                            //         this.setState({ status: UserStatus.SIGNED_IN });
-                            //         this.props.onLogin(username);
-                            //     }}
-                            // />
+                        {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM !== 'AWS' && (
+                            <LoginForm
+                                onChangeForm={(formType: FormType) => this.setState({ formType })}
+                                onSuccess={(username: string) => {
+                                    this.setState({ status: UserStatus.SIGNED_IN });
+                                    this.props.onLogin(username);
+                                }}
+                            />
+                        )}
+                        {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM === 'AWS' && (
                             <LoginOptions />
                         )}
                         {formType === FormType.TEMP_PASSWORD_LOGIN && (

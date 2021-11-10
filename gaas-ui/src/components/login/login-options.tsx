@@ -1,13 +1,9 @@
 import { Button, Grid } from '@material-ui/core';
-import { FormType } from './login-modal';
-import { BrowserRouter as Router, Switch, Route, Link, useParams, useLocation } from 'react-router-dom';
-import axios, { AxiosResponse } from 'axios';
 import React from 'react';
-import jwt_decode from 'jwt-decode';
+import { Config } from '../../rest/config';
 
 export default function LoginOptions() {
-    const url =
-        'https://kteam-auth-endpoint.auth.eu-west-2.amazoncognito.com/login?client_id=35hmud0udlqfkc4g0ntaur6t8v&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile+gaas-rest-resource/graphs&redirect_uri=http://localhost:3000/viewgraphs';
+    const url = Config.REACT_APP_AUTH_ENDPOINT;
 
     return (
         <main id="cognito-login">
