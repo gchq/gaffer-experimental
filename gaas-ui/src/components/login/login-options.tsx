@@ -6,7 +6,7 @@ export default function LoginOptions() {
     const url = Config.REACT_APP_AUTH_ENDPOINT;
 
     return (
-        <main id="cognito-login">
+        <main id="login-options">
             <Grid container direction="column" justify="center" alignItems="center">
                 <Button
                     id="login-with-cognito-button"
