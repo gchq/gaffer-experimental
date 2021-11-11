@@ -14,7 +14,15 @@ export default function LoginOptions() {
                     variant="contained"
                     color="primary"
                     style={{ marginTop: '20px' }}
-                    href={url}
+                    href={
+                        url +
+                        '/login' +
+                        '?client_id=' +
+                        Config.REACT_APP_COGNITO_CLIENTID +
+                        '&response_type=token' +
+                        '&scope=aws.cognito.signin.user.admin+email+openid+phone+profile+gaas-rest-resource/graphs' +
+                        '&redirect_uri=http://localhost:3000/viewgraphs'
+                    }
                 >
                     Login with Cognito
                 </Button>

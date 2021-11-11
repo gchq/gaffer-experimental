@@ -94,7 +94,9 @@ describe('Cognito Login', () => {
         });
         it('should have the REACT_APP_AUTH_ENDPOINT in the button href', () => {
             const button = component.find('a#login-with-cognito-button');
-            expect(button.props().href).toBe('https://localhost:4000');
+            expect(button.props().href).toBe(
+                'https://localhost:4000/login?client_id=undefined&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile+gaas-rest-resource/graphs&redirect_uri=http://localhost:3000/viewgraphs'
+            );
         });
         it('should call back with Username when a User logs in with Cognito', async () => {
             window.location.hash =
