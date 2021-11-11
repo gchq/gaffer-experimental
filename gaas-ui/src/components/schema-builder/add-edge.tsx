@@ -158,6 +158,8 @@ export default function AddEdge(props: IProps): ReactElement {
             case 'handleUpdateProperties':
                 draft.properties[action.value.key] = action.value.value;
                 return;
+            case 'validateEdgeProperties':
+                draft.properties = action.value;
         }
     }
 
@@ -322,7 +324,24 @@ export default function AddEdge(props: IProps): ReactElement {
                     </DialogContent>
                 </Dialog>
             </Grid>
-
+            <Grid item>
+                <TextField
+                    id="properties-viewer"
+                    inputProps={{
+                        name: 'Schema Types',
+                        id: 'schema-types-input',
+                        'aria-label': 'schema-types-input',
+                    }}
+                    fullWidth
+                    value={JSON.stringify(state.properties)}
+                    name="schema-types"
+                    required
+                    multiline
+                    rows={5}
+                    variant="outlined"
+                    onChange={(e) => dispatch({ type: 'validateEdgeProperties', value: e.target.value })}
+                />
+            </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">
                 <Button
                     id={'add-edge-button'}
