@@ -22,7 +22,6 @@ export class AuthApiClient implements IAuthClient {
                 .execute();
             RestClient.setJwtToken(token.data);
             onSuccess();
-            
         } catch (e) {
             onError((e as Error).message);
         }

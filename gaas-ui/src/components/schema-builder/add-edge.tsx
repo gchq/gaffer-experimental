@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Box } from '@material-ui/core';
 import { useImmerReducer } from 'use-immer';
 
@@ -7,6 +7,7 @@ interface IProps {
 
     types: Array<string>;
 }
+
 interface IState {
     edgeName: {
         value: string;
@@ -34,11 +35,14 @@ interface IState {
         value: string;
         hasErrors: boolean;
     };
+    inputs: Array<string>;
 }
 
 export default function AddEdge(props: IProps): ReactElement {
     const { onAddEdge, types } = props;
 
+    const [inputs, setInputs] = useState([{ value: '' }]);
+    const [result, setResult] = useState({});
     function addEdgeSubmit() {
         const edgeToAdd: any = {};
         edgeToAdd[state.edgeName.value] = {
@@ -46,6 +50,7 @@ export default function AddEdge(props: IProps): ReactElement {
             source: state.edgeSource.value,
             destination: state.edgeDestination.value,
             directed: state.edgeDirected.value,
+            properties: Object.assign({}, inputs),
         };
         onAddEdge(edgeToAdd);
         dispatch({ type: 'reset' });
@@ -78,6 +83,7 @@ export default function AddEdge(props: IProps): ReactElement {
             value: '',
             hasErrors: false,
         },
+        inputs: [],
     };
 
     function addEdgeReducer(draft: any, action: any) {
@@ -146,6 +152,25 @@ export default function AddEdge(props: IProps): ReactElement {
             state.edgeDestination.value.length === 0 ||
             state.edgeDirected.value.length === 0
         );
+    }
+
+    function addHandler(key: any) {
+        const _inputs = [...inputs];
+        _inputs.push({ value: '' });
+        setInputs(_inputs);
+    }
+
+    function deleteHandler(key: any) {
+        const _inputs = inputs.filter((input, index) => index !== key);
+        setInputs(_inputs);
+    }
+
+    function inputHandler(e: any, key: any) {
+        console.log('text: ' + e);
+        console.log('key: ' + key);
+        const _inputs = [...inputs];
+        _inputs[key].value = e;
+        setInputs(_inputs);
     }
 
     return (
@@ -256,6 +281,32 @@ export default function AddEdge(props: IProps): ReactElement {
                         <MenuItem value={'false'}>False</MenuItem>
                     </Select>
                 </FormControl>
+            </Grid>
+
+            <Grid item>
+                <Box display="flex" alignItems="center" justifyContent="center">
+                    <Button id={'add-property-button'} name={'Add Property'} variant="outlined" onClick={addHandler}>
+                        Add Property
+                    </Button>
+                </Box>
+                {inputs.map((input, key) => (
+                    <TextField
+                        id={'edge-property-input'}
+                        label={'name'}
+                        aria-label="edge-property-input"
+                        inputProps={{
+                            name: 'Edge property',
+                            id: 'edge-property-input',
+                            'aria-label': 'edge-property-input',
+                        }}
+                        name={'edge-property'}
+                        value={input.value}
+                        variant="outlined"
+                        fullWidth
+                        onChange={(e) => inputHandler(e.target.value, key)}
+                        helperText={'Enter property'}
+                    />
+                ))}
             </Grid>
 
             <Box display="flex" alignItems="center" justifyContent="center">

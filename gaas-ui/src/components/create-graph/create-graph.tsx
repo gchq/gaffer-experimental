@@ -95,32 +95,32 @@ export default class CreateGraph extends React.Component<{}, IState> {
         this.getAllStoreTypes();
     }
 
-  private async getGraphs() {
-      try {
-          const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
-          this.setState({graphs});
-      } catch (e:any) {
-          this.setState({
-              outcome: AlertType.FAILED,
-              outcomeMessage: `Failed to get all graphs. ${(e as Error)}`,
-          });
-      }
-  }
+    private async getGraphs() {
+        try {
+            const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
+            this.setState({ graphs });
+        } catch (e: any) {
+            this.setState({
+                outcome: AlertType.FAILED,
+                outcomeMessage: `Failed to get all graphs. ${e as Error}`,
+            });
+        }
+    }
 
-  private async getAllStoreTypes() {
-      try {
-          const storeTypes: IStoreTypes = await new GetStoreTypesRepo().get();
-              this.setState({
-                  storeTypes: storeTypes.storeTypes,
-                  federatedStoreTypes: storeTypes.federatedStoreTypes
-              });
-      } catch (e:any) {
-          this.setState({
-              outcome: AlertType.FAILED,
-              outcomeMessage: `Storetypes unavailable: ${(e as Error)}`,
-          });
-      }
-  }
+    private async getAllStoreTypes() {
+        try {
+            const storeTypes: IStoreTypes = await new GetStoreTypesRepo().get();
+            this.setState({
+                storeTypes: storeTypes.storeTypes,
+                federatedStoreTypes: storeTypes.federatedStoreTypes,
+            });
+        } catch (e: any) {
+            this.setState({
+                outcome: AlertType.FAILED,
+                outcomeMessage: `Storetypes unavailable: ${e as Error}`,
+            });
+        }
+    }
 
     private async submitNewGraph() {
         //TODO: separate functions
@@ -128,43 +128,41 @@ export default class CreateGraph extends React.Component<{}, IState> {
 
         let config: ICreateGraphConfig;
         if (this.currentStoreTypeIsFederated()) {
-            const subGraphs: Array<{ graphId: string; url: string; }> = graphs
+            const subGraphs: Array<{ graphId: string; url: string }> = graphs
                 .filter((graph) => selectedGraphs.includes(graph.getId()))
                 .map((subGraph: Graph) => ({
                     graphId: subGraph.getId(),
                     url: subGraph.getUrl(),
                 }));
-            config = {proxyStores: subGraphs};
-
+            config = { proxyStores: subGraphs };
         } else {
             const elements = new ElementsSchema(this.state.elements);
             const types = new TypesSchema(this.state.types);
             elements.validate();
             types.validate();
             config = {
-                schema: {elements: elements.getElements(), types: types.getTypes()},
+                schema: { elements: elements.getElements(), types: types.getTypes() },
             };
         }
 
         try {
             if (!this.currentStoreTypeIsFederated()) {
                 await new CreateStoreTypesGraphRepo().create(graphId, description, storeType, config);
-
-          } else {
-              await new CreateFederatedGraphRepo().create(graphId, description, storeType, config);
-          }
-          this.setState({
-              outcome: AlertType.SUCCESS,
-              outcomeMessage: `${graphId} was successfully added`,
-          });
-          this.resetForm();
-      } catch (e:any) {
-          this.setState({
-              outcome: AlertType.FAILED,
-              outcomeMessage: `Failed to Add '${graphId}' Graph. ${(e as Error).message}`,
-          });
-      }
-  }
+            } else {
+                await new CreateFederatedGraphRepo().create(graphId, description, storeType, config);
+            }
+            this.setState({
+                outcome: AlertType.SUCCESS,
+                outcomeMessage: `${graphId} was successfully added`,
+            });
+            this.resetForm();
+        } catch (e: any) {
+            this.setState({
+                outcome: AlertType.FAILED,
+                outcomeMessage: `Failed to Add '${graphId}' Graph. ${(e as Error).message}`,
+            });
+        }
+    }
 
     private resetForm() {
         this.setState({
@@ -456,6 +454,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                     />
                                 </Grid>
                             </form>
+
                             <AddProxyGraphInput
                                 hide={federatedStoreIsNotSelected()}
                                 proxyURLValue={this.state.proxyURL}
