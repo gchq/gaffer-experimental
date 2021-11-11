@@ -1,6 +1,22 @@
 import React, { ReactElement, useState } from 'react';
-import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Box } from '@material-ui/core';
+import {
+    Button,
+    FormControl,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Box,
+    Dialog,
+    IconButton,
+    DialogTitle,
+    DialogContent,
+} from '@material-ui/core';
 import { useImmerReducer } from 'use-immer';
+import ClearIcon from '@material-ui/icons/Clear';
+import { arrayBuffer } from 'stream/consumers';
+import AddProperty from './add-property';
 
 interface IProps {
     onAddEdge(edge: object): void;
@@ -35,7 +51,13 @@ interface IState {
         value: string;
         hasErrors: boolean;
     };
+    edgeProperty: {
+        key: string;
+        value: string;
+    };
+    properties: {};
     inputs: Array<string>;
+    openProperties: boolean;
 }
 
 export default function AddEdge(props: IProps): ReactElement {
@@ -50,7 +72,7 @@ export default function AddEdge(props: IProps): ReactElement {
             source: state.edgeSource.value,
             destination: state.edgeDestination.value,
             directed: state.edgeDirected.value,
-            properties: Object.assign({}, inputs),
+            properties: state.properties,
         };
         onAddEdge(edgeToAdd);
         dispatch({ type: 'reset' });
@@ -84,6 +106,12 @@ export default function AddEdge(props: IProps): ReactElement {
             hasErrors: false,
         },
         inputs: [],
+        edgeProperty: {
+            key: '',
+            value: '',
+        },
+        properties: {},
+        openProperties: false,
     };
 
     function addEdgeReducer(draft: any, action: any) {
@@ -136,6 +164,15 @@ export default function AddEdge(props: IProps): ReactElement {
                 if (draft.edgeDirected.value.length === 0) {
                     draft.edgeDirected.hasErrors = true;
                 }
+                return;
+            case 'addPropertyKey':
+                draft.edgeProperty.key = action.value;
+                return;
+            case 'handleClickCloseProperties':
+                draft.openProperties = action.value;
+                return;
+            case 'handleUpdateProperties':
+                draft.properties[action.value.key] = action.value.value;
                 return;
         }
     }
@@ -284,29 +321,41 @@ export default function AddEdge(props: IProps): ReactElement {
             </Grid>
 
             <Grid item>
-                <Box display="flex" alignItems="center" justifyContent="center">
-                    <Button id={'add-property-button'} name={'Add Property'} variant="outlined" onClick={addHandler}>
-                        Add Property
-                    </Button>
-                </Box>
-                {inputs.map((input, key) => (
-                    <TextField
-                        id={'edge-property-input'}
-                        label={'name'}
-                        aria-label="edge-property-input"
-                        inputProps={{
-                            name: 'Edge property',
-                            id: 'edge-property-input',
-                            'aria-label': 'edge-property-input',
-                        }}
-                        name={'edge-property'}
-                        value={input.value}
-                        variant="outlined"
-                        fullWidth
-                        onChange={(e) => inputHandler(e.target.value, key)}
-                        helperText={'Enter property'}
-                    />
-                ))}
+                <Button
+                    variant="outlined"
+                    onClick={(e) => dispatch({ type: 'handleClickCloseProperties', value: true })}
+                    id={'add-properties-button'}
+                >
+                    Add Property
+                </Button>
+                <Dialog
+                    fullWidth
+                    maxWidth="xs"
+                    open={state.openProperties}
+                    onClose={(e) => dispatch({ type: 'handleClickCloseProperties', value: false })}
+                    id={'add-properties-dialog'}
+                    aria-labelledby="add-properties-dialog"
+                >
+                    <Box display="flex" alignItems="right" justifyContent="right">
+                        <IconButton
+                            id="close-add-properties-button"
+                            onClick={(e) => dispatch({ type: 'handleClickCloseProperties', value: false })}
+                        >
+                            <ClearIcon />
+                        </IconButton>
+                    </Box>
+
+                    <Box display="flex" alignItems="center" justifyContent="center">
+                        <DialogTitle id="add-properties-dialog-title">{'Add Property'}</DialogTitle>
+                    </Box>
+                    <DialogContent>
+                        <AddProperty
+                            onAddProperty={(properties) =>
+                                dispatch({ type: 'handleUpdateProperties', value: properties })
+                            }
+                        />
+                    </DialogContent>
+                </Dialog>
             </Grid>
 
             <Box display="flex" alignItems="center" justifyContent="center">
