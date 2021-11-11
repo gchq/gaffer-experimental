@@ -88,7 +88,7 @@ export default function AddProperty(props: IProps): ReactElement {
             </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">
                 <Button id={'add-edge-button'} name={'Add Edge'} variant="outlined" onClick={addPropertySubmit}>
-                    Add Edge
+                    Add Property
                 </Button>
             </Box>
         </Grid>
