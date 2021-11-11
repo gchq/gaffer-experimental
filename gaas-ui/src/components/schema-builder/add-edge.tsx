@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
 import {
     Button,
     FormControl,
@@ -15,7 +15,6 @@ import {
 } from '@material-ui/core';
 import { useImmerReducer } from 'use-immer';
 import ClearIcon from '@material-ui/icons/Clear';
-import { arrayBuffer } from 'stream/consumers';
 import AddProperty from './add-property';
 
 interface IProps {
@@ -51,20 +50,13 @@ interface IState {
         value: string;
         hasErrors: boolean;
     };
-    edgeProperty: {
-        key: string;
-        value: string;
-    };
     properties: {};
-    inputs: Array<string>;
     openProperties: boolean;
 }
 
 export default function AddEdge(props: IProps): ReactElement {
     const { onAddEdge, types } = props;
 
-    const [inputs, setInputs] = useState([{ value: '' }]);
-    const [result, setResult] = useState({});
     function addEdgeSubmit() {
         const edgeToAdd: any = {};
         edgeToAdd[state.edgeName.value] = {
@@ -104,11 +96,6 @@ export default function AddEdge(props: IProps): ReactElement {
         edgeDirected: {
             value: '',
             hasErrors: false,
-        },
-        inputs: [],
-        edgeProperty: {
-            key: '',
-            value: '',
         },
         properties: {},
         openProperties: false,
@@ -165,9 +152,6 @@ export default function AddEdge(props: IProps): ReactElement {
                     draft.edgeDirected.hasErrors = true;
                 }
                 return;
-            case 'addPropertyKey':
-                draft.edgeProperty.key = action.value;
-                return;
             case 'handleClickCloseProperties':
                 draft.openProperties = action.value;
                 return;
@@ -189,25 +173,6 @@ export default function AddEdge(props: IProps): ReactElement {
             state.edgeDestination.value.length === 0 ||
             state.edgeDirected.value.length === 0
         );
-    }
-
-    function addHandler(key: any) {
-        const _inputs = [...inputs];
-        _inputs.push({ value: '' });
-        setInputs(_inputs);
-    }
-
-    function deleteHandler(key: any) {
-        const _inputs = inputs.filter((input, index) => index !== key);
-        setInputs(_inputs);
-    }
-
-    function inputHandler(e: any, key: any) {
-        console.log('text: ' + e);
-        console.log('key: ' + key);
-        const _inputs = [...inputs];
-        _inputs[key].value = e;
-        setInputs(_inputs);
     }
 
     return (

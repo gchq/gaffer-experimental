@@ -1,20 +1,19 @@
 import { Box, Button, Grid, TextField } from '@material-ui/core';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { useImmerReducer } from 'use-immer';
 
 interface IProps {
     onAddProperty(properties: object): void;
 }
+
 interface IState {
     property: {
         key: string;
         value: string;
         hasErrors: boolean;
     };
-    // key: string;
-    // value: string;
-    // hasErrors: boolean;
 }
+
 export default function AddProperty(props: IProps): ReactElement {
     const { onAddProperty } = props;
 
@@ -24,16 +23,11 @@ export default function AddProperty(props: IProps): ReactElement {
             key: '',
             hasErrors: false,
         },
-        // value: '',
-        // key: '',
-        // hasErrors: false,
-        // },
     };
 
     function addPropertySubmit() {
-        // const propertyToAdd: any = {};
-        // propertyToAdd[state.key] = state.value;
         onAddProperty(state.property);
+        dispatch({ type: 'reset' });
     }
 
     function addEdgeReducer(draft: any, action: any) {
@@ -93,13 +87,7 @@ export default function AddProperty(props: IProps): ReactElement {
                 />
             </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">
-                <Button
-                    id={'add-edge-button'}
-                    name={'Add Edge'}
-                    variant="outlined"
-                    //disabled={disableAddEdgeButton()}
-                    onClick={addPropertySubmit}
-                >
+                <Button id={'add-edge-button'} name={'Add Edge'} variant="outlined" onClick={addPropertySubmit}>
                     Add Edge
                 </Button>
             </Box>
