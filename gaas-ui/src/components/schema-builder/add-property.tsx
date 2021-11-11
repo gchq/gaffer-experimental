@@ -74,10 +74,10 @@ export default function AddProperty(props: IProps): ReactElement {
                     aria-label="property-value-input"
                     inputProps={{
                         name: 'Property Value',
-                        id: 'edge-description-input',
-                        'aria-label': 'edge-description-input',
+                        id: 'property-value-input',
+                        'aria-label': 'property-value-input',
                     }}
-                    name={'edge-description'}
+                    name={'property-value'}
                     value={state.property.value}
                     variant="outlined"
                     fullWidth
@@ -87,7 +87,7 @@ export default function AddProperty(props: IProps): ReactElement {
                 />
             </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">
-                <Button id={'add-edge-button'} name={'Add Edge'} variant="outlined" onClick={addPropertySubmit}>
+                <Button id={'add-property-button'} name={'Add Property'} variant="outlined" onClick={addPropertySubmit}>
                     Add Property
                 </Button>
             </Box>
