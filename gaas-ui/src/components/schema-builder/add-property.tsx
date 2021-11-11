@@ -31,9 +31,8 @@ export default function AddProperty(props: IProps): ReactElement {
     };
 
     function addPropertySubmit() {
-        // const propertyToAdd: any = {};
-        // propertyToAdd[state.key] = state.value;
         onAddProperty(state.property);
+        dispatch({ type: 'reset' });
     }
 
     function addEdgeReducer(draft: any, action: any) {
