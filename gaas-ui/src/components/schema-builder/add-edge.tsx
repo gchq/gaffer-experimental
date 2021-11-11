@@ -1,12 +1,28 @@
 import React, { ReactElement } from 'react';
-import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Box } from '@material-ui/core';
+import {
+    Button,
+    FormControl,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Box,
+    Dialog,
+    IconButton,
+    DialogTitle,
+    DialogContent,
+} from '@material-ui/core';
 import { useImmerReducer } from 'use-immer';
+import ClearIcon from '@material-ui/icons/Clear';
+import AddProperty from './add-property';
 
 interface IProps {
     onAddEdge(edge: object): void;
 
     types: Array<string>;
 }
+
 interface IState {
     edgeName: {
         value: string;
@@ -34,6 +50,8 @@ interface IState {
         value: string;
         hasErrors: boolean;
     };
+    properties: {};
+    openProperties: boolean;
 }
 
 export default function AddEdge(props: IProps): ReactElement {
@@ -46,6 +64,7 @@ export default function AddEdge(props: IProps): ReactElement {
             source: state.edgeSource.value,
             destination: state.edgeDestination.value,
             directed: state.edgeDirected.value,
+            properties: state.properties,
         };
         onAddEdge(edgeToAdd);
         dispatch({ type: 'reset' });
@@ -78,6 +97,8 @@ export default function AddEdge(props: IProps): ReactElement {
             value: '',
             hasErrors: false,
         },
+        properties: {},
+        openProperties: false,
     };
 
     function addEdgeReducer(draft: any, action: any) {
@@ -130,6 +151,12 @@ export default function AddEdge(props: IProps): ReactElement {
                 if (draft.edgeDirected.value.length === 0) {
                     draft.edgeDirected.hasErrors = true;
                 }
+                return;
+            case 'handleClickCloseProperties':
+                draft.openProperties = action.value;
+                return;
+            case 'handleUpdateProperties':
+                draft.properties[action.value.key] = action.value.value;
                 return;
         }
     }
@@ -256,6 +283,44 @@ export default function AddEdge(props: IProps): ReactElement {
                         <MenuItem value={'false'}>False</MenuItem>
                     </Select>
                 </FormControl>
+            </Grid>
+
+            <Grid item>
+                <Button
+                    variant="outlined"
+                    onClick={(e) => dispatch({ type: 'handleClickCloseProperties', value: true })}
+                    id={'add-properties-button'}
+                >
+                    Add Property
+                </Button>
+                <Dialog
+                    fullWidth
+                    maxWidth="xs"
+                    open={state.openProperties}
+                    onClose={(e) => dispatch({ type: 'handleClickCloseProperties', value: false })}
+                    id={'add-properties-dialog'}
+                    aria-labelledby="add-properties-dialog"
+                >
+                    <Box display="flex" alignItems="right" justifyContent="right">
+                        <IconButton
+                            id="close-add-properties-button"
+                            onClick={(e) => dispatch({ type: 'handleClickCloseProperties', value: false })}
+                        >
+                            <ClearIcon />
+                        </IconButton>
+                    </Box>
+
+                    <Box display="flex" alignItems="center" justifyContent="center">
+                        <DialogTitle id="add-properties-dialog-title">{'Add Property'}</DialogTitle>
+                    </Box>
+                    <DialogContent>
+                        <AddProperty
+                            onAddProperty={(properties) =>
+                                dispatch({ type: 'handleUpdateProperties', value: properties })
+                            }
+                        />
+                    </DialogContent>
+                </Dialog>
             </Grid>
 
             <Box display="flex" alignItems="center" justifyContent="center">

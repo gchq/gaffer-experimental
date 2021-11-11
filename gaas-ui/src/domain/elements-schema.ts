@@ -140,5 +140,5 @@ export interface IEdge {
     source: string;
     destination: string;
     directed: string;
-    properties: string;
+    properties: object;
 }
