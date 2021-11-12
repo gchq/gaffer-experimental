@@ -12,6 +12,7 @@ import LoginOptions from './login-options';
 import { RestClient } from '../../rest/clients/rest-client';
 import jwt_decode from 'jwt-decode';
 import { Config } from '../../rest/config';
+import { CognitoIdentityClient } from '../../rest/clients/cognito-identity-client';
 
 function styles(theme: any) {
     return createStyles({
@@ -101,7 +102,11 @@ class LoginModal extends React.Component<IProps, IState> {
                                 signOutMessage: errorMessage,
                             });
                         };
-                        this.authClient.signOut(onSuccess, onError);
+                        if (Config.REACT_APP_API_PLATFORM === 'AWS') {
+                            CognitoIdentityClient.logout();
+                        } else {
+                            this.authClient.signOut(onSuccess, onError);
+                        }
                     }}
                 >
                     Sign out
@@ -119,7 +124,7 @@ class LoginModal extends React.Component<IProps, IState> {
                             />
                         )}
                         {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM === 'AWS' && (
-                            <LoginOptions />
+                            <LoginOptions cognitoLoginURL={CognitoIdentityClient.buildCognitoLoginURL()} />
                         )}
                         {formType === FormType.TEMP_PASSWORD_LOGIN && (
                             <TempPasswordLoginForm

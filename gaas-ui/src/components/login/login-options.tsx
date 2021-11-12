@@ -1,10 +1,11 @@
 import { Button, Grid } from '@material-ui/core';
 import React from 'react';
-import { Config } from '../../rest/config';
 
-export default function LoginOptions() {
-    const url = Config.REACT_APP_AUTH_ENDPOINT;
-
+interface IProps {
+    cognitoLoginURL: string;
+}
+export default function LoginOptions(props: IProps) {
+    const { cognitoLoginURL } = props;
     return (
         <main id="login-options">
             <Grid container direction="column" justify="center" alignItems="center">
@@ -14,15 +15,7 @@ export default function LoginOptions() {
                     variant="contained"
                     color="primary"
                     style={{ marginTop: '20px' }}
-                    href={
-                        url +
-                        '/login' +
-                        '?client_id=' +
-                        Config.REACT_APP_COGNITO_CLIENTID +
-                        '&response_type=token' +
-                        '&scope=aws.cognito.signin.user.admin+email+openid+phone+profile+gaas-rest-resource/graphs' +
-                        '&redirect_uri=http://localhost:3000/viewgraphs'
-                    }
+                    href={cognitoLoginURL}
                 >
                     Login with Cognito
                 </Button>
