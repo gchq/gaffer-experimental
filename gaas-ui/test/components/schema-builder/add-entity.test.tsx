@@ -91,6 +91,7 @@ describe('Add Entity UI Component', () => {
                 testEntity: {
                     description: 'test entity description',
                     vertex: 'typeOne',
+                    properties: {},
                 },
             };
 
