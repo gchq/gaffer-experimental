@@ -21,19 +21,15 @@ export class CognitoIdentityClient implements IAuthClient {
             Config.REACT_APP_COGNITO_REDIRECT_URI
         );
     }
-    public static async logout() {
-        try {
-            await axios.get(
-                Config.REACT_APP_AUTH_ENDPOINT +
-                    '/logout' +
-                    '?client_id=' +
-                    Config.REACT_APP_COGNITO_CLIENTID +
-                    '&redirect_uri=' +
-                    Config.REACT_APP_COGNITO_REDIRECT_URI
-            );
-        } catch (e) {
-            return e as Error;
-        }
+    public static buildCognitoLogoutURL(): string {
+        return (
+            Config.REACT_APP_AUTH_ENDPOINT +
+            '/logout' +
+            '?client_id=' +
+            Config.REACT_APP_COGNITO_CLIENTID +
+            '&logout_uri=' +
+            Config.REACT_APP_COGNITO_REDIRECT_URI
+        );
     }
     public login(username: string, password: string, onSuccess: Function, onError: Function) {
         CognitoIdentityClient.initCognitoUser(username, password);

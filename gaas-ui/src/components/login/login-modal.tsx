@@ -103,7 +103,7 @@ class LoginModal extends React.Component<IProps, IState> {
                             });
                         };
                         if (Config.REACT_APP_API_PLATFORM === 'AWS') {
-                            CognitoIdentityClient.logout();
+                            window.open(CognitoIdentityClient.buildCognitoLogoutURL(), '_self');
                         } else {
                             this.authClient.signOut(onSuccess, onError);
                         }
