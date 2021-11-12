@@ -62,15 +62,15 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                 return;
 
             case 'handleUpdateTypes':
-                draft.types = action.value;
+                draft.types = Object.assign(draft.types, action.value);
                 return;
 
             case 'handleUpdateEdges':
-                draft.elements.edges = action.value;
+                draft.elements.edges = Object.assign(draft.elements.edges, action.value);
                 return;
 
             case 'handleUpdateEntities':
-                draft.elements.entities = action.value;
+                draft.elements.entities = Object.assign(draft.elements.entities, action.value);
                 return;
             case 'handleClickCloseEntities':
                 draft.openEntities = action.value;
