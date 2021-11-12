@@ -35,7 +35,6 @@ interface IState {
     };
     entityVertex: {
         value: string;
-        hasErrors: boolean;
     };
     openProperties: boolean;
     properties: {};
@@ -70,7 +69,6 @@ export default function AddEntity(props: IProps): ReactElement {
 
         entityVertex: {
             value: '',
-            hasErrors: false,
         },
         openProperties: false,
         properties: {},
@@ -103,17 +101,17 @@ export default function AddEntity(props: IProps): ReactElement {
                 return;
 
             case 'validateEntityVertex':
-                draft.entityVertex.hasErrors = false;
                 draft.entityVertex.value = action.value;
-                if (draft.entityVertex.value.length === 0) {
-                    draft.entityVertex.hasErrors = true;
-                }
                 return;
             case 'handleClickCloseProperties':
                 draft.openProperties = action.value;
                 return;
             case 'handleUpdateProperties':
                 draft.properties[action.value.key] = action.value.value;
+                return;
+
+            case 'validateEntityProperties':
+                draft.properties = action.value;
                 return;
         }
     }
@@ -126,8 +124,7 @@ export default function AddEntity(props: IProps): ReactElement {
             state.entityName.hasErrors ||
             state.entityDescription.value.length === 0 ||
             state.entityDescription.hasErrors ||
-            state.entityVertex.value.length === 0 ||
-            state.entityVertex.hasErrors
+            state.entityVertex.value.length === 0
         );
     }
 
@@ -242,20 +239,20 @@ export default function AddEntity(props: IProps): ReactElement {
             </Grid>
             <Grid item>
                 <TextField
-                    id="properties-viewer"
+                    id="entity-properties-input"
                     inputProps={{
-                        name: 'Schema Types',
-                        id: 'schema-types-input',
-                        'aria-label': 'schema-types-input',
+                        name: 'Entity Properties',
+                        id: 'entity-properties-input',
+                        'aria-label': 'entity-properties-input',
                     }}
                     fullWidth
                     value={JSON.stringify(state.properties)}
-                    name="schema-types"
+                    name="entity-properties"
                     required
                     multiline
                     rows={5}
                     variant="outlined"
-                    onChange={(e) => dispatch({ type: 'validateEdgeProperties', value: e.target.value })}
+                    onChange={(e) => dispatch({ type: 'validateEntityProperties', value: e.target.value })}
                 />
             </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">

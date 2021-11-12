@@ -38,17 +38,14 @@ interface IState {
 
     edgeSource: {
         value: string;
-        hasErrors: boolean;
     };
 
     edgeDestination: {
         value: string;
-        hasErrors: boolean;
     };
 
     edgeDirected: {
         value: string;
-        hasErrors: boolean;
     };
     properties: {};
     openProperties: boolean;
@@ -85,17 +82,14 @@ export default function AddEdge(props: IProps): ReactElement {
 
         edgeSource: {
             value: '',
-            hasErrors: false,
         },
 
         edgeDestination: {
             value: '',
-            hasErrors: false,
         },
 
         edgeDirected: {
             value: '',
-            hasErrors: false,
         },
         properties: {},
         openProperties: false,
@@ -130,27 +124,15 @@ export default function AddEdge(props: IProps): ReactElement {
                 return;
 
             case 'validateEdgeSource':
-                draft.edgeSource.hasErrors = false;
                 draft.edgeSource.value = action.value;
-                if (draft.edgeSource.value.length === 0) {
-                    draft.edgeSource.hasErrors = true;
-                }
                 return;
 
             case 'validateEdgeDestination':
-                draft.edgeDestination.hasErrors = false;
                 draft.edgeDestination.value = action.value;
-                if (draft.edgeDestination.value.length === 0) {
-                    draft.edgeDestination.hasErrors = true;
-                }
                 return;
 
             case 'validateEdgeDirected':
-                draft.edgeDirected.hasErrors = false;
                 draft.edgeDirected.value = action.value;
-                if (draft.edgeDirected.value.length === 0) {
-                    draft.edgeDirected.hasErrors = true;
-                }
                 return;
             case 'handleClickCloseProperties':
                 draft.openProperties = action.value;
@@ -160,6 +142,7 @@ export default function AddEdge(props: IProps): ReactElement {
                 return;
             case 'validateEdgeProperties':
                 draft.properties = action.value;
+                return;
         }
     }
 
@@ -326,15 +309,15 @@ export default function AddEdge(props: IProps): ReactElement {
             </Grid>
             <Grid item>
                 <TextField
-                    id="properties-viewer"
+                    id={'edge-properties-input'}
                     inputProps={{
-                        name: 'Schema Types',
-                        id: 'schema-types-input',
-                        'aria-label': 'schema-types-input',
+                        name: 'Edge Properties',
+                        id: 'edge-properties-input',
+                        'aria-label': 'edge-properties-input',
                     }}
                     fullWidth
                     value={JSON.stringify(state.properties)}
-                    name="schema-types"
+                    name={'edge-properties'}
                     required
                     multiline
                     rows={5}
@@ -342,6 +325,7 @@ export default function AddEdge(props: IProps): ReactElement {
                     onChange={(e) => dispatch({ type: 'validateEdgeProperties', value: e.target.value })}
                 />
             </Grid>
+
             <Box display="flex" alignItems="center" justifyContent="center">
                 <Button
                     id={'add-edge-button'}

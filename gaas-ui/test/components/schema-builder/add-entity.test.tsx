@@ -47,6 +47,12 @@ describe('Add Entity UI Component', () => {
             expect(vertexSelect.text()).toBe('Vertex *');
         });
 
+        it('should have an Entity Property input field', () => {
+            const propertyInputField = wrapper.find('textarea#entity-properties-input');
+
+            expect(propertyInputField.props().name).toBe('Entity Properties');
+        });
+
         //TODO: properties, group by
     });
     describe('Add Entity Button', () => {

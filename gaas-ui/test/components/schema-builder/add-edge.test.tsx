@@ -57,6 +57,11 @@ describe('Add Edge UI Component', () => {
             expect(directedSelect.text()).toBe('Directed *');
         });
 
+        it('should have an Edge Property input field', () => {
+            const propertyInputField = wrapper.find('textarea#edge-properties-input');
+
+            expect(propertyInputField.props().name).toBe('Edge Properties');
+        });
         //TODO: Properties and Group by
     });
     describe('Add Edge Button', () => {
@@ -88,6 +93,7 @@ describe('Add Edge UI Component', () => {
             expect(onAddEdgeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
         });
     });
+
     describe('Disbale | Enable Add Edge Button', () => {
         it('should be disabled when Edge Name field is empty', () => {
             addEdgeDescription('test edge description');
