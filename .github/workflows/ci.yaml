@@ -16,7 +16,7 @@ jobs:
     - name: Run build
       run: mvn clean install
 
-  run_ui_tests:
+  run-ui-tests:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -38,3 +38,6 @@ jobs:
     - name: Run tests
       run:
         npm run test
+    - name: Lint code
+      run:
+        npm run lint-errors
