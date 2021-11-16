@@ -8,6 +8,7 @@ interface IProps {
 }
 export default function LoginOptions(props: IProps) {
     const { cognitoLoginURL } = props;
+    const href = sanitizeUrl(cognitoLoginURL);
     return (
         <main id="login-options">
             <Grid container direction="column" justify="center" alignItems="center">
@@ -17,7 +18,7 @@ export default function LoginOptions(props: IProps) {
                     variant="contained"
                     color="primary"
                     style={{ marginTop: "20px" }}
-                    href={sanitizeUrl(cognitoLoginURL)}
+                    href={href}
                 >
                     Login with Cognito
                 </Button>
