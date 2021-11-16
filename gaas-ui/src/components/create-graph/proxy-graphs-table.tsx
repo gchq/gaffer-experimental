@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement } from "react";
 import {
     Checkbox,
     InputLabel,
@@ -8,8 +8,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-} from '@material-ui/core';
-import { Graph } from '../../domain/graph';
+} from "@material-ui/core";
+import { Graph } from "../../domain/graph";
 
 interface IProps {
     hide: boolean;
@@ -24,20 +24,20 @@ export default function ProxyGraphsTable(props: IProps): ReactElement {
     return (
         <>
             {!hide && (
-                <TableContainer id={'proxy-graphs-table'}>
+                <TableContainer id={"proxy-graphs-table"}>
                     <InputLabel aria-label="proxy-graphs-table-label">Proxy Graphs Table</InputLabel>
                     <Table size="medium" aria-label="Proxy Graphs Table">
                         <TableHead>
-                            <TableRow style={{ background: '#F4F2F2' }}>
+                            <TableRow style={{ background: "#F4F2F2" }}>
                                 <TableCell component="th">Graph ID</TableCell>
                                 <TableCell align="center">Description</TableCell>
                                 <TableCell align="center">Type</TableCell>
                                 <TableCell align="right">
                                     <Checkbox
                                         inputProps={{
-                                            name: 'checkbox all',
-                                            id: 'all-checkbox',
-                                            'aria-label': 'all-checkbox',
+                                            name: "checkbox all",
+                                            id: "all-checkbox",
+                                            "aria-label": "all-checkbox",
                                         }}
                                         checked={graphs.length > 0 && selectedGraphs.length === graphs.length}
                                         onChange={(event) =>
@@ -45,13 +45,13 @@ export default function ProxyGraphsTable(props: IProps): ReactElement {
                                                 event.target.checked ? graphs.map((graph) => graph.getId()) : []
                                             )
                                         }
-                                    />{' '}
+                                    />{" "}
                                 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {graphs
-                                .filter((graph) => graph.getStatus() === 'UP')
+                                .filter((graph) => graph.getStatus() === "UP")
                                 .map((graph) => (
                                     <TableRow key={graph.getId()} hover>
                                         <TableCell scope="row">{graph.getId()}</TableCell>
@@ -60,9 +60,9 @@ export default function ProxyGraphsTable(props: IProps): ReactElement {
                                         <TableCell align="right" id={`${graph.getId()}-checkbox-cell`}>
                                             <Checkbox
                                                 inputProps={{
-                                                    name: 'checkbox' + graph.getId(),
-                                                    id: 'checkbox' + graph.getId(),
-                                                    'aria-label': 'checkbox' + graph.getId(),
+                                                    name: "checkbox" + graph.getId(),
+                                                    id: "checkbox" + graph.getId(),
+                                                    "aria-label": "checkbox" + graph.getId(),
                                                 }}
                                                 id={`${graph.getId()}-checkbox`}
                                                 required

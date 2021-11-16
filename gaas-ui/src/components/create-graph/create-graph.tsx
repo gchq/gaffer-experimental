@@ -13,28 +13,28 @@ import {
     Tooltip,
     Typography,
     Zoom,
-} from '@material-ui/core';
-import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
-import AddRoundedIcon from '@material-ui/icons/AddRounded';
-import React from 'react';
-import { CreateStoreTypesGraphRepo, ICreateGraphConfig } from '../../rest/repositories/create-storetypes-graph-repo';
-import { AlertType, NotificationAlert } from '../alerts/notification-alert';
-import { GetAllGraphsRepo } from '../../rest/repositories/get-all-graphs-repo';
-import { Graph } from '../../domain/graph';
-import { ElementsSchema } from '../../domain/elements-schema';
-import { TypesSchema } from '../../domain/types-schema';
-import AttachFileIcon from '@material-ui/icons/AttachFile';
-import ClearIcon from '@material-ui/icons/Clear';
-import { DropzoneArea } from 'material-ui-dropzone';
-import { TransitionProps } from '@material-ui/core/transitions';
-import GraphIdDescriptionInput from './graph-id-description';
-import SchemaInput from './schema-inputs';
-import StoreTypeSelect from './storetype';
-import AddProxyGraphInput from './add-proxy-graph-input';
-import ProxyGraphsTable from './proxy-graphs-table';
-import { GetStoreTypesRepo, IStoreTypes } from '../../rest/repositories/get-store-types-repo';
-import { CreateFederatedGraphRepo } from '../../rest/repositories/create-federated-graph-repo';
-import { Copyright } from '../copyright/copyright';
+} from "@material-ui/core";
+import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
+import AddRoundedIcon from "@material-ui/icons/AddRounded";
+import React from "react";
+import { CreateStoreTypesGraphRepo, ICreateGraphConfig } from "../../rest/repositories/create-storetypes-graph-repo";
+import { AlertType, NotificationAlert } from "../alerts/notification-alert";
+import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
+import { Graph } from "../../domain/graph";
+import { ElementsSchema } from "../../domain/elements-schema";
+import { TypesSchema } from "../../domain/types-schema";
+import AttachFileIcon from "@material-ui/icons/AttachFile";
+import ClearIcon from "@material-ui/icons/Clear";
+import { DropzoneArea } from "material-ui-dropzone";
+import { TransitionProps } from "@material-ui/core/transitions";
+import GraphIdDescriptionInput from "./graph-id-description";
+import SchemaInput from "./schema-inputs";
+import StoreTypeSelect from "./storetype";
+import AddProxyGraphInput from "./add-proxy-graph-input";
+import ProxyGraphsTable from "./proxy-graphs-table";
+import { GetStoreTypesRepo, IStoreTypes } from "../../rest/repositories/get-store-types-repo";
+import { CreateFederatedGraphRepo } from "../../rest/repositories/create-federated-graph-repo";
+import { Copyright } from "../copyright/copyright";
 
 interface IState {
     graphId: string;
@@ -66,25 +66,25 @@ export default class CreateGraph extends React.Component<{}, IState> {
     constructor(props: object) {
         super(props);
         this.state = {
-            graphId: '',
-            description: '',
-            schemaJson: '',
-            elements: '',
+            graphId: "",
+            description: "",
+            schemaJson: "",
+            elements: "",
             elementsFiles: [],
             elementsFieldDisabled: false,
-            types: '',
+            types: "",
             typesFiles: [],
             typesFieldDisabled: false,
             dialogIsOpen: false,
-            storeType: '',
+            storeType: "",
             storeTypes: [],
             federatedStoreTypes: [],
-            proxyURL: '',
-            root: '',
+            proxyURL: "",
+            root: "",
             graphs: [],
             selectedGraphs: [],
             outcome: undefined,
-            outcomeMessage: '',
+            outcomeMessage: "",
         };
     }
 
@@ -164,14 +164,14 @@ export default class CreateGraph extends React.Component<{}, IState> {
 
     private resetForm() {
         this.setState({
-            graphId: '',
-            description: '',
+            graphId: "",
+            description: "",
             elementsFiles: [],
             typesFiles: [],
-            schemaJson: '',
-            elements: '',
-            types: '',
-            proxyURL: '',
+            schemaJson: "",
+            elements: "",
+            types: "",
+            proxyURL: "",
             selectedGraphs: [],
         });
     }
@@ -232,7 +232,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
         };
 
         return (
-            <main aria-label="create-graph-Page" id={'create-graph-page'}>
+            <main aria-label="create-graph-Page" id={"create-graph-page"}>
                 {this.state.outcome && (
                     <NotificationAlert alertType={this.state.outcome} message={this.state.outcomeMessage} />
                 )}
@@ -254,9 +254,9 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                 <Box my={4}>
                                     <Typography
                                         variant="h4"
-                                        align={'center'}
-                                        id={'create-graph-title'}
-                                        aria-label={'create-graph-title'}
+                                        align={"center"}
+                                        id={"create-graph-title"}
+                                        aria-label={"create-graph-title"}
                                     >
                                         Create Graph
                                     </Typography>
@@ -297,7 +297,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                 direction="row"
                                                 justify="flex-end"
                                                 alignItems="center"
-                                                id={'test'}
+                                                id={"test"}
                                             >
                                                 <Tooltip
                                                     TransitionComponent={Zoom}
@@ -326,9 +326,9 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                     <IconButton
                                                         onClick={() =>
                                                             this.setState({
-                                                                elements: '',
+                                                                elements: "",
                                                                 elementsFiles: [],
-                                                                types: '',
+                                                                types: "",
                                                                 typesFiles: [],
                                                             })
                                                         }
@@ -343,7 +343,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                     TransitionComponent={Transition}
                                                     keepMounted
                                                     onClose={closeDialogBox}
-                                                    style={{ minWidth: '500px' }}
+                                                    style={{ minWidth: "500px" }}
                                                     aria-labelledby="alert-dialog-slide-title"
                                                     aria-describedby="alert-dialog-slide-description"
                                                 >
@@ -369,14 +369,14 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                                 dropzoneText="Drag and drop elements.JSON"
                                                                 useChipsForPreview
                                                                 previewGridProps={{
-                                                                    container: { spacing: 1, direction: 'row' },
+                                                                    container: { spacing: 1, direction: "row" },
                                                                 }}
                                                                 previewChipProps={{
                                                                     classes: { root: this.classes.previewChip },
                                                                 }}
                                                                 previewText="Selected files"
                                                                 clearOnUnmount={true}
-                                                                acceptedFiles={['application/json']}
+                                                                acceptedFiles={["application/json"]}
                                                                 filesLimit={1}
                                                             />
                                                         </Grid>
@@ -388,14 +388,14 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                                 dropzoneText="Drag and drop types.JSON"
                                                                 useChipsForPreview
                                                                 previewGridProps={{
-                                                                    container: { spacing: 1, direction: 'row' },
+                                                                    container: { spacing: 1, direction: "row" },
                                                                 }}
                                                                 previewChipProps={{
                                                                     classes: { root: this.classes.previewChip },
                                                                 }}
                                                                 previewText="Selected files"
                                                                 clearOnUnmount={true}
-                                                                acceptedFiles={['application/json']}
+                                                                acceptedFiles={["application/json"]}
                                                                 filesLimit={1}
                                                             />
                                                         </Grid>
@@ -466,28 +466,28 @@ export default class CreateGraph extends React.Component<{}, IState> {
 
     private classes: any = makeStyles((theme) => ({
         root: {
-            width: '100%',
+            width: "100%",
             marginTop: 40,
         },
         paper: {
             marginTop: theme.spacing(2),
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
         },
         avatar: {
             margin: theme.spacing(1),
             backgroundColor: theme.palette.secondary.main,
         },
         form: {
-            width: '100%', // Fix IE 11 issue.
+            width: "100%", // Fix IE 11 issue.
             marginTop: theme.spacing(3),
         },
         submit: {
             margin: theme.spacing(3, 0, 2),
         },
         button: {
-            margin: '10px',
+            margin: "10px",
         },
         previewChip: {
             minWidth: 160,

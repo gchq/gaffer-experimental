@@ -1,7 +1,7 @@
-import { RestClient } from '../clients/rest-client';
-import { ICreateFederatedGraphRequestBody } from '../http-message-interfaces/request-interfaces';
-import { Config } from '../config';
-import { ICreateGraphConfig } from './create-storetypes-graph-repo';
+import { RestClient } from "../clients/rest-client";
+import { ICreateFederatedGraphRequestBody } from "../http-message-interfaces/request-interfaces";
+import { Config } from "../config";
+import { ICreateGraphConfig } from "./create-storetypes-graph-repo";
 
 export class CreateFederatedGraphRepo {
     public async create(
@@ -11,7 +11,7 @@ export class CreateFederatedGraphRepo {
         config: ICreateGraphConfig
     ): Promise<void> {
         if (config.proxyStores === undefined) {
-            throw new Error('Proxy Stores is undefined');
+            throw new Error("Proxy Stores is undefined");
         }
         const httpRequestBody: ICreateFederatedGraphRequestBody = {
             graphId: graphId,

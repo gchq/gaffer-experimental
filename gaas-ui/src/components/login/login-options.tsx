@@ -1,5 +1,5 @@
-import { Button, Grid } from '@material-ui/core';
-import React from 'react';
+import { Button, Grid } from "@material-ui/core";
+import React from "react";
 
 interface IProps {
     cognitoLoginURL: string;
@@ -14,7 +14,7 @@ export default function LoginOptions(props: IProps) {
                     aria-label="login-with-cognito-button"
                     variant="contained"
                     color="primary"
-                    style={{ marginTop: '20px' }}
+                    style={{ marginTop: "20px" }}
                     href={cognitoLoginURL}
                 >
                     Login with Cognito

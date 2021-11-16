@@ -1,9 +1,9 @@
-import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
-import { IAuthClient } from './authclient';
-import { poolData } from './cognito-config';
-import { RestClient } from './rest-client';
-import { Config } from '../config';
-import axios from 'axios';
+import { AuthenticationDetails, CognitoUser, CognitoUserPool } from "amazon-cognito-identity-js";
+import { IAuthClient } from "./authclient";
+import { poolData } from "./cognito-config";
+import { RestClient } from "./rest-client";
+import { Config } from "../config";
+import axios from "axios";
 
 export class CognitoIdentityClient implements IAuthClient {
     private static cognitoUser: CognitoUser;
@@ -11,23 +11,23 @@ export class CognitoIdentityClient implements IAuthClient {
     public static buildCognitoLoginURL(): string {
         return (
             Config.REACT_APP_AUTH_ENDPOINT +
-            '/login' +
-            '?client_id=' +
+            "/login" +
+            "?client_id=" +
             Config.REACT_APP_COGNITO_CLIENTID +
-            '&response_type=token' +
-            '&scope=' +
+            "&response_type=token" +
+            "&scope=" +
             Config.REACT_APP_COGNITO_SCOPE +
-            '&redirect_uri=' +
+            "&redirect_uri=" +
             Config.REACT_APP_COGNITO_REDIRECT_URI
         );
     }
     public static buildCognitoLogoutURL(): string {
         return (
             Config.REACT_APP_AUTH_ENDPOINT +
-            '/logout' +
-            '?client_id=' +
+            "/logout" +
+            "?client_id=" +
             Config.REACT_APP_COGNITO_CLIENTID +
-            '&logout_uri=' +
+            "&logout_uri=" +
             Config.REACT_APP_COGNITO_REDIRECT_URI
         );
     }

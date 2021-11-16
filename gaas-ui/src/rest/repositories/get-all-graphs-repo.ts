@@ -1,8 +1,8 @@
-import { Graph } from '../../domain/graph';
-import { GraphType } from '../../domain/graph-type';
-import { IApiResponse, RestClient } from '../clients/rest-client';
-import { Config } from '../config';
-import { IAllGraphsResponse, IGraphByIdResponse } from '../http-message-interfaces/response-interfaces';
+import { Graph } from "../../domain/graph";
+import { GraphType } from "../../domain/graph-type";
+import { IApiResponse, RestClient } from "../clients/rest-client";
+import { Config } from "../config";
+import { IAllGraphsResponse, IGraphByIdResponse } from "../http-message-interfaces/response-interfaces";
 
 export class GetAllGraphsRepo {
     public async getAll(): Promise<Graph[]> {

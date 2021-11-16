@@ -1,4 +1,4 @@
-import { IApiResponse, RestClient } from '../clients/rest-client';
+import { IApiResponse, RestClient } from "../clients/rest-client";
 
 export class GetGraphIdRepo {
     public async getGraphId(proxiedGraphBaseUrl: string): Promise<string> {

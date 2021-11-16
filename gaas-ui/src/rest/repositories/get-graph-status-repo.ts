@@ -1,5 +1,5 @@
-import { IApiResponse, RestClient } from '../clients/rest-client';
-import { IGraphStatusResponse } from '../http-message-interfaces/response-interfaces';
+import { IApiResponse, RestClient } from "../clients/rest-client";
+import { IGraphStatusResponse } from "../http-message-interfaces/response-interfaces";
 
 export class GetGraphStatusRepo {
     public async getStatus(proxiedGraphBaseUrl: string): Promise<string> {

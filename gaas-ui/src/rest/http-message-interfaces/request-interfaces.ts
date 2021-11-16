@@ -1,5 +1,5 @@
-import { IElements } from '../../domain/elements-schema';
-import { ITypesSchema } from '../../domain/types-schema';
+import { IElements } from "../../domain/elements-schema";
+import { ITypesSchema } from "../../domain/types-schema";
 export interface ICreateGraphInterface {
     graphId: string;
     description: string;

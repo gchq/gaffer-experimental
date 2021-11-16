@@ -1,6 +1,6 @@
-import { Config } from '../config';
-import { IAuthClient } from './authclient';
-import { IApiResponse, RestClient } from './rest-client';
+import { Config } from "../config";
+import { IAuthClient } from "./authclient";
+import { IApiResponse, RestClient } from "./rest-client";
 
 interface IAuthRequest {
     username: string;
@@ -57,7 +57,7 @@ export class AuthApiClient implements IAuthClient {
             await new RestClient()
                 .baseUrl(Config.REACT_APP_AUTH_ENDPOINT)
                 .post()
-                .requestBody('signout')
+                .requestBody("signout")
                 .authentication()
                 .execute();
             onSuccess();

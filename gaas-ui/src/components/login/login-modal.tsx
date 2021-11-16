@@ -1,18 +1,18 @@
-import React from 'react';
-import { Button, Dialog, DialogContent, DialogTitle, IconButton } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import TempPasswordLoginForm from './temp-password-login-form';
-import LoginForm from './login-form';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
-import { AuthClientFactory } from '../../rest/clients/auth-client-factory';
-import { IAuthClient } from '../../rest/clients/authclient';
-import { Logo } from '../logo';
-import LoginOptions from './login-options';
-import { RestClient } from '../../rest/clients/rest-client';
-import jwt_decode from 'jwt-decode';
-import { Config } from '../../rest/config';
-import { CognitoIdentityClient } from '../../rest/clients/cognito-identity-client';
+import React from "react";
+import { Button, Dialog, DialogContent, DialogTitle, IconButton } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
+import TempPasswordLoginForm from "./temp-password-login-form";
+import LoginForm from "./login-form";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { createStyles, withStyles, WithStyles } from "@material-ui/core/styles";
+import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
+import { IAuthClient } from "../../rest/clients/authclient";
+import { Logo } from "../logo";
+import LoginOptions from "./login-options";
+import { RestClient } from "../../rest/clients/rest-client";
+import jwt_decode from "jwt-decode";
+import { Config } from "../../rest/config";
+import { CognitoIdentityClient } from "../../rest/clients/cognito-identity-client";
 
 function styles(theme: any) {
     return createStyles({
@@ -21,7 +21,7 @@ function styles(theme: any) {
             padding: theme.spacing(2),
         },
         closeButton: {
-            position: 'absolute',
+            position: "absolute",
             right: theme.spacing(1),
             top: theme.spacing(1),
             color: theme.palette.grey[500],
@@ -61,22 +61,22 @@ class LoginModal extends React.Component<IProps, IState> {
             status: UserStatus.SIGNED_OUT,
             formType: FormType.EXISTING_USER_LOGIN,
             openSignOutModal: false,
-            signOutMessage: '',
+            signOutMessage: "",
         };
     }
     getQueryStringParams = (query: any) =>
         query
-            ? (/^[?#]/.test(query) ? query.slice(1) : query).split('&').reduce((params: any, param: any) => {
-                  const [key, value] = param.split('=');
-                  params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
+            ? (/^[?#]/.test(query) ? query.slice(1) : query).split("&").reduce((params: any, param: any) => {
+                  const [key, value] = param.split("=");
+                  params[key] = value ? decodeURIComponent(value.replace(/\+/g, " ")) : "";
                   return params;
               }, {})
             : {};
     public async componentDidMount() {
-        const idToken = this.getQueryStringParams(window.location.href.split('#').pop())['id_token'];
+        const idToken = this.getQueryStringParams(window.location.href.split("#").pop())["id_token"];
         if (idToken) {
             const decode = Object.entries(jwt_decode(idToken));
-            const username = decode.filter((entry) => entry[0] === 'cognito:username')[0][1] as string;
+            const username = decode.filter((entry) => entry[0] === "cognito:username")[0][1] as string;
             RestClient.setJwtToken(idToken);
             this.setState({ status: UserStatus.SIGNED_IN });
             this.props.onLogin(username);
@@ -102,8 +102,8 @@ class LoginModal extends React.Component<IProps, IState> {
                                 signOutMessage: errorMessage,
                             });
                         };
-                        if (Config.REACT_APP_API_PLATFORM === 'AWS') {
-                            window.open(CognitoIdentityClient.buildCognitoLogoutURL(), '_self');
+                        if (Config.REACT_APP_API_PLATFORM === "AWS") {
+                            window.open(CognitoIdentityClient.buildCognitoLogoutURL(), "_self");
                         } else {
                             this.authClient.signOut(onSuccess, onError);
                         }
@@ -114,7 +114,7 @@ class LoginModal extends React.Component<IProps, IState> {
                 <Dialog id="login-modal-dialog" fullScreen open={status === UserStatus.SIGNED_OUT}>
                     <DialogContent style={{ padding: 30 }}>
                         <Logo />
-                        {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM !== 'AWS' && (
+                        {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM !== "AWS" && (
                             <LoginForm
                                 onChangeForm={(formType: FormType) => this.setState({ formType })}
                                 onSuccess={(username: string) => {
@@ -123,7 +123,7 @@ class LoginModal extends React.Component<IProps, IState> {
                                 }}
                             />
                         )}
-                        {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM === 'AWS' && (
+                        {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM === "AWS" && (
                             <LoginOptions cognitoLoginURL={CognitoIdentityClient.buildCognitoLoginURL()} />
                         )}
                         {formType === FormType.TEMP_PASSWORD_LOGIN && (

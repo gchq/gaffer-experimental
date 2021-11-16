@@ -1,13 +1,13 @@
-import React from 'react';
-import { Container, Grid, Toolbar, Typography, Box, CardContent, Paper } from '@material-ui/core';
-import { Graph } from '../../domain/graph';
-import { GetAllGraphsRepo } from '../../rest/repositories/get-all-graphs-repo';
-import { DeleteGraphRepo } from '../../rest/repositories/delete-graph-repo';
-import { GetStoreTypesRepo } from '../../rest/repositories/get-store-types-repo';
-import { AlertType, NotificationAlert } from '../alerts/notification-alert';
-import { Copyright } from '../copyright/copyright';
-import Gauge from './gauge';
-import { ViewGraphsTable } from './view-graphs-table';
+import React from "react";
+import { Container, Grid, Toolbar, Typography, Box, CardContent, Paper } from "@material-ui/core";
+import { Graph } from "../../domain/graph";
+import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
+import { DeleteGraphRepo } from "../../rest/repositories/delete-graph-repo";
+import { GetStoreTypesRepo } from "../../rest/repositories/get-store-types-repo";
+import { AlertType, NotificationAlert } from "../alerts/notification-alert";
+import { Copyright } from "../copyright/copyright";
+import Gauge from "./gauge";
+import { ViewGraphsTable } from "./view-graphs-table";
 
 interface IState {
     graphs: Graph[];
@@ -21,7 +21,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
         super(props);
         this.state = {
             graphs: [],
-            errorMessage: '',
+            errorMessage: "",
             federatedStores: [],
             otherStores: [],
         };
@@ -45,7 +45,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
     private async getGraphs() {
         try {
             const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
-            this.setState({ graphs, errorMessage: '' });
+            this.setState({ graphs, errorMessage: "" });
         } catch (e) {
             this.setState({ errorMessage: `Failed to get all graphs. ${e as Error}` });
         }
@@ -81,16 +81,16 @@ export default class ViewGraph extends React.Component<{}, IState> {
         const { graphs, errorMessage } = this.state;
 
         return (
-            <main aria-label={'view-graphs-page'}>
+            <main aria-label={"view-graphs-page"}>
                 {errorMessage && <NotificationAlert alertType={AlertType.FAILED} message={errorMessage} />}
                 <Toolbar />
                 <Container maxWidth="md">
                     <Box my={2}>
                         <Typography
                             variant="h4"
-                            align={'center'}
-                            id={'view-graphs-title'}
-                            aria-label={'view-graphs-title'}
+                            align={"center"}
+                            id={"view-graphs-title"}
+                            aria-label={"view-graphs-title"}
                         >
                             View Graphs
                         </Typography>
@@ -105,17 +105,17 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                     <Gauge
                                         maxValue={graphs.length}
                                         data={[
-                                            { key: 'TOTAL', data: graphs.length },
+                                            { key: "TOTAL", data: graphs.length },
                                             {
-                                                key: 'UP',
-                                                data: graphs.filter((graph) => graph.getStatus() === 'UP').length,
+                                                key: "UP",
+                                                data: graphs.filter((graph) => graph.getStatus() === "UP").length,
                                             },
                                             {
-                                                key: 'DOWN',
-                                                data: graphs.filter((graph) => graph.getStatus() === 'DOWN').length,
+                                                key: "DOWN",
+                                                data: graphs.filter((graph) => graph.getStatus() === "DOWN").length,
                                             },
                                         ]}
-                                        colours={['#fdb81e', '#00ECB1', '#F50057']}
+                                        colours={["#fdb81e", "#00ECB1", "#F50057"]}
                                     />
                                 </CardContent>
                             </Paper>
@@ -130,7 +130,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                                     <Gauge
                                         maxValue={graphs.length}
                                         data={this.convertStoreTypesToGaugeData()}
-                                        colours={['#02bfe7', '#02bfe7', '#02bfe7']}
+                                        colours={["#02bfe7", "#02bfe7", "#02bfe7"]}
                                     />
                                 </CardContent>
                             </Paper>

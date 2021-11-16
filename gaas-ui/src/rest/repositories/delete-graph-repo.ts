@@ -1,5 +1,5 @@
-import { RestClient } from '../clients/rest-client';
-import { Config } from '../config';
+import { RestClient } from "../clients/rest-client";
+import { Config } from "../config";
 
 export class DeleteGraphRepo {
     public async delete(graphId: string): Promise<void> {
