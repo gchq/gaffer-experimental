@@ -10,4 +10,4 @@ data:
         window.REACT_APP_COGNITO_CLIENTID= "{{.Values.envVariables.cognitoClientID}}"
         window.REACT_APP_AUTH_ENDPOINT="{{.Values.envVariables.reactAuthEndpoint}}"
         window.REACT_APP_COGNITO_SCOPE = "{{.Values.envVariables.reactCognitoScope}}"
-        window.REACT_APP_COGNITO_REDIRECT_URI = "{{.Values.envVariables.reactCognitoRedirectURI}}"
+        window.REACT_APP_COGNITO_REDIRECT_URI = "https://{{include "helm.fullname" .}}-{{.Values.namespace}}.{{.Values.ingressSuffix}}/viewgraphs"
