@@ -24,7 +24,10 @@ service:
 envConfigFile: "env-config.js"
 
 envVariables:
-  reactAPIPlatform: "test"
-  kaiRestAPIHost: "http://kubernetes.host.co.uk/"
-  cognitoUserpoolID: "us-east-1_uS3rPo0L1D"
-  cognitoClientID: "c0gN1t0Id"
+  reactAPIPlatform: ""
+  kaiRestAPIHost: ""
+  cognitoUserpoolID: ""
+  cognitoClientID: ""
+  reactAuthEndpoint: ""
+  reactCognitoScope: "&scope=aws.cognito.signin.user.admin+email+openid+phone+profile+gaas-rest-resource/graphs"
+  reactCognitoRedirectURI: ""
