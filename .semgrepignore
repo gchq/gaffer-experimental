@@ -1,2 +1,27 @@
-gaas-ui/server/middleware.js
-gaas-ui/test
+# Ignore git items
+.gitignore
+.git/
+:include .gitignore
+
+# Common large paths
+node_modules/
+build/
+dist/
+vendor/
+env/
+.env/
+venv/
+.venv/
+.tox/
+*.min.js
+
+# Common test paths
+test/
+tests/
+*_test.go
+
+# Semgrep rules folder
+.semgrep
+
+*/test
+*/tests
