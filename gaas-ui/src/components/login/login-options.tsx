@@ -1,5 +1,6 @@
 import { Button, Grid } from "@material-ui/core";
 import React from "react";
+import { Config } from "../../rest/config";
 
 const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 
