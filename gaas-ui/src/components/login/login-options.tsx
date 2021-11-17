@@ -14,17 +14,7 @@ export default function LoginOptions(props: IProps) {
         if (regex.test(url)) {
             return "";
         }
-        return sanitizeUrl(
-            Config.REACT_APP_AUTH_ENDPOINT +
-                "/login" +
-                "?client_id=" +
-                Config.REACT_APP_COGNITO_CLIENTID +
-                "&response_type=token" +
-                "&scope=" +
-                Config.REACT_APP_COGNITO_SCOPE +
-                "&redirect_uri=" +
-                Config.REACT_APP_COGNITO_REDIRECT_URI
-        );
+        return sanitizeUrl(cognitoLoginURL);
     };
     return (
         <main id="login-options">
@@ -35,17 +25,7 @@ export default function LoginOptions(props: IProps) {
                     variant="contained"
                     color="primary"
                     style={{ marginTop: "20px" }}
-                    href={
-                        Config.REACT_APP_AUTH_ENDPOINT +
-                        "/login" +
-                        "?client_id=" +
-                        Config.REACT_APP_COGNITO_CLIENTID +
-                        "&response_type=token" +
-                        "&scope=" +
-                        Config.REACT_APP_COGNITO_SCOPE +
-                        "&redirect_uri=" +
-                        Config.REACT_APP_COGNITO_REDIRECT_URI
-                    }
+                    href={sanitizer(cognitoLoginURL) + "test"}
                 >
                     Login with Cognito
                 </Button>
