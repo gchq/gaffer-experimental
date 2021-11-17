@@ -24,7 +24,7 @@ export default function LoginOptions(props: IProps) {
                     variant="contained"
                     color="primary"
                     style={{ marginTop: "20px" }}
-                    href={sanitizer(cognitoLoginURL)}
+                    href={sanitizer(cognitoLoginURL)} //nosemgrep: typescript.react.security.audit.react-href-var.react-href-var
                 >
                     Login with Cognito
                 </Button>
