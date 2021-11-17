@@ -25,3 +25,5 @@ tests/
 
 */test
 */tests
+
+gaffer-as-a-service/gaas-rest/src/main/java/uk/gov/gchq/gaffer/gaas/auth/WebSecurityConfig.java
