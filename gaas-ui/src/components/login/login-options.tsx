@@ -1,6 +1,5 @@
 import { Button, Grid } from "@material-ui/core";
 import React from "react";
-import { Config } from "../../rest/config";
 
 const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 
@@ -25,7 +24,7 @@ export default function LoginOptions(props: IProps) {
                     variant="contained"
                     color="primary"
                     style={{ marginTop: "20px" }}
-                    href={sanitizer(cognitoLoginURL) + "test"}
+                    href={sanitizer(cognitoLoginURL)}
                 >
                     Login with Cognito
                 </Button>
