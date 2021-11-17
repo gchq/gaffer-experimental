@@ -86,7 +86,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                     )
                     );
         } else {
-            http.csrf().disable() //nosemgrep: java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
+            http.csrf().disable() // nosemgrep: java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
                     // dont authenticate this particular request
                     .authorizeRequests()
                     .antMatchers("/auth", "/v2/api-docs", "/swagger-ui.html", "/swagger-ui/", "/swagger-ui/**", "/swagger-resources",
