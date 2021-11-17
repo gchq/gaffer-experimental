@@ -77,7 +77,7 @@ describe("Login form", () => {
         });
     });
 });
-fdescribe("URL Sanitising in href tags", () => {
+describe("URL Sanitising in href tags", () => {
     beforeEach(() => {
         Config.REACT_APP_API_PLATFORM = "AWS";
         Config.REACT_APP_COGNITO_CLIENTID = "TestClientId";
