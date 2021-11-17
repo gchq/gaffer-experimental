@@ -35,7 +35,17 @@ export default function LoginOptions(props: IProps) {
                     variant="contained"
                     color="primary"
                     style={{ marginTop: "20px" }}
-                    href={sanitizer(cognitoLoginURL)}
+                    href={
+                        Config.REACT_APP_AUTH_ENDPOINT +
+                        "/login" +
+                        "?client_id=" +
+                        Config.REACT_APP_COGNITO_CLIENTID +
+                        "&response_type=token" +
+                        "&scope=" +
+                        Config.REACT_APP_COGNITO_SCOPE +
+                        "&redirect_uri=" +
+                        Config.REACT_APP_COGNITO_REDIRECT_URI
+                    }
                 >
                     Login with Cognito
                 </Button>
