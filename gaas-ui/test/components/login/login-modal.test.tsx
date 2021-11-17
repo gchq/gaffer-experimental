@@ -14,7 +14,11 @@ afterEach(() => {
     component.unmount();
     jestMock.mockReset();
     Config.REACT_APP_API_PLATFORM = "";
+    Config.REACT_APP_COGNITO_USERPOOLID = "";
+    Config.REACT_APP_COGNITO_CLIENTID = "";
     Config.REACT_APP_AUTH_ENDPOINT = "";
+    Config.REACT_APP_COGNITO_SCOPE = "";
+    Config.REACT_APP_COGNITO_REDIRECT_URI = "";
 });
 
 describe("Login form", () => {
@@ -71,6 +75,21 @@ describe("Login form", () => {
 
             expect(component.find(Dialog).at(1).text()).toBe("Sign out was a failure");
         });
+    });
+});
+fdescribe("URL Sanitising in href tags", () => {
+    beforeEach(() => {
+        Config.REACT_APP_API_PLATFORM = "AWS";
+        Config.REACT_APP_COGNITO_CLIENTID = "TestClientId";
+        Config.REACT_APP_AUTH_ENDPOINT = "javascript:alert('XSS');";
+        Config.REACT_APP_COGNITO_SCOPE = "TestScope";
+        Config.REACT_APP_COGNITO_REDIRECT_URI = "http://localhost:3000/viewgraphs";
+        component = mount(<LoginModal onLogin={usernameCallback} />);
+    });
+    it("should sanitize the URL in the href tag", () => {
+        expect(component.find("main#login-options").length).toBe(1);
+        const button = component.find("button#login-with-cognito-button");
+        expect(button.props().href).toBe("");
     });
 });
 describe("Cognito", () => {
