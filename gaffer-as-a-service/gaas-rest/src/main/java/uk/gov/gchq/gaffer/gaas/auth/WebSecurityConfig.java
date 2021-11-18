@@ -87,6 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     );
         } else {
             http.csrf().disable() // nosemgrep: java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
+                    //csrf is disabled as the application uses JWT and stateless and cookieless authentication when using this configuration
                     // dont authenticate this particular request
                     .authorizeRequests()
                     .antMatchers("/auth", "/v2/api-docs", "/swagger-ui.html", "/swagger-ui/", "/swagger-ui/**", "/swagger-resources",

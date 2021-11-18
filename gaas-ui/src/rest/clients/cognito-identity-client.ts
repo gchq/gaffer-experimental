@@ -3,7 +3,6 @@ import { IAuthClient } from "./authclient";
 import { poolData } from "./cognito-config";
 import { RestClient } from "./rest-client";
 import { Config } from "../config";
-import axios from "axios";
 
 export class CognitoIdentityClient implements IAuthClient {
     private static cognitoUser: CognitoUser;
