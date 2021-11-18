@@ -18,7 +18,7 @@ export default function LoginOptions(props: IProps) {
     return (
         <main id="login-options">
             <Grid container direction="column" justify="center" alignItems="center">
-                <Button
+                <Button // nosemgrep
                     id="login-with-cognito-button"
                     aria-label="login-with-cognito-button"
                     variant="contained"
