@@ -26,3 +26,4 @@ tests/
 */test
 */tests
 
+gaas-ui/server/middleware.js
