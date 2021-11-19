@@ -1,4 +1,4 @@
-import {mount, ReactWrapper} from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import StoreTypeSelect from "../../../src/components/create-graph/storetype";
 jest.mock("../../../src/rest/repositories/get-store-types-repo");
@@ -12,17 +12,15 @@ describe("Storetype select component", () => {
     describe("General", () => {
         beforeEach(() => {
             component = mount(
-                <StoreTypeSelect value={""} allStoreTypes={[
-                    "accumulo",
-                    "mapStore",
-                    "proxy",
-                    "proxyNoContextRoot", "federated"
-                ]} onChangeStoreType={onChangeMockCallBack}/>
+                <StoreTypeSelect
+                    value={""}
+                    allStoreTypes={["accumulo", "mapStore", "proxy", "proxyNoContextRoot", "federated"]}
+                    onChangeStoreType={onChangeMockCallBack}
+                />
             );
         });
         it("Should have the correct value in the value props", () => {
-            expect(component.find("div#storetype-formcontrol")
-                .find("input").props().value).toBe("");
+            expect(component.find("div#storetype-formcontrol").find("input").props().value).toBe("");
         });
         it("should allow a storetype to be selected", () => {
             selectStoreType("accumulo");
@@ -35,7 +33,7 @@ describe("Storetype select component", () => {
     describe("Helper Text", () => {
         beforeEach(() => {
             component = mount(
-                <StoreTypeSelect value={""} allStoreTypes={[]} onChangeStoreType={onChangeMockCallBack}/>
+                <StoreTypeSelect value={""} allStoreTypes={[]} onChangeStoreType={onChangeMockCallBack} />
             );
         });
         it("Should display helper text when storetype empty", () => {
@@ -48,6 +46,6 @@ function selectStoreType(storeType: string) {
         .find("div#storetype-formcontrol")
         .find("input")
         .simulate("change", {
-            target: {value: storeType},
+            target: { value: storeType },
         });
 }

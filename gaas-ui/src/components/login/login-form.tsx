@@ -78,7 +78,9 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                 }}
                                 noValidate
                             >
-                                <InputLabel aria-label="username-input-label" required>Username</InputLabel>
+                                <InputLabel aria-label="username-input-label" required>
+                                    Username
+                                </InputLabel>
                                 <TextField
                                     id="username"
                                     variant="outlined"
@@ -102,7 +104,9 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                         }
                                     }}
                                 />
-                                <InputLabel aria-label="password-input-label" required>Password</InputLabel>
+                                <InputLabel aria-label="password-input-label" required>
+                                    Password
+                                </InputLabel>
                                 <TextField
                                     variant="outlined"
                                     value={this.state.password}

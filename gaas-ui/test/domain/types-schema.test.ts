@@ -372,8 +372,7 @@ describe("Types Schema Validation", () => {
                         class: "uk.gov.gchq.koryphe.impl.binaryoperator.Sum",
                     },
                     serialiser: {
-                        class:
-                            "uk.gov.gchq.gaffer.sketches.clearspring.cardinality.serialisation.HyperLogLogPlusSerialiser",
+                        class: "uk.gov.gchq.gaffer.sketches.clearspring.cardinality.serialisation.HyperLogLogPlusSerialiser",
                     },
                 },
             },

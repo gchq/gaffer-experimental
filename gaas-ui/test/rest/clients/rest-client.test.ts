@@ -16,7 +16,7 @@ describe("RestClient 2** Responses", () => {
             .onDelete("/graphs/redundant-graph")
             .reply(202)
             .onGet("/graph/status")
-            .reply(200, {status: "UP"})
+            .reply(200, { status: "UP" })
             .onGet("/graph/config/description")
             .reply(200, "test")
             .onGet("/graph/config/graphId")
@@ -67,8 +67,8 @@ describe("RestClient 2** Responses", () => {
 
         expect(actual).toEqual({
             status: 200,
-             data:{
-                status: "UP"
+            data: {
+                status: "UP",
             },
         });
     });
@@ -77,7 +77,7 @@ describe("RestClient 2** Responses", () => {
 
         expect(actual).toEqual({
             status: 200,
-             data: "test",
+            data: "test",
         });
     });
     it("should return the graph id when GET graph id is successful", async () => {
@@ -85,7 +85,7 @@ describe("RestClient 2** Responses", () => {
 
         expect(actual).toEqual({
             status: 200,
-             data: "test",
+            data: "test",
         });
     });
 });
@@ -121,7 +121,7 @@ describe("GaaS API 4**/5** Error Responses", () => {
             await new RestClient().create().get().graphs().execute();
             throw new Error("Error did not throw");
         } catch (e) {
-            expect(e.toString()).toBe("Validation Failed: Graph ID can not be null");
+            expect(e).toEqual({ detail: "Graph ID can not be null", title: "Validation Failed" });
         }
     });
     it("should throw 404 Error Message when api returns 404 - get graph status", async () => {
@@ -129,7 +129,7 @@ describe("GaaS API 4**/5** Error Responses", () => {
             await new RestClient().create().get().status().execute();
             throw new Error("Error did not throw");
         } catch (e) {
-            expect(e.toString()).toBe("Not Found: Could not find resource");
+            expect(e).toEqual({ detail: "Could not find resource", title: "Not Found" });
         }
     });
     it("should throw 404 Error Message when api returns 404 - get graph description", async () => {
@@ -137,7 +137,7 @@ describe("GaaS API 4**/5** Error Responses", () => {
             await new RestClient().create().get().description().execute();
             throw new Error("Error did not throw");
         } catch (e) {
-            expect(e.toString()).toBe("Not Found: Could not find resource");
+            expect(e).toEqual({ detail: "Could not find resource", title: "Not Found" });
         }
     });
     it("should throw 404 Error Message when api returns 404 - get graph id", async () => {
@@ -145,7 +145,7 @@ describe("GaaS API 4**/5** Error Responses", () => {
             await new RestClient().create().get().graphId().execute();
             throw new Error("Error did not throw");
         } catch (e) {
-            expect(e.toString()).toBe("Not Found: Could not find resource");
+            expect(e).toEqual({ detail: "Could not find resource", title: "Not Found" });
         }
     });
     it("should throw 404 Error Message when api returns 404", async () => {
@@ -153,7 +153,7 @@ describe("GaaS API 4**/5** Error Responses", () => {
             await new RestClient().create().post().requestBody("unfindable-graph").graphs().execute();
             throw new Error("Error did not throw");
         } catch (e) {
-            expect(e.toString()).toBe("Error Code 404: Not Found");
+            expect(e).toEqual({ detail: "Not Found", title: "Error Code 404" });
         }
     });
     it("should throw 500 Error Message when api returns 404", async () => {
@@ -161,7 +161,7 @@ describe("GaaS API 4**/5** Error Responses", () => {
             await new RestClient().create().post().requestBody({ request: "not-found" }).graphs().execute();
             throw new Error("Error did not throw");
         } catch (e) {
-            expect(e.toString()).toBe("Server Error: Null pointer in back end API");
+            expect(e).toEqual({ detail: "Null pointer in back end API", title: "Server Error" });
         }
     });
     it("should throw 504 Error Message when api returns 404", async () => {
@@ -169,7 +169,7 @@ describe("GaaS API 4**/5** Error Responses", () => {
             await new RestClient().create().delete().graphs("already-deleted").execute();
             throw new Error("Error did not throw");
         } catch (e) {
-            expect(e.toString()).toBe("Server Error: Timeout");
+            expect(e).toEqual({ detail: "Timeout", title: "Server Error" });
         }
     });
 });
@@ -181,12 +181,13 @@ describe("Gaffer REST API 4**/5** Error Responses", () => {
             .reply(403, {
                 statusCode: 403,
                 status: "Forbidden",
-                simpleMessage: "User does not have permission to run operation: uk.gov.gchq.gaffer.operation.impl.GetVariables"
-              })
+                simpleMessage:
+                    "User does not have permission to run operation: uk.gov.gchq.gaffer.operation.impl.GetVariables",
+            })
             .onPost("/graph/status")
             .reply(404, {
-                statusCode: 404
-              })
+                statusCode: 404,
+            })
     );
     afterAll(() => mock.resetHandlers());
 
@@ -195,7 +196,10 @@ describe("Gaffer REST API 4**/5** Error Responses", () => {
             await new RestClient().create().get().uri("/graph/config/graphid").execute();
             throw new Error("Error did not throw");
         } catch (e) {
-            expect(e.toString()).toBe("Forbidden: User does not have permission to run operation: uk.gov.gchq.gaffer.operation.impl.GetVariables");
+            expect(e).toEqual({
+                detail: "User does not have permission to run operation: uk.gov.gchq.gaffer.operation.impl.GetVariables",
+                title: "Forbidden",
+            });
         }
     });
     it("should throw generic status code error message when Gaffer API error response is not an instanceof", async () => {
@@ -203,7 +207,7 @@ describe("Gaffer REST API 4**/5** Error Responses", () => {
             await new RestClient().create().get().uri("/graph/status").execute();
             throw new Error("Error did not throw");
         } catch (e) {
-            expect(e.toString()).toBe("Error Code 404: Not Found");
+            expect(e).toEqual({ detail: "Not Found", title: "Error Code 404" });
         }
     });
 });

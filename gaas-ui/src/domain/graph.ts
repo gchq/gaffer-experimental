@@ -8,7 +8,14 @@ export class Graph {
     private readonly configName: string;
     private readonly type: GraphType;
 
-    constructor(graphId: string, description: string, url: string, status: "UP" | "DOWN", configName: string, type: GraphType) {
+    constructor(
+        graphId: string,
+        description: string,
+        url: string,
+        status: "UP" | "DOWN",
+        configName: string,
+        type: GraphType
+    ) {
         this.graphId = graphId;
         this.description = description;
         this.url = url;

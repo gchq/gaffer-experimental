@@ -138,13 +138,12 @@ const NavigationAppbar: React.FC = (props: any) => {
                 >
                     <Toolbar />
                     <div className={classes.drawerContainer}>
-                        <List
-                            id={"navigation-drawer-list"}
-                            aria-label={"navigation-drawer-list"}
-                        >
+                        <List id={"navigation-drawer-list"} aria-label={"navigation-drawer-list"}>
                             <ListItem className={classes.listItem}>
                                 <ListItemAvatar>
-                                    <Avatar style={{color: "#ffffff", backgroundColor:"#5A7C81"}}>{username.slice(0, 1)}</Avatar>
+                                    <Avatar style={{ color: "#ffffff", backgroundColor: "#5A7C81" }}>
+                                        {username.slice(0, 1)}
+                                    </Avatar>
                                 </ListItemAvatar>
                                 <ListItemText
                                     id="signedin-user-details"
@@ -154,7 +153,7 @@ const NavigationAppbar: React.FC = (props: any) => {
                             </ListItem>
                         </List>
                         <Divider />
-                        <List >
+                        <List>
                             {Routes.map((prop, key) => (
                                 <NavLink
                                     to={prop.path}

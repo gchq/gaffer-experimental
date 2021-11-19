@@ -53,8 +53,12 @@ const NavigationDrawer: React.FC = (props: any) => {
     return (
         <div>
             <div>
-                <AppBar position="static" className={classes.appBar} id={"navigation-appbar"}
-                        aria-label={"navigation-appbar"}>
+                <AppBar
+                    position="static"
+                    className={classes.appBar}
+                    id={"navigation-appbar"}
+                    aria-label={"navigation-appbar"}
+                >
                     <Toolbar>
                         <IconButton
                             edge="start"
@@ -65,24 +69,32 @@ const NavigationDrawer: React.FC = (props: any) => {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h4" className={classes.title} id={"Kai-main-title"}
-                                    aria-label={"Kai-main-title"}>
+                        <Typography
+                            variant="h4"
+                            className={classes.title}
+                            id={"Kai-main-title"}
+                            aria-label={"Kai-main-title"}
+                        >
                             Kai
                         </Typography>
                     </Toolbar>
                 </AppBar>
             </div>
 
-            <Drawer classes={{ paper: classes.drawer }} open={isOpen} onClose={toggleDrawer(false)} id={"navigation-drawer"}
-                    aria-label={"navigation-drawer"}>
+            <Drawer
+                classes={{ paper: classes.drawer }}
+                open={isOpen}
+                onClose={toggleDrawer(false)}
+                id={"navigation-drawer"}
+                aria-label={"navigation-drawer"}
+            >
                 <div
                     className={classes.fullList}
                     role="presentation"
                     onClick={toggleDrawer(false)}
                     onKeyDown={toggleDrawer(false)}
                 >
-                    <MenuList id={"navigation-drawer-menu-list"}
-                              aria-label={"navigation-drawer-menu-list"}>
+                    <MenuList id={"navigation-drawer-menu-list"} aria-label={"navigation-drawer-menu-list"}>
                         {Routes.map((prop, key) => (
                             <NavLink to={prop.path} style={{ color: "inherit", textDecoration: "inherit" }} key={key}>
                                 <MenuItem className={classes.listItem} selected={activeRoute(prop.path)}>

@@ -85,7 +85,7 @@ Make sure you are in the UI directory when running the commands.
 * `docker stop [CONTAINER ID]` stops the specified running container by CONTAINER_ID (can be found with `docker ps` command).
 * `docker logs -f [container ID]` shows a log of the actions happening to the UI container.
 
-Once the process has finished, visit (http://localhost:80), where you will be able to see the UI.
+Once the process has finished, visit (http://localhost:8080), where you will be able to see the UI.
 
 ## Deploying To Kubernetes
 

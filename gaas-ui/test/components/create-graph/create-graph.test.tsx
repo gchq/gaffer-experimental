@@ -1,20 +1,20 @@
-import {mount, ReactWrapper} from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 import React from "react";
-import {act} from "react-dom/test-utils";
+import { act } from "react-dom/test-utils";
 import CreateGraph from "../../../src/components/create-graph/create-graph";
-import {Graph} from "../../../src/domain/graph";
+import { Graph } from "../../../src/domain/graph";
 import {
     CreateStoreTypesGraphRepo,
-    ICreateGraphConfig
+    ICreateGraphConfig,
 } from "../../../src/rest/repositories/create-storetypes-graph-repo";
-import {GetAllGraphsRepo} from "../../../src/rest/repositories/get-all-graphs-repo";
-import {GetGraphDescriptionRepo} from "../../../src/rest/repositories/get-graph-description-repo";
-import {GetGraphIdRepo} from "../../../src/rest/repositories/get-graph-id-repo";
-import {GetGraphStatusRepo} from "../../../src/rest/repositories/get-graph-status-repo";
-import {RestApiError} from "../../../src/rest/RestApiError";
-import {GetStoreTypesRepo, IStoreTypes} from "../../../src/rest/repositories/get-store-types-repo";
-import {CreateFederatedGraphRepo} from "../../../src/rest/repositories/create-federated-graph-repo";
-import {GraphType} from "../../../src/domain/graph-type";
+import { GetAllGraphsRepo } from "../../../src/rest/repositories/get-all-graphs-repo";
+import { GetGraphDescriptionRepo } from "../../../src/rest/repositories/get-graph-description-repo";
+import { GetGraphIdRepo } from "../../../src/rest/repositories/get-graph-id-repo";
+import { GetGraphStatusRepo } from "../../../src/rest/repositories/get-graph-status-repo";
+import { RestApiError } from "../../../src/rest/RestApiError";
+import { GetStoreTypesRepo, IStoreTypes } from "../../../src/rest/repositories/get-store-types-repo";
+import { CreateFederatedGraphRepo } from "../../../src/rest/repositories/create-federated-graph-repo";
+import { GraphType } from "../../../src/domain/graph-type";
 
 jest.mock("../../../src/rest/repositories/create-storetypes-graph-repo");
 jest.mock("../../../src/rest/repositories/create-federated-graph-repo");
@@ -24,23 +24,15 @@ jest.mock("../../../src/rest/repositories/get-graph-description-repo");
 jest.mock("../../../src/rest/repositories/get-graph-id-repo");
 jest.mock("../../../src/rest/repositories/get-store-types-repo");
 
-
 let wrapper: ReactWrapper;
 
-beforeEach(async() => {
+beforeEach(async () => {
     mockGetAllGraphsRepoToReturn([]);
     mockGetStoreTypesRepoToReturn({
-        storeTypes: [
-            "accumulo",
-            "mapStore",
-            "proxy",
-            "proxyNoContextRoot"
-        ],
-        federatedStoreTypes: [
-            "federated"
-        ]
+        storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
+        federatedStoreTypes: ["federated"],
     });
-    wrapper = mount(<CreateGraph/>);
+    wrapper = mount(<CreateGraph />);
 });
 
 afterEach(() => {
@@ -80,13 +72,13 @@ describe("CreateGraph UI component", () => {
     describe("When GetAllGraphsRepo is called", () => {
         let component: ReactWrapper;
         afterEach(() => component.unmount());
-        it("Should display an error notification when GetAllGraphsRepo throws an exception", async() => {
+        it("Should display an error notification when GetAllGraphsRepo throws an exception", async () => {
             await mockGetAllGraphsRepoToThrow(() => {
                 throw new RestApiError("Server Error", "Timeout exception");
             });
-            mockGetStoreTypesRepoToReturn({storeTypes: [], federatedStoreTypes: []});
-            await act(async() => {
-                component = mount(<CreateGraph/>);
+            mockGetStoreTypesRepoToReturn({ storeTypes: [], federatedStoreTypes: [] });
+            await act(async () => {
+                component = mount(<CreateGraph />);
             });
             component.update();
             component.update();
@@ -96,21 +88,16 @@ describe("CreateGraph UI component", () => {
                 "Failed to get all graphs. Server Error: Timeout exception"
             );
         });
-        it("Should display the graphs returned by GetAllGraphsRepo in the graphs table, when federated store type is selected", async() => {
-            mockGetAllGraphsRepoToReturn([new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "mapStore", GraphType.GAAS_GRAPH)]);
+        it("Should display the graphs returned by GetAllGraphsRepo in the graphs table, when federated store type is selected", async () => {
+            mockGetAllGraphsRepoToReturn([
+                new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            ]);
             mockGetStoreTypesRepoToReturn({
-                storeTypes: [
-                    "accumulo",
-                    "mapStore",
-                    "proxy",
-                    "proxyNoContextRoot"
-                ],
-                federatedStoreTypes: [
-                    "federated"
-                ]
+                storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
+                federatedStoreTypes: ["federated"],
             });
-            await act(async() => {
-                component = mount(<CreateGraph/>);
+            await act(async () => {
+                component = mount(<CreateGraph />);
             });
 
             await selectStoreType(component, "federated");
@@ -125,13 +112,13 @@ describe("CreateGraph UI component", () => {
     describe("when GetStoreTypesRepo called", () => {
         let component: ReactWrapper;
         afterEach(() => component.unmount());
-        it("should show error notification when GetStoreTypesRepo throws an exception", async() => {
+        it("should show error notification when GetStoreTypesRepo throws an exception", async () => {
             await mockGetStoreTypesRepoToThrow(() => {
                 throw new RestApiError("Server Error", "Timeout exception");
             });
             mockGetAllGraphsRepoToReturn([]);
-            await act(async() => {
-                component = mount(<CreateGraph/>);
+            await act(async () => {
+                component = mount(<CreateGraph />);
             });
             component.update();
             component.update();
@@ -141,11 +128,11 @@ describe("CreateGraph UI component", () => {
                 "Storetypes unavailable: Server Error: Timeout exception"
             );
         });
-        it("should show helper text when GetStoreTypesRepo returns an empty array", async() => {
+        it("should show helper text when GetStoreTypesRepo returns an empty array", async () => {
             mockGetAllGraphsRepoToReturn([]);
-            mockGetStoreTypesRepoToReturn({storeTypes: [], federatedStoreTypes: []});
-            await act(async() => {
-                component = mount(<CreateGraph/>);
+            mockGetStoreTypesRepoToReturn({ storeTypes: [], federatedStoreTypes: [] });
+            await act(async () => {
+                component = mount(<CreateGraph />);
             });
             component.update();
             component.update();
@@ -155,7 +142,7 @@ describe("CreateGraph UI component", () => {
         });
     });
     describe("When Federated StoreType Is Selected", () => {
-        it("Should have a URL Input, Add Button & Graph Table when federated store is selected", async() => {
+        it("Should have a URL Input, Add Button & Graph Table when federated store is selected", async () => {
             await selectStoreType(wrapper, "federated");
             await wrapper.update();
             await wrapper.update();
@@ -167,13 +154,13 @@ describe("CreateGraph UI component", () => {
             const graphTable = wrapper.find("table");
             expect(graphTable.text()).toBe("Graph IDDescriptionType No Graphs.");
         });
-        it("Should disable the add proxy graph button when the proxy graph URL textfield is empty", async() => {
+        it("Should disable the add proxy graph button when the proxy graph URL textfield is empty", async () => {
             await selectStoreType(wrapper, "federated");
             await wrapper.update();
             const button = wrapper.find("button#add-new-proxy-button");
             expect(button.props().disabled).toEqual(true);
         });
-        it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", async() => {
+        it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", async () => {
             selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
@@ -188,7 +175,7 @@ describe("CreateGraph UI component", () => {
                 "Graph IDDescriptionType graph-idDescription for this Proxy GraphProxy Graph"
             );
         });
-        it("Should not add graph when status is down to the graphs table and display notification", async() => {
+        it("Should not add graph when status is down to the graphs table and display notification", async () => {
             selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("DOWN");
@@ -200,7 +187,7 @@ describe("CreateGraph UI component", () => {
             const graphTable = wrapper.find("table");
             expect(graphTable.text()).not.toContain("http://test.graph.url");
         });
-        it("Should select a graph in table", async() => {
+        it("Should select a graph in table", async () => {
             selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
@@ -214,11 +201,9 @@ describe("CreateGraph UI component", () => {
 
             clickTableBodyCheckBox(0, false);
 
-            expect(wrapper.find("table").find("input").at(1).props().checked).toBe(
-                false
-            );
+            expect(wrapper.find("table").find("input").at(1).props().checked).toBe(false);
         });
-        it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async() => {
+        it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async () => {
             selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
@@ -237,18 +222,15 @@ describe("CreateGraph UI component", () => {
             expect(tableInputs.at(1).props().checked).toBe(true);
             expect(tableInputs.at(2).props().checked).toBe(true);
         });
-        it("Should disable the submit graph button when no proxy stores are selected", async() => {
+        it("Should disable the submit graph button when no proxy stores are selected", async () => {
             selectStoreType(wrapper, "federated");
             await wrapper.update();
             inputGraphId("test");
             inputDescription("test");
 
-
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
-        it("Should uncheck all graphs in the table when the uncheck all button is clicked", async() => {
+        it("Should uncheck all graphs in the table when the uncheck all button is clicked", async () => {
             selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
@@ -270,7 +252,7 @@ describe("CreateGraph UI component", () => {
             expect(tableInputs.at(1).props().checked).toBe(false);
             expect(tableInputs.at(2).props().checked).toBe(false);
         });
-        it("Should call CreateGraphRepo with Federated Store Graph request params and display success message", async() => {
+        it("Should call CreateGraphRepo with Federated Store Graph request params and display success message", async () => {
             const mock = jest.fn();
             mockCreateFederatedGraphRepoWithFunction(mock);
             await inputGraphId("OK Graph");
@@ -289,20 +271,12 @@ describe("CreateGraph UI component", () => {
             await wrapper.update();
             await clickSubmit();
             const expectedConfig: ICreateGraphConfig = {
-                proxyStores: [{graphId: "graph id", url: "https://www.testURL.com/"}]
+                proxyStores: [{ graphId: "graph id", url: "https://www.testURL.com/" }],
             };
-            expect(wrapper.find("div#notification-alert").text()).toBe(
-                "OK Graph was successfully added"
-            );
-            expect(mock).toHaveBeenLastCalledWith(
-                "OK Graph",
-                "test",
-                "federated",
-                expectedConfig,
-            );
-
+            expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
+            expect(mock).toHaveBeenLastCalledWith("OK Graph", "test", "federated", expectedConfig);
         });
-        it("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async() => {
+        it("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async () => {
             const mock = jest.fn();
             mockCreateFederatedGraphRepoWithFunction(mock);
             await inputGraphId("OK Graph");
@@ -322,22 +296,14 @@ describe("CreateGraph UI component", () => {
             await clickSubmit();
 
             const expectedConfig: ICreateGraphConfig = {
-                proxyStores: [{graphId: "n/a", url: "https://www.testURL.com/"}]
+                proxyStores: [{ graphId: "n/a", url: "https://www.testURL.com/" }],
             };
-            expect(wrapper.find("div#notification-alert").text()).toBe(
-                "OK Graph was successfully added"
-            );
-            expect(mock).toHaveBeenLastCalledWith(
-                "OK Graph",
-                "test",
-                "federated",
-                expectedConfig,
-            );
-
+            expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
+            expect(mock).toHaveBeenLastCalledWith("OK Graph", "test", "federated", expectedConfig);
         });
     });
     describe("When Map Store Is Selected", () => {
-        it("Should call CreateGraphRepo with Map Store Graph request params and display success message", async() => {
+        it("Should call CreateGraphRepo with Map Store Graph request params and display success message", async () => {
             const mock = jest.fn();
             mockCreateStoreTypesGraphRepoWithFunction(mock);
 
@@ -351,16 +317,14 @@ describe("CreateGraph UI component", () => {
             await clickSubmit();
 
             const expectedConfig: ICreateGraphConfig = {
-                schema: {elements: elements, types: types},
+                schema: { elements: elements, types: types },
             };
             expect(mock).toHaveBeenLastCalledWith("map-store-graph", "Mappy description", "mapStore", expectedConfig);
-            expect(wrapper.find("div#notification-alert").text()).toBe(
-                "map-store-graph was successfully added"
-            );
+            expect(wrapper.find("div#notification-alert").text()).toBe("map-store-graph was successfully added");
         });
     });
     describe("When Accumulo Store Is Selected", () => {
-        it("Should call CreateGraphRepo with Accumulo Store Graph request params and display success message", async() => {
+        it("Should call CreateGraphRepo with Accumulo Store Graph request params and display success message", async () => {
             const mock = jest.fn();
             mockCreateStoreTypesGraphRepoWithFunction(mock);
 
@@ -374,12 +338,10 @@ describe("CreateGraph UI component", () => {
             await clickSubmit();
 
             const expectedConfig: ICreateGraphConfig = {
-                schema: {elements: elements, types: types},
+                schema: { elements: elements, types: types },
             };
             expect(mock).toHaveBeenLastCalledWith("accumulo-graph", "None", "accumulo", expectedConfig);
-            expect(wrapper.find("div#notification-alert").text()).toBe(
-                "accumulo-graph was successfully added"
-            );
+            expect(wrapper.find("div#notification-alert").text()).toBe("accumulo-graph was successfully added");
         });
     });
     describe("Dropzone behaviour", () => {
@@ -397,27 +359,21 @@ describe("CreateGraph UI component", () => {
 
     describe("Create Graph Button", () => {
         it("should be disabled when Graph Name and Graph Description fields are empty", () => {
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("should be disabled when Graph Name field is empty", () => {
             inputDescription("test");
             inputElements(elements);
             inputTypes(types);
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("should be disabled when Graph Description field is empty", () => {
             inputGraphId("test");
             inputElements(elements);
             inputTypes(types);
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("Should be enabled when Graph Name and Graph Description is not empty", () => {
             inputGraphId("test");
@@ -427,9 +383,7 @@ describe("CreateGraph UI component", () => {
 
             selectStoreType(wrapper, "mapStore");
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                false
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(false);
         });
         it("Should be enabled when Graph Name and Graph Description is not empty and Accumulo selected", () => {
             inputGraphId("test");
@@ -439,49 +393,39 @@ describe("CreateGraph UI component", () => {
 
             selectStoreType(wrapper, "accumulo");
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                false
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(false);
         });
-        it("Should be disabled when federated selected and no proxy stores added", async() => {
+        it("Should be disabled when federated selected and no proxy stores added", async () => {
             selectStoreType(wrapper, "federated");
             await wrapper.update();
             inputGraphId("test");
             inputDescription("test");
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("should be disabled when the elements field is empty", () => {
             inputGraphId("G");
             inputDescription("test");
             inputElements(elements);
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("should be disabled when the types field is empty", () => {
             inputGraphId("G");
             inputDescription("test");
             inputTypes(types);
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("should be disabled when MAP STORE selected and elements schema has error", () => {
             inputGraphId("G");
             inputDescription("test");
             selectStoreType(wrapper, "mapStore");
 
-            inputElements({invalid: "json"});
+            inputElements({ invalid: "json" });
             inputTypes(types);
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("should be disabled when MAP STORE selected and types schema has error", () => {
             inputGraphId("G");
@@ -489,40 +433,33 @@ describe("CreateGraph UI component", () => {
             selectStoreType(wrapper, "mapStore");
 
             inputElements(elements);
-            inputTypes({invalid: "json"});
+            inputTypes({ invalid: "json" });
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("should be disabled when the elements schema has error", () => {
             inputGraphId("G");
             inputDescription("test");
             selectStoreType(wrapper, "accumulo");
-            inputElements({invalid: "json"});
+            inputElements({ invalid: "json" });
             inputTypes(types);
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("should be disabled when the types schema has error", () => {
             inputGraphId("G");
             inputDescription("test");
             selectStoreType(wrapper, "accumulo");
             inputElements(elements);
-            inputTypes({invalid: "json"});
+            inputTypes({ invalid: "json" });
 
-            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(
-                true
-            );
+            expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
     });
 
     describe("On Submit Request", () => {
-        it("should display success message in the NotificationAlert", async() => {
-            mockCreateStoreTypesGraphRepoWithFunction(() => {
-            });
+        it("should display success message in the NotificationAlert", async () => {
+            mockCreateStoreTypesGraphRepoWithFunction(() => {});
             inputGraphId("OK Graph");
             inputDescription("test");
             inputElements(elements);
@@ -530,16 +467,14 @@ describe("CreateGraph UI component", () => {
 
             await clickSubmit();
 
-            expect(wrapper.find("div#notification-alert").text()).toBe(
-                "OK Graph was successfully added"
-            );
+            expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
         });
     });
 });
 
 async function clickSubmit(): Promise<void> {
     expect(wrapper.find("button#create-new-graph-button").props().disabled).toEqual(false);
-    await act(async() => {
+    await act(async () => {
         wrapper.find("button#create-new-graph-button").simulate("click");
     });
     await wrapper.update();
@@ -548,34 +483,34 @@ async function clickSubmit(): Promise<void> {
 
 function inputGraphId(graphId: string): void {
     wrapper.find("input#graph-id-input").simulate("change", {
-        target: {value: graphId},
+        target: { value: graphId },
     });
 }
 
 async function selectStoreType(component: ReactWrapper, storeType: string) {
-    await act(async() => {
+    await act(async () => {
         component
             .find("div#storetype-formcontrol")
             .find("input")
             .simulate("change", {
-                target: {value: storeType},
+                target: { value: storeType },
             });
     });
 }
 
 async function inputProxyURL(url: string): Promise<void> {
-    await act(async() => {
+    await act(async () => {
         wrapper
             .find("div#proxy-url-grid")
             .find("input")
             .simulate("change", {
-                target: {value: url},
+                target: { value: url },
             });
     });
 }
 
 async function clickAddProxy(): Promise<void> {
-    await act(async() => {
+    await act(async () => {
         wrapper.find("button#add-new-proxy-button").simulate("click");
     });
 }
@@ -587,7 +522,7 @@ function clickTableBodyCheckBox(row: number, check: boolean) {
         .find("input")
         .at(row)
         .simulate("change", {
-            target: {checked: check},
+            target: { checked: check },
         });
 }
 
@@ -597,41 +532,35 @@ function clickTableHeaderCheckBox(check: boolean) {
         .find("thead")
         .find("input")
         .simulate("change", {
-            target: {checked: check},
+            target: { checked: check },
         });
 }
 
 function inputDescription(description: string): void {
     wrapper.find("textarea#graph-description-input").simulate("change", {
-        target: {value: description},
+        target: { value: description },
     });
-    expect(wrapper.find("textarea#graph-description-input").props().value).toBe(
-        description
-    );
+    expect(wrapper.find("textarea#graph-description-input").props().value).toBe(description);
 }
 
 function inputElements(elementsObject: object): void {
     wrapper.find("textarea#schema-elements-input").simulate("change", {
-        target: {value: JSON.stringify(elementsObject)},
+        target: { value: JSON.stringify(elementsObject) },
     });
-    expect(wrapper.find("textarea#schema-elements-input").props().value).toBe(
-        JSON.stringify(elementsObject)
-    );
+    expect(wrapper.find("textarea#schema-elements-input").props().value).toBe(JSON.stringify(elementsObject));
 }
 
 function inputTypes(typesObject: object): void {
     wrapper.find("textarea#schema-types-input").simulate("change", {
-        target: {value: JSON.stringify(typesObject)},
+        target: { value: JSON.stringify(typesObject) },
     });
-    expect(wrapper.find("textarea#schema-types-input").props().value).toBe(
-        JSON.stringify(typesObject)
-    );
+    expect(wrapper.find("textarea#schema-types-input").props().value).toBe(JSON.stringify(typesObject));
 }
 
 // @ts-ignore
 async function waitForComponentToRender(wrapper: ReactWrapper) {
     // React forces test to use act(() => {}) when the component state is updated in some cases
-    await act(async() => {
+    await act(async () => {
         await new Promise((resolve) => setTimeout(resolve));
         wrapper.update();
         wrapper.update();
@@ -676,7 +605,6 @@ function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypes): void {
             new Promise((resolve, reject) => {
                 resolve(storetypes);
             }),
-
     }));
 }
 
@@ -697,7 +625,6 @@ function mockGetGraphDescription(description: string): void {
             new Promise((resolve, reject) => {
                 resolve(description);
             }),
-
     }));
 }
 
@@ -708,7 +635,6 @@ function mockGetGraphId(graphId: string): void {
             new Promise((resolve, reject) => {
                 resolve(graphId);
             }),
-
     }));
 }
 
@@ -726,7 +652,7 @@ function mockGetGraphDescriptionRepoToThrowError() {
     GetGraphDescriptionRepo.mockImplementationOnce(() => ({
         getDescription: () => {
             throw new RestApiError("Server Error", "Invalid proxy URL");
-        }
+        },
     }));
 }
 

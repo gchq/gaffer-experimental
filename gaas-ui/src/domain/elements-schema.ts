@@ -35,16 +35,15 @@ export class ElementsSchema {
     }
 
     private validateElements(notes: Notifications): void {
-        if(this.elements.edges !== undefined){
+        if (this.elements.edges !== undefined) {
             this.validateEdges(notes);
         }
-        if(this.elements.entities !== undefined){
+        if (this.elements.entities !== undefined) {
             this.validateEntities(notes);
         }
-        if(this.elements.entities === undefined && this.elements.edges === undefined){
+        if (this.elements.entities === undefined && this.elements.edges === undefined) {
             notes.addError("Elements Schema must contain entities or edges");
         }
-
     }
 
     private validateEntities(notes: Notifications): void {
@@ -56,7 +55,7 @@ export class ElementsSchema {
             notes.addError(`Entities is type ${typeof this.elements.entities} and not an object of Entity objects`);
             return;
         }
-        Object.entries(this.elements.entities).forEach(([entityName,value]) => {
+        Object.entries(this.elements.entities).forEach(([entityName, value]) => {
             const entity: IEntity = value as IEntity;
 
             const missingProps: Array<string> = [];

@@ -6,29 +6,28 @@ import Routes from "./navigation-bar/Routes";
 
 function App() {
     return (
-            <Box display="flex"
-                 justifyContent="center"
-                 flexDirection="row"
-                 alignItems="center"
-                 id={"kai-main-component"}
-                 aria-label={"kai-main-component"}
-            >
-                <Box display="flex" alignSelf="left" id={"navigation-appbar-and-drawer"}>
-                    <NavigationAppbar />
-                </Box>
-                <Box display="flex" alignSelf="right" alignItems="right" justifyContent="right">
-                    <Switch>
-                        <Redirect exact from="/" to="/viewgraphs" />
-                        {Routes.map((route: any) => (
-                            <Route exact path={route.path} key={route.path}>
-                                <route.component />
-                            </Route>
-                        ))}
-                    </Switch>
-                </Box>
-
+        <Box
+            display="flex"
+            justifyContent="center"
+            flexDirection="row"
+            alignItems="center"
+            id={"kai-main-component"}
+            aria-label={"kai-main-component"}
+        >
+            <Box display="flex" alignSelf="left" id={"navigation-appbar-and-drawer"}>
+                <NavigationAppbar />
             </Box>
-
+            <Box display="flex" alignSelf="right" alignItems="right" justifyContent="right">
+                <Switch>
+                    <Redirect exact from="/" to="/viewgraphs" />
+                    {Routes.map((route: any) => (
+                        <Route exact path={route.path} key={route.path}>
+                            <route.component />
+                        </Route>
+                    ))}
+                </Switch>
+            </Box>
+        </Box>
     );
 }
 

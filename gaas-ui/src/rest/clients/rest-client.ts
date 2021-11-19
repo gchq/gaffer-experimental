@@ -24,46 +24,46 @@ export class RestClient<T> {
         this.url = "";
         this.method = "get";
         this.headers = {};
-        this.data = undefined;        
+        this.data = undefined;
     }
-    
-    public create():any {
+
+    public create(): any {
         return this.methodSpec(this);
     }
-    
+
     public baseUrl(baseURL: string) {
         this.baseURL = baseURL;
         return this.methodSpec(this);
     }
 
     private methodSpec = (restClient: RestClient<any>) => ({
-        get: () => { 
-        restClient.method = "get";
-        return restClient.uriSpec(restClient);
-         },
-        post: () => { 
+        get: () => {
+            restClient.method = "get";
+            return restClient.uriSpec(restClient);
+        },
+        post: () => {
             restClient.method = "post";
             return restClient.requestBodySpec(restClient);
         },
-        delete: () => { 
+        delete: () => {
             restClient.method = "delete";
             return restClient.uriSpec(restClient);
-        }
-    })
+        },
+    });
 
     private requestBodySpec = (restClient: RestClient<any>) => ({
         requestBody: (requestBody?: T) => {
             restClient.data = requestBody;
             return restClient.uriSpec(restClient);
-        }
-    })
+        },
+    });
 
     private uriSpec = (restClient: RestClient<any>) => ({
-        uri: (uri: string) => { 
+        uri: (uri: string) => {
             restClient.url = uri;
             return restClient.executeSpec(restClient);
-         },
-         graphs: (pathVariable?: string) => {
+        },
+        graphs: (pathVariable?: string) => {
             const _pathVariable = pathVariable ? `/${pathVariable}` : "";
             restClient.url = `/graphs${_pathVariable}`;
             restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
@@ -81,7 +81,7 @@ export class RestClient<T> {
             restClient.url = "/graph/config/graphId";
             return restClient.executeSpec(restClient);
         },
-        namespaces: () =>  {
+        namespaces: () => {
             restClient.url = "/namespaces";
             restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
@@ -92,11 +92,11 @@ export class RestClient<T> {
             return restClient.executeSpec(restClient);
         },
         storeTypes: () => {
-            restClient.url="/storetypes"
+            restClient.url = "/storetypes";
             restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
-        }
-    })
+        },
+    });
 
     private executeSpec = (restClient: RestClient<any>) => ({
         execute: async () => {
@@ -113,8 +113,8 @@ export class RestClient<T> {
                 const error = e as AxiosError<any>;
                 throw RestClient.fromError(error);
             }
-        }
-    })
+        },
+    });
 
     private static async convert(response: AxiosResponse<any>): Promise<IApiResponse> {
         return {
@@ -124,7 +124,7 @@ export class RestClient<T> {
     }
 
     private static fromError(e: AxiosError<any>): RestApiError {
-        if (e.response && RestClient.isInstanceOfGafferApiErrorResponseBody(e.response.data)) { 
+        if (e.response && RestClient.isInstanceOfGafferApiErrorResponseBody(e.response.data)) {
             return new RestApiError(e.response.data.status, e.response.data.simpleMessage);
         }
         if (e.response && e.response.data) {
