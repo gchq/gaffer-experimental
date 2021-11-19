@@ -16,6 +16,7 @@ import {
 import { useImmerReducer } from 'use-immer';
 import ClearIcon from '@material-ui/icons/Clear';
 import AddProperty from './add-property';
+import AddGroupby from './add-groupby';
 
 interface IProps {
     onAddEdge(edge: object): void;
@@ -49,6 +50,8 @@ interface IState {
     };
     properties: {};
     openProperties: boolean;
+    groupby: [];
+    openGroupby: boolean;
 }
 
 export default function AddEdge(props: IProps): ReactElement {
@@ -62,6 +65,7 @@ export default function AddEdge(props: IProps): ReactElement {
             destination: state.edgeDestination.value,
             directed: state.edgeDirected.value,
             properties: state.properties,
+            groupby: state.groupby,
         };
         onAddEdge(edgeToAdd);
         dispatch({ type: 'reset' });
@@ -93,6 +97,9 @@ export default function AddEdge(props: IProps): ReactElement {
         },
         properties: {},
         openProperties: false,
+
+        groupby: [],
+        openGroupby: false,
     };
 
     function addEdgeReducer(draft: any, action: any) {
@@ -142,6 +149,12 @@ export default function AddEdge(props: IProps): ReactElement {
                 return;
             case 'validateEdgeProperties':
                 draft.properties = action.value;
+                return;
+            case 'handleClickCloseGroupby':
+                draft.openGroupby = action.value;
+                return;
+            case 'handleUpdateGroupby':
+                draft.groupby = action.value;
                 return;
         }
     }
@@ -323,6 +336,60 @@ export default function AddEdge(props: IProps): ReactElement {
                     rows={5}
                     variant="outlined"
                     onChange={(e) => dispatch({ type: 'validateEdgeProperties', value: e.target.value })}
+                />
+            </Grid>
+
+            <Grid item>
+                <Button
+                    variant="outlined"
+                    onClick={(e) => dispatch({ type: 'handleClickCloseGroupby', value: true })}
+                    id={'add-groupby-button'}
+                >
+                    Add Groupby
+                </Button>
+                <Dialog
+                    fullWidth
+                    maxWidth="xs"
+                    open={state.openGroupby}
+                    onClose={(e) => dispatch({ type: 'handleClickCloseGroupby', value: false })}
+                    id={'add-groupby-dialog'}
+                    aria-labelledby="add-groupby-dialog"
+                >
+                    <Box display="flex" alignItems="right" justifyContent="right">
+                        <IconButton
+                            id="close-add-groupby-button"
+                            onClick={(e) => dispatch({ type: 'handleClickCloseGroupby', value: false })}
+                        >
+                            <ClearIcon />
+                        </IconButton>
+                    </Box>
+
+                    <Box display="flex" alignItems="center" justifyContent="center">
+                        <DialogTitle id="add-groupby-dialog-title">{'Add Groupby'}</DialogTitle>
+                    </Box>
+                    <DialogContent>
+                        <AddGroupby
+                            onAddGroupby={(groupby) => dispatch({ type: 'handleUpdateGroupby', value: groupby })}
+                        />
+                    </DialogContent>
+                </Dialog>
+            </Grid>
+            <Grid item>
+                <TextField
+                    id={'edge-groupby-input'}
+                    inputProps={{
+                        name: 'Edge Group By',
+                        id: 'edge-groupby-input',
+                        'aria-label': 'edge-groupby-input',
+                    }}
+                    fullWidth
+                    value={JSON.stringify(state.groupby)}
+                    name={'edge-groupby'}
+                    required
+                    multiline
+                    rows={5}
+                    variant="outlined"
+                    onChange={(e) => dispatch({ type: 'validateEdgeGroupby', value: e.target.value })}
                 />
             </Grid>
 
