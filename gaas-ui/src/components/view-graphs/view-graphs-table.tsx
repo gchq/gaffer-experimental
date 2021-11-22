@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { Graph } from '../../domain/graph';
-import { GetAllGraphIdsRepo } from '../../rest/repositories/gaffer/get-all-graph-ids-repo';
+import React, { useEffect } from "react";
+import { Graph } from "../../domain/graph";
+import { GetAllGraphIdsRepo } from "../../rest/repositories/gaffer/get-all-graph-ids-repo";
 import {
     Button,
     Grid,
@@ -19,13 +19,13 @@ import {
     IconButton,
     Tooltip,
     Zoom,
-} from '@material-ui/core';
-import RefreshOutlinedIcon from '@material-ui/icons/RefreshOutlined';
-import CheckRoundedIcon from '@material-ui/icons/CheckRounded';
-import WarningRoundedIcon from '@material-ui/icons/WarningRounded';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+} from "@material-ui/core";
+import RefreshOutlinedIcon from "@material-ui/icons/RefreshOutlined";
+import CheckRoundedIcon from "@material-ui/icons/CheckRounded";
+import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
 
 interface IProps {
     graphs: Graph[];
@@ -43,8 +43,8 @@ interface IGraphRow {
 
 const useStyles = makeStyles({
     root: {
-        '& > *': {
-            borderBottom: 'unset',
+        "& > *": {
+            borderBottom: "unset",
         },
     },
     table: {
@@ -61,7 +61,7 @@ export function ViewGraphsTable(props: IProps) {
                 <TableContainer component={Paper}>
                     <Table size="medium" className={classes.table} aria-label="Graphs Table">
                         <TableHead>
-                            <TableRow style={{ background: '#F4F2F2' }}>
+                            <TableRow style={{ background: "#F4F2F2" }}>
                                 <TableCell />
                                 <TableCell>Graph ID</TableCell>
                                 <TableCell>Store Type</TableCell>
@@ -102,17 +102,17 @@ export function ViewGraphsTable(props: IProps) {
 }
 
 function StatusChip(graph: { status: string }) {
-    return graph.status === 'UP' ? (
+    return graph.status === "UP" ? (
         <Chip
-            icon={<CheckRoundedIcon style={{ color: '#ffffff' }} />}
+            icon={<CheckRoundedIcon style={{ color: "#ffffff" }} />}
             label={graph.status}
-            style={{ color: '#ffffff', backgroundColor: '#5A7C81' }}
+            style={{ color: "#ffffff", backgroundColor: "#5A7C81" }}
         />
     ) : (
         <Chip
-            icon={<WarningRoundedIcon style={{ color: '#ffffff' }} />}
+            icon={<WarningRoundedIcon style={{ color: "#ffffff" }} />}
             label={graph.status}
-            style={{ color: '#ffffff', backgroundColor: '#EB0052' }}
+            style={{ color: "#ffffff", backgroundColor: "#EB0052" }}
         />
     );
 }
@@ -121,7 +121,7 @@ function MainGraphTableRow(props: IGraphRow) {
     const { graph, index, federatedStores, onClickDelete } = props;
     const classes = useStyles();
     const [rowIsExpanded, setRowIsExpanded] = React.useState(false);
-    const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>('');
+    const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>("");
 
     useEffect(() => {
         setGraphUrl();
@@ -134,7 +134,7 @@ function MainGraphTableRow(props: IGraphRow) {
         try {
             const allGraphIds: string[] = await new GetAllGraphIdsRepo().get(graph.getUrl());
             setAllGraphIdsText(
-                allGraphIds.length !== 0 ? 'Federated Graphs: ' + allGraphIds.join(', ') : 'No Federated Graphs'
+                allGraphIds.length !== 0 ? "Federated Graphs: " + allGraphIds.join(", ") : "No Federated Graphs"
             );
         } catch (e) {
             setAllGraphIdsText(`Federated Graphs: [GetAllGraphIds Operation - ${e}]`);
@@ -143,50 +143,50 @@ function MainGraphTableRow(props: IGraphRow) {
     function setGraphUrl() {
         const tableCellLinkElement = document.getElementById(graph.getId());
         if (tableCellLinkElement !== null) {
-            tableCellLinkElement.setAttribute('href', graph.getUrl());
+            tableCellLinkElement.setAttribute("href", graph.getUrl());
         }
     }
 
     return (
         <React.Fragment>
-            <TableRow className={classes.root} hover aria-label={'view-graphs-table'}>
-                <TableCell aria-label={'expand-row-icon'}>
+            <TableRow className={classes.root} hover aria-label={"view-graphs-table"}>
+                <TableCell aria-label={"expand-row-icon"}>
                     <IconButton
-                        id={'expand-row-button-' + index}
-                        aria-label={graph.getId() + '-expand-button'}
+                        id={"expand-row-button-" + index}
+                        aria-label={graph.getId() + "-expand-button"}
                         size="small"
                         onClick={() => setRowIsExpanded(!rowIsExpanded)}
                     >
                         {rowIsExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell component="th" scope="row" aria-label={'row-id'}>
+                <TableCell component="th" scope="row" aria-label={"row-id"}>
                     {graph.getId()}
                 </TableCell>
-                <TableCell aria-label={'graph-store-type'}>
+                <TableCell aria-label={"graph-store-type"}>
                     <Avatar
                         style={{
-                            color: 'white',
-                            backgroundColor: '#5A7C81',
+                            color: "white",
+                            backgroundColor: "#5A7C81",
                         }}
                     >
-                        {' '}
+                        {" "}
                         {graph.getConfigName().charAt(0).toUpperCase()}
                     </Avatar>
                 </TableCell>
-                <TableCell aria-label={'graph-status'}>
+                <TableCell aria-label={"graph-status"}>
                     <StatusChip status={graph.getStatus()} />
                 </TableCell>
-                <TableCell aria-label={'graph-url'}>
+                <TableCell aria-label={"graph-url"}>
                     <a id={graph.getId()} href="placeholder" target="_blank" rel="noopener noreferrer">
                         {graph.getUrl()}
                     </a>
                 </TableCell>
-                <TableCell aria-label={'delete-graph'}>
+                <TableCell aria-label={"delete-graph"}>
                     <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
                         <IconButton
-                            id={'view-graphs-delete-button-' + index}
-                            aria-label={graph.getId() + '-delete-button'}
+                            id={"view-graphs-delete-button-" + index}
+                            aria-label={graph.getId() + "-delete-button"}
                             onClick={async () => onClickDelete(graph.getId())}
                         >
                             <DeleteOutlineOutlinedIcon />
@@ -200,15 +200,15 @@ function MainGraphTableRow(props: IGraphRow) {
                         <Box margin={1}>
                             <Table size="small" aria-label="graph-details">
                                 <TableBody>
-                                    <TableRow aria-label={'graph-description'}>
+                                    <TableRow aria-label={"graph-description"}>
                                         <TableCell component="th" scope="row">
                                             Description: {graph.getDescription()}
                                         </TableCell>
                                     </TableRow>
                                     {federatedStores.includes(graph.getConfigName()) && (
                                         <TableRow
-                                            id={'federated-graph-ids-' + index}
-                                            aria-label={'federated-graph-ids'}
+                                            id={"federated-graph-ids-" + index}
+                                            aria-label={"federated-graph-ids"}
                                         >
                                             <TableCell component="th" scope="row">
                                                 {allGraphIdsText}

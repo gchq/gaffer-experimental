@@ -1,8 +1,8 @@
-import { Box } from '@material-ui/core';
-import React from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import NavigationAppbar from './navigation-bar/navigation-appbar';
-import Routes from './navigation-bar/Routes';
+import { Box } from "@material-ui/core";
+import React from "react";
+import { Route, Switch, Redirect } from "react-router-dom";
+import NavigationAppbar from "./navigation-bar/navigation-appbar";
+import Routes from "./navigation-bar/Routes";
 
 function App() {
     return (
@@ -11,10 +11,10 @@ function App() {
             justifyContent="center"
             flexDirection="row"
             alignItems="center"
-            id={'kai-main-component'}
-            aria-label={'kai-main-component'}
+            id={"kai-main-component"}
+            aria-label={"kai-main-component"}
         >
-            <Box display="flex" alignSelf="left" id={'navigation-appbar-and-drawer'}>
+            <Box display="flex" alignSelf="left" id={"navigation-appbar-and-drawer"}>
                 <NavigationAppbar />
             </Box>
             <Box display="flex" alignSelf="right" alignItems="right" justifyContent="right">

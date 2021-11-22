@@ -1,6 +1,6 @@
-import { Box, Button, Grid, TextField } from '@material-ui/core';
-import React, { ReactElement } from 'react';
-import { useImmerReducer } from 'use-immer';
+import { Box, Button, Grid, TextField } from "@material-ui/core";
+import React, { ReactElement } from "react";
+import { useImmerReducer } from "use-immer";
 
 interface IProps {
     onAddProperty(properties: object): void;
@@ -19,26 +19,26 @@ export default function AddProperty(props: IProps): ReactElement {
 
     const initialState: IState = {
         property: {
-            value: '',
-            key: '',
+            value: "",
+            key: "",
             hasErrors: false,
         },
     };
 
     function addPropertySubmit() {
         onAddProperty(state.property);
-        dispatch({ type: 'reset' });
+        dispatch({ type: "reset" });
     }
 
     function addEdgeReducer(draft: any, action: any) {
         switch (action.type) {
-            case 'reset':
+            case "reset":
                 return initialState;
-            case 'validatePropertyKey':
+            case "validatePropertyKey":
                 draft.property.hasErrors = false;
                 draft.property.key = action.value;
                 return;
-            case 'validatePropertyValue':
+            case "validatePropertyValue":
                 draft.property.hasErrors = false;
                 draft.property.value = action.value;
                 return;
@@ -47,47 +47,47 @@ export default function AddProperty(props: IProps): ReactElement {
     const [state, dispatch] = useImmerReducer(addEdgeReducer, initialState);
 
     return (
-        <Grid container spacing={2} direction="column" id={'add-property-inputs'}>
+        <Grid container spacing={2} direction="column" id={"add-property-inputs"}>
             <Grid item>
                 <TextField
-                    id={'property-key-input'}
-                    label={'Property Key'}
+                    id={"property-key-input"}
+                    label={"Property Key"}
                     aria-label="property-key-input"
                     inputProps={{
-                        name: 'Property Key',
-                        id: 'property-key-input',
-                        'aria-label': 'property-key-input',
+                        name: "Property Key",
+                        id: "property-key-input",
+                        "aria-label": "property-key-input",
                     }}
-                    name={'property-key'}
+                    name={"property-key"}
                     value={state.property.key}
                     variant="outlined"
                     fullWidth
                     error={state.property.hasErrors}
                     required
-                    onChange={(e) => dispatch({ type: 'validatePropertyKey', value: e.target.value })}
+                    onChange={(e) => dispatch({ type: "validatePropertyKey", value: e.target.value })}
                 />
             </Grid>
             <Grid item>
                 <TextField
-                    id={'property-value-input'}
-                    label={'Property Value'}
+                    id={"property-value-input"}
+                    label={"Property Value"}
                     aria-label="property-value-input"
                     inputProps={{
-                        name: 'Property Value',
-                        id: 'property-value-input',
-                        'aria-label': 'property-value-input',
+                        name: "Property Value",
+                        id: "property-value-input",
+                        "aria-label": "property-value-input",
                     }}
-                    name={'property-value'}
+                    name={"property-value"}
                     value={state.property.value}
                     variant="outlined"
                     fullWidth
                     error={state.property.hasErrors}
                     required
-                    onChange={(e) => dispatch({ type: 'validatePropertyValue', value: e.target.value })}
+                    onChange={(e) => dispatch({ type: "validatePropertyValue", value: e.target.value })}
                 />
             </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">
-                <Button id={'add-property-button'} name={'Add Property'} variant="outlined" onClick={addPropertySubmit}>
+                <Button id={"add-property-button"} name={"Add Property"} variant="outlined" onClick={addPropertySubmit}>
                     Add Property
                 </Button>
             </Box>

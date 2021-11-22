@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { Button, Dialog, DialogContent, DialogTitle, Box, IconButton } from '@material-ui/core';
-import SchemaBuilder from '../schema-builder/schema-builder';
-import ClearIcon from '@material-ui/icons/Clear';
-import { ITypesSchema } from '../../domain/types-schema';
-import { IElementsSchema } from '../../domain/elements-schema';
+import * as React from "react";
+import { Button, Dialog, DialogContent, DialogTitle, Box, IconButton } from "@material-ui/core";
+import SchemaBuilder from "../schema-builder/schema-builder";
+import ClearIcon from "@material-ui/icons/Clear";
+import { ITypesSchema } from "../../domain/types-schema";
+import { IElementsSchema } from "../../domain/elements-schema";
 
 interface IProps {
     onCreateSchema(schema: { types: ITypesSchema; elements: IElementsSchema }): void;
@@ -26,7 +26,7 @@ export default function SchemaBuilderDialog(props: IProps) {
 
     return (
         <div>
-            <Button variant="outlined" onClick={handleClickOpen} id={'schema-builder-button'}>
+            <Button variant="outlined" onClick={handleClickOpen} id={"schema-builder-button"}>
                 Schema Builder
             </Button>
             <Dialog
@@ -34,7 +34,7 @@ export default function SchemaBuilderDialog(props: IProps) {
                 maxWidth="md"
                 open={open}
                 onClose={handleClose}
-                id={'schema-builder-dialog'}
+                id={"schema-builder-dialog"}
                 aria-labelledby="schema-builder-dialog"
             >
                 <Box display="flex" alignItems="right" justifyContent="right">
@@ -43,7 +43,7 @@ export default function SchemaBuilderDialog(props: IProps) {
                     </IconButton>
                 </Box>
                 <Box display="flex" alignItems="center" justifyContent="center">
-                    <DialogTitle id="schema-builder-dialog-title">{'Schema Builder'}</DialogTitle>
+                    <DialogTitle id="schema-builder-dialog-title">{"Schema Builder"}</DialogTitle>
                 </Box>
                 <DialogContent>
                     <SchemaBuilder

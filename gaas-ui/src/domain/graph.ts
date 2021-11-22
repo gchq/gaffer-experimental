@@ -1,10 +1,10 @@
-import { GraphType } from './graph-type';
+import { GraphType } from "./graph-type";
 
 export class Graph {
     private readonly graphId: string;
     private readonly description: string;
     private readonly url: string;
-    private readonly status: 'UP' | 'DOWN';
+    private readonly status: "UP" | "DOWN";
     private readonly configName: string;
     private readonly type: GraphType;
 
@@ -12,7 +12,7 @@ export class Graph {
         graphId: string,
         description: string,
         url: string,
-        status: 'UP' | 'DOWN',
+        status: "UP" | "DOWN",
         configName: string,
         type: GraphType
     ) {

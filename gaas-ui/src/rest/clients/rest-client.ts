@@ -1,6 +1,6 @@
-import axios, { AxiosError, AxiosResponse, Method } from 'axios';
-import status from 'statuses';
-import { RestApiError } from '../RestApiError';
+import axios, { AxiosError, AxiosResponse, Method } from "axios";
+import status from "statuses";
+import { RestApiError } from "../RestApiError";
 
 export interface IApiResponse<T = any> {
     status: number;
@@ -20,9 +20,9 @@ export class RestClient<T> {
     private headers: object;
     private data: T | undefined;
     constructor() {
-        this.baseURL = '';
-        this.url = '';
-        this.method = 'get';
+        this.baseURL = "";
+        this.url = "";
+        this.method = "get";
         this.headers = {};
         this.data = undefined;
     }
@@ -38,15 +38,15 @@ export class RestClient<T> {
 
     private methodSpec = (restClient: RestClient<any>) => ({
         get: () => {
-            restClient.method = 'get';
+            restClient.method = "get";
             return restClient.uriSpec(restClient);
         },
         post: () => {
-            restClient.method = 'post';
+            restClient.method = "post";
             return restClient.requestBodySpec(restClient);
         },
         delete: () => {
-            restClient.method = 'delete';
+            restClient.method = "delete";
             return restClient.uriSpec(restClient);
         },
     });
@@ -64,36 +64,36 @@ export class RestClient<T> {
             return restClient.executeSpec(restClient);
         },
         graphs: (pathVariable?: string) => {
-            const _pathVariable = pathVariable ? `/${pathVariable}` : '';
+            const _pathVariable = pathVariable ? `/${pathVariable}` : "";
             restClient.url = `/graphs${_pathVariable}`;
-            restClient.headers = { Authorization: 'Bearer ' + RestClient.jwtToken };
+            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
         },
         status: () => {
-            restClient.url = '/graph/status';
+            restClient.url = "/graph/status";
             return restClient.executeSpec(restClient);
         },
         description: () => {
-            restClient.url = '/graph/config/description';
+            restClient.url = "/graph/config/description";
             return restClient.executeSpec(restClient);
         },
         graphId: () => {
-            restClient.url = '/graph/config/graphId';
+            restClient.url = "/graph/config/graphId";
             return restClient.executeSpec(restClient);
         },
         namespaces: () => {
-            restClient.url = '/namespaces';
-            restClient.headers = { Authorization: 'Bearer ' + RestClient.jwtToken };
+            restClient.url = "/namespaces";
+            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
         },
         authentication: (pathVariable?: string) => {
-            const _pathVariable = pathVariable ? `/${pathVariable}` : '';
+            const _pathVariable = pathVariable ? `/${pathVariable}` : "";
             restClient.url = `/auth${_pathVariable}`;
             return restClient.executeSpec(restClient);
         },
         storeTypes: () => {
-            restClient.url = '/storetypes';
-            restClient.headers = { Authorization: 'Bearer ' + RestClient.jwtToken };
+            restClient.url = "/storetypes";
+            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
         },
     });
@@ -134,10 +134,10 @@ export class RestClient<T> {
             // @ts-ignore
             return new RestApiError(`Error Code ${e.response.status}`, status(e.response.status));
         }
-        return new RestApiError('Unknown Error', 'Unable to make request');
+        return new RestApiError("Unknown Error", "Unable to make request");
     }
 
     private static isInstanceOfGafferApiErrorResponseBody(responseBody: object) {
-        return responseBody && responseBody.hasOwnProperty('status') && responseBody.hasOwnProperty('simpleMessage');
+        return responseBody && responseBody.hasOwnProperty("status") && responseBody.hasOwnProperty("simpleMessage");
     }
 }

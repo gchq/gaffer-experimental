@@ -1,6 +1,6 @@
-import { IApiResponse, RestClient } from '../clients/rest-client';
-import { Config } from '../config';
-import { IStoreTypesResponse } from '../http-message-interfaces/response-interfaces';
+import { IApiResponse, RestClient } from "../clients/rest-client";
+import { Config } from "../config";
+import { IStoreTypesResponse } from "../http-message-interfaces/response-interfaces";
 
 export interface IStoreTypes {
     storeTypes: string[];
@@ -19,7 +19,7 @@ export class GetStoreTypesRepo {
         const otherStores: string[] = [];
 
         response.data.storeTypes.forEach((store) => {
-            if (store.parameters.includes('proxies')) {
+            if (store.parameters.includes("proxies")) {
                 federatedStores.push(store.name);
             } else {
                 otherStores.push(store.name);

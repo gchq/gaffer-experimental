@@ -1,7 +1,7 @@
-import React, { ReactElement, useState } from 'react';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import { InputLabel } from '@material-ui/core';
+import React, { ReactElement, useState } from "react";
+import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
+import { InputLabel } from "@material-ui/core";
 
 interface IProps {
     graphIdValue: string;
@@ -12,20 +12,20 @@ interface IProps {
 
 export default function GraphIdDescriptionInput(props: IProps): ReactElement {
     const { graphIdValue, descriptionValue, onChangeGraphId, onChangeDescription } = props;
-    const [errorHelperText, setErrorHelperText] = useState('');
+    const [errorHelperText, setErrorHelperText] = useState("");
 
     return (
         <>
-            <Grid item xs={12} id={'id-description-fields'} aria-label="id-description-fields">
+            <Grid item xs={12} id={"id-description-fields"} aria-label="id-description-fields">
                 <InputLabel aria-label="graph-id-input-label" id="graph-id-input-label" required>
                     Graph Id
                 </InputLabel>
                 <TextField
                     id="graph-id"
                     inputProps={{
-                        name: 'Graph ID',
-                        id: 'graph-id-input',
-                        'aria-label': 'graph-id-input',
+                        name: "Graph ID",
+                        id: "graph-id-input",
+                        "aria-label": "graph-id-input",
                     }}
                     aria-label="graph-id-input"
                     variant="outlined"
@@ -37,11 +37,11 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
                     name="graph-id"
                     onChange={(event) => {
                         onChangeGraphId(event.target.value);
-                        const regex = new RegExp('^[a-z0-9]*$');
+                        const regex = new RegExp("^[a-z0-9]*$");
                         if (regex.test(event.target.value)) {
-                            setErrorHelperText('');
+                            setErrorHelperText("");
                         } else {
-                            setErrorHelperText('Graph ID can only contain numbers and lowercase letters');
+                            setErrorHelperText("Graph ID can only contain numbers and lowercase letters");
                         }
                     }}
                     helperText={errorHelperText}
@@ -56,9 +56,9 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
                     id="graph-description"
                     aria-label="graph-description-input"
                     inputProps={{
-                        name: 'Graph Description',
-                        id: 'graph-description-input',
-                        'aria-label': 'graph-description-input',
+                        name: "Graph Description",
+                        id: "graph-description-input",
+                        "aria-label": "graph-description-input",
                     }}
                     value={descriptionValue}
                     required
