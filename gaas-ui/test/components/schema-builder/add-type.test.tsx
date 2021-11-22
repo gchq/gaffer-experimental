@@ -96,6 +96,7 @@ describe("Add Type UI Component", () => {
                 testName: {
                     description: "test description",
                     class: "test.class",
+                    aggregateFunction: {},
                 },
             };
 

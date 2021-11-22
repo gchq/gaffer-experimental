@@ -73,7 +73,7 @@ describe("schema-builder UI wrapper", () => {
             await clickCloseAddTypeDialog();
 
             expect(wrapper.find("div#json-types-schema-viewer").text()).toEqual(
-                '{"aType":{"description":"test description""class":"test.class"}"testName":{"description":"testDescription""class":"testClass"}}'
+                '{"aType":{"description":"test description""class":"test.class"}"testName":{"description":"testDescription""class":"testClass""aggregateFunction":{}}}'
             );
         });
         it("should display the types schema that is passed in", () => {

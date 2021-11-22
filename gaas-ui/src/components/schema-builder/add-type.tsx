@@ -1,6 +1,8 @@
 import React, { ReactElement } from "react";
-import { Button, Grid, TextField, Box } from "@material-ui/core";
+import { Button, Grid, TextField, Box, IconButton, DialogTitle, DialogContent, Dialog } from "@material-ui/core";
 import { useImmerReducer } from "use-immer";
+import AddAggregateFunction from "./add-aggregate-function";
+import ClearIcon from "@material-ui/icons/Clear";
 
 interface IProps {
     onAddType(type: object): void;
@@ -21,6 +23,8 @@ interface IState {
         hasErrors: boolean;
         message: string;
     };
+    aggregateFunction: {};
+    openAggregateFunction: boolean;
 }
 
 export default function AddType(props: IProps): ReactElement {
@@ -44,6 +48,8 @@ export default function AddType(props: IProps): ReactElement {
             hasErrors: false,
             message: "",
         },
+        aggregateFunction: {},
+        openAggregateFunction: false,
     };
 
     function addTypeReducer(draft: any, action: any) {
@@ -82,6 +88,14 @@ export default function AddType(props: IProps): ReactElement {
                     draft.typeClass.message = "Type class can only contain letters";
                 }
                 return;
+            case "handleClickCloseAggregateFunction":
+                draft.openAggregateFunction = action.value;
+                return;
+            case "validateTypeAggregateFunction":
+                draft.aggregateFunction = action.value;
+                return;
+            case "handleUpdateAggregateFunction":
+                draft.aggregateFunction[action.value.key] = action.value.value;
         }
     }
 
@@ -103,6 +117,7 @@ export default function AddType(props: IProps): ReactElement {
         typeToAdd[state.typeName.value] = {
             description: state.typeDescription.value,
             class: state.typeClass.value,
+            aggregateFunction: state.aggregateFunction,
         };
         onAddType(typeToAdd);
         dispatch({ type: "reset" });
@@ -169,6 +184,63 @@ export default function AddType(props: IProps): ReactElement {
                         helperText={state.typeClass.message}
                         name={"type-class"}
                         autoComplete="type-class"
+                    />
+                </Grid>
+                <Grid item>
+                    <Button
+                        variant="outlined"
+                        onClick={(e) => dispatch({ type: "handleClickCloseAggregateFunction", value: true })}
+                        id={"add-aggregate-function-button"}
+                    >
+                        Add Aggregate Function
+                    </Button>
+                    <Dialog
+                        fullWidth
+                        maxWidth="xs"
+                        open={state.openAggregateFunction}
+                        onClose={(e) => dispatch({ type: "handleClickCloseAggregateFunction", value: false })}
+                        id={"add-aggregate-function-dialog"}
+                        aria-labelledby="add-aggregate-function-dialog"
+                    >
+                        <Box display="flex" alignItems="right" justifyContent="right">
+                            <IconButton
+                                id="close-add-groupby-button"
+                                onClick={(e) => dispatch({ type: "handleClickCloseAggregateFunction", value: false })}
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        </Box>
+
+                        <Box display="flex" alignItems="center" justifyContent="center">
+                            <DialogTitle id="add-aggregate-function-dialog-title">
+                                {"Add Aggregate Function"}
+                            </DialogTitle>
+                        </Box>
+                        <DialogContent>
+                            <AddAggregateFunction
+                                onAddAggregateFunction={(aggregateFunction) =>
+                                    dispatch({ type: "handleUpdateAggregateFunction", value: aggregateFunction })
+                                }
+                            />
+                        </DialogContent>
+                    </Dialog>
+                </Grid>
+                <Grid item>
+                    <TextField
+                        id={"type-aggregate-function-input"}
+                        inputProps={{
+                            name: "Type Aggregate Function",
+                            id: "type-aggregate-function-input",
+                            "aria-label": "type-aggregate-function-input",
+                        }}
+                        fullWidth
+                        value={JSON.stringify(state.aggregateFunction)}
+                        name={"type-aggregate-function"}
+                        required
+                        multiline
+                        rows={5}
+                        variant="outlined"
+                        onChange={(e) => dispatch({ type: "validateTypeAggregateFunction", value: e.target.value })}
                     />
                 </Grid>
                 <Box display="flex" alignItems="center" justifyContent="center">
