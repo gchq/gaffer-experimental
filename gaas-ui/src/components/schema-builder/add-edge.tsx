@@ -154,7 +154,7 @@ export default function AddEdge(props: IProps): ReactElement {
                 draft.openGroupby = action.value;
                 return;
             case 'handleUpdateGroupby':
-                draft.groupby = action.value;
+                draft.groupby[draft.groupby.length] = action.value;
                 return;
         }
     }
