@@ -80,7 +80,7 @@ describe("schema-builder UI wrapper", () => {
         });
     });
     describe("Elements Schema Prop", () => {
-        it("should update the json viewer with the added type from the add type dialog", async () => {
+        it("should update the json viewer with the added entity from the add entity dialog", async () => {
             wrapper.find("button#add-entity-button").simulate("click");
 
             await addEntityName("anEntityName");
