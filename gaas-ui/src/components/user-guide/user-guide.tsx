@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardContent, Grid, makeStyles, Toolbar, Typography } from "@material-ui/core";
+import { Box, Button, Card, CardActions, CardContent, Grid, Toolbar, Typography } from "@material-ui/core";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import React from "react";
 import ReactJson from "react-json-view";
@@ -7,25 +7,12 @@ import { exampleElementsSchema } from "./example-elements-schema";
 import { exampleTypesSchema } from "./example-types-schema";
 
 export default class UserGuide extends React.Component<{}, {}> {
-    private classes: any = makeStyles((theme) => ({
-        root: {
-            width: "100%",
-        },
-        heading: {
-            fontSize: theme.typography.pxToRem(15),
-            fontWeight: theme.typography.fontWeightRegular,
-        },
-        card: {
-            maxWidth: 345,
-        },
-    }));
-
     public render() {
         return (
             <main aria-label="User-Guide-Page">
                 <Toolbar />
-                <Grid container justify="center" className={this.classes.root} style={{ marginTop: 30 }}>
-                    <Card className={this.classes.card} style={{ maxWidth: 800 }}>
+                <Grid container justify="center" style={{ marginTop: 30 }}>
+                    <Card style={{ maxWidth: 800 }}>
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="h2">
                                 Create Graphs

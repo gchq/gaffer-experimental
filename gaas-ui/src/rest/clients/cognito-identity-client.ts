@@ -2,15 +2,38 @@ import { AuthenticationDetails, CognitoUser, CognitoUserPool } from "amazon-cogn
 import { IAuthClient } from "./authclient";
 import { poolData } from "./cognito-config";
 import { RestClient } from "./rest-client";
+import { Config } from "../config";
 
-export class CognitoClient implements IAuthClient {
+export class CognitoIdentityClient implements IAuthClient {
     private static cognitoUser: CognitoUser;
     private static authenticationDetails: AuthenticationDetails;
-
+    public static buildCognitoLoginURL(): string {
+        return (
+            Config.REACT_APP_AUTH_ENDPOINT +
+            "/login" +
+            "?client_id=" +
+            Config.REACT_APP_COGNITO_CLIENTID +
+            "&response_type=token" +
+            "&scope=" +
+            Config.REACT_APP_COGNITO_SCOPE +
+            "&redirect_uri=" +
+            Config.REACT_APP_COGNITO_REDIRECT_URI
+        );
+    }
+    public static buildCognitoLogoutURL(): string {
+        return (
+            Config.REACT_APP_AUTH_ENDPOINT +
+            "/logout" +
+            "?client_id=" +
+            Config.REACT_APP_COGNITO_CLIENTID +
+            "&logout_uri=" +
+            Config.REACT_APP_COGNITO_REDIRECT_URI
+        );
+    }
     public login(username: string, password: string, onSuccess: Function, onError: Function) {
-        CognitoClient.initCognitoUser(username, password);
+        CognitoIdentityClient.initCognitoUser(username, password);
 
-        CognitoClient.cognitoUser.authenticateUser(CognitoClient.authenticationDetails, {
+        CognitoIdentityClient.cognitoUser.authenticateUser(CognitoIdentityClient.authenticationDetails, {
             onSuccess: function (result) {
                 // Use the idToken for Logins Map when Federating User Pools with identity pools or when
                 // passing through an Authorization Header to an API Gateway Authorizer
@@ -32,9 +55,9 @@ export class CognitoClient implements IAuthClient {
         onSuccess: Function,
         onError: Function
     ) {
-        CognitoClient.initCognitoUser(username, tempPassword);
+        CognitoIdentityClient.initCognitoUser(username, tempPassword);
 
-        CognitoClient.cognitoUser.authenticateUser(CognitoClient.authenticationDetails, {
+        CognitoIdentityClient.cognitoUser.authenticateUser(CognitoIdentityClient.authenticationDetails, {
             newPasswordRequired: function (userAttributes) {
                 // User was signed up by an admin and must provide new password and required attributes,
                 // if any, to complete authentication.
@@ -42,7 +65,7 @@ export class CognitoClient implements IAuthClient {
                 delete userAttributes.email_verified;
 
                 // Get these details and call
-                CognitoClient.cognitoUser.completeNewPasswordChallenge(newPassword, userAttributes, this);
+                CognitoIdentityClient.cognitoUser.completeNewPasswordChallenge(newPassword, userAttributes, this);
             },
 
             onSuccess: function (result) {
@@ -75,7 +98,7 @@ export class CognitoClient implements IAuthClient {
     }
 
     public signOut(onSuccess: Function, onError: Function) {
-        CognitoClient.cognitoUser.globalSignOut({
+        CognitoIdentityClient.cognitoUser.globalSignOut({
             onSuccess: function () {
                 onSuccess();
             },

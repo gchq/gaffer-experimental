@@ -16,7 +16,7 @@ describe("Get Graph By Id Repo", () => {
             description: "DEPLOYED",
             url: "graph-1 URL",
             configName: "mapStore",
-            status: "UP"
+            status: "UP",
         };
         mock.onGet("/graphs/graph-1").reply(200, apiResponse);
 
@@ -25,7 +25,6 @@ describe("Get Graph By Id Repo", () => {
         const expected: Graph = new Graph("graph-1", "DEPLOYED", "graph-1 URL", "UP", "mapStore", GraphType.GAAS_GRAPH);
         expect(actual).toEqual(expected);
     });
-
 
     it("should throw RestApiError when 404 and have correct error message when no response body returned", async () => {
         mock.onGet("/graphs/notfound-graph").reply(404);

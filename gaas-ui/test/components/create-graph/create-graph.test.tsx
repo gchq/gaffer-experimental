@@ -1,5 +1,5 @@
 import { mount, ReactWrapper } from "enzyme";
-
+import React from "react";
 import { act } from "react-dom/test-utils";
 import CreateGraph from "../../../src/components/create-graph/create-graph";
 import { Graph } from "../../../src/domain/graph";

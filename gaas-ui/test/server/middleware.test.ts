@@ -7,7 +7,7 @@ afterEach(() => {
     server.close();
 });
 
-beforeEach(() => (process.env = Object.assign(process.env, { JWT_SECRET: "my-dev-secret" })))
+beforeEach(() => (process.env = Object.assign(process.env, { JWT_SECRET: "my-dev-secret" })));
 afterAll(() => (process.env = Object.assign(process.env, { JWT_SECRET: "" })));
 describe("Auth", () => {
     it("Should respond to the POST method with a 200 status code when the username and password is correct", async () => {
@@ -78,7 +78,73 @@ describe("Graph API", () => {
             .then((response) => {
                 // @ts-ignore
                 expect(response.statusCode).toBe(200);
-                expect(response.body).toStrictEqual({"graphs": [{"configName": "federated", "description": "Road traffic graph. This graphs uses a federated store of proxy stores", "graphId": "roadTraffic", "status": "UP", "url": "http://localhost:4000/rest"}, {"configName": "mapStore", "description": "Example Graph description", "graphId": "exampleGraphId", "status": "UP", "url": "http://road-traffic.k8s.cluster/rest"}, {"configName": "accumuloStore", "description": "Clashing entities on an Accumulo Store graph", "graphId": "accEntitiesClashingGraph", "status": "DOWN", "url": "http://acc-entities-2.k8s.cluster/rest"}, {"configName": "mapStore", "description": "Map of edge", "graphId": "mapEdges", "status": "UP", "url": "http://map-edges.k8s.cluster/rest"}, {"configName": "accumuloStore", "description": "Accumulo graph of entities", "graphId": "accEntities", "status": "UP", "url": "http://acc-entities-1.k8s.cluster/rest"}, {"configName": "accumuloStore", "description": "Basic graph instance using Accumulo", "graphId": "basicGraph", "status": "UP", "url": "http://basic-graph.k8s.cluster/rest"}, {"configName": "mapStore", "description": "Primary dev environment graph", "graphId": "devGraph", "status": "DOWN", "url": "http://dev-environment-1.k8s.cluster/rest"}, {"configName": "mapStore", "description": "Secondary development mode graph", "graphId": "devGraph2", "status": "UP", "url": "http://dev-environment-2.k8s.cluster/rest"}, {"configName": "mapStore", "description": "Test instance of Gaffer", "graphId": "testGaffer", "status": "UP", "url": "http://test-gaffer.k8s.cluster/rest"}]});
+                expect(response.body).toStrictEqual({
+                    graphs: [
+                        {
+                            configName: "federated",
+                            description: "Road traffic graph. This graphs uses a federated store of proxy stores",
+                            graphId: "roadTraffic",
+                            status: "UP",
+                            url: "http://localhost:4000/rest",
+                        },
+                        {
+                            configName: "mapStore",
+                            description: "Example Graph description",
+                            graphId: "exampleGraphId",
+                            status: "UP",
+                            url: "http://road-traffic.k8s.cluster/rest",
+                        },
+                        {
+                            configName: "accumuloStore",
+                            description: "Clashing entities on an Accumulo Store graph",
+                            graphId: "accEntitiesClashingGraph",
+                            status: "DOWN",
+                            url: "http://acc-entities-2.k8s.cluster/rest",
+                        },
+                        {
+                            configName: "mapStore",
+                            description: "Map of edge",
+                            graphId: "mapEdges",
+                            status: "UP",
+                            url: "http://map-edges.k8s.cluster/rest",
+                        },
+                        {
+                            configName: "accumuloStore",
+                            description: "Accumulo graph of entities",
+                            graphId: "accEntities",
+                            status: "UP",
+                            url: "http://acc-entities-1.k8s.cluster/rest",
+                        },
+                        {
+                            configName: "accumuloStore",
+                            description: "Basic graph instance using Accumulo",
+                            graphId: "basicGraph",
+                            status: "UP",
+                            url: "http://basic-graph.k8s.cluster/rest",
+                        },
+                        {
+                            configName: "mapStore",
+                            description: "Primary dev environment graph",
+                            graphId: "devGraph",
+                            status: "DOWN",
+                            url: "http://dev-environment-1.k8s.cluster/rest",
+                        },
+                        {
+                            configName: "mapStore",
+                            description: "Secondary development mode graph",
+                            graphId: "devGraph2",
+                            status: "UP",
+                            url: "http://dev-environment-2.k8s.cluster/rest",
+                        },
+                        {
+                            configName: "mapStore",
+                            description: "Test instance of Gaffer",
+                            graphId: "testGaffer",
+                            status: "UP",
+                            url: "http://test-gaffer.k8s.cluster/rest",
+                        },
+                    ],
+                });
             });
     });
     it("Should respond with a graph when GET is called with the graphs path and user is signed in", async () => {
@@ -151,44 +217,32 @@ describe("Storetypes", () => {
                 expect(response.body).toStrictEqual({
                     storeTypes: [
                         {
-                          name: "accumuloSmall",
-                          parameters: [
-                            "schema"
-                          ]
+                            name: "accumuloSmall",
+                            parameters: ["schema"],
                         },
                         {
                             name: "accumulo",
-                            parameters: [
-                              "schema"
-                            ]
-                          },
-                          {
-                            name: "proxy",
-                            parameters: [
-                              "schema"
-                            ]
-                          },
-                          {
-                            name: "mapStore",
-                            parameters: [
-                              "schema"
-                            ]
-                          },
-                        {
-                          name: "accumuloBig",
-                          parameters: [
-                            "schema"
-                          ]
+                            parameters: ["schema"],
                         },
                         {
-                          name: "federated",
-                          parameters: [
-                            "proxies"
-                          ]
-                        }
-                      ]
+                            name: "proxy",
+                            parameters: ["schema"],
+                        },
+                        {
+                            name: "mapStore",
+                            parameters: ["schema"],
+                        },
+                        {
+                            name: "accumuloBig",
+                            parameters: ["schema"],
+                        },
+                        {
+                            name: "federated",
+                            parameters: ["proxies"],
+                        },
+                    ],
                 });
             });
-    })
-})
+    });
+});
 export {};

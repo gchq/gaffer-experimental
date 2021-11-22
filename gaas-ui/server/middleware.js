@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 // Token
 let token;
 
-app.use( cors());
+app.use(cors());
 // Sign in
 app.post("/auth", (req, res) => {
     const username = String(req.body.username).toLowerCase();
@@ -99,36 +99,36 @@ app.get("/graphs", (req, res) => {
                         description: "Basic graph instance using Accumulo",
                         url: "http://basic-graph.k8s.cluster/rest",
                         configName: "accumuloStore",
-                        status: "UP"
+                        status: "UP",
                     },
                     {
                         graphId: "devGraph",
                         description: "Primary dev environment graph",
                         url: "http://dev-environment-1.k8s.cluster/rest",
                         configName: "mapStore",
-                        status: "DOWN"
+                        status: "DOWN",
                     },
                     {
                         graphId: "devGraph2",
                         description: "Secondary development mode graph",
                         url: "http://dev-environment-2.k8s.cluster/rest",
                         configName: "mapStore",
-                        status: "UP"
+                        status: "UP",
                     },
                     {
                         graphId: "testGaffer",
                         description: "Test instance of Gaffer",
                         url: "http://test-gaffer.k8s.cluster/rest",
                         configName: "mapStore",
-                        status: "UP"
+                        status: "UP",
                     },
-                ]});
+                ],
+            });
         });
     } catch (e) {
         res.status(403).end();
     }
 });
-
 
 // Get graph by ID
 app.get("/graphs/:graphId", (req, res) => {
@@ -170,42 +170,30 @@ app.get("/storetypes", (req, res) => {
             res.status(200).send({
                 storeTypes: [
                     {
-                      name: "accumuloSmall",
-                      parameters: [
-                        "schema"
-                      ]
+                        name: "accumuloSmall",
+                        parameters: ["schema"],
                     },
                     {
                         name: "accumulo",
-                        parameters: [
-                          "schema"
-                        ]
-                      },
-                      {
-                        name: "proxy",
-                        parameters: [
-                          "schema"
-                        ]
-                      },
-                      {
-                        name: "mapStore",
-                        parameters: [
-                          "schema"
-                        ]
-                      },
-                    {
-                      name: "accumuloBig",
-                      parameters: [
-                        "schema"
-                      ]
+                        parameters: ["schema"],
                     },
                     {
-                      name: "federated",
-                      parameters: [
-                        "proxies"
-                      ]
-                    }
-                  ]
+                        name: "proxy",
+                        parameters: ["schema"],
+                    },
+                    {
+                        name: "mapStore",
+                        parameters: ["schema"],
+                    },
+                    {
+                        name: "accumuloBig",
+                        parameters: ["schema"],
+                    },
+                    {
+                        name: "federated",
+                        parameters: ["proxies"],
+                    },
+                ],
             });
         });
     } catch (e) {
@@ -230,7 +218,7 @@ app.get("/down/graph/status", (req, res) => {
 });
 
 app.post("/rest/graph/operations/execute", (req, res) => {
-    res.status(200).send([ "mapEdges", "accEntities" ]);
+    res.status(200).send(["mapEdges", "accEntities"]);
 });
 
 module.exports = server;
