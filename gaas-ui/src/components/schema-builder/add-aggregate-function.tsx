@@ -18,7 +18,7 @@ export default function AddAggregateFunction(props: IProps): ReactElement {
 
     const initialState: IState = {
         aggregateFunction: {
-            key: "",
+            key: "class",
             value: "",
         },
     };
@@ -32,9 +32,6 @@ export default function AddAggregateFunction(props: IProps): ReactElement {
         switch (action.type) {
             case "reset":
                 return initialState;
-            case "validateAggregateFunctionKey":
-                draft.aggregateFunction.key = action.value;
-                return;
             case "validateAggregateFunctionValue":
                 draft.aggregateFunction.value = action.value;
                 return;
@@ -44,24 +41,6 @@ export default function AddAggregateFunction(props: IProps): ReactElement {
 
     return (
         <Grid container spacing={2} direction="column" id={"add-property-inputs"}>
-            <Grid item>
-                <TextField
-                    id={"aggregate-function-key-input"}
-                    label={"Aggregate Function Key"}
-                    aria-label="aggregate-function-key-input"
-                    inputProps={{
-                        name: "Aggregate Function Key",
-                        id: "aggregate-function-key-input",
-                        "aria-label": "property-key-input",
-                    }}
-                    name={"aggregate-function-key"}
-                    value={state.aggregateFunction.key}
-                    variant="outlined"
-                    fullWidth
-                    required
-                    onChange={(e) => dispatch({ type: "validateAggregateFunctionKey", value: e.target.value })}
-                />
-            </Grid>
             <Grid item>
                 <TextField
                     id={"aggregate-function-value-input"}

@@ -13,12 +13,6 @@ afterEach(() => {
 
 describe("Add Property UI Component", () => {
     describe("Add Aggregate Function inputs", () => {
-        it("should have a aggregate function key input field", () => {
-            const aggregateKeyField = wrapper.find("input#aggregate-function-key-input");
-
-            expect(aggregateKeyField.props().name).toBe("Aggregate Function Key");
-        });
-
         it("should have a property value input field", () => {
             const aggregateValueField = wrapper.find("input#aggregate-function-value-input");
             expect(aggregateValueField.props().name).toBe("Aggregate Function Value");
@@ -28,11 +22,9 @@ describe("Add Property UI Component", () => {
     describe("On Add Aggregate Function", () => {
         it("should callback with a object when a new aggregate function has been added", () => {
             const expectedResult: object = {
-                key: "Key",
+                key: "class",
                 value: "value",
             };
-
-            addAggregateKey("Key");
             addAggregateValue("value");
             clickAddAggregate();
 
@@ -48,12 +40,6 @@ describe("Add Property UI Component", () => {
     });
 });
 
-function addAggregateKey(key: string) {
-    const aggregateKeyInputField = wrapper.find("input#aggregate-function-key-input");
-    aggregateKeyInputField.simulate("change", {
-        target: { value: key },
-    });
-}
 function addAggregateValue(value: string) {
     const propertyKeyInputField = wrapper.find("input#aggregate-function-value-input");
     propertyKeyInputField.simulate("change", {
