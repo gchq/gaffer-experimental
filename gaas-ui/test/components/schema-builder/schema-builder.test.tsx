@@ -69,17 +69,8 @@ describe("schema-builder UI wrapper", () => {
             await addTypeDescription("testDescription");
             await addTypeClass("testClass");
 
-            await wrapper.update();
-            await wrapper.update();
-            await wrapper.update();
             await clickAddType();
-            await wrapper.update();
-            await wrapper.update();
-            await wrapper.update();
             await clickCloseAddTypeDialog();
-            await wrapper.update();
-            await wrapper.update();
-            await wrapper.update();
 
             expect(wrapper.find("div#json-types-schema-viewer").text()).toEqual(
                 '{"aType":{"description":"test description""class":"test.class"}"testName":{"description":"testDescription""class":"testClass"}}'
@@ -104,8 +95,8 @@ describe("schema-builder UI wrapper", () => {
         });
     });
 
-    describe("Disbale | Enable Buttons", () => {
-        it("should be enabled add type button when schema builder dailog opens", () => {
+    describe("Disable | Enable Buttons", () => {
+        it("should be enabled add type button when schema builder dialog opens", () => {
             expect(wrapper.find("button#add-type-button").props().disabled).toBe(false);
         });
 
@@ -208,6 +199,49 @@ async function clickAddType() {
 async function clickCloseAddTypeDialog() {
     await act(() => {
         const closeAddTypeButton = wrapper.find("div#add-type-dialog").find("button#close-add-type-button");
+        wrapper.find(Backdrop).simulate("click");
+        closeAddTypeButton.simulate("click");
+    });
+}
+async function selectVertex(vertex: string) {
+    await act(() => {
+        wrapper
+            .find("div#add-entity-dialog")
+            .find("div#entity-vertex-formcontrol")
+            .find("input")
+            .simulate("change", {
+                target: { value: vertex },
+            });
+    });
+}
+
+async function addEntityName(name: string) {
+    await act(() => {
+        const nameInputField = wrapper.find("div#add-entity-dialog").find("input#entity-name-input");
+        nameInputField.simulate("change", {
+            target: { value: name },
+        });
+    });
+}
+
+async function addEntityDescription(description: string) {
+    await act(() => {
+        const descriptionInputField = wrapper.find("div#add-entity-dialog").find("input#entity-description-input");
+        descriptionInputField.simulate("change", {
+            target: { value: description },
+        });
+    });
+}
+
+async function clickAddEntityInAddEntityDialog() {
+    await act(() => {
+        const addTypeButton = wrapper.find("div#add-entity-dialog").find("button#add-entity-button");
+        addTypeButton.simulate("click");
+    });
+}
+async function clickCloseAddEntityDialog() {
+    await act(() => {
+        const closeAddTypeButton = wrapper.find("div#add-entity-dialog").find("button#close-add-entity-button");
         wrapper.find(Backdrop).simulate("click");
         closeAddTypeButton.simulate("click");
     });
