@@ -11,4 +11,7 @@ spec:
     weight: 100
   port:
     targetPort: {{ .Values.service.targetPort }}-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None

@@ -1,11 +1,11 @@
 import { AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
-import { CognitoClient } from "../../../src/rest/clients/cognito-client";
+import { CognitoIdentityClient } from "../../../src/rest/clients/cognito-identity-client";
 import { RestClient } from "../../../src/rest/clients/rest-client";
 
 jest.mock("amazon-cognito-identity-js");
 jest.mock("../../../src/rest/clients/rest-client");
 
-const cognitoClient = new CognitoClient();
+const cognitoClient = new CognitoIdentityClient();
 
 describe("Existing User Sign In", () => {
     it("should call onSuccess when login is successful", () => {

@@ -18,6 +18,7 @@ package uk.gov.gchq.gaffer.gaas.controller;
 
 import io.kubernetes.client.openapi.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -53,8 +54,6 @@ public class GraphController {
     @Autowired
     private ApiClient apiClient;
     @Autowired
-    private AuthService authService;
-    @Autowired
     private GetGaffersService getGaffersService;
     @Autowired
     private CreateGraphService createGraphService;
@@ -66,11 +65,19 @@ public class GraphController {
     private GetNamespacesService getNamespacesService;
     @Autowired
     private GetGaaSGraphConfigsService getStoreTypesService;
+    @Autowired(required = false)
+    private AuthService authService;
+
+    @Value("${cognito.enabled: false}")
+    boolean cognitoEnabled;
 
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-        final String token = authService.getToken(authenticationRequest);
-        return ResponseEntity.ok(token);
+        if (!cognitoEnabled) {
+            final String token = authService.getToken(authenticationRequest);
+            return ResponseEntity.ok(token);
+        }
+        return null;
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
