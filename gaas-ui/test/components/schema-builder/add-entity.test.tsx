@@ -63,7 +63,7 @@ describe("Add Entity UI Component", () => {
         });
     });
 
-    describe("Disbale | Enable Add Entity Button", () => {
+    describe("Disable | Enable Add Entity Button", () => {
         it("should be disabled when Entity Name field is empty", () => {
             addEntityDescription("test entity description");
             selectVertex("typeOne");
