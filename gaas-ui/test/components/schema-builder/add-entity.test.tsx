@@ -103,7 +103,7 @@ describe("Add Entity UI Component", () => {
             await addEntityName("testEntity");
             await addEntityDescription("test entity description");
             await selectVertex("typeOne");
-            await addEnityInTextArea('{"propertyKey":"propertyValue"}');
+            await addEntityInTextArea('{"propertyKey":"propertyValue"}');
             await clickAddEntity();
 
             expect(onAddEntityMockCallBack).toHaveBeenLastCalledWith(expectedResult);
@@ -143,7 +143,7 @@ describe("Add Entity UI Component", () => {
         });
     });
 });
-async function addEnityInTextArea(property: string) {
+async function addEntityInTextArea(property: string) {
     await act(() => {
         const propertyInputField = wrapper.find("textarea#entity-properties-input");
         propertyInputField.simulate("change", {
