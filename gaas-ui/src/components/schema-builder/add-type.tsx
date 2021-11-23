@@ -146,6 +146,7 @@ export default function AddType(props: IProps): ReactElement {
             <Grid container spacing={2} direction="column" id={"add-type-inputs"}>
                 <Grid item>
                     <TextField
+                        required
                         id={"type-name-input"}
                         label={"Type Name"}
                         value={state.typeName.value}
@@ -166,6 +167,7 @@ export default function AddType(props: IProps): ReactElement {
                 </Grid>
                 <Grid item>
                     <TextField
+                        required
                         id={"type-description-input"}
                         label={"Description"}
                         value={state.typeDescription.value}
@@ -186,6 +188,7 @@ export default function AddType(props: IProps): ReactElement {
                 </Grid>
                 <Grid item>
                     <TextField
+                        required
                         id={"type-class-input"}
                         label={"Class"}
                         value={state.typeClass.value}
