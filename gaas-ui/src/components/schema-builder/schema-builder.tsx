@@ -89,10 +89,10 @@ export default function SchemaBuilder(props: IProps): ReactElement {
             <Grid item container spacing={2} direction="row" alignItems="center" id={"add-schema-element-buttons"}>
                 <Grid item>
                     <Button
-                        data-testid="add-type-button"
+                        data-testid="add-type-dialog-button"
                         variant="outlined"
                         onClick={(e) => dispatch({ type: "handleClickCloseTypes", value: true })}
-                        id={"add-type-button"}
+                        id={"add-type-dialog-button"}
                     >
                         Add Type
                     </Button>
@@ -125,9 +125,10 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                 </Grid>
                 <Grid item>
                     <Button
+                        data-testid="add-edge-dialog-button"
                         variant="outlined"
                         onClick={(e) => dispatch({ type: "handleClickCloseEdges", value: true })}
-                        id={"add-edge-button"}
+                        id={"add-edge-dialog-button"}
                         disabled={disableNonTypeButtons()}
                     >
                         Add Edge
@@ -162,9 +163,10 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                 </Grid>
                 <Grid item>
                     <Button
+                        data-testid="add-entity-dialog-button"
                         variant="outlined"
                         onClick={(e) => dispatch({ type: "handleClickCloseEntities", value: true })}
-                        id={"add-entity-button"}
+                        id={"add-entity-dialog-button"}
                         disabled={disableNonTypeButtons()}
                     >
                         Add Entity
