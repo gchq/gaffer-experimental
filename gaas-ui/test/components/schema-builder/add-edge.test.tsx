@@ -63,7 +63,6 @@ describe("Add Edge UI Component", () => {
 
             expect(propertyInputField.props().name).toBe("Edge Properties");
         });
-        //TODO: Properties and Group by
     });
     describe("Add Edge Button", () => {
         it("should have an Add Edge button", () => {
@@ -72,6 +71,18 @@ describe("Add Edge UI Component", () => {
             expect(addEdgeButton.text()).toBe("Add Edge");
         });
     });
+    describe("Add Property Dialog", () => {
+        it("should add the properties added in the property dialog to the properties textarea", async () => {
+            await addEdgePropertyInDialog("propertyKey", "propertyValue");
+            expect(wrapper.find("textarea#edge-properties-input").text()).toEqual('{"propertyKey":"propertyValue"}');
+        });
+    });
+    describe("Add Groupby Dialog", () => {
+        it("should add the groupby added in the groupby dialog to the groupby textarea", async () => {
+            await addEdgeGroupbyInDialog("test");
+            expect(wrapper.find("textarea#edge-groupby-input").text()).toEqual('["test"]');
+        });
+    });
     describe("On Add Edge", () => {
         it("should callback with an edge object when a new edge has been added", async () => {
             const expectedResult: object = {
@@ -80,51 +91,55 @@ describe("Add Edge UI Component", () => {
                     source: "typeOne",
                     destination: "typeTwo",
                     directed: "true",
-                    groupby: [],
-                    properties: {},
+                    groupby: ["test"],
+                    properties: { propertyKey: "propertyValue" },
                 },
             };
 
             await addEdgeName("testEdge");
             await addEdgeDescription("test edge description");
+
             await selectSource("typeOne");
             await selectDestination("typeTwo");
             await selectDirected("true");
+
+            await addEdgePropertyInTextarea('{"propertyKey":"propertyValue"}');
+            await addEdgeGroupbyInTextarea('["test"]');
+
+            await clickAddEdge();
+
+            expect(onAddEdgeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
+        });
+        it("should callback with an edge object when a new edge has been added using property and groupby dialogs", async () => {
+            const expectedResult: object = {
+                testEdge: {
+                    description: "test edge description",
+                    source: "typeOne",
+                    destination: "typeTwo",
+                    directed: "true",
+                    groupby: ["test"],
+                    properties: { propertyKey: "propertyValue" },
+                },
+            };
+
+            await addEdgeName("testEdge");
+            await addEdgeDescription("test edge description");
+
+            await selectSource("typeOne");
+            await selectDestination("typeTwo");
+            await selectDirected("true");
+
+            await addEdgePropertyInDialog("propertyKey", "propertyValue");
+            await addEdgeGroupbyInDialog("test");
+
             await clickAddEdge();
 
             expect(onAddEdgeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
         });
     });
 
-    describe("On Add Edge", () => {
-        it("should callback with an edge object when a new edge has been added", async () => {
-            const expectedResult: object = {
-                testEdge: {
-                    description: "test edge description",
-                    source: "typeOne",
-                    destination: "typeTwo",
-                    directed: "true",
-                    groupby: [],
-                    properties: {},
-                },
-            };
-            wrapper.find("button#add-properties-button").simulate("click");
-
-            await addEdgeName("testEdge");
-            await addEdgeDescription("test edge description");
-            await selectSource("typeOne");
-            await selectDestination("typeTwo");
-            await selectDirected("true");
-            await addEdgeProperty('{"aproperty":"aproperty"}');
-            await clickAddEdgeDialog();
-
-            expect(onAddEdgeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
-        });
-    });
-
-    describe("Disbale | Enable Add Edge Button", () => {
+    describe("Disable | Enable Add Edge Button", () => {
         it("should be disabled when Edge Name field is empty", async () => {
-            await addEdgeName("testEdge");
             await addEdgeDescription("test edge description");
             await selectSource("typeOne");
             await selectDestination("typeTwo");
@@ -238,54 +253,87 @@ async function addEdgeDescription(description: string) {
 }
 
 async function selectSource(source: string) {
-    await act(async () => {
-        wrapper
-            .find("div#edge-source-formcontrol")
-            .find("input")
-            .simulate("change", {
-                target: { value: source },
-            });
-    });
+    wrapper
+        .find("div#add-edge-inputs")
+        .find("div#edge-source-formcontrol")
+        .find("input")
+        .simulate("change", {
+            target: { value: source },
+        });
 }
 
 async function selectDestination(destination: string) {
-    await act(async () => {
-        wrapper
-            .find("div#edge-destination-formcontrol")
-            .find("input")
-            .simulate("change", {
-                target: { value: destination },
-            });
-    });
+    wrapper
+        .find("div#edge-destination-formcontrol")
+        .find("input")
+        .simulate("change", {
+            target: { value: destination },
+        });
 }
 
 async function selectDirected(directed: string) {
-    await act(async () => {
-        wrapper
-            .find("div#edge-directed-formcontrol")
-            .find("input")
-            .simulate("change", {
-                target: { value: directed },
-            });
-    });
+    wrapper
+        .find("div#edge-directed-formcontrol")
+        .find("input")
+        .simulate("change", {
+            target: { value: directed },
+        });
 }
-async function addEdgeProperty(property: string) {
+async function addEdgePropertyInTextarea(property: string) {
     await act(() => {
-        const propertyInputField = wrapper.find("div#add-properties-dialog").find("input#property-key-input");
-        propertyInputField.simulate("change", {
+        const propertyTextarea = wrapper.find("textarea#edge-properties-input");
+        propertyTextarea.simulate("change", {
             target: { value: property },
         });
     });
+}
+async function addEdgePropertyInDialog(propertyKey: string, propertyValue: string) {
+    await wrapper.find("button#add-properties-button").simulate("click");
+    await act(() => {
+        const propertyKeyInput = wrapper
+            .find("div#add-properties-dialog")
+            .find("div#add-property-inputs")
+            .find("input#property-key-input");
+        propertyKeyInput.simulate("change", {
+            target: { value: propertyKey },
+        });
+        const propertyValueInput = wrapper
+            .find("div#add-properties-dialog")
+            .find("div#add-property-inputs")
+            .find("input#property-value-input");
+        propertyValueInput.simulate("change", {
+            target: { value: propertyValue },
+        });
+    });
+    await wrapper.find("button#add-property-button").simulate("click");
+}
+async function addEdgeGroupbyInTextarea(groupby: string) {
+    await act(() => {
+        const groupbyInputField = wrapper.find("textarea#edge-groupby-input");
+        groupbyInputField.simulate("change", {
+            target: { value: groupby },
+        });
+    });
+}
+async function addEdgeGroupbyInDialog(groupby: string) {
+    await wrapper.find("button#add-groupby-button").simulate("click");
+    await act(() => {
+        const groupByInput = wrapper
+            .find("div#add-groupby-dialog")
+            .find("div#add-groupby-inputs")
+            .find("input#groupby-key-input");
+        groupByInput.simulate("change", {
+            target: { value: groupby },
+        });
+    });
+    await wrapper
+        .find("div#add-groupby-dialog")
+        .find("div#add-groupby-inputs")
+        .find("button#add-groupby-button")
+        .simulate("click");
 }
 
 function clickAddEdge() {
     const addTypeButton = wrapper.find("button#add-edge-button");
     addTypeButton.simulate("click");
-}
-
-async function clickAddEdgeDialog() {
-    await act(async () => {
-        const addTypeButton = wrapper.find("div#add-properties-dialog").find("button#add-properties-button");
-        addTypeButton.simulate("click");
-    });
 }
