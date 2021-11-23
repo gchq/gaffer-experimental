@@ -106,6 +106,36 @@ describe("schema-builder UI wrapper", () => {
         });
     });
 
+    describe("Elements Schema Prop", () => {
+        it("should update the json viewer with the added edge from the add edge dialog", async () => {
+            wrapper.find("button#add-edge-button").simulate("click");
+
+            await addEdgeName("testEdge2");
+            await addEdgeDescription("test edge description");
+            await selectSource("edgeOne");
+            await selectDestination("edgeTwo");
+            await selectDirected("true");
+            await addEdgeProperty('{"aproperty":"aproperty"}');
+            await addEdgeGroupby('{"groupby":"groupby"}');
+
+            await clickAddEdgeInAddEdgeDialog();
+
+            expect(wrapper.find("div#json-edges-schema-viewer").text()).toEqual(
+                '"entities":{"testEdge":{"description":"test description""source":""}"anEntityName":{"description":"anEntityDescription""vertex":"aType""properties":"{"aproperty":"aproperty"}"}}'
+            );
+        });
+        it("should display the edges from the elements schema that is passed in", () => {
+            expect(wrapper.find("div#json-edges-schema-viewer").text()).toEqual(
+                '"edges":{"TestEdge":{"description":"test""source":"A""destination":"B""directed":"true"}}'
+            );
+        });
+        it("should display the entities from the elements schema that is passed in ", () => {
+            expect(wrapper.find("div#json-entities-schema-viewer").text()).toEqual(
+                '"entities":{"TestEntity":{"description":"test description""vertex":"B"}}'
+            );
+        });
+    });
+
     describe("Disable | Enable Buttons", () => {
         it("should be enabled add type button when schema builder dialog opens", () => {
             expect(wrapper.find("button#add-type-button").props().disabled).toBe(false);
@@ -172,6 +202,85 @@ describe("schema-builder UI wrapper", () => {
         });
     });
 });
+
+async function addEdgeName(name: string) {
+    await act(async () => {
+        const nameEdgeInputField = wrapper.find("div#add-edge-dialog").find("input#edge-name-input");
+        nameEdgeInputField.simulate("change", {
+            target: { name: "Type Name", value: name },
+        });
+    });
+}
+
+async function addEdgeDescription(description: string) {
+    await act(async () => {
+        const descriptionEdgeInputField = wrapper.find("div#add-edge-dialog").find("input#edge-description-input");
+        descriptionEdgeInputField.simulate("change", {
+            target: { value: description },
+        });
+    });
+}
+
+async function selectSource(source: string) {
+    await act(() => {
+        wrapper
+            .find("div#add-edge-dialog")
+            .find("div#edge-source-formcontrol")
+            .find("input")
+            .simulate("change", {
+                target: { value: source },
+            });
+    });
+}
+
+async function selectDestination(destination: string) {
+    await act(() => {
+        wrapper
+            .find("div#add-edge-dialog")
+            .find("div#edge-destination-formcontrol")
+            .find("input")
+            .simulate("change", {
+                target: { value: destination },
+            });
+    });
+}
+
+async function selectDirected(directed: string) {
+    await act(() => {
+        wrapper
+            .find("div#add-edge-dialog")
+            .find("div#edge-directed-formcontrol")
+            .find("input")
+            .simulate("change", {
+                target: { value: directed },
+            });
+    });
+}
+
+async function addEdgeProperty(property: string) {
+    await act(() => {
+        const propertyInputField = wrapper.find("div#add-edge-dialog").find("textarea#edge-properties-input");
+        propertyInputField.simulate("change", {
+            target: { value: property },
+        });
+    });
+}
+
+async function addEdgeGroupby(groupby: string) {
+    await act(() => {
+        const groupbyInputField = wrapper.find("div#add-edge-dialog").find("textarea#edge-groupby-input");
+        groupbyInputField.simulate("change", {
+            target: { value: groupby },
+        });
+    });
+}
+
+async function clickAddEdgeInAddEdgeDialog() {
+    await act(async () => {
+        const addEdgeButton = wrapper.find("div#add-edge-dialog").find("button#add-edge-button");
+        addEdgeButton.simulate("click");
+    });
+}
 
 async function addTypeName(name: string) {
     await act(async () => {
