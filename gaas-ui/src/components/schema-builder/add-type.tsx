@@ -3,6 +3,9 @@ import { Button, Grid, TextField, Box, IconButton, DialogTitle, DialogContent, D
 import { useImmerReducer } from "use-immer";
 import AddAggregateFunction from "./add-aggregate-function";
 import ClearIcon from "@material-ui/icons/Clear";
+import AddSerialiser from "./add-serialiser";
+import { StarRateRounded } from "@material-ui/icons";
+import { startsWith } from "core-js/library/es7/string";
 
 interface IProps {
     onAddType(type: object): void;
@@ -25,6 +28,8 @@ interface IState {
     };
     aggregateFunction: {};
     openAggregateFunction: boolean;
+    serialiser: {};
+    openSerialiser: boolean;
 }
 
 export default function AddType(props: IProps): ReactElement {
@@ -50,6 +55,8 @@ export default function AddType(props: IProps): ReactElement {
         },
         aggregateFunction: {},
         openAggregateFunction: false,
+        serialiser: {},
+        openSerialiser: false,
     };
 
     function addTypeReducer(draft: any, action: any) {
@@ -96,6 +103,16 @@ export default function AddType(props: IProps): ReactElement {
                 return;
             case "handleUpdateAggregateFunction":
                 draft.aggregateFunction[action.value.key] = action.value.value;
+                return;
+            case "handleClickCloseSerialiser":
+                draft.openSerialiser = action.value;
+                return;
+            case "validateTypeSerialiser":
+                draft.serialiser = action.value;
+                return;
+            case "handleUpdateSerialiser":
+                draft.serialiser[action.value.key] = action.value.value;
+                return;
         }
     }
 
@@ -118,6 +135,7 @@ export default function AddType(props: IProps): ReactElement {
             description: state.typeDescription.value,
             class: state.typeClass.value,
             aggregateFunction: state.aggregateFunction,
+            serialiser: state.serialiser,
         };
         onAddType(typeToAdd);
         dispatch({ type: "reset" });
@@ -241,6 +259,61 @@ export default function AddType(props: IProps): ReactElement {
                         rows={5}
                         variant="outlined"
                         onChange={(e) => dispatch({ type: "validateTypeAggregateFunction", value: e.target.value })}
+                    />
+                </Grid>
+                <Grid item>
+                    <Button
+                        variant="outlined"
+                        onClick={(e) => dispatch({ type: "handleClickCloseSerialiser", value: true })}
+                        id={"add-serialiser-button"}
+                    >
+                        Add Serialiser
+                    </Button>
+                    <Dialog
+                        fullWidth
+                        maxWidth="xs"
+                        open={state.openSerialiser}
+                        onClose={(e) => dispatch({ type: "handleClickCloseSerialiser", value: false })}
+                        id={"add-serialiser-dialog"}
+                        aria-labelledby="add-serialiser-dialog"
+                    >
+                        <Box display="flex" alignItems="right" justifyContent="right">
+                            <IconButton
+                                id="close-serialiser-button"
+                                onClick={(e) => dispatch({ type: "handleClickCloseSerialiser", value: false })}
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        </Box>
+
+                        <Box display="flex" alignItems="center" justifyContent="center">
+                            <DialogTitle id="add-serialiser-dialog-title">{"Add Serialiser"}</DialogTitle>
+                        </Box>
+                        <DialogContent>
+                            <AddSerialiser
+                                onAddSerialiser={(serialiser) =>
+                                    dispatch({ type: "handleUpdateSerialiser", value: serialiser })
+                                }
+                            />
+                        </DialogContent>
+                    </Dialog>
+                </Grid>
+                <Grid item>
+                    <TextField
+                        id={"type-serialiser-input"}
+                        inputProps={{
+                            name: "Type Serialiser",
+                            id: "type-serialiser-input",
+                            "aria-label": "type-serialiser-input",
+                        }}
+                        fullWidth
+                        value={JSON.stringify(state.serialiser)}
+                        name={"type-serialiser-textfield"}
+                        required
+                        multiline
+                        rows={5}
+                        variant="outlined"
+                        onChange={(e) => dispatch({ type: "validateTypeSerialiser", value: e.target.value })}
                     />
                 </Grid>
                 <Box display="flex" alignItems="center" justifyContent="center">
