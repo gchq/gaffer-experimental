@@ -397,7 +397,9 @@ async function clickAddEntityInAddEntityDialog() {
     });
 }
 
-function clickCreateSchema() {
-    const createSchemaButton = wrapper.find("button#create-schema-button");
-    createSchemaButton.simulate("click");
+async function clickCreateSchema() {
+    await act(() => {
+        const createSchemaButton = wrapper.find("button#create-schema-button");
+        createSchemaButton.simulate("click");
+    });
 }

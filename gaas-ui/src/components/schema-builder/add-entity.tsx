@@ -189,6 +189,7 @@ export default function AddEntity(props: IProps): ReactElement {
                     >
                         {types.map((type: string) => (
                             <MenuItem
+                                key={type + "-item"}
                                 value={type}
                                 aria-label={type + "-menu-item"}
                                 id={type + "-menu-item"}
