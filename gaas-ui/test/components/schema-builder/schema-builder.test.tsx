@@ -85,12 +85,12 @@ describe("schema-builder UI wrapper", () => {
             await addEntityName("anEntityName");
             await addEntityDescription("anEntityDescription");
             await selectVertex("aType");
-            await addEntityProperty('{"aproperty":"aproperty"}');
+            await addEntityPropertyInDialog("propertyKey", "propertyValue");
 
             await clickAddEntityInAddEntityDialog();
 
             expect(wrapper.find("div#json-entities-schema-viewer").text()).toEqual(
-                '"entities":{"TestEntity":{"description":"test description""vertex":"B"}"anEntityName":{"description":"anEntityDescription""vertex":"aType""properties":"{"aproperty":"aproperty"}"}}'
+                '"entities":{"TestEntity":{"description":"test description""vertex":"B"}"anEntityName":{"description":"anEntityDescription""vertex":"aType""properties":{"propertyKey":"propertyValue"}}}'
             );
         });
         it("should update the json viewer with the added edge from the add edge dialog", async () => {
@@ -103,13 +103,13 @@ describe("schema-builder UI wrapper", () => {
             await selectEdgeDestination("aType");
             await selectEdgeDirected("true");
 
-            await addEdgeProperty('{"aproperty":"aproperty"}');
-            await addEdgeGroupby('["test"]');
+            await addEdgePropertyInDialog("propertyKey", "propertyValue");
+            await addEdgeGroupbyInDialog("test");
 
             await clickAddEdgeInAddEdgeDialog();
 
             expect(wrapper.find("div#json-edges-schema-viewer").text()).toEqual(
-                '"edges":{"TestEdge":{"description":"test""source":"A""destination":"B""directed":"true"}"testEdge":{"description":"test edge description""source":"aType""destination":"aType""directed":"true""properties":"{"aproperty":"aproperty"}""groupby":[]}}'
+                '"edges":{"TestEdge":{"description":"test""source":"A""destination":"B""directed":"true"}"testEdge":{"description":"test edge description""source":"aType""destination":"aType""directed":"true""properties":{"propertyKey":"propertyValue"}"groupby":[0:"test"]}}'
             );
         });
         it("should display the edges from the elements schema that is passed in", () => {
@@ -245,22 +245,51 @@ async function selectEdgeDirected(directed: string) {
     });
 }
 
-async function addEdgeProperty(property: string) {
+async function addEdgePropertyInDialog(propertyKey: string, propertyValue: string) {
+    await wrapper.find("div#add-edge-dialog").find("button#add-properties-button").simulate("click");
     await act(() => {
-        const propertyInputField = wrapper.find("div#add-edge-dialog").find("textarea#edge-properties-input");
-        propertyInputField.simulate("change", {
-            target: { value: property },
+        const propertyKeyInput = wrapper
+            .find("div#add-edge-dialog")
+            .find("div#add-properties-dialog")
+            .find("div#add-property-inputs")
+            .find("input#property-key-input");
+        propertyKeyInput.simulate("change", {
+            target: { value: propertyKey },
+        });
+        const propertyValueInput = wrapper
+            .find("div#add-edge-dialog")
+            .find("div#add-properties-dialog")
+            .find("div#add-property-inputs")
+            .find("input#property-value-input");
+        propertyValueInput.simulate("change", {
+            target: { value: propertyValue },
         });
     });
+    await wrapper
+        .find("div#add-edge-dialog")
+        .find("div#add-properties-dialog")
+        .find("button#add-property-button")
+        .simulate("click");
 }
 
-async function addEdgeGroupby(groupby: string) {
+async function addEdgeGroupbyInDialog(groupby: string) {
+    await wrapper.find("div#add-edge-dialog").find("button#add-groupby-button").simulate("click");
     await act(() => {
-        const groupbyInputField = wrapper.find("div#add-edge-dialog").find("textarea#edge-groupby-input");
-        groupbyInputField.simulate("change", {
+        const groupByInput = wrapper
+            .find("div#add-edge-dialog")
+            .find("div#add-groupby-dialog")
+            .find("div#add-groupby-inputs")
+            .find("input#groupby-key-input");
+        groupByInput.simulate("change", {
             target: { value: groupby },
         });
     });
+    await wrapper
+        .find("div#add-edge-dialog")
+        .find("div#add-groupby-dialog")
+        .find("div#add-groupby-inputs")
+        .find("button#add-groupby-button")
+        .simulate("click");
 }
 
 async function clickAddEdgeInAddEdgeDialog() {
@@ -333,13 +362,32 @@ async function addEntityDescription(description: string) {
         });
     });
 }
-async function addEntityProperty(property: string) {
+
+async function addEntityPropertyInDialog(propertyKey: string, propertyValue: string) {
+    await wrapper.find("div#add-entity-dialog").find("button#add-properties-button").simulate("click");
     await act(() => {
-        const propertyInputField = wrapper.find("div#add-entity-dialog").find("textarea#entity-properties-input");
-        propertyInputField.simulate("change", {
-            target: { value: property },
+        const propertyKeyInput = wrapper
+            .find("div#add-entity-dialog")
+            .find("div#add-properties-dialog")
+            .find("div#add-property-inputs")
+            .find("input#property-key-input");
+        propertyKeyInput.simulate("change", {
+            target: { value: propertyKey },
+        });
+        const propertyValueInput = wrapper
+            .find("div#add-entity-dialog")
+            .find("div#add-properties-dialog")
+            .find("div#add-property-inputs")
+            .find("input#property-value-input");
+        propertyValueInput.simulate("change", {
+            target: { value: propertyValue },
         });
     });
+    await wrapper
+        .find("div#add-entity-dialog")
+        .find("div#add-properties-dialog")
+        .find("button#add-property-button")
+        .simulate("click");
 }
 
 async function clickAddEntityInAddEntityDialog() {
