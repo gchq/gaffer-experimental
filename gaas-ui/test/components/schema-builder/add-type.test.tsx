@@ -166,12 +166,10 @@ describe("Add Type UI Component", () => {
                 testName: {
                     description: "test description",
                     class: "test.class",
-                    validateFunctions: [
-                        {
-                            class: "test.class",
-                            testAdditionalKey: "someValue",
-                        },
-                    ],
+                    validateFunctions: {
+                        class: "test.class",
+                        testAdditionalKey: "someValue",
+                    },
                 },
             };
 
