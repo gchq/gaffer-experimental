@@ -32,7 +32,6 @@ describe("Add Property UI Component", () => {
         it("should callback with a object when a new validate functions object has been added", () => {
             const expectedResult: object = {
                 class: "value",
-                value: {},
             };
             addClass("value");
             clickAddValidateFunctions();

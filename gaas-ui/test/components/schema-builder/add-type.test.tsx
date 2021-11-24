@@ -119,6 +119,11 @@ describe("Add Type UI Component", () => {
                     serialiser: {
                         class: "test",
                     },
+                    validateFunctions: [
+                        {
+                            class: "uk.gov.gchq.koryphe.impl.predicate.Exists",
+                        },
+                    ],
                 },
             };
 
@@ -127,6 +132,7 @@ describe("Add Type UI Component", () => {
             addTypeClass("test.class");
             await addAggregateFunctionInTextarea('{"class":"testAggregateFunction"}');
             await addSerialiserInTextarea('{"class":"test"}');
+            await addValidateFunctionsInTextarea('[{"class": "uk.gov.gchq.koryphe.impl.predicate.Exists"}]');
             clickAddType();
 
             expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
@@ -200,6 +206,15 @@ async function addSerialiserInTextarea(serialiser: string) {
 
         aggregateFunctionInput.simulate("change", {
             target: { value: serialiser },
+        });
+    });
+}
+async function addValidateFunctionsInTextarea(validateFuntions: string) {
+    await act(() => {
+        const aggregateFunctionInput = wrapper.find("textarea#type-validate-functions-input");
+
+        aggregateFunctionInput.simulate("change", {
+            target: { value: validateFuntions },
         });
     });
 }

@@ -33,6 +33,7 @@ interface IState {
     openValidateFunctions: boolean;
     serialiserTextarea: string;
     aggregateFunctionTextarea: string;
+    validateFunctionsTextarea: string;
 }
 
 export default function AddType(props: IProps): ReactElement {
@@ -64,6 +65,7 @@ export default function AddType(props: IProps): ReactElement {
         openValidateFunctions: false,
         serialiserTextarea: "",
         aggregateFunctionTextarea: "",
+        validateFunctionsTextarea: "",
     };
 
     function addTypeReducer(draft: any, action: any) {
@@ -108,6 +110,9 @@ export default function AddType(props: IProps): ReactElement {
             case "handleUpdateAggregateFunctionTextarea":
                 draft.aggregateFunctionTextarea = action.value;
                 return;
+            case "handleUpdateValidateFunctionsTextarea":
+                draft.validateFunctionsTextarea = action.value;
+                return;
             case "handleClickCloseAggregateFunction":
                 draft.openAggregateFunction = action.value;
                 return;
@@ -123,11 +128,8 @@ export default function AddType(props: IProps): ReactElement {
             case "handleClickCloseValidateFunctions":
                 draft.openValidateFunctions = action.value;
                 return;
-            case "validateTypeValidateFunctions":
-                draft.validateFunctions = action.value;
-                return;
             case "handleUpdateValidateFunctions":
-                draft.validateFunctions[draft.validateFunctions.length] = action.value;
+                draft.validateFunctions = action.value;
                 return;
         }
     }
@@ -388,9 +390,16 @@ export default function AddType(props: IProps): ReactElement {
                         </Box>
                         <DialogContent>
                             <AddValidateFunctions
-                                onAddValidateFunctions={(validateFunctions) =>
-                                    dispatch({ type: "handleUpdateValidateFunctions", value: validateFunctions })
-                                }
+                                onAddValidateFunctions={(validateFunctions) => {
+                                    dispatch({
+                                        type: "handleUpdateValidateFunctionsTextarea",
+                                        value: JSON.stringify(validateFunctions),
+                                    });
+                                    dispatch({
+                                        type: "handleUpdateValidateFunctions",
+                                        value: validateFunctions,
+                                    });
+                                }}
                             />
                         </DialogContent>
                     </Dialog>
@@ -404,13 +413,16 @@ export default function AddType(props: IProps): ReactElement {
                             "aria-label": "type-validate-functions-input",
                         }}
                         fullWidth
-                        value={JSON.stringify(state.validateFunctions)}
+                        value={state.validateFunctionsTextarea}
                         name={"type-validate-functions-textfield"}
                         required
                         multiline
                         rows={5}
                         variant="outlined"
-                        onChange={(e) => dispatch({ type: "validateTypeValidateFunctions", value: e.target.value })}
+                        onChange={(e) => {
+                            dispatch({ type: "handleUpdateValidateFunctionsTextarea", value: e.target.value });
+                            dispatch({ type: "handleUpdateValidateFunctions", value: JSON.parse(e.target.value) });
+                        }}
                     />
                 </Grid>
                 <Box display="flex" alignItems="center" justifyContent="center">
