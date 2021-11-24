@@ -132,7 +132,7 @@ describe("Add Type UI Component", () => {
             addTypeClass("test.class");
             await addAggregateFunctionInTextarea('{"class":"testAggregateFunction"}');
             await addSerialiserInTextarea('{"class":"test"}');
-            await addValidateFunctionsInTextarea('[{"class": "uk.gov.gchq.koryphe.impl.predicate.Exists"}]');
+            await addValidateFunctionsInTextarea('{"class": "uk.gov.gchq.koryphe.impl.predicate.Exists"}');
             clickAddType();
 
             expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
