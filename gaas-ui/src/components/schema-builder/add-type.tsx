@@ -148,10 +148,16 @@ export default function AddType(props: IProps): ReactElement {
         typeToAdd[state.typeName.value] = {
             description: state.typeDescription.value,
             class: state.typeClass.value,
-            aggregateFunction: state.aggregateFunction,
-            serialiser: state.serialiser,
-            validateFunctions: state.validateFunctions,
         };
+        if (Object.keys(state.aggregateFunction).length !== 0) {
+            typeToAdd[state.typeName.value].aggregateFunction = state.aggregateFunction;
+        }
+        if (Object.keys(state.serialiser).length !== 0) {
+            typeToAdd[state.typeName.value].serialiser = state.serialiser;
+        }
+        if (state.validateFunctions.length !== 0) {
+            typeToAdd[state.typeName.value].validateFunctions = state.validateFunctions;
+        }
         onAddType(typeToAdd);
         dispatch({ type: "reset" });
     }

@@ -10,7 +10,6 @@ interface IProps {
 interface IState {
     validateFunctionObject: {
         class: string;
-        value: {};
     };
     nestedObject: {};
     classValue: string;
@@ -24,7 +23,6 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
     const initialState: IState = {
         validateFunctionObject: {
             class: "",
-            value: {},
         },
         nestedObject: {},
         classValue: "",
@@ -50,7 +48,7 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                 return;
             case "handleUpdateNestedObject":
                 draft.nestedObject = Object.assign(draft.nestedObject, action.value);
-                draft.validateFunctionObject.value = draft.nestedObject;
+                draft.validateFunctionObject["value"] = draft.nestedObject;
                 return;
             case "validateAdditionalKey":
                 draft.additionalKey = action.value;

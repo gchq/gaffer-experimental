@@ -143,7 +143,6 @@ describe("Add Type UI Component", () => {
                     serialiser: {
                         class: "testSerialiser",
                     },
-                    validateFunctions: [],
                 },
             };
 
