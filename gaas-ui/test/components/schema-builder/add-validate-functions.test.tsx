@@ -1,7 +1,6 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 import AddValidateFunctions from "../../../src/components/schema-builder/add-validate-functions";
-import { EcoTwoTone } from "@material-ui/icons";
 
 let wrapper: ReactWrapper;
 const onAddValidateFunctionsMockCallBack = jest.fn();
