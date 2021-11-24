@@ -10,8 +10,8 @@ interface IState {
     property: {
         key: string;
         value: string;
-        hasErrors: boolean;
     };
+    hasErrors: boolean;
 }
 
 export default function AddProperty(props: IProps): ReactElement {
@@ -21,12 +21,14 @@ export default function AddProperty(props: IProps): ReactElement {
         property: {
             value: "",
             key: "",
-            hasErrors: false,
         },
+        hasErrors: false,
     };
 
     function addPropertySubmit() {
-        onAddProperty(state.property);
+        onAddProperty({
+            [state.property.key]: state.property.value,
+        });
         dispatch({ type: "reset" });
     }
 
@@ -35,11 +37,11 @@ export default function AddProperty(props: IProps): ReactElement {
             case "reset":
                 return initialState;
             case "validatePropertyKey":
-                draft.property.hasErrors = false;
+                draft.hasErrors = false;
                 draft.property.key = action.value;
                 return;
             case "validatePropertyValue":
-                draft.property.hasErrors = false;
+                draft.hasErrors = false;
                 draft.property.value = action.value;
                 return;
         }
@@ -62,7 +64,7 @@ export default function AddProperty(props: IProps): ReactElement {
                     value={state.property.key}
                     variant="outlined"
                     fullWidth
-                    error={state.property.hasErrors}
+                    error={state.hasErrors}
                     required
                     onChange={(e) => dispatch({ type: "validatePropertyKey", value: e.target.value })}
                 />
@@ -81,7 +83,7 @@ export default function AddProperty(props: IProps): ReactElement {
                     value={state.property.value}
                     variant="outlined"
                     fullWidth
-                    error={state.property.hasErrors}
+                    error={state.hasErrors}
                     required
                     onChange={(e) => dispatch({ type: "validatePropertyValue", value: e.target.value })}
                 />

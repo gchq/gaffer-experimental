@@ -38,6 +38,7 @@ interface IState {
     };
     openProperties: boolean;
     properties: {};
+    propertiesTextarea: string;
 }
 
 export default function AddEntity(props: IProps): ReactElement {
@@ -72,6 +73,7 @@ export default function AddEntity(props: IProps): ReactElement {
         },
         openProperties: false,
         properties: {},
+        propertiesTextarea: "",
     };
 
     function addEntityReducer(draft: any, action: any) {
@@ -107,11 +109,10 @@ export default function AddEntity(props: IProps): ReactElement {
                 draft.openProperties = action.value;
                 return;
             case "handleUpdateProperties":
-                draft.properties[action.value.key] = action.value.value;
+                draft.properties[Object.keys(action.value)[0]] = Object.values(action.value)[0];
                 return;
-
-            case "validateEntityProperties":
-                draft.properties = action.value;
+            case "handleUpdatePropertiesTextarea":
+                draft.propertiesTextarea = draft.propertiesTextarea + action.value;
                 return;
         }
     }
@@ -231,9 +232,13 @@ export default function AddEntity(props: IProps): ReactElement {
                     </Box>
                     <DialogContent>
                         <AddProperty
-                            onAddProperty={(properties) =>
-                                dispatch({ type: "handleUpdateProperties", value: properties })
-                            }
+                            onAddProperty={(properties) => {
+                                dispatch({ type: "handleUpdateProperties", value: properties });
+                                dispatch({
+                                    type: "handleUpdatePropertiesTextarea",
+                                    value: JSON.stringify(properties),
+                                });
+                            }}
                         />
                     </DialogContent>
                 </Dialog>
@@ -247,13 +252,16 @@ export default function AddEntity(props: IProps): ReactElement {
                         "aria-label": "entity-properties-input",
                     }}
                     fullWidth
-                    value={JSON.stringify(state.properties)}
+                    value={state.propertiesTextarea}
                     name="entity-properties"
                     required
                     multiline
                     rows={5}
                     variant="outlined"
-                    onChange={(e) => dispatch({ type: "validateEntityProperties", value: e.target.value })}
+                    onChange={(e) => {
+                        dispatch({ type: "handleUpdatePropertiesTextarea", value: e.target.value });
+                        dispatch({ type: "handleUpdateProperties", value: JSON.parse(e.target.value) });
+                    }}
                 />
             </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">

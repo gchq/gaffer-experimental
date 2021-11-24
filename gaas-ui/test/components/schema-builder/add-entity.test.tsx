@@ -96,13 +96,15 @@ describe("Add Entity UI Component", () => {
                 testEntity: {
                     description: "test entity description",
                     vertex: "typeOne",
-                    properties: { propertyKey: "propertyValue" },
+                    properties: { propertyKey: "propertyValue", AProperty: "APropertyValue" },
                 },
             };
 
             await addEntityName("testEntity");
             await addEntityDescription("test entity description");
             await selectVertex("typeOne");
+            await addEntityPropertyInDialog("AProperty", "APropertyValue");
+
             await addEntityInTextArea('{"propertyKey":"propertyValue"}');
             await clickAddEntity();
 
