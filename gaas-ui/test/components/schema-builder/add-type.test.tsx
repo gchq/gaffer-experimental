@@ -119,7 +119,6 @@ describe("Add Type UI Component", () => {
                     serialiser: {
                         class: "testSerialiser",
                     },
-                    validateFunctions: [],
                 },
             };
 
@@ -151,6 +150,29 @@ describe("Add Type UI Component", () => {
             await addTypeClass("test.class");
             await addAggregateFunctionInDialog("testAggregateFunction");
             await addSerialiserInDialog("testSerialiser");
+
+            await clickAddType();
+
+            expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
+        });
+        it("should callback with a type object when a new type has been added using validateFunctions dialog", async () => {
+            const expectedResult: object = {
+                testName: {
+                    description: "test description",
+                    class: "test.class",
+                    validateFunctions: [
+                        {
+                            class: "test.class",
+                            testAdditionalKey: "someValue",
+                        },
+                    ],
+                },
+            };
+
+            await addTypeName("testName");
+            await addTypeDescription("test description");
+            await addTypeClass("test.class");
+            await addValidateFunctionInDialog("test.class");
 
             await clickAddType();
 
@@ -236,6 +258,43 @@ async function addSerialiserInDialog(serialiser: string) {
         .find("div#add-serialiser-dialog")
         .find("div#add-serialiser-inputs")
         .find("button#add-serialiser-button")
+        .simulate("click");
+}
+
+async function addValidateFunctionInDialog(classInput: string) {
+    await wrapper.find("button#add-validate-function-button").simulate("click");
+    await act(() => {
+        const addClass = wrapper
+            .find("div#add-validate-functions-dialog")
+            .find("div#add-validate-functions-inputs")
+            .find("input#validate-functions-class-input");
+        addClass.simulate("change", {
+            target: { value: classInput },
+        });
+        const addAdditionalKey = wrapper
+            .find("div#add-validate-functions-dialog")
+            .find("div#add-validate-functions-inputs")
+            .find("input#validate-functions-additional-key-input");
+        addAdditionalKey.simulate("change", {
+            target: { value: "testAdditionalKey" },
+        });
+        const addAdditionalValue = wrapper
+            .find("div#add-validate-functions-dialog")
+            .find("div#add-validate-functions-inputs")
+            .find("input#validate-functions-additional-value-input");
+        addAdditionalValue.simulate("change", {
+            target: { value: "someValue" },
+        });
+    });
+    await wrapper
+        .find("div#add-validate-functions-dialog")
+        .find("div#add-validate-functions-inputs")
+        .find("button#add-additional-kv-button")
+        .simulate("click");
+    await wrapper
+        .find("div#add-validate-functions-dialog")
+        .find("div#add-validate-functions-inputs")
+        .find("button#add-validate-functions-button")
         .simulate("click");
 }
 
