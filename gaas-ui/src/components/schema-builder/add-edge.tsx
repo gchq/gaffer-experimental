@@ -64,9 +64,13 @@ export default function AddEdge(props: IProps): ReactElement {
             source: state.edgeSource.value,
             destination: state.edgeDestination.value,
             directed: state.edgeDirected.value,
-            properties: state.properties,
-            groupby: state.groupby,
         };
+        if (Object.keys(state.properties).length !== 0) {
+            edgeToAdd[state.edgeName.value].properties = state.properties;
+        }
+        if (state.groupby.length !== 0) {
+            edgeToAdd[state.edgeName.value].groupBy = state.groupby;
+        }
         onAddEdge(edgeToAdd);
         dispatch({ type: "reset" });
     }

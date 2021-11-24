@@ -109,7 +109,7 @@ describe("schema-builder UI wrapper", () => {
             await clickAddEdgeInAddEdgeDialog();
 
             expect(wrapper.find("div#json-edges-schema-viewer").text()).toEqual(
-                '"edges":{"TestEdge":{"description":"test""source":"A""destination":"B""directed":"true"}"testEdge":{"description":"test edge description""source":"aType""destination":"aType""directed":"true""properties":{"propertyKey":"propertyValue"}"groupby":[0:"test"]}}'
+                '"edges":{"TestEdge":{"description":"test""source":"A""destination":"B""directed":"true"}"testEdge":{"description":"test edge description""source":"aType""destination":"aType""directed":"true""properties":{"propertyKey":"propertyValue"}"groupBy":[0:"test"]}}'
             );
         });
         it("should display the edges from the elements schema that is passed in", () => {

@@ -117,7 +117,7 @@ describe("Add Edge UI Component", () => {
                     source: "typeOne",
                     destination: "typeTwo",
                     directed: "true",
-                    groupby: ["test"],
+                    groupBy: ["test"],
                     properties: { propertyKey: "propertyValue" },
                 },
             };
