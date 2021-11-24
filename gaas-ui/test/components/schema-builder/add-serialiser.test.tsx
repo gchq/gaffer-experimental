@@ -22,8 +22,7 @@ describe("Add Property UI Component", () => {
     describe("On Add Serialiser", () => {
         it("should callback with a object when a new serialiser has been added", () => {
             const expectedResult: object = {
-                key: "class",
-                value: "value",
+                class: "value",
             };
             addSerialiserValue("value");
             clickAddSerialiser();

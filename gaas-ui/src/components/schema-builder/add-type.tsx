@@ -33,6 +33,7 @@ interface IState {
     openSerialiser: boolean;
     validateFunctions: [];
     openValidateFunctions: boolean;
+    serialiserTextarea: string;
 }
 
 export default function AddType(props: IProps): ReactElement {
@@ -62,6 +63,7 @@ export default function AddType(props: IProps): ReactElement {
         openSerialiser: false,
         validateFunctions: [],
         openValidateFunctions: false,
+        serialiserTextarea: "",
     };
 
     function addTypeReducer(draft: any, action: any) {
@@ -100,6 +102,9 @@ export default function AddType(props: IProps): ReactElement {
                     draft.typeClass.message = "Type class can only contain letters";
                 }
                 return;
+            case "handleUpdateSerialiserTextarea":
+                draft.serialiserTextarea = action.value;
+                return;
             case "handleClickCloseAggregateFunction":
                 draft.openAggregateFunction = action.value;
                 return;
@@ -112,11 +117,8 @@ export default function AddType(props: IProps): ReactElement {
             case "handleClickCloseSerialiser":
                 draft.openSerialiser = action.value;
                 return;
-            case "validateTypeSerialiser":
-                draft.serialiser = action.value;
-                return;
             case "handleUpdateSerialiser":
-                draft.serialiser[action.value.key] = action.value.value;
+                draft.serialiser = action.value;
                 return;
             case "handleClickCloseValidateFunctions":
                 draft.openValidateFunctions = action.value;
@@ -315,9 +317,13 @@ export default function AddType(props: IProps): ReactElement {
                         </Box>
                         <DialogContent>
                             <AddSerialiser
-                                onAddSerialiser={(serialiser) =>
-                                    dispatch({ type: "handleUpdateSerialiser", value: serialiser })
-                                }
+                                onAddSerialiser={(serialiser) => {
+                                    dispatch({ type: "handleUpdateSerialiser", value: serialiser });
+                                    dispatch({
+                                        type: "handleUpdateSerialiserTextarea",
+                                        value: JSON.stringify(serialiser),
+                                    });
+                                }}
                             />
                         </DialogContent>
                     </Dialog>
@@ -331,13 +337,16 @@ export default function AddType(props: IProps): ReactElement {
                             "aria-label": "type-serialiser-input",
                         }}
                         fullWidth
-                        value={JSON.stringify(state.serialiser)}
+                        value={state.serialiserTextarea}
                         name={"type-serialiser-textfield"}
                         required
                         multiline
                         rows={5}
                         variant="outlined"
-                        onChange={(e) => dispatch({ type: "validateTypeSerialiser", value: e.target.value })}
+                        onChange={(e) => {
+                            dispatch({ type: "handleUpdateSerialiserTextarea", value: e.target.value });
+                            dispatch({ type: "handleUpdateSerialiser", value: JSON.parse(e.target.value) });
+                        }}
                     />
                 </Grid>
                 <Grid item>

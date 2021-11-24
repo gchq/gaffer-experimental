@@ -117,9 +117,8 @@ describe("Add Type UI Component", () => {
                         class: "testAggregateFunction",
                     },
                     serialiser: {
-                        class: "testSerialiser",
+                        class: "test",
                     },
-                    validateFunctions: [],
                 },
             };
 
@@ -127,7 +126,7 @@ describe("Add Type UI Component", () => {
             addTypeDescription("test description");
             addTypeClass("test.class");
             await addAggregateFunctionInTextarea('{"class":"testAggregateFunction"}');
-            await addSerialiserInTextarea('{"class":"testSerialiser"}');
+            await addSerialiserInTextarea('{"class":"test"}');
             clickAddType();
 
             expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
