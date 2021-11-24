@@ -22,8 +22,7 @@ describe("Add Property UI Component", () => {
     describe("On Add Aggregate Function", () => {
         it("should callback with a object when a new aggregate function has been added", () => {
             const expectedResult: object = {
-                key: "class",
-                value: "value",
+                class: "value",
             };
             addAggregateValue("value");
             clickAddAggregate();

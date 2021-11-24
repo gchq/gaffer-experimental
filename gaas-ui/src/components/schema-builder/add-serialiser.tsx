@@ -3,13 +3,12 @@ import React, { ReactElement } from "react";
 import { useImmerReducer } from "use-immer";
 
 interface IProps {
-    onAddSerialiser(properties: object): void;
+    onAddSerialiser(serialiser: object): void;
 }
 
 interface IState {
     serialiser: {
-        key: string;
-        value: string;
+        class: string;
     };
 }
 
@@ -18,8 +17,7 @@ export default function AddSerialiser(props: IProps): ReactElement {
 
     const initialState: IState = {
         serialiser: {
-            key: "class",
-            value: "",
+            class: "",
         },
     };
 
@@ -33,7 +31,7 @@ export default function AddSerialiser(props: IProps): ReactElement {
             case "reset":
                 return initialState;
             case "validateSerialiserValue":
-                draft.serialiser.value = action.value;
+                draft.serialiser.class = action.value;
                 return;
         }
     }
@@ -52,7 +50,7 @@ export default function AddSerialiser(props: IProps): ReactElement {
                         "aria-label": "serialiser-value-input",
                     }}
                     name={"serialiser-value"}
-                    value={state.serialiser.value}
+                    value={state.serialiser.class}
                     variant="outlined"
                     fullWidth
                     required
