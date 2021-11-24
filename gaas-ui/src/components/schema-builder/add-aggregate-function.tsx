@@ -3,13 +3,12 @@ import React, { ReactElement } from "react";
 import { useImmerReducer } from "use-immer";
 
 interface IProps {
-    onAddAggregateFunction(properties: object): void;
+    onAddAggregateFunction(aggregateFunction: object): void;
 }
 
 interface IState {
     aggregateFunction: {
-        key: string;
-        value: string;
+        class: string;
     };
 }
 
@@ -18,8 +17,7 @@ export default function AddAggregateFunction(props: IProps): ReactElement {
 
     const initialState: IState = {
         aggregateFunction: {
-            key: "class",
-            value: "",
+            class: "",
         },
     };
 
@@ -33,7 +31,7 @@ export default function AddAggregateFunction(props: IProps): ReactElement {
             case "reset":
                 return initialState;
             case "validateAggregateFunctionValue":
-                draft.aggregateFunction.value = action.value;
+                draft.aggregateFunction.class = action.value;
                 return;
         }
     }
@@ -52,7 +50,7 @@ export default function AddAggregateFunction(props: IProps): ReactElement {
                         "aria-label": "aggregate-function-value-input",
                     }}
                     name={"aggregate-function-value"}
-                    value={state.aggregateFunction.value}
+                    value={state.aggregateFunction.class}
                     variant="outlined"
                     fullWidth
                     required

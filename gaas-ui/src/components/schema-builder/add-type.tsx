@@ -4,8 +4,6 @@ import { useImmerReducer } from "use-immer";
 import AddAggregateFunction from "./add-aggregate-function";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddSerialiser from "./add-serialiser";
-import { StarRateRounded } from "@material-ui/icons";
-import { startsWith } from "core-js/library/es7/string";
 import AddValidateFunctions from "./add-validate-functions";
 
 interface IProps {
@@ -34,6 +32,7 @@ interface IState {
     validateFunctions: [];
     openValidateFunctions: boolean;
     serialiserTextarea: string;
+    aggregateFunctionTextarea: string;
 }
 
 export default function AddType(props: IProps): ReactElement {
@@ -64,6 +63,7 @@ export default function AddType(props: IProps): ReactElement {
         validateFunctions: [],
         openValidateFunctions: false,
         serialiserTextarea: "",
+        aggregateFunctionTextarea: "",
     };
 
     function addTypeReducer(draft: any, action: any) {
@@ -105,14 +105,14 @@ export default function AddType(props: IProps): ReactElement {
             case "handleUpdateSerialiserTextarea":
                 draft.serialiserTextarea = action.value;
                 return;
+            case "handleUpdateAggregateFunctionTextarea":
+                draft.aggregateFunctionTextarea = action.value;
+                return;
             case "handleClickCloseAggregateFunction":
                 draft.openAggregateFunction = action.value;
                 return;
-            case "validateTypeAggregateFunction":
-                draft.aggregateFunction = action.value;
-                return;
             case "handleUpdateAggregateFunction":
-                draft.aggregateFunction[action.value.key] = action.value.value;
+                draft.aggregateFunction = action.value;
                 return;
             case "handleClickCloseSerialiser":
                 draft.openSerialiser = action.value;
@@ -262,9 +262,13 @@ export default function AddType(props: IProps): ReactElement {
                         </Box>
                         <DialogContent>
                             <AddAggregateFunction
-                                onAddAggregateFunction={(aggregateFunction) =>
-                                    dispatch({ type: "handleUpdateAggregateFunction", value: aggregateFunction })
-                                }
+                                onAddAggregateFunction={(aggregateFunction) => {
+                                    dispatch({ type: "handleUpdateAggregateFunction", value: aggregateFunction });
+                                    dispatch({
+                                        type: "handleUpdateAggregateFunctionTextarea",
+                                        value: JSON.stringify(aggregateFunction),
+                                    });
+                                }}
                             />
                         </DialogContent>
                     </Dialog>
@@ -278,13 +282,16 @@ export default function AddType(props: IProps): ReactElement {
                             "aria-label": "type-aggregate-function-input",
                         }}
                         fullWidth
-                        value={JSON.stringify(state.aggregateFunction)}
+                        value={state.aggregateFunctionTextarea}
                         name={"type-aggregate-function"}
                         required
                         multiline
                         rows={5}
                         variant="outlined"
-                        onChange={(e) => dispatch({ type: "validateTypeAggregateFunction", value: e.target.value })}
+                        onChange={(e) => {
+                            dispatch({ type: "handleUpdateAggregateFunctionTextarea", value: e.target.value });
+                            dispatch({ type: "handleUpdateAggregateFunction", value: JSON.parse(e.target.value) });
+                        }}
                     />
                 </Grid>
                 <Grid item>
