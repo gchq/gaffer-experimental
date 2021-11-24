@@ -6,6 +6,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import AddSerialiser from "./add-serialiser";
 import { StarRateRounded } from "@material-ui/icons";
 import { startsWith } from "core-js/library/es7/string";
+import AddValidateFunctions from "./add-validate-functions";
 
 interface IProps {
     onAddType(type: object): void;
@@ -30,6 +31,8 @@ interface IState {
     openAggregateFunction: boolean;
     serialiser: {};
     openSerialiser: boolean;
+    validateFunctions: [];
+    openValidateFunctions: boolean;
 }
 
 export default function AddType(props: IProps): ReactElement {
@@ -57,6 +60,8 @@ export default function AddType(props: IProps): ReactElement {
         openAggregateFunction: false,
         serialiser: {},
         openSerialiser: false,
+        validateFunctions: [],
+        openValidateFunctions: false,
     };
 
     function addTypeReducer(draft: any, action: any) {
@@ -113,6 +118,15 @@ export default function AddType(props: IProps): ReactElement {
             case "handleUpdateSerialiser":
                 draft.serialiser[action.value.key] = action.value.value;
                 return;
+            case "handleClickCloseValidateFunctions":
+                draft.openValidateFunctions = action.value;
+                return;
+            case "validateTypeValidateFunctions":
+                draft.validateFunctions = action.value;
+                return;
+            case "handleUpdateValidateFunctions":
+                draft.validateFunctions[draft.validateFunctions.length] = action.value;
+                return;
         }
     }
 
@@ -136,6 +150,7 @@ export default function AddType(props: IProps): ReactElement {
             class: state.typeClass.value,
             aggregateFunction: state.aggregateFunction,
             serialiser: state.serialiser,
+            validateFunctions: state.validateFunctions,
         };
         onAddType(typeToAdd);
         dispatch({ type: "reset" });
@@ -314,6 +329,63 @@ export default function AddType(props: IProps): ReactElement {
                         rows={5}
                         variant="outlined"
                         onChange={(e) => dispatch({ type: "validateTypeSerialiser", value: e.target.value })}
+                    />
+                </Grid>
+                <Grid item>
+                    <Button
+                        variant="outlined"
+                        onClick={(e) => dispatch({ type: "handleClickCloseValidateFunctions", value: true })}
+                        id={"add-validate-function-button"}
+                    >
+                        Add Validate Function
+                    </Button>
+                    <Dialog
+                        fullWidth
+                        maxWidth="xs"
+                        open={state.openValidateFunctions}
+                        onClose={(e) => dispatch({ type: "handleClickCloseValidateFunctions", value: false })}
+                        id={"add-validate-functions-dialog"}
+                        aria-labelledby="add-validate-functions-dialog"
+                    >
+                        <Box display="flex" alignItems="right" justifyContent="right">
+                            <IconButton
+                                id="close-validate-functions-button"
+                                onClick={(e) => dispatch({ type: "handleClickCloseValidateFunctions", value: false })}
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        </Box>
+
+                        <Box display="flex" alignItems="center" justifyContent="center">
+                            <DialogTitle id="add-validate-functions-dialog-title">
+                                {"Add Validate Functions"}
+                            </DialogTitle>
+                        </Box>
+                        <DialogContent>
+                            <AddValidateFunctions
+                                onAddValidateFunctions={(validateFunctions) =>
+                                    dispatch({ type: "handleUpdateValidateFunctions", value: validateFunctions })
+                                }
+                            />
+                        </DialogContent>
+                    </Dialog>
+                </Grid>
+                <Grid item>
+                    <TextField
+                        id={"type-validate-functions-input"}
+                        inputProps={{
+                            name: "Type Validate Functions",
+                            id: "type-validate-functions-input",
+                            "aria-label": "type-validate-functions-input",
+                        }}
+                        fullWidth
+                        value={JSON.stringify(state.validateFunctions)}
+                        name={"type-validate-functions-textfield"}
+                        required
+                        multiline
+                        rows={5}
+                        variant="outlined"
+                        onChange={(e) => dispatch({ type: "validateTypeValidateFunctions", value: e.target.value })}
                     />
                 </Grid>
                 <Box display="flex" alignItems="center" justifyContent="center">

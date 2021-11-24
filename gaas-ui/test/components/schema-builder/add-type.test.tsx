@@ -98,6 +98,7 @@ describe("Add Type UI Component", () => {
                     class: "test.class",
                     aggregateFunction: {},
                     serialiser: {},
+                    validateFunctions: [],
                 },
             };
 
