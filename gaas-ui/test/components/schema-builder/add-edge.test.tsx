@@ -1,6 +1,7 @@
 import { mount, ReactWrapper } from "enzyme";
 import AddEdge from "../../../src/components/schema-builder/add-edge";
 import React from "react";
+import { act } from "react-dom/test-utils";
 
 let wrapper: ReactWrapper;
 const onAddEdgeMockCallBack = jest.fn();
@@ -62,13 +63,24 @@ describe("Add Edge UI Component", () => {
 
             expect(propertyInputField.props().name).toBe("Edge Properties");
         });
-        //TODO: Properties and Group by
     });
     describe("Add Edge Button", () => {
         it("should have an Add Edge button", () => {
             const addEdgeButton = wrapper.find("button#add-edge-button");
 
             expect(addEdgeButton.text()).toBe("Add Edge");
+        });
+    });
+    describe("Add Property Dialog", () => {
+        it("should add the properties added in the property dialog to the properties textarea", async () => {
+            await addEdgePropertyInDialog("propertyKey", "propertyValue");
+            expect(wrapper.find("textarea#edge-properties-input").text()).toEqual('{"propertyKey":"propertyValue"}');
+        });
+    });
+    describe("Add Groupby Dialog", () => {
+        it("should add the groupby added in the groupby dialog to the groupby textarea", async () => {
+            await addEdgeGroupbyInDialog("test");
+            expect(wrapper.find("textarea#edge-groupby-input").text()).toEqual('["test"]');
         });
     });
     describe("On Add Edge", () => {
@@ -79,134 +91,170 @@ describe("Add Edge UI Component", () => {
                     source: "typeOne",
                     destination: "typeTwo",
                     directed: "true",
-                    groupby: [],
-                    properties: {},
+                    groupby: ["test"],
+                    properties: { propertyKey: "propertyValue" },
                 },
             };
 
-            addEdgeName("testEdge");
-            addEdgeDescription("test edge description");
-            selectSource("typeOne");
-            selectDestination("typeTwo");
-            selectDirected("true");
+            await addEdgeName("testEdge");
+            await addEdgeDescription("test edge description");
+
+            await selectSource("typeOne");
+            await selectDestination("typeTwo");
+            await selectDirected("true");
+
+            await addEdgePropertyInTextarea('{"propertyKey":"propertyValue"}');
+            await addEdgeGroupbyInTextarea('["test"]');
+
+            await clickAddEdge();
+
+            expect(onAddEdgeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
+        });
+        it("should callback with an edge object when a new edge has been added using property and groupby dialogs", async () => {
+            const expectedResult: object = {
+                testEdge: {
+                    description: "test edge description",
+                    source: "typeOne",
+                    destination: "typeTwo",
+                    directed: "true",
+                    groupby: ["test"],
+                    properties: { propertyKey: "propertyValue" },
+                },
+            };
+
+            await addEdgeName("testEdge");
+            await addEdgeDescription("test edge description");
+
+            await selectSource("typeOne");
+            await selectDestination("typeTwo");
+            await selectDirected("true");
+
+            await addEdgePropertyInDialog("propertyKey", "propertyValue");
+            await addEdgeGroupbyInDialog("test");
+
             await clickAddEdge();
 
             expect(onAddEdgeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
         });
     });
 
-    describe("Disbale | Enable Add Edge Button", () => {
-        it("should be disabled when Edge Name field is empty", () => {
-            addEdgeDescription("test edge description");
-            selectSource("typeOne");
-            selectDestination("typeTwo");
-            selectDirected("true");
+    describe("Disable | Enable Add Edge Button", () => {
+        it("should be disabled when Edge Name field is empty", async () => {
+            await addEdgeDescription("test edge description");
+            await selectSource("typeOne");
+            await selectDestination("typeTwo");
+            await selectDirected("true");
 
             expect(wrapper.find("button#add-edge-button").props().disabled).toBe(true);
         });
 
-        it("should be disabled when Edge description field is empty", () => {
-            addEdgeName("testEdge");
-            selectSource("typeOne");
-            selectDestination("typeTwo");
-            selectDirected("true");
+        it("should be disabled when Edge description field is empty", async () => {
+            await addEdgeName("testEdge");
+            await selectSource("typeOne");
+            await selectDestination("typeTwo");
+            await selectDirected("true");
 
             expect(wrapper.find("button#add-edge-button").props().disabled).toBe(true);
         });
 
-        it("should be disabled when Edge Name, description fields are empty", () => {
-            selectSource("typeOne");
-            selectDestination("typeTwo");
-            selectDirected("true");
-            expect(wrapper.find("button#add-edge-button").props().disabled).toBe(true);
+        it("should be disabled when Edge Name, description fields are empty", async () => {
+            await selectSource("typeOne");
+            await selectDestination("typeTwo");
+            await selectDirected("true");
+            await expect(wrapper.find("button#add-edge-button").props().disabled).toBe(true);
         });
 
         it("should be disabled when Edge name, description, source, destination and directed fields are empty", () => {
             expect(wrapper.find("button#add-edge-button").props().disabled).toBe(true);
         });
 
-        it("should be disabled when Edge directed field are is empty", () => {
-            addEdgeName("testEdge");
-            addEdgeDescription("test edge description");
-            selectSource("typeOne");
-            selectDestination("typeTwo");
+        it("should be disabled when Edge directed field are is empty", async () => {
+            await addEdgeName("testEdge");
+            await addEdgeDescription("test edge description");
+            await selectSource("typeOne");
+            await selectDestination("typeTwo");
             expect(wrapper.find("button#add-edge-button").props().disabled).toBe(true);
         });
 
-        it("should be disabled when Edge Source field are is empty", () => {
-            addEdgeName("testEdge");
-            addEdgeDescription("test edge description");
-            selectDestination("typeTwo");
-            selectDirected("true");
+        it("should be disabled when Edge Source field are is empty", async () => {
+            await addEdgeName("testEdge");
+            await addEdgeDescription("test edge description");
+            await selectDestination("typeTwo");
+            await selectDirected("true");
             expect(wrapper.find("button#add-edge-button").props().disabled).toBe(true);
         });
 
-        it("should be disabled when Edge Destination field are is empty", () => {
-            addEdgeName("testEdge");
-            addEdgeDescription("test edge description");
-            selectSource("typeOne");
-            selectDirected("true");
+        it("should be disabled when Edge Destination field are is empty", async () => {
+            await addEdgeName("testEdge");
+            await addEdgeDescription("test edge description");
+            await selectSource("typeOne");
+            await selectDirected("true");
             expect(wrapper.find("button#add-edge-button").props().disabled).toBe(true);
         });
 
-        it("should be enabled when Edge name, description, source, destination and directed fields are not empty", () => {
-            addEdgeName("testEdge");
-            addEdgeDescription("test edge description");
-            selectSource("typeOne");
-            selectDestination("typeTwo");
-            selectDirected("true");
+        it("should be enabled when Edge name, description, source, destination and directed fields are not empty", async () => {
+            await addEdgeName("testEdge");
+            await addEdgeDescription("test edge description");
+            await selectSource("typeOne");
+            await selectDestination("typeTwo");
+            await selectDirected("true");
             expect(wrapper.find("button#add-edge-button").props().disabled).toBe(false);
         });
     });
 
     describe("Source Dropdown", () => {
-        it("Should allow a valid type to be selected", () => {
-            selectSource("typeOne");
+        it("Should allow a valid type to be selected", async () => {
+            await selectSource("typeOne");
             expect(wrapper.find("div#edge-source-formcontrol").find("input").props().value).toBe("typeOne");
         });
-        it("should not allow an invalid type to be selected", () => {
-            selectSource("typeFive");
+        it("should not allow an invalid type to be selected", async () => {
+            await selectSource("typeFive");
             expect(wrapper.find("div#edge-source-formcontrol").find("input").props().value).toBe("");
         });
     });
     describe("Destination Dropdown", () => {
-        it("Should allow a valid type to be selected", () => {
-            selectDestination("typeOne");
+        it("Should allow a valid type to be selected", async () => {
+            await selectDestination("typeOne");
             expect(wrapper.find("div#edge-destination-formcontrol").find("input").props().value).toBe("typeOne");
         });
-        it("should not allow an invalid type to be selected", () => {
-            selectDestination("typeFive");
+        it("should not allow an invalid type to be selected", async () => {
+            await selectDestination("typeFive");
             expect(wrapper.find("div#edge-destination-formcontrol").find("input").props().value).toBe("");
         });
     });
     describe("Directed Dropdown", () => {
-        it("Should allow true to be selected", () => {
-            selectDirected("true");
+        it("Should allow true to be selected", async () => {
+            await selectDirected("true");
             expect(wrapper.find("div#edge-directed-formcontrol").find("input").props().value).toBe("true");
         });
-        it("should not allow false to be selected", () => {
-            selectDirected("false");
+        it("should not allow false to be selected", async () => {
+            await selectDirected("false");
             expect(wrapper.find("div#edge-directed-formcontrol").find("input").props().value).toBe("false");
         });
     });
 });
 
-function addEdgeName(name: string) {
-    const nameInputField = wrapper.find("input#edge-name-input");
-    nameInputField.simulate("change", {
-        target: { value: name },
+async function addEdgeName(name: string) {
+    await act(async () => {
+        const nameInputField = wrapper.find("input#edge-name-input");
+        nameInputField.simulate("change", {
+            target: { value: name },
+        });
     });
 }
 
-function addEdgeDescription(description: string) {
-    const descriptionInputField = wrapper.find("input#edge-description-input");
-    descriptionInputField.simulate("change", {
-        target: { value: description },
+async function addEdgeDescription(description: string) {
+    await act(async () => {
+        const descriptionInputField = wrapper.find("input#edge-description-input");
+        descriptionInputField.simulate("change", {
+            target: { value: description },
+        });
     });
 }
 
-function selectSource(source: string) {
+async function selectSource(source: string) {
     wrapper
+        .find("div#add-edge-inputs")
         .find("div#edge-source-formcontrol")
         .find("input")
         .simulate("change", {
@@ -214,7 +262,7 @@ function selectSource(source: string) {
         });
 }
 
-function selectDestination(destination: string) {
+async function selectDestination(destination: string) {
     wrapper
         .find("div#edge-destination-formcontrol")
         .find("input")
@@ -223,13 +271,66 @@ function selectDestination(destination: string) {
         });
 }
 
-function selectDirected(directed: string) {
+async function selectDirected(directed: string) {
     wrapper
         .find("div#edge-directed-formcontrol")
         .find("input")
         .simulate("change", {
             target: { value: directed },
         });
+}
+async function addEdgePropertyInTextarea(property: string) {
+    await act(() => {
+        const propertyTextarea = wrapper.find("textarea#edge-properties-input");
+        propertyTextarea.simulate("change", {
+            target: { value: property },
+        });
+    });
+}
+async function addEdgePropertyInDialog(propertyKey: string, propertyValue: string) {
+    await wrapper.find("button#add-properties-button").simulate("click");
+    await act(() => {
+        const propertyKeyInput = wrapper
+            .find("div#add-properties-dialog")
+            .find("div#add-property-inputs")
+            .find("input#property-key-input");
+        propertyKeyInput.simulate("change", {
+            target: { value: propertyKey },
+        });
+        const propertyValueInput = wrapper
+            .find("div#add-properties-dialog")
+            .find("div#add-property-inputs")
+            .find("input#property-value-input");
+        propertyValueInput.simulate("change", {
+            target: { value: propertyValue },
+        });
+    });
+    await wrapper.find("button#add-property-button").simulate("click");
+}
+async function addEdgeGroupbyInTextarea(groupby: string) {
+    await act(() => {
+        const groupbyInputField = wrapper.find("textarea#edge-groupby-input");
+        groupbyInputField.simulate("change", {
+            target: { value: groupby },
+        });
+    });
+}
+async function addEdgeGroupbyInDialog(groupby: string) {
+    await wrapper.find("button#add-groupby-button").simulate("click");
+    await act(() => {
+        const groupByInput = wrapper
+            .find("div#add-groupby-dialog")
+            .find("div#add-groupby-inputs")
+            .find("input#groupby-key-input");
+        groupByInput.simulate("change", {
+            target: { value: groupby },
+        });
+    });
+    await wrapper
+        .find("div#add-groupby-dialog")
+        .find("div#add-groupby-inputs")
+        .find("button#add-groupby-button")
+        .simulate("click");
 }
 
 function clickAddEdge() {

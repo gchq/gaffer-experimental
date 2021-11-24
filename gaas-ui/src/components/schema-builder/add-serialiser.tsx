@@ -40,7 +40,7 @@ export default function AddSerialiser(props: IProps): ReactElement {
     const [state, dispatch] = useImmerReducer(addEdgeReducer, initialState);
 
     return (
-        <Grid container spacing={2} direction="column" id={"add-property-inputs"}>
+        <Grid container spacing={2} direction="column" id={"add-serialiser-inputs"}>
             <Grid item>
                 <TextField
                     id={"serialiser-value-input"}

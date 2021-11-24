@@ -1,6 +1,7 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 import AddType from "../../../src/components/schema-builder/add-type";
+import { act } from "react-dom/test-utils";
 
 let wrapper: ReactWrapper;
 const onAddTypeMockCallBack = jest.fn();
@@ -57,7 +58,7 @@ describe("Add Type UI Component", () => {
         });
     });
 
-    describe("Disbale | Enable Add Type Button", () => {
+    describe("Disable | Enable Add Type Button", () => {
         it("should be disabled when Type Name field is empty", () => {
             addTypeDescription("test description");
             addTypeClass("test.class");
@@ -90,22 +91,67 @@ describe("Add Type UI Component", () => {
             expect(wrapper.find("button#add-type-button").props().disabled).toBe(false);
         });
     });
+    describe("Add Aggregate Function Dialog", () => {
+        it("should add the aggregateFunction added in the aggregateFunction dialog to the aggregateFunction textarea", async () => {
+            await addAggregateFunctionInDialog("testAggregateFunction");
+
+            expect(wrapper.find("textarea#type-aggregate-function-input").text()).toBe(
+                '{"class":"testAggregateFunction"}'
+            );
+        });
+    });
+    describe("Add Serialiser Dialog", () => {
+        it("should add the Serialiser added in the Serialiser dialog to the Serialiser textarea", async () => {
+            await addSerialiserInDialog("testSerialiser");
+
+            expect(wrapper.find("textarea#type-serialiser-input").text()).toBe('{"class":"testSerialiser"}');
+        });
+    });
     describe("On Add Type", () => {
-        it("should callback with a type object when a new type has been added", () => {
+        it("should callback with a type object when a new type has been added", async () => {
             const expectedResult: object = {
                 testName: {
                     description: "test description",
                     class: "test.class",
-                    aggregateFunction: {},
-                    serialiser: {},
-                    validateFunctions: [],
+                    aggregateFunction: {
+                        class: "testAggregateFunction",
+                    },
+                    serialiser: {
+                        class: "testSerialiser",
+                    },
                 },
             };
 
             addTypeName("testName");
             addTypeDescription("test description");
             addTypeClass("test.class");
+            await addAggregateFunctionInTextarea('{"class":"testAggregateFunction"}');
+            await addSerialiserInTextarea('{"class":"testSerialiser"}');
             clickAddType();
+
+            expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
+        });
+        it("should callback with a type object when a new type has been added using aggregateFunction and serialiser dialogs", async () => {
+            const expectedResult: object = {
+                testName: {
+                    description: "test description",
+                    class: "test.class",
+                    aggregateFunction: {
+                        class: "testAggregateFunction",
+                    },
+                    serialiser: {
+                        class: "testSerialiser",
+                    },
+                },
+            };
+
+            await addTypeName("testName");
+            await addTypeDescription("test description");
+            await addTypeClass("test.class");
+            await addAggregateFunctionInDialog("testAggregateFunction");
+            await addSerialiserInDialog("testSerialiser");
+
+            await clickAddType();
 
             expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
         });
@@ -138,6 +184,58 @@ function addTypeClass(className: string) {
     classInputField.simulate("change", {
         target: { value: className },
     });
+}
+async function addAggregateFunctionInTextarea(aggregateFunction: string) {
+    await act(() => {
+        const aggregateFunctionInput = wrapper.find("textarea#type-aggregate-function-input");
+
+        aggregateFunctionInput.simulate("change", {
+            target: { value: aggregateFunction },
+        });
+    });
+}
+async function addSerialiserInTextarea(serialiser: string) {
+    await act(() => {
+        const aggregateFunctionInput = wrapper.find("textarea#type-serialiser-input");
+
+        aggregateFunctionInput.simulate("change", {
+            target: { value: serialiser },
+        });
+    });
+}
+async function addAggregateFunctionInDialog(aggregateFunction: string) {
+    await wrapper.find("button#add-aggregate-function-button").simulate("click");
+    await act(() => {
+        const aggregateFunctionInput = wrapper
+            .find("div#add-aggregate-function-dialog")
+            .find("div#add-aggregate-function-inputs")
+            .find("input#aggregate-function-value-input");
+        aggregateFunctionInput.simulate("change", {
+            target: { value: aggregateFunction },
+        });
+    });
+    await wrapper
+        .find("div#add-aggregate-function-dialog")
+        .find("div#add-aggregate-function-inputs")
+        .find("button#add-aggregate-function-button")
+        .simulate("click");
+}
+async function addSerialiserInDialog(serialiser: string) {
+    await wrapper.find("button#add-serialiser-button").simulate("click");
+    await act(() => {
+        const serialiserInput = wrapper
+            .find("div#add-serialiser-dialog")
+            .find("div#add-serialiser-inputs")
+            .find("input#serialiser-value-input");
+        serialiserInput.simulate("change", {
+            target: { value: serialiser },
+        });
+    });
+    await wrapper
+        .find("div#add-serialiser-dialog")
+        .find("div#add-serialiser-inputs")
+        .find("button#add-serialiser-button")
+        .simulate("click");
 }
 
 function clickAddType() {

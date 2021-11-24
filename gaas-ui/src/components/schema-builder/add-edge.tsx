@@ -229,6 +229,7 @@ export default function AddEdge(props: IProps): ReactElement {
                     >
                         {types.map((type: string) => (
                             <MenuItem
+                                key={type + "-item"}
                                 value={type}
                                 aria-label={type + "-menu-item"}
                                 id={type + "-menu-item"}
@@ -254,6 +255,7 @@ export default function AddEdge(props: IProps): ReactElement {
                     >
                         {types.map((type: string) => (
                             <MenuItem
+                                key={type + "-item"}
                                 value={type}
                                 aria-label={type + "-menu-item"}
                                 id={type + "-menu-item"}

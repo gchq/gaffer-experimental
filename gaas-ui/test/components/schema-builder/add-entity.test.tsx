@@ -1,6 +1,7 @@
 import { mount, ReactWrapper } from "enzyme";
 import AddEntity from "../../../src/components/schema-builder/add-entity";
 import React from "react";
+import { act } from "react-dom/test-utils";
 
 let wrapper: ReactWrapper;
 const onAddEntityMockCallBack = jest.fn();
@@ -52,8 +53,6 @@ describe("Add Entity UI Component", () => {
 
             expect(propertyInputField.props().name).toBe("Entity Properties");
         });
-
-        //TODO: properties, group by
     });
     describe("Add Entity Button", () => {
         it("should have an Add Entity button", () => {
@@ -97,13 +96,33 @@ describe("Add Entity UI Component", () => {
                 testEntity: {
                     description: "test entity description",
                     vertex: "typeOne",
-                    properties: {},
+                    properties: { propertyKey: "propertyValue" },
                 },
             };
 
-            addEntityName("testEntity");
-            addEntityDescription("test entity description");
-            selectVertex("typeOne");
+            await addEntityName("testEntity");
+            await addEntityDescription("test entity description");
+            await selectVertex("typeOne");
+            await addEntityInTextArea('{"propertyKey":"propertyValue"}');
+            await clickAddEntity();
+
+            expect(onAddEntityMockCallBack).toHaveBeenLastCalledWith(expectedResult);
+        });
+        it("should callback with an entity object when a new entity has been added with properties", async () => {
+            const expectedResult: object = {
+                testEntity: {
+                    description: "test entity description",
+                    vertex: "typeOne",
+                    properties: { propertyKey: "propertyValue" },
+                },
+            };
+
+            await addEntityName("testEntity");
+            await addEntityDescription("test entity description");
+            await selectVertex("typeOne");
+
+            await addEntityPropertyInDialog("propertyKey", "propertyValue");
+
             await clickAddEntity();
 
             expect(onAddEntityMockCallBack).toHaveBeenLastCalledWith(expectedResult);
@@ -124,7 +143,34 @@ describe("Add Entity UI Component", () => {
         });
     });
 });
-
+async function addEntityInTextArea(property: string) {
+    await act(() => {
+        const propertyInputField = wrapper.find("textarea#entity-properties-input");
+        propertyInputField.simulate("change", {
+            target: { value: property },
+        });
+    });
+}
+async function addEntityPropertyInDialog(propertyKey: string, propertyValue: string) {
+    await wrapper.find("button#add-properties-button").simulate("click");
+    await act(() => {
+        const propertyKeyInput = wrapper
+            .find("div#add-properties-dialog")
+            .find("div#add-property-inputs")
+            .find("input#property-key-input");
+        propertyKeyInput.simulate("change", {
+            target: { value: propertyKey },
+        });
+        const propertyValueInput = wrapper
+            .find("div#add-properties-dialog")
+            .find("div#add-property-inputs")
+            .find("input#property-value-input");
+        propertyValueInput.simulate("change", {
+            target: { value: propertyValue },
+        });
+    });
+    await wrapper.find("button#add-property-button").simulate("click");
+}
 function selectVertex(vertex: string) {
     wrapper
         .find("div#entity-vertex-formcontrol")
