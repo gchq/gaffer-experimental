@@ -32,6 +32,10 @@ export default function AddProperty(props: IProps): ReactElement {
         dispatch({ type: "reset" });
     }
 
+    function disableButton(): boolean {
+        return state.property.key.length === 0 || state.property.value.length === 0;
+    }
+
     function addEdgeReducer(draft: any, action: any) {
         switch (action.type) {
             case "reset":
@@ -89,7 +93,13 @@ export default function AddProperty(props: IProps): ReactElement {
                 />
             </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">
-                <Button id={"add-property-button"} name={"Add Property"} variant="outlined" onClick={addPropertySubmit}>
+                <Button
+                    id={"add-property-button"}
+                    name={"Add Property"}
+                    variant="outlined"
+                    onClick={addPropertySubmit}
+                    disabled={disableButton()}
+                >
                     Add Property
                 </Button>
             </Box>

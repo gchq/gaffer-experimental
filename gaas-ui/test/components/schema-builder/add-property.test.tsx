@@ -44,6 +44,11 @@ describe("Add Property UI Component", () => {
 
             expect(addPropertyButton.text()).toBe("Add Property");
         });
+        it("should be disabled when key and value empty", () => {
+            const addPropertyButton = wrapper.find("button#add-property-button");
+
+            expect(addPropertyButton.props().disabled).toBe(true);
+        });
     });
 });
 
