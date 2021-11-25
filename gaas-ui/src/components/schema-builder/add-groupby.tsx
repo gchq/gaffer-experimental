@@ -31,6 +31,9 @@ export default function AddGroupby(props: IProps): ReactElement {
                 return;
         }
     }
+    function disableButton(): boolean {
+        return state.groupBy.length === 0;
+    }
     const [state, dispatch] = useImmerReducer(addGroupbyReducer, initialState);
 
     return (
@@ -58,6 +61,7 @@ export default function AddGroupby(props: IProps): ReactElement {
                     id={"add-groupby-button-groupby-dialog"}
                     name={"Add Groupby"}
                     variant="outlined"
+                    disabled={disableButton()}
                     onClick={addGroupbySubmit}
                 >
                     Add Groupby
