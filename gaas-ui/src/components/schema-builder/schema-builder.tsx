@@ -62,15 +62,23 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                 return;
 
             case "handleUpdateTypes":
-                draft.types = Object.assign(draft.types, action.value);
+                Object.assign(draft.types, action.value);
                 return;
-
+            case "handleDeleteTypes":
+                draft.types = action.value;
+                return;
             case "handleUpdateEdges":
                 draft.elements.edges = Object.assign(draft.elements.edges, action.value);
+                return;
+            case "handleDeleteEdges":
+                draft.elements.edges = action.value;
                 return;
 
             case "handleUpdateEntities":
                 draft.elements.entities = Object.assign(draft.elements.entities, action.value);
+                return;
+            case "handleDeleteEntities":
+                draft.elements.entities = action.value;
                 return;
             case "handleClickCloseEntities":
                 draft.openEntities = action.value;
@@ -211,7 +219,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                             dispatch({ type: "handleUpdateTypes", value: e.updated_src });
                         }}
                         onDelete={(e) => {
-                            dispatch({ type: "handleUpdateTypes", value: e.updated_src });
+                            dispatch({ type: "handleDeleteTypes", value: e.updated_src });
                         }}
                         displayDataTypes={false}
                         displayObjectSize={false}
@@ -227,7 +235,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                             dispatch({ type: "handleUpdateEntities", value: e.updated_src });
                         }}
                         onDelete={(e) => {
-                            dispatch({ type: "handleUpdateEntities", value: e.updated_src });
+                            dispatch({ type: "handleDeleteEntities", value: e.updated_src });
                         }}
                         displayDataTypes={false}
                         displayObjectSize={false}
@@ -243,7 +251,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                             dispatch({ type: "handleUpdateEdges", value: e.updated_src });
                         }}
                         onDelete={(e) => {
-                            dispatch({ type: "handleUpdateEdges", value: e.updated_src });
+                            dispatch({ type: "handleDeleteEdges", value: e.updated_src });
                         }}
                         displayDataTypes={false}
                         displayObjectSize={false}
