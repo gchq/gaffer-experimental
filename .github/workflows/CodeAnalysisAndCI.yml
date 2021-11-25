@@ -98,8 +98,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: semgrep.sarif
-
-      java-code-coverage:
+  java-code-coverage:
             needs: run-maven-build
             runs-on: ubuntu-latest
             defaults:
