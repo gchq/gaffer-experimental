@@ -132,7 +132,7 @@ describe("Add Type UI Component", () => {
             addTypeClass("test.class");
             await addAggregateFunctionInTextarea('{"class":"testAggregateFunction"}');
             await addSerialiserInTextarea('{"class":"test"}');
-            await addValidateFunctionsInTextarea('[{"class": "uk.gov.gchq.koryphe.impl.predicate.Exists"}]');
+            await addValidateFunctionsInTextarea('{"class": "uk.gov.gchq.koryphe.impl.predicate.Exists"}');
             clickAddType();
 
             expect(onAddTypeMockCallBack).toHaveBeenLastCalledWith(expectedResult);
@@ -166,10 +166,16 @@ describe("Add Type UI Component", () => {
                 testName: {
                     description: "test description",
                     class: "test.class",
-                    validateFunctions: {
-                        class: "test.class",
-                        testAdditionalKey: "someValue",
-                    },
+                    validateFunctions: [
+                        {
+                            class: "test.class",
+                            testAdditionalKey: "someValue",
+                        },
+                        {
+                            class: "test.class2",
+                            testAdditionalKey: "someValue",
+                        },
+                    ],
                 },
             };
 
@@ -177,6 +183,7 @@ describe("Add Type UI Component", () => {
             await addTypeDescription("test description");
             await addTypeClass("test.class");
             await addValidateFunctionInDialog("test.class");
+            await addValidateFunctionInDialog("test.class2");
 
             await clickAddType();
 
