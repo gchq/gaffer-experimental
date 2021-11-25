@@ -80,7 +80,8 @@ describe("Add Edge UI Component", () => {
     describe("Add Groupby Dialog", () => {
         it("should add the groupby added in the groupby dialog to the groupby textarea", async () => {
             await addEdgeGroupbyInDialog("test");
-            expect(wrapper.find("textarea#edge-groupby-input").text()).toEqual('["test"]');
+            await addEdgeGroupbyInDialog("testM");
+            expect(wrapper.find("textarea#edge-groupby-input").text()).toEqual('"test""testM"');
         });
     });
     describe("On Add Edge", () => {
@@ -91,7 +92,7 @@ describe("Add Edge UI Component", () => {
                     source: "typeOne",
                     destination: "typeTwo",
                     directed: "true",
-                    groupby: ["test"],
+                    groupBy: ["test", "testM"],
                     properties: { propertyKey: "propertyValue" },
                 },
             };
@@ -104,7 +105,7 @@ describe("Add Edge UI Component", () => {
             await selectDirected("true");
 
             await addEdgePropertyInTextarea('{"propertyKey":"propertyValue"}');
-            await addEdgeGroupbyInTextarea('["test"]');
+            await addEdgeGroupbyInTextarea('"test""testM"');
 
             await clickAddEdge();
 
@@ -307,15 +308,15 @@ async function addEdgePropertyInDialog(propertyKey: string, propertyValue: strin
     });
     await wrapper.find("button#add-property-button").simulate("click");
 }
-async function addEdgeGroupbyInTextarea(groupby: string) {
+async function addEdgeGroupbyInTextarea(groupBy: string) {
     await act(() => {
         const groupbyInputField = wrapper.find("textarea#edge-groupby-input");
         groupbyInputField.simulate("change", {
-            target: { value: groupby },
+            target: { value: groupBy },
         });
     });
 }
-async function addEdgeGroupbyInDialog(groupby: string) {
+async function addEdgeGroupbyInDialog(groupBy: string) {
     await wrapper.find("button#add-groupby-button").simulate("click");
     await act(() => {
         const groupByInput = wrapper
@@ -323,13 +324,13 @@ async function addEdgeGroupbyInDialog(groupby: string) {
             .find("div#add-groupby-inputs")
             .find("input#groupby-key-input");
         groupByInput.simulate("change", {
-            target: { value: groupby },
+            target: { value: groupBy },
         });
     });
     await wrapper
         .find("div#add-groupby-dialog")
         .find("div#add-groupby-inputs")
-        .find("button#add-groupby-button")
+        .find("button#add-groupby-button-groupby-dialog")
         .simulate("click");
 }
 

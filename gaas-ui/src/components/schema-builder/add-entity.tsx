@@ -112,7 +112,7 @@ export default function AddEntity(props: IProps): ReactElement {
                 draft.properties[Object.keys(action.value)[0]] = Object.values(action.value)[0];
                 return;
             case "handleUpdatePropertiesTextarea":
-                draft.propertiesTextarea = draft.propertiesTextarea + action.value;
+                draft.propertiesTextarea = action.value;
                 return;
         }
     }
@@ -236,7 +236,7 @@ export default function AddEntity(props: IProps): ReactElement {
                                 dispatch({ type: "handleUpdateProperties", value: properties });
                                 dispatch({
                                     type: "handleUpdatePropertiesTextarea",
-                                    value: JSON.stringify(properties),
+                                    value: state.propertiesTextarea + JSON.stringify(properties),
                                 });
                             }}
                         />

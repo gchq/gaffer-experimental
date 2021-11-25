@@ -288,7 +288,7 @@ async function addEdgeGroupbyInDialog(groupby: string) {
         .find("div#add-edge-dialog")
         .find("div#add-groupby-dialog")
         .find("div#add-groupby-inputs")
-        .find("button#add-groupby-button")
+        .find("button#add-groupby-button-groupby-dialog")
         .simulate("click");
 }
 

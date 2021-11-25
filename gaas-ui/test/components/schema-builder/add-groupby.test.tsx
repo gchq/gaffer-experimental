@@ -31,9 +31,9 @@ describe("Add GroupBy UI Component", () => {
     });
     describe("Add GroupBy Button", () => {
         it("should have an add groupby button", () => {
-            const addPropertyButton = wrapper.find("button#add-groupby-button");
+            const addGroupByButton = wrapper.find("button#add-groupby-button-groupby-dialog");
 
-            expect(addPropertyButton.text()).toBe("Add Groupby");
+            expect(addGroupByButton.text()).toBe("Add Groupby");
         });
     });
 });
@@ -46,6 +46,6 @@ function addGroupByValue(key: string) {
 }
 
 function clickAddGroupBy() {
-    const addPropertyButton = wrapper.find("button#add-groupby-button");
+    const addPropertyButton = wrapper.find("button#add-groupby-button-groupby-dialog");
     addPropertyButton.simulate("click");
 }

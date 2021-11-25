@@ -3,22 +3,22 @@ import React, { ReactElement } from "react";
 import { useImmerReducer } from "use-immer";
 
 interface IProps {
-    onAddGroupby(groupby: string): void;
+    onAddGroupby(groupBy: string): void;
 }
 
 interface IState {
-    groupby: string;
+    groupBy: string;
 }
 
 export default function AddGroupby(props: IProps): ReactElement {
     const { onAddGroupby } = props;
 
     const initialState: IState = {
-        groupby: "",
+        groupBy: "",
     };
 
     function addGroupbySubmit() {
-        onAddGroupby(state.groupby);
+        onAddGroupby(state.groupBy);
         dispatch({ type: "reset" });
     }
 
@@ -27,7 +27,7 @@ export default function AddGroupby(props: IProps): ReactElement {
             case "reset":
                 return initialState;
             case "validateGroupbyKey":
-                draft.groupby = action.value;
+                draft.groupBy = action.value;
                 return;
         }
     }
@@ -46,7 +46,7 @@ export default function AddGroupby(props: IProps): ReactElement {
                         "aria-label": "groupby-key-input",
                     }}
                     name={"groupby-key"}
-                    value={state.groupby}
+                    value={state.groupBy}
                     variant="outlined"
                     fullWidth
                     required
@@ -54,7 +54,12 @@ export default function AddGroupby(props: IProps): ReactElement {
                 />
             </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">
-                <Button id={"add-groupby-button"} name={"Add Groupby"} variant="outlined" onClick={addGroupbySubmit}>
+                <Button
+                    id={"add-groupby-button-groupby-dialog"}
+                    name={"Add Groupby"}
+                    variant="outlined"
+                    onClick={addGroupbySubmit}
+                >
                     Add Groupby
                 </Button>
             </Box>

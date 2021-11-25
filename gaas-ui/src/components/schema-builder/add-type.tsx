@@ -111,7 +111,7 @@ export default function AddType(props: IProps): ReactElement {
                 draft.aggregateFunctionTextarea = action.value;
                 return;
             case "handleUpdateValidateFunctionsTextarea":
-                draft.validateFunctionsTextarea = draft.validateFunctionsTextarea + action.value;
+                draft.validateFunctionsTextarea = action.value;
                 return;
             case "handleClickCloseAggregateFunction":
                 draft.openAggregateFunction = action.value;
@@ -393,7 +393,7 @@ export default function AddType(props: IProps): ReactElement {
                                 onAddValidateFunctions={(validateFunctions) => {
                                     dispatch({
                                         type: "handleUpdateValidateFunctionsTextarea",
-                                        value: JSON.stringify(validateFunctions),
+                                        value: state.validateFunctionsTextarea + JSON.stringify(validateFunctions),
                                     });
                                     dispatch({
                                         type: "handleUpdateValidateFunctions",

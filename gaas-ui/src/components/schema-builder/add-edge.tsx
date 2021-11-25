@@ -49,9 +49,11 @@ interface IState {
         value: string;
     };
     properties: {};
+    propertiesTextarea: string;
     openProperties: boolean;
-    groupby: [];
+    groupBy: [];
     openGroupby: boolean;
+    groupByTextarea: string;
 }
 
 export default function AddEdge(props: IProps): ReactElement {
@@ -68,8 +70,8 @@ export default function AddEdge(props: IProps): ReactElement {
         if (Object.keys(state.properties).length !== 0) {
             edgeToAdd[state.edgeName.value].properties = state.properties;
         }
-        if (state.groupby.length !== 0) {
-            edgeToAdd[state.edgeName.value].groupBy = state.groupby;
+        if (state.groupBy.length !== 0) {
+            edgeToAdd[state.edgeName.value].groupBy = state.groupBy;
         }
         onAddEdge(edgeToAdd);
         dispatch({ type: "reset" });
@@ -101,9 +103,10 @@ export default function AddEdge(props: IProps): ReactElement {
         },
         properties: {},
         openProperties: false,
-
-        groupby: [],
+        propertiesTextarea: "",
+        groupBy: [],
         openGroupby: false,
+        groupByTextarea: "",
     };
 
     function addEdgeReducer(draft: any, action: any) {
@@ -149,16 +152,19 @@ export default function AddEdge(props: IProps): ReactElement {
                 draft.openProperties = action.value;
                 return;
             case "handleUpdateProperties":
-                draft.properties[action.value.key] = action.value.value;
+                draft.properties[Object.keys(action.value)[0]] = Object.values(action.value)[0];
                 return;
-            case "validateEdgeProperties":
-                draft.properties = action.value;
+            case "handleUpdatePropertiesTextarea":
+                draft.propertiesTextarea = action.value;
                 return;
             case "handleClickCloseGroupby":
                 draft.openGroupby = action.value;
                 return;
-            case "handleUpdateGroupby":
-                draft.groupby[draft.groupby.length] = action.value;
+            case "handleUpdateGroupBy":
+                draft.groupBy[draft.groupBy.length] = action.value;
+                return;
+            case "handleUpdateGroupByTextarea":
+                draft.groupByTextarea = action.value;
                 return;
         }
     }
@@ -319,9 +325,13 @@ export default function AddEdge(props: IProps): ReactElement {
                     </Box>
                     <DialogContent>
                         <AddProperty
-                            onAddProperty={(properties) =>
-                                dispatch({ type: "handleUpdateProperties", value: properties })
-                            }
+                            onAddProperty={(properties) => {
+                                dispatch({ type: "handleUpdateProperties", value: properties });
+                                dispatch({
+                                    type: "handleUpdatePropertiesTextarea",
+                                    value: state.propertiesTextarea + JSON.stringify(properties),
+                                });
+                            }}
                         />
                     </DialogContent>
                 </Dialog>
@@ -335,13 +345,16 @@ export default function AddEdge(props: IProps): ReactElement {
                         "aria-label": "edge-properties-input",
                     }}
                     fullWidth
-                    value={JSON.stringify(state.properties)}
+                    value={state.propertiesTextarea}
                     name={"edge-properties"}
                     required
                     multiline
                     rows={5}
                     variant="outlined"
-                    onChange={(e) => dispatch({ type: "validateEdgeProperties", value: e.target.value })}
+                    onChange={(e) => {
+                        dispatch({ type: "handleUpdatePropertiesTextarea", value: e.target.value });
+                        dispatch({ type: "handleUpdateProperties", value: JSON.parse(e.target.value) });
+                    }}
                 />
             </Grid>
 
@@ -375,7 +388,13 @@ export default function AddEdge(props: IProps): ReactElement {
                     </Box>
                     <DialogContent>
                         <AddGroupby
-                            onAddGroupby={(groupby) => dispatch({ type: "handleUpdateGroupby", value: groupby })}
+                            onAddGroupby={(groupBy) => {
+                                dispatch({
+                                    type: "handleUpdateGroupByTextarea",
+                                    value: state.groupByTextarea + JSON.stringify(groupBy),
+                                });
+                                dispatch({ type: "handleUpdateGroupBy", value: groupBy });
+                            }}
                         />
                     </DialogContent>
                 </Dialog>
@@ -389,13 +408,16 @@ export default function AddEdge(props: IProps): ReactElement {
                         "aria-label": "edge-groupby-input",
                     }}
                     fullWidth
-                    value={JSON.stringify(state.groupby)}
+                    value={state.groupByTextarea}
                     name={"edge-groupby"}
                     required
                     multiline
                     rows={5}
                     variant="outlined"
-                    onChange={(e) => dispatch({ type: "validateEdgeGroupby", value: e.target.value })}
+                    onChange={(e) => {
+                        dispatch({ type: "handleUpdateGroupByTextarea", value: e.target.value });
+                        dispatch({ type: "handleUpdateGroupBy", value: JSON.parse(e.target.value) });
+                    }}
                 />
             </Grid>
 
