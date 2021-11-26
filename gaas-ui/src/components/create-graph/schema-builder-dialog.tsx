@@ -38,7 +38,7 @@ export default function SchemaBuilderDialog(props: IProps) {
                 aria-labelledby="schema-builder-dialog"
             >
                 <Box display="flex" alignItems="right" justifyContent="right">
-                    <IconButton id="close-add-type-button" onClick={handleClose}>
+                    <IconButton id="close-schema-builder-dialog-button" onClick={handleClose}>
                         <ClearIcon />
                     </IconButton>
                 </Box>
