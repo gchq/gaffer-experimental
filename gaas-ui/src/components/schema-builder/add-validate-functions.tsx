@@ -38,6 +38,13 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
         dispatch({ type: "submitKVPair" });
     }
 
+    function disableAddValidateFunctionsButton(): boolean {
+        return state.validateFunctionObject.class.length === 0;
+    }
+    function disableKVButton(): boolean {
+        return state.additionalKey.length === 0 || state.additionalValue.length === 0;
+    }
+
     function addEdgeReducer(draft: any, action: any) {
         switch (action.type) {
             case "reset":
@@ -127,6 +134,7 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                     name={"Add Key Value Pair"}
                     variant="outlined"
                     onClick={additionalKVSubmit}
+                    disabled={disableKVButton()}
                 >
                     Add Key Value Pair
                 </Button>
@@ -158,6 +166,7 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                     name={"Add Validate Functions"}
                     variant="outlined"
                     onClick={onAddValidateFunctionsSubmit}
+                    disabled={disableAddValidateFunctionsButton()}
                 >
                     Add Validate Functions
                 </Button>
