@@ -25,6 +25,9 @@ export default function AddAggregateFunction(props: IProps): ReactElement {
         onAddAggregateFunction(state.aggregateFunction);
         dispatch({ type: "reset" });
     }
+    function disableButton(): boolean {
+        return state.aggregateFunction.class.length === 0;
+    }
 
     function addEdgeReducer(draft: any, action: any) {
         switch (action.type) {
@@ -61,6 +64,7 @@ export default function AddAggregateFunction(props: IProps): ReactElement {
                 <Button
                     id={"add-aggregate-function-button"}
                     name={"Add Aggregate Function"}
+                    disabled={disableButton()}
                     variant="outlined"
                     onClick={addAggregateFunctionSubmit}
                 >

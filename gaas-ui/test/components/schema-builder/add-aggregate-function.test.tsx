@@ -36,6 +36,11 @@ describe("Add Property UI Component", () => {
 
             expect(addAggregateFunctionButton.text()).toBe("Add Aggregate Function");
         });
+        it("should be disabled when value empty", () => {
+            const addPropertyButton = wrapper.find("button#add-aggregate-function-button");
+
+            expect(addPropertyButton.props().disabled).toBe(true);
+        });
     });
 });
 
