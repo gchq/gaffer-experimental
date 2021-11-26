@@ -45,6 +45,23 @@ describe("Add Property UI Component", () => {
 
             expect(addValidateFunctionsButton.text()).toBe("Add Validate Functions");
         });
+        it("should be disabled class input is empty", () => {
+            const addButton = wrapper.find("button#add-validate-functions-button");
+
+            expect(addButton.props().disabled).toBe(true);
+        });
+    });
+    describe("Add Key Value Button", () => {
+        it("should have a Add Key Value button", () => {
+            const addButton = wrapper.find("button#add-additional-kv-button");
+
+            expect(addButton.text()).toBe("Add Key Value Pair");
+        });
+        it("should be disabled when key and value empty", () => {
+            const addButton = wrapper.find("button#add-additional-kv-button");
+
+            expect(addButton.props().disabled).toBe(true);
+        });
     });
 });
 
