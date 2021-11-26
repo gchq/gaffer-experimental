@@ -391,7 +391,7 @@ export default function AddEdge(props: IProps): ReactElement {
                             onAddGroupby={(groupBy) => {
                                 dispatch({
                                     type: "handleUpdateGroupByTextarea",
-                                    value: state.groupByTextarea + JSON.stringify(groupBy),
+                                    value: state.groupByTextarea + JSON.stringify(groupBy) + ",",
                                 });
                                 dispatch({ type: "handleUpdateGroupBy", value: groupBy });
                             }}
@@ -416,7 +416,9 @@ export default function AddEdge(props: IProps): ReactElement {
                     variant="outlined"
                     onChange={(e) => {
                         dispatch({ type: "handleUpdateGroupByTextarea", value: e.target.value });
-                        dispatch({ type: "handleUpdateGroupBy", value: JSON.parse(e.target.value) });
+                        JSON.parse("[" + e.target.value + "]").forEach((item: string) => {
+                            dispatch({ type: "handleUpdateGroupBy", value: item });
+                        });
                     }}
                 />
             </Grid>

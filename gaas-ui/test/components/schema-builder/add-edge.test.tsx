@@ -81,7 +81,7 @@ describe("Add Edge UI Component", () => {
         it("should add the groupby added in the groupby dialog to the groupby textarea", async () => {
             await addEdgeGroupbyInDialog("test");
             await addEdgeGroupbyInDialog("testM");
-            expect(wrapper.find("textarea#edge-groupby-input").text()).toEqual('"test""testM"');
+            expect(wrapper.find("textarea#edge-groupby-input").text()).toEqual('"test","testM",');
         });
     });
     describe("On Add Edge", () => {
@@ -105,7 +105,7 @@ describe("Add Edge UI Component", () => {
             await selectDirected("true");
 
             await addEdgePropertyInTextarea('{"propertyKey":"propertyValue"}');
-            await addEdgeGroupbyInTextarea('"test""testM"');
+            await addEdgeGroupbyInTextarea('"test","testM"');
 
             await clickAddEdge();
 
@@ -118,7 +118,7 @@ describe("Add Edge UI Component", () => {
                     source: "typeOne",
                     destination: "typeTwo",
                     directed: "true",
-                    groupBy: ["test"],
+                    groupBy: ["test", "testM"],
                     properties: { propertyKey: "propertyValue" },
                 },
             };
@@ -132,6 +132,7 @@ describe("Add Edge UI Component", () => {
 
             await addEdgePropertyInDialog("propertyKey", "propertyValue");
             await addEdgeGroupbyInDialog("test");
+            await addEdgeGroupbyInDialog("testM");
 
             await clickAddEdge();
 
