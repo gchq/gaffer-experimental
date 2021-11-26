@@ -118,7 +118,7 @@ describe("Add Edge UI Component", () => {
                     source: "typeOne",
                     destination: "typeTwo",
                     directed: "true",
-                    groupBy: ["test", "testM"],
+                    groupBy: ["test", "testM", "testV"],
                     properties: { propertyKey: "propertyValue" },
                 },
             };
@@ -133,6 +133,7 @@ describe("Add Edge UI Component", () => {
             await addEdgePropertyInDialog("propertyKey", "propertyValue");
             await addEdgeGroupbyInDialog("test");
             await addEdgeGroupbyInDialog("testM");
+            await addEdgeGroupbyInTextarea('"test","testM","testV"');
 
             await clickAddEdge();
 

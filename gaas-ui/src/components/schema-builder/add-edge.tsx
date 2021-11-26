@@ -161,7 +161,10 @@ export default function AddEdge(props: IProps): ReactElement {
                 draft.openGroupby = action.value;
                 return;
             case "handleUpdateGroupBy":
-                draft.groupBy[draft.groupBy.length] = action.value;
+                if (!draft.groupBy.includes(action.value)) {
+                    draft.groupBy[draft.groupBy.length] = action.value;
+                    return;
+                }
                 return;
             case "handleUpdateGroupByTextarea":
                 draft.groupByTextarea = action.value;
