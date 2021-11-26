@@ -108,7 +108,8 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         fullWidth
                         maxWidth="xs"
                         open={state.openTypes}
-                        onClose={(e) => dispatch({ type: "handleClickCloseTypes", value: false })}
+                        onBackdropClick={() => dispatch({ type: "handleClickCloseTypes", value: false })}
+                        onClose={() => dispatch({ type: "handleClickCloseTypes", value: false })}
                         id={"add-type-dialog"}
                         aria-labelledby="add-type-dialog"
                     >
@@ -145,7 +146,8 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         fullWidth
                         maxWidth="xs"
                         open={state.openEdges}
-                        onClose={(e) => dispatch({ type: "handleClickCloseEdges", value: false })}
+                        onBackdropClick={() => dispatch({ type: "handleClickCloseEdges", value: false })}
+                        onClose={() => dispatch({ type: "handleClickCloseEdges", value: false })}
                         id={"add-edge-dialog"}
                         aria-labelledby="add-edge-dialog"
                     >
@@ -183,7 +185,8 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         fullWidth
                         maxWidth="xs"
                         open={state.openEntities}
-                        onClose={(e) => dispatch({ type: "handleClickCloseEntities", value: false })}
+                        onBackdropClick={() => dispatch({ type: "handleClickCloseEntities", value: false })}
+                        onClose={() => dispatch({ type: "handleClickCloseEntities", value: false })}
                         id={"add-entity-dialog"}
                         aria-labelledby="add-entity-dialog"
                     >
