@@ -43,7 +43,7 @@ jobs:
           name: Depcheck report
           path: ${{github.workspace}}/gaas-ui/dependency-check-reports
   run-semgrep:
-    name: Scan
+    name: Semgrep Scan
     needs: [ run-maven-build, run-ui-code-analysis ]
     runs-on: ubuntu-latest
     # Skip any PR created by dependabot to avoid permission issues
