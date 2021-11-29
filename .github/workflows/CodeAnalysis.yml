@@ -93,11 +93,9 @@ jobs:
       - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          files: gaffer-as-a-service/gaas-rest/target/site/jacoco/jacoco.xml # optional
           flags: unittests # optional
           name: jacoco-report-uploader # optional
           fail_ci_if_error: true # optional (default = false)
-          verbose: true # optional (default = false)
 
 
 
