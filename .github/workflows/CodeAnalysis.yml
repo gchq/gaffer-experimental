@@ -40,7 +40,7 @@ jobs:
       - name: Upload Dependancy Check Results
         uses: actions/upload-artifact@master
         with:
-          name: Depcheck report
+          name: UI-Dependancy-Report
           path: ${{github.workspace}}/gaas-ui/dependency-check-reports
   run-semgrep:
     name: Semgrep Scan
@@ -99,4 +99,11 @@ jobs:
           flags: unittests # optional
           name: jacoco-report-uploader # optional
           fail_ci_if_error: true # optional (default = false)
-        
+       - name: Dependancy Check
+         run: mvn org.owasp:dependency-check-maven:check
+      - name: Upload Dependancy Check Results
+        uses: actions/upload-artifact@master
+        with:
+          name: GAAS-Dependancy-Report
+          path: ${{github.workspace}}/gaffer-as-a-service/target/dependency-check-report.html
+      
