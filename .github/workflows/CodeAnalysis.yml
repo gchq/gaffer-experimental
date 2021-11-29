@@ -85,22 +85,11 @@ jobs:
         run: |
           echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
           echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
-  upload-to-codecov:
-    needs: java-code-coverage
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: gaffer-as-a-service/gaas-rest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: codecov/codecov-action@v2
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: target/site/jacoco/jacoco.xml # not required for public repos
           flags: unittests # optional
           name: jacoco-report-uploader # optional
           fail_ci_if_error: true # optional (default = false)
-
-
-
-
+        
