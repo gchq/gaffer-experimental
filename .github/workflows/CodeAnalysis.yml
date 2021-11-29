@@ -1,5 +1,5 @@
 name: Code Analysis
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   run-maven-build:
@@ -37,7 +37,7 @@ jobs:
           npm run lint-errors
   run-semgrep:
     name: Scan
-    needs: [run-maven-build, run-ui-lint]
+    needs: [ run-maven-build, run-ui-lint ]
     runs-on: ubuntu-latest
     # Skip any PR created by dependabot to avoid permission issues
     if: (github.actor != 'dependabot[bot]')
@@ -61,35 +61,42 @@ jobs:
         with:
           sarif_file: semgrep.sarif
   java-code-coverage:
-            needs: run-maven-build
-            runs-on: ubuntu-latest
-            defaults:
-              run:
-                working-directory: gaffer-as-a-service
-            steps:
-              - uses: actions/checkout@v2
-              - name: Set up the Java JDK
-                uses: actions/setup-java@v1
-                with:
-                  java-version: 1.8
-              - name: Build with Maven
-                run: mvn -B verify -P coverage
-              - name: Generate JaCoCo Badge
-                id: jacoco
-                uses: cicirello/jacoco-badge-generator@v2.1.0
-                with:
-                  generate-branches-badge: true
-                  jacoco-csv-file: >
-                    gaffer-as-a-service/gaas-rest/target/site/jacoco/jacoco.csv
-              - name: Log coverage percentage
-                run: |
-                  echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
-                  echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
-              - name: Upload JaCoCo coverage report
-                uses: actions/upload-artifact@v2
-                with:
-                  name: jacoco-report
-                  path: gaffer-as-a-service/gaas-rest/target/site/jacoco/
+    needs: run-maven-build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gaffer-as-a-service
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up the Java JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Build with Maven
+        run: mvn -B verify -P coverage
+      - name: Generate JaCoCo Badge
+        id: jacoco
+        uses: cicirello/jacoco-badge-generator@v2.1.0
+        with:
+          generate-branches-badge: true
+          jacoco-csv-file: >
+            gaffer-as-a-service/gaas-rest/target/site/jacoco/jacoco.csv
+      - name: Log coverage percentage
+        run: |
+          echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
+          echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
+  upload-to-codecov:
+    needs: java-code-coverage
+    steps:
+      - uses: actions/checkout@v2
+      - uses: codecov/codecov-action@v2
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+            files: gaffer-as-a-service/gaas-rest/target/site/jacoco/jacoco.xml # optional
+            flags: unittests # optional
+            name: jacoco-report-uploader # optional
+            fail_ci_if_error: true # optional (default = false)
+            verbose: true # optional (default = false)
 
 
 
