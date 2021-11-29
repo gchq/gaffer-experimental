@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: Depcheck report
-          path: ${{github.workspace}}/reports
+          path: ${{github.workspace}}/gaas-ui/dependency-check-reports
   run-semgrep:
     name: Scan
     needs: [ run-maven-build, run-ui-code-analysis ]
