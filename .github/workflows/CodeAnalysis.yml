@@ -37,7 +37,7 @@ jobs:
           npm run lint-errors
       - name: Dependancy Check
         run: npm run owasp
-      - name: Upload Test results
+      - name: Upload Dependancy Check Results
         uses: actions/upload-artifact@master
         with:
           name: Depcheck report
