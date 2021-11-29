@@ -14,7 +14,7 @@ jobs:
 
       - name: Run build
         run: mvn clean install
-  run-ui-lint:
+  run-ui-code-analysis:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -35,19 +35,6 @@ jobs:
       - name: Lint code
         run:
           npm run lint-errors
-  dependancy-check-ui:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: gaas-ui/
-    steps:
-      - name: Set up Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.16.0
-      - name: Install dependencies
-        run:
-          npm install
       - name: Dependancy Check
         run: npm run owasp
       - name: Upload Test results
@@ -57,7 +44,7 @@ jobs:
           path: ${{github.workspace}}/reports
   run-semgrep:
     name: Scan
-    needs: [ run-maven-build, run-ui-lint ]
+    needs: [ run-maven-build, run-ui-code-analysis ]
     runs-on: ubuntu-latest
     # Skip any PR created by dependabot to avoid permission issues
     if: (github.actor != 'dependabot[bot]')
