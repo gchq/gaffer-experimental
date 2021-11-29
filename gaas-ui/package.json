@@ -12,7 +12,8 @@
     "deploy": "aws s3 sync build/ s3://kai-ui",
     "eject": "react-scripts eject",
     "lint": "eslint './src/**/*.{ts,tsx}' --fix",
-    "lint-errors": "eslint './src/**/*.{ts,tsx, js, jsx}'"
+    "lint-errors": "eslint './src/**/*.{ts,tsx, js, jsx}'",
+    "owasp": "owasp-dependency-check --project \"gaas-ui\" "
   },
   "dependencies": {
     "@braintree/sanitize-url": "^5.0.2",
@@ -43,6 +44,7 @@
     "material-ui-dropzone": "^3.5.0",
     "material-ui-image": "^3.3.2",
     "npm-check-updates": "^9.1.0",
+    "owasp-dependency-check": "^0.0.18",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-json-view": "^1.19.1",
