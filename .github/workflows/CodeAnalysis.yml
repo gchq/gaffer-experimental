@@ -37,7 +37,9 @@ jobs:
           npm run lint-errors
   dependancy-check-ui:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: gaas-ui/
     steps:
       - name: Set up Node
         uses: actions/setup-node@v1
