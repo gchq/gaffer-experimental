@@ -87,6 +87,7 @@ jobs:
           echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
   upload-to-codecov:
     needs: java-code-coverage
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: codecov/codecov-action@v2
