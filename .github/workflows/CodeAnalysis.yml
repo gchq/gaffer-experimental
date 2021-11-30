@@ -72,7 +72,7 @@ jobs:
           path: ${{github.workspace}}/gaas-ui/dependency-check-reports
   run-semgrep:
     name: Semgrep Scan
-    needs: [ run-maven-build, run-ui-code-analysis ]
+    needs: [ run-gaas-code-analysis, run-ui-code-analysis ]
     runs-on: ubuntu-latest
     # Skip any PR created by dependabot to avoid permission issues
     if: (github.actor != 'dependabot[bot]')
