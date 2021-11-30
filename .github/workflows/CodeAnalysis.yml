@@ -66,8 +66,8 @@ jobs:
       - name: Lint code
         run:
           npm run lint-errors
-      - name: Style Linting
-        run: npx stylelint "**/*.{css,scss}"
+      - name: stylelint
+        uses: actions-hub/stylelint@master
       - name: Dependancy Check
         run: npm run owasp
       - name: Upload Dependancy Check Results
