@@ -2,7 +2,7 @@ name: Code Analysis
 on: [ push, pull_request ]
 
 jobs:
-  run-maven-build:
+  run-gaas-code-analysis:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -17,7 +17,7 @@ jobs:
 
       - name: Run build
         run: mvn clean install
-      - name: Build with Maven
+      - name: Check Coverage
         run: mvn -B verify -P coverage
       - name: Generate JaCoCo Badge
         id: jacoco
