@@ -66,9 +66,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-          <groupId>org.springframework.boot</groupId>
-           <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-       </dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -408,6 +408,23 @@
     </profiles>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>6.5.0</version>
+                <configuration>
+                    <skipSystemScope>true</skipSystemScope>
+                </configuration>
+
+                <executions>
+                    <execution>
+
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
