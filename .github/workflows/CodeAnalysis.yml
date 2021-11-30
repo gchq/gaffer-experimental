@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: GAAS-Dependancy-Report
-          path: ${{github.workspace}}/gaffer-as-a-service/target/dependency-check-report.html
+          path: ${{github.workspace}}/gaffer-as-a-service/gaas-rest/target/dependency-check-report.html
   run-ui-code-analysis:
     runs-on: ubuntu-latest
     defaults:
