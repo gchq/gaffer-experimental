@@ -4,6 +4,9 @@ on: [ push, pull_request ]
 jobs:
   run-maven-build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gaffer-as-a-service
     steps:
       - uses: actions/checkout@v2
 
@@ -14,6 +17,33 @@ jobs:
 
       - name: Run build
         run: mvn clean install
+      - name: Build with Maven
+        run: mvn -B verify -P coverage
+      - name: Generate JaCoCo Badge
+        id: jacoco
+        uses: cicirello/jacoco-badge-generator@v2.1.0
+        with:
+          generate-branches-badge: true
+          jacoco-csv-file: >
+            gaffer-as-a-service/gaas-rest/target/site/jacoco/jacoco.csv
+      - name: Log coverage percentage
+        run: |
+          echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
+          echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: unittests # optional
+          name: jacoco-report-uploader # optional
+          fail_ci_if_error: true # optional (default = false)
+      - name: Dependancy Check
+        run: mvn org.owasp:dependency-check-maven:check
+      - name: Upload Dependancy Check Results
+        uses: actions/upload-artifact@master
+        with:
+          name: GAAS-Dependancy-Report
+          path: ${{github.workspace}}/gaffer-as-a-service/target/dependency-check-report.html
   run-ui-code-analysis:
     runs-on: ubuntu-latest
     defaults:
@@ -67,43 +97,3 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: semgrep.sarif
-  run-gaas-code-analysis:
-    needs: run-maven-build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: gaffer-as-a-service
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up the Java JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: Build with Maven
-        run: mvn -B verify -P coverage
-      - name: Generate JaCoCo Badge
-        id: jacoco
-        uses: cicirello/jacoco-badge-generator@v2.1.0
-        with:
-          generate-branches-badge: true
-          jacoco-csv-file: >
-            gaffer-as-a-service/gaas-rest/target/site/jacoco/jacoco.csv
-      - name: Log coverage percentage
-        run: |
-          echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
-          echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
-      - name: Upload to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: unittests # optional
-          name: jacoco-report-uploader # optional
-          fail_ci_if_error: true # optional (default = false)
-      - name: Dependancy Check
-        run: mvn org.owasp:dependency-check-maven:check
-      - name: Upload Dependancy Check Results
-        uses: actions/upload-artifact@master
-        with:
-          name: GAAS-Dependancy-Report
-          path: ${{github.workspace}}/gaffer-as-a-service/target/dependency-check-report.html
-      
