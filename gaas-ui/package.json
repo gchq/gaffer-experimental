@@ -45,6 +45,7 @@
     "material-ui-image": "^3.3.2",
     "npm-check-updates": "^9.1.0",
     "owasp-dependency-check": "^0.0.18",
+    "postcss": "^8.4.4",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-json-view": "^1.19.1",
