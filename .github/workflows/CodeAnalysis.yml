@@ -72,6 +72,10 @@ jobs:
           npx stylelint "**/*.{css,scss}"
       - name: Dependancy Check
         run: npm run owasp
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload Dependancy Check Results
         uses: actions/upload-artifact@master
         with:
