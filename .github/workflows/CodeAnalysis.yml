@@ -68,9 +68,8 @@ jobs:
         run:
           npm run lint-errors
       - name: stylelint
-        uses: actions-hub/stylelint@master
-        env:
-          PATTERN: "*scss"
+        run: 
+          npx stylelint "**/*.{css,scss}"
       - name: Dependancy Check
         run: npm run owasp
       - name: Upload Dependancy Check Results
