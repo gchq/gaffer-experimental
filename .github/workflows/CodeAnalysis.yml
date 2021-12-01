@@ -68,7 +68,9 @@ jobs:
         run:
           npm run lint-errors
       - name: stylelint
-        uses: moneyforward/stylelint-action@v0
+        uses: actions-hub/stylelint@master
+        env:
+          PATTERN: "*scss"
       - name: Dependancy Check
         run: npm run owasp
       - name: Upload Dependancy Check Results
