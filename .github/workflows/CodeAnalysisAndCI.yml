@@ -49,7 +49,7 @@ jobs:
         working-directory: gaas-ui/
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Check out repository
         uses: actions/checkout@v2
 
