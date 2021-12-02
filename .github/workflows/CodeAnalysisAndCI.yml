@@ -49,6 +49,7 @@ jobs:
         working-directory: gaas-ui/
 
     steps:
+      - uses: actions/checkout@v2
       - name: Check out repository
         uses: actions/checkout@v2
 
@@ -66,8 +67,15 @@ jobs:
       - name: Lint code
         run:
           npm run lint-errors
+      - name: stylelint
+        run: 
+          npx stylelint "**/*.{css,scss}"
       - name: Dependancy Check
         run: npm run owasp
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload Dependancy Check Results
         uses: actions/upload-artifact@master
         with:

@@ -1,51 +1,53 @@
-$base-color: #5A7C81;
+$base-color: #5a7c81;
 
 body {
-    font-family: 'Lucida Sans', Verdana, sans-serif;
+  font-family: "Lucida Sans", Verdana, sans-serif;
 }
 
 main {
-    width: 100%;
-    margin-top: 30px;
-    }
+  width: 100%;
+  margin-top: 30px;
+}
 
-#login-form, #temp-password-login-form {
-    margin-top: 0px;
-    main {
-        margin-top: 0px;
-        }
-}    
+#login-form,
+#temp-password-login-form {
+  margin-top: 0;
+
+  main {
+    margin-top: 0;
+  }
+}
 
 a {
-    &:hover {
-        cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
+  }
 }
+
 .MuiAppBar-colorPrimary {
-    background-color: $base-color;
-    box-shadow: none;  
+  background-color: $base-color;
+  box-shadow: none;
 }
 
 .MuiButton-contained {
-    background-color: $base-color;
+  background-color: $base-color;
+  box-shadow: none;
+
+  &:hover {
+    background-color: #49606b;
     box-shadow: none;
-    &:hover {
-        background-color: #49606b;
-        box-shadow: none;
-    }
+  }
 }
 
 #notification-alert {
-    position: absolute;
-    top: 65px;
-    border-radius: 0;
-    width: 100%;
+  position: absolute;
+  top: 65px;
+  border-radius: 0;
+  width: 100%;
 }
 
 .MuiDialogContent-root {
-    #notification-alert {
-       position: unset;
-    }
-} 
-
-
+  #notification-alert {
+    position: unset;
+  }
+}
