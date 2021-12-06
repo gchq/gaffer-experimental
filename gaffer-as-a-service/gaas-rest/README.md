@@ -21,6 +21,9 @@ mvn clean install -DbuildType=build -DimageName=[IMAGE_NAME] -DuserName=[YOUR_DO
 Run the Spring Boot app locally and access the Swagger dashboard at 
 http://localhost:8080/swagger-ui/
 
+## Java Code Coverage with JaCoCo Instructions
+To generate a code coverage report run the command: `mvn -B verify -P coverage`
+The coverage report can be found at: `target/site/jacoco/index.html`
 
 ## OpenShift Deployment
 

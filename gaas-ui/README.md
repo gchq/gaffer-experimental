@@ -33,7 +33,8 @@ You can specify a test file to run on loop by using the syntax `npm run watch [f
 Builds the app for production to the `/build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
 To add environment variables for the production build to consume, such as your own GaaS REST API host URL target, create a `env-config.js` file at the root of the `/build` directory and add the following:
-
+### `npx stylelint "**/*.{css,scss}"`
+Does lint checks on the css and scss files in the gaas-ui. Add a `--fix` tag to the command above to fix any issues.
 ```javascript
 window.REACT_APP_API_PLATFORM="OPENSHIFT"
 window.REACT_APP_KAI_REST_API_HOST="http://localhost:4000"
