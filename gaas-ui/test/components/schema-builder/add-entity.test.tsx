@@ -145,6 +145,7 @@ describe("Add Entity UI Component", () => {
         });
     });
 });
+
 async function addEntityInTextArea(property: string) {
     await act(() => {
         const propertyInputField = wrapper.find("textarea#entity-properties-input");
@@ -153,6 +154,7 @@ async function addEntityInTextArea(property: string) {
         });
     });
 }
+
 async function addEntityPropertyInDialog(propertyKey: string, propertyValue: string) {
     await wrapper.find("button#add-properties-button").simulate("click");
     await act(() => {
@@ -172,7 +174,9 @@ async function addEntityPropertyInDialog(propertyKey: string, propertyValue: str
         });
     });
     await wrapper.find("button#add-property-button").simulate("click");
+    await wrapper.find("button#close-add-properties-button").simulate("click");
 }
+
 function selectVertex(vertex: string) {
     wrapper
         .find("div#entity-vertex-formcontrol")
