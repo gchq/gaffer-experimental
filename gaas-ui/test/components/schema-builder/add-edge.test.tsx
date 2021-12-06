@@ -282,6 +282,7 @@ async function selectDirected(directed: string) {
             target: { value: directed },
         });
 }
+
 async function addEdgePropertyInTextarea(property: string) {
     await act(() => {
         const propertyTextarea = wrapper.find("textarea#edge-properties-input");
@@ -290,6 +291,7 @@ async function addEdgePropertyInTextarea(property: string) {
         });
     });
 }
+
 async function addEdgePropertyInDialog(propertyKey: string, propertyValue: string) {
     await wrapper.find("button#add-properties-button").simulate("click");
     await act(() => {
@@ -309,7 +311,9 @@ async function addEdgePropertyInDialog(propertyKey: string, propertyValue: strin
         });
     });
     await wrapper.find("button#add-property-button").simulate("click");
+    await wrapper.find("button#close-add-properties-button").simulate("click");
 }
+
 async function addEdgeGroupbyInTextarea(groupBy: string) {
     await act(() => {
         const groupbyInputField = wrapper.find("textarea#edge-groupby-input");
@@ -318,6 +322,7 @@ async function addEdgeGroupbyInTextarea(groupBy: string) {
         });
     });
 }
+
 async function addEdgeGroupbyInDialog(groupBy: string) {
     await wrapper.find("button#add-groupby-button").simulate("click");
     await act(() => {
@@ -334,6 +339,7 @@ async function addEdgeGroupbyInDialog(groupBy: string) {
         .find("div#add-groupby-inputs")
         .find("button#add-groupby-button-groupby-dialog")
         .simulate("click");
+    await wrapper.find("button#close-add-groupby-button").simulate("click");
 }
 
 function clickAddEdge() {
