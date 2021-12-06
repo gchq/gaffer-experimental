@@ -6,7 +6,7 @@ import { Config } from "../config";
 // The following config details can be found at:
 export const poolData = {
     // Cognito > User Pools > KaiUserPool... > (on homepage) Pool Id: e.g. eu-west-2_aBc123
-    UserPoolId: Config.REACT_APP_COGNITO_USERPOOLID,
+    UserPoolId: Config.REACT_APP_COGNITO_USERPOOL_ID,
     // Cognito > User Pools > KaiUserPool... > (left nav column) General Settings > App Clients > App client Id
-    ClientId: Config.REACT_APP_COGNITO_CLIENTID,
+    ClientId: Config.REACT_APP_COGNITO_CLIENT_ID,
 };
