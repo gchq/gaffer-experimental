@@ -1,17 +1,17 @@
 import React, { ReactElement } from "react";
 import {
+    Box,
     Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
     FormControl,
     Grid,
+    IconButton,
     InputLabel,
     MenuItem,
     Select,
     TextField,
-    Box,
-    Dialog,
-    IconButton,
-    DialogTitle,
-    DialogContent,
 } from "@material-ui/core";
 import { useImmerReducer } from "use-immer";
 import ClearIcon from "@material-ui/icons/Clear";
@@ -186,6 +186,14 @@ export default function AddEdge(props: IProps): ReactElement {
         );
     }
 
+    function closeProperties() {
+        dispatch({ type: "handleClickCloseProperties", value: false });
+    }
+
+    function closeGroupBy() {
+        dispatch({ type: "handleClickCloseGroupby", value: false });
+    }
+
     return (
         <Grid container spacing={2} direction="column" id={"add-edge-inputs"}>
             <Grid item>
@@ -310,15 +318,12 @@ export default function AddEdge(props: IProps): ReactElement {
                     fullWidth
                     maxWidth="xs"
                     open={state.openProperties}
-                    onClose={(e) => dispatch({ type: "handleClickCloseProperties", value: false })}
+                    onClose={closeProperties}
                     id={"add-properties-dialog"}
                     aria-labelledby="add-properties-dialog"
                 >
                     <Box display="flex" alignItems="right" justifyContent="right">
-                        <IconButton
-                            id="close-add-properties-button"
-                            onClick={(e) => dispatch({ type: "handleClickCloseProperties", value: false })}
-                        >
+                        <IconButton id="close-add-properties-button" onClick={closeProperties}>
                             <ClearIcon />
                         </IconButton>
                     </Box>
@@ -373,15 +378,12 @@ export default function AddEdge(props: IProps): ReactElement {
                     fullWidth
                     maxWidth="xs"
                     open={state.openGroupby}
-                    onClose={(e) => dispatch({ type: "handleClickCloseGroupby", value: false })}
+                    onClose={closeGroupBy}
                     id={"add-groupby-dialog"}
                     aria-labelledby="add-groupby-dialog"
                 >
                     <Box display="flex" alignItems="right" justifyContent="right">
-                        <IconButton
-                            id="close-add-groupby-button"
-                            onClick={(e) => dispatch({ type: "handleClickCloseGroupby", value: false })}
-                        >
+                        <IconButton id="close-add-groupby-button" onClick={closeGroupBy}>
                             <ClearIcon />
                         </IconButton>
                     </Box>
