@@ -219,6 +219,7 @@ function addTypeClass(className: string) {
         target: { value: className },
     });
 }
+
 async function addAggregateFunctionInTextarea(aggregateFunction: string) {
     await act(() => {
         const aggregateFunctionInput = wrapper.find("textarea#type-aggregate-function-input");
@@ -228,6 +229,7 @@ async function addAggregateFunctionInTextarea(aggregateFunction: string) {
         });
     });
 }
+
 async function addSerialiserInTextarea(serialiser: string) {
     await act(() => {
         const aggregateFunctionInput = wrapper.find("textarea#type-serialiser-input");
@@ -237,6 +239,7 @@ async function addSerialiserInTextarea(serialiser: string) {
         });
     });
 }
+
 async function addValidateFunctionsInTextarea(validateFuntions: string) {
     await act(() => {
         const aggregateFunctionInput = wrapper.find("textarea#type-validate-functions-input");
@@ -246,6 +249,7 @@ async function addValidateFunctionsInTextarea(validateFuntions: string) {
         });
     });
 }
+
 async function addAggregateFunctionInDialog(aggregateFunction: string) {
     await wrapper.find("button#add-aggregate-function-button").simulate("click");
     await act(() => {
@@ -262,7 +266,12 @@ async function addAggregateFunctionInDialog(aggregateFunction: string) {
         .find("div#add-aggregate-function-inputs")
         .find("button#add-aggregate-function-button")
         .simulate("click");
+    await wrapper
+        .find("div#add-aggregate-function-dialog")
+        .find("button#close-add-aggregate-function-button")
+        .simulate("click");
 }
+
 async function addSerialiserInDialog(serialiser: string) {
     await wrapper.find("button#add-serialiser-button").simulate("click");
     await act(() => {
@@ -279,6 +288,7 @@ async function addSerialiserInDialog(serialiser: string) {
         .find("div#add-serialiser-inputs")
         .find("button#add-serialiser-button")
         .simulate("click");
+    await wrapper.find("div#add-serialiser-dialog").find("button#close-serialiser-button").simulate("click");
 }
 
 async function addValidateFunctionInDialog(classInput: string) {
@@ -294,14 +304,14 @@ async function addValidateFunctionInDialog(classInput: string) {
         const addAdditionalKey = wrapper
             .find("div#add-validate-functions-dialog")
             .find("div#add-validate-functions-inputs")
-            .find("input#validate-functions-additional-key-input");
+            .find("input#additional-key-input");
         addAdditionalKey.simulate("change", {
             target: { value: "testAdditionalKey" },
         });
         const addAdditionalValue = wrapper
             .find("div#add-validate-functions-dialog")
             .find("div#add-validate-functions-inputs")
-            .find("input#validate-functions-additional-value-input");
+            .find("input#additional-value-input");
         addAdditionalValue.simulate("change", {
             target: { value: "someValue" },
         });
@@ -315,6 +325,10 @@ async function addValidateFunctionInDialog(classInput: string) {
         .find("div#add-validate-functions-dialog")
         .find("div#add-validate-functions-inputs")
         .find("button#add-validate-functions-button")
+        .simulate("click");
+    await wrapper
+        .find("div#add-validate-functions-dialog")
+        .find("button#close-validate-functions-button")
         .simulate("click");
 }
 

@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { Button, Grid, TextField, Box, IconButton, DialogTitle, DialogContent, Dialog } from "@material-ui/core";
+import { Box, Button, Dialog, DialogContent, DialogTitle, Grid, IconButton, TextField } from "@material-ui/core";
 import { useImmerReducer } from "use-immer";
 import AddAggregateFunction from "./add-aggregate-function";
 import ClearIcon from "@material-ui/icons/Clear";
@@ -9,6 +9,7 @@ import AddValidateFunctions from "./add-validate-functions";
 interface IProps {
     onAddType(type: object): void;
 }
+
 interface IState {
     typeName: {
         value: string;
@@ -250,7 +251,7 @@ export default function AddType(props: IProps): ReactElement {
                     >
                         <Box display="flex" alignItems="right" justifyContent="right">
                             <IconButton
-                                id="close-add-groupby-button"
+                                id="close-add-aggregate-function-button"
                                 onClick={(e) => dispatch({ type: "handleClickCloseAggregateFunction", value: false })}
                             >
                                 <ClearIcon />

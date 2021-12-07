@@ -34,6 +34,7 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
         onAddValidateFunctions(state.validateFunctionObject);
         dispatch({ type: "reset" });
     }
+
     function additionalKVSubmit() {
         dispatch({ type: "submitKVPair" });
     }
@@ -41,6 +42,7 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
     function disableAddValidateFunctionsButton(): boolean {
         return state.validateFunctionObject.class.length === 0;
     }
+
     function disableKVButton(): boolean {
         return state.additionalKey.length === 0 || state.additionalValue.length === 0;
     }
@@ -70,6 +72,7 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                 return;
         }
     }
+
     const [state, dispatch] = useImmerReducer(addEdgeReducer, initialState);
 
     return (
@@ -94,15 +97,15 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
             </Grid>
             <Grid item>
                 <TextField
-                    id={"validate-functions-additional-key-input"}
+                    id={"additional-key-input"}
                     label={"Validate Functions Key"}
-                    aria-label="validate-functions-additional-key-input"
+                    aria-label="additional-key-input"
                     inputProps={{
                         name: "Validate Functions Key",
-                        id: "validate-functions-additional-key-input",
-                        "aria-label": "validate-functions-additional-key-input",
+                        id: "additional-key-input",
+                        "aria-label": "additional-key-input",
                     }}
-                    name={"validate-functions-additional-key"}
+                    name={"additional-key"}
                     value={state.additionalKey}
                     variant="outlined"
                     fullWidth
@@ -112,15 +115,15 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
             </Grid>
             <Grid item>
                 <TextField
-                    id={"validate-functions-additional-value-input"}
+                    id={"additional-value-input"}
                     label={"Validate Functions Value"}
-                    aria-label="validate-functions-additional-value-input"
+                    aria-label="additional-value-input"
                     inputProps={{
                         name: "Validate Functions Value",
-                        id: "validate-functions-additional-value-input",
-                        "aria-label": "validate-functions-additional-value-input",
+                        id: "additional-value-input",
+                        "aria-label": "additional-value-input",
                     }}
-                    name={"validate-functions-additional-value"}
+                    name={"additional-value"}
                     value={state.additionalValue}
                     variant="outlined"
                     fullWidth

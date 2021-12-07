@@ -18,10 +18,15 @@ describe("Add Property UI Component", () => {
             expect(classInput.props().name).toBe("Validate Functions Class");
         });
         it("should have additional key value input fields", () => {
-            const additionalKeyInput = wrapper.find("input#validate-functions-additional-key-input");
+            const additionalKeyInput = wrapper.find("input#additional-key-input");
             expect(additionalKeyInput.props().name).toBe("Validate Functions Key");
-            const additionalValueInput = wrapper.find("input#validate-functions-additional-value-input");
+            const additionalValueInput = wrapper.find("input#additional-value-input");
             expect(additionalValueInput.props().name).toBe("Validate Functions Value");
+        });
+        it("should have a Add Key Value button", () => {
+            const addButton = wrapper.find("button#add-additional-kv-button");
+
+            expect(addButton.text()).toBe("Add Key Value Pair");
         });
         it("should have a react json viewer", () => {
             expect(wrapper.find("div#json-validate-functions-schema-viewer").text()).toEqual('"value":{}');
@@ -32,8 +37,12 @@ describe("Add Property UI Component", () => {
         it("should callback with a object when a new validate functions object has been added", () => {
             const expectedResult: object = {
                 class: "value",
+                secondTestKey: "secondTestValue",
+                testKey: "testValue",
             };
             addClass("value");
+            addAdditionalKeyValue("testKey", "testValue");
+            addAdditionalKeyValue("secondTestKey", "secondTestValue");
             clickAddValidateFunctions();
 
             expect(onAddValidateFunctionsMockCallBack).toHaveBeenLastCalledWith(expectedResult);
@@ -51,12 +60,7 @@ describe("Add Property UI Component", () => {
             expect(addButton.props().disabled).toBe(true);
         });
     });
-    describe("Add Key Value Button", () => {
-        it("should have a Add Key Value button", () => {
-            const addButton = wrapper.find("button#add-additional-kv-button");
-
-            expect(addButton.text()).toBe("Add Key Value Pair");
-        });
+    describe("Add Key Value", () => {
         it("should be disabled when key and value empty", () => {
             const addButton = wrapper.find("button#add-additional-kv-button");
 
@@ -75,4 +79,14 @@ function addClass(value: string) {
 function clickAddValidateFunctions() {
     const addButton = wrapper.find("button#add-validate-functions-button");
     addButton.simulate("click");
+}
+
+function addAdditionalKeyValue(key: string, value: string) {
+    wrapper.find("input#additional-key-input").simulate("change", {
+        target: { value: key },
+    });
+    wrapper.find("input#additional-value-input").simulate("change", {
+        target: { value: value },
+    });
+    wrapper.find("button#add-additional-kv-button").simulate("click");
 }
