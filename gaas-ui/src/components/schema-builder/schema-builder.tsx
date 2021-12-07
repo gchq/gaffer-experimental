@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { Button, Dialog, DialogContent, DialogTitle, Grid, IconButton, Box } from "@material-ui/core";
+import { Box, Button, Dialog, DialogContent, DialogTitle, Grid, IconButton } from "@material-ui/core";
 import AddType from "./add-type";
 import AddEdge from "./add-edge";
 import AddEntity from "./add-entity";
@@ -11,6 +11,7 @@ import { ITypesSchema } from "../../domain/types-schema";
 
 interface IProps {
     onCreateSchema(schema: { types: ITypesSchema; elements: IElementsSchema }): void;
+
     typesSchema: ITypesSchema;
     elementsSchema: IElementsSchema;
 }
@@ -92,6 +93,18 @@ export default function SchemaBuilder(props: IProps): ReactElement {
 
     const [state, dispatch] = useImmerReducer(addSchemaBuilderReducer, initialState);
 
+    function closeTypes() {
+        dispatch({ type: "handleClickCloseTypes", value: false });
+    }
+
+    function closeEdges() {
+        dispatch({ type: "handleClickCloseEdges", value: false });
+    }
+
+    function closeEntities() {
+        dispatch({ type: "handleClickCloseEntities", value: false });
+    }
+
     return (
         <Grid container spacing={2} direction="column" id={"schema-builder-component"}>
             <Grid item container spacing={2} direction="row" alignItems="center" id={"add-schema-element-buttons"}>
@@ -108,16 +121,12 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         fullWidth
                         maxWidth="xs"
                         open={state.openTypes}
-                        onBackdropClick={() => dispatch({ type: "handleClickCloseTypes", value: false })}
-                        onClose={() => dispatch({ type: "handleClickCloseTypes", value: false })}
+                        onClose={closeTypes}
                         id={"add-type-dialog"}
                         aria-labelledby="add-type-dialog"
                     >
                         <Box display="flex" alignItems="right" justifyContent="right">
-                            <IconButton
-                                id="close-add-type-button"
-                                onClick={(e) => dispatch({ type: "handleClickCloseTypes", value: false })}
-                            >
+                            <IconButton id="close-add-type-button" onClick={closeTypes}>
                                 <ClearIcon />
                             </IconButton>
                         </Box>
@@ -146,16 +155,12 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         fullWidth
                         maxWidth="xs"
                         open={state.openEdges}
-                        onBackdropClick={() => dispatch({ type: "handleClickCloseEdges", value: false })}
-                        onClose={() => dispatch({ type: "handleClickCloseEdges", value: false })}
+                        onClose={closeEdges}
                         id={"add-edge-dialog"}
                         aria-labelledby="add-edge-dialog"
                     >
                         <Box display="flex" alignItems="right" justifyContent="right">
-                            <IconButton
-                                id="close-add-type-button"
-                                onClick={(e) => dispatch({ type: "handleClickCloseEdges", value: false })}
-                            >
+                            <IconButton id="close-add-edge-button" onClick={closeEdges}>
                                 <ClearIcon />
                             </IconButton>
                         </Box>
@@ -185,16 +190,12 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                         fullWidth
                         maxWidth="xs"
                         open={state.openEntities}
-                        onBackdropClick={() => dispatch({ type: "handleClickCloseEntities", value: false })}
-                        onClose={() => dispatch({ type: "handleClickCloseEntities", value: false })}
+                        onClose={closeEntities}
                         id={"add-entity-dialog"}
                         aria-labelledby="add-entity-dialog"
                     >
                         <Box display="flex" alignItems="right" justifyContent="right">
-                            <IconButton
-                                id="close-add-type-button"
-                                onClick={(e) => dispatch({ type: "handleClickCloseEntities", value: false })}
-                            >
+                            <IconButton id="close-add-entity-button" onClick={closeEntities}>
                                 <ClearIcon />
                             </IconButton>
                         </Box>

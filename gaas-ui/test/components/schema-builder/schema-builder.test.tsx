@@ -296,6 +296,7 @@ async function clickAddEdgeInAddEdgeDialog() {
     await act(async () => {
         const addEdgeButton = wrapper.find("div#add-edge-dialog").find("button#add-edge-button");
         addEdgeButton.simulate("click");
+        wrapper.find("button#close-add-edge-button").simulate("click");
     });
 }
 
@@ -330,6 +331,7 @@ async function clickAddTypeInAddTypeDialog() {
     await act(async () => {
         const addTypeButton = wrapper.find("div#add-type-dialog").find("button#add-type-button");
         addTypeButton.simulate("click");
+        wrapper.find("button#close-add-type-button").simulate("click");
     });
 }
 
@@ -394,6 +396,7 @@ async function clickAddEntityInAddEntityDialog() {
     await act(() => {
         const addTypeButton = wrapper.find("div#add-entity-dialog").find("button#add-entity-button");
         addTypeButton.simulate("click");
+        wrapper.find("button#close-add-entity-button").simulate("click");
     });
 }
 
