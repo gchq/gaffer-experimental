@@ -210,7 +210,7 @@ export default function AddEntity(props: IProps): ReactElement {
             <Grid item>
                 <Button
                     variant="outlined"
-                    onClick={(e) => dispatch({ type: "handleClickCloseProperties", value: true })}
+                    onClick={() => dispatch({ type: "handleClickCloseProperties", value: true })}
                     id={"add-properties-button"}
                 >
                     Add Property

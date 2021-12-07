@@ -112,7 +112,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                     <Button
                         data-testid="add-type-dialog-button"
                         variant="outlined"
-                        onClick={(e) => dispatch({ type: "handleClickCloseTypes", value: true })}
+                        onClick={() => dispatch({ type: "handleClickCloseTypes", value: true })}
                         id={"add-type-dialog-button"}
                     >
                         Add Type
@@ -145,7 +145,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                     <Button
                         data-testid="add-edge-dialog-button"
                         variant="outlined"
-                        onClick={(e) => dispatch({ type: "handleClickCloseEdges", value: true })}
+                        onClick={() => dispatch({ type: "handleClickCloseEdges", value: true })}
                         id={"add-edge-dialog-button"}
                         disabled={disableNonTypeButtons()}
                     >
@@ -180,7 +180,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
                     <Button
                         data-testid="add-entity-dialog-button"
                         variant="outlined"
-                        onClick={(e) => dispatch({ type: "handleClickCloseEntities", value: true })}
+                        onClick={() => dispatch({ type: "handleClickCloseEntities", value: true })}
                         id={"add-entity-dialog-button"}
                         disabled={disableNonTypeButtons()}
                     >

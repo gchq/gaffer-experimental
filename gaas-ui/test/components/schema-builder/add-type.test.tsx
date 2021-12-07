@@ -240,12 +240,12 @@ async function addSerialiserInTextarea(serialiser: string) {
     });
 }
 
-async function addValidateFunctionsInTextarea(validateFuntions: string) {
+async function addValidateFunctionsInTextarea(validateFunctions: string) {
     await act(() => {
         const aggregateFunctionInput = wrapper.find("textarea#type-validate-functions-input");
 
         aggregateFunctionInput.simulate("change", {
-            target: { value: validateFuntions },
+            target: { value: validateFunctions },
         });
     });
 }

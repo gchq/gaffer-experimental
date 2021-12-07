@@ -248,7 +248,7 @@ export default function AddType(props: IProps): ReactElement {
                 <Grid item>
                     <Button
                         variant="outlined"
-                        onClick={(e) => dispatch({ type: "handleClickCloseAggregateFunction", value: true })}
+                        onClick={() => dispatch({ type: "handleClickCloseAggregateFunction", value: true })}
                         id={"add-aggregate-function-button"}
                     >
                         Add Aggregate Function
@@ -309,7 +309,7 @@ export default function AddType(props: IProps): ReactElement {
                 <Grid item>
                     <Button
                         variant="outlined"
-                        onClick={(e) => dispatch({ type: "handleClickCloseSerialiser", value: true })}
+                        onClick={() => dispatch({ type: "handleClickCloseSerialiser", value: true })}
                         id={"add-serialiser-button"}
                     >
                         Add Serialiser
@@ -368,7 +368,7 @@ export default function AddType(props: IProps): ReactElement {
                 <Grid item>
                     <Button
                         variant="outlined"
-                        onClick={(e) => dispatch({ type: "handleClickCloseValidateFunctions", value: true })}
+                        onClick={() => dispatch({ type: "handleClickCloseValidateFunctions", value: true })}
                         id={"add-validate-function-button"}
                     >
                         Add Validate Function

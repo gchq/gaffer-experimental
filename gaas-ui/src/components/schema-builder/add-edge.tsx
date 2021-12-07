@@ -309,7 +309,7 @@ export default function AddEdge(props: IProps): ReactElement {
             <Grid item>
                 <Button
                     variant="outlined"
-                    onClick={(e) => dispatch({ type: "handleClickCloseProperties", value: true })}
+                    onClick={() => dispatch({ type: "handleClickCloseProperties", value: true })}
                     id={"add-properties-button"}
                 >
                     Add Property
@@ -369,7 +369,7 @@ export default function AddEdge(props: IProps): ReactElement {
             <Grid item>
                 <Button
                     variant="outlined"
-                    onClick={(e) => dispatch({ type: "handleClickCloseGroupby", value: true })}
+                    onClick={() => dispatch({ type: "handleClickCloseGroupby", value: true })}
                     id={"add-groupby-button"}
                 >
                     Add Groupby
