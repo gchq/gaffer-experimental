@@ -77,6 +77,7 @@ export default class UserGuide extends React.Component<{}, {}> {
                                 <ReactJson
                                     src={exampleElementsSchema}
                                     theme="bright"
+                                    collapsed={true}
                                     displayDataTypes={false}
                                     displayObjectSize={false}
                                 />
@@ -92,6 +93,7 @@ export default class UserGuide extends React.Component<{}, {}> {
                             <Box my={1} />
                             <div id="example-types-schema">
                                 <ReactJson
+                                    collapsed={true}
                                     src={exampleTypesSchema}
                                     theme="bright"
                                     displayDataTypes={false}

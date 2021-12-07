@@ -296,7 +296,7 @@ export default function AddType(props: IProps): ReactElement {
                         fullWidth
                         value={state.aggregateFunctionTextarea}
                         name={"type-aggregate-function"}
-                        required
+                        label={"Aggregate Function"}
                         multiline
                         rows={5}
                         variant="outlined"
@@ -355,7 +355,7 @@ export default function AddType(props: IProps): ReactElement {
                         fullWidth
                         value={state.serialiserTextarea}
                         name={"type-serialiser-textfield"}
-                        required
+                        label={"Serialiser"}
                         multiline
                         rows={5}
                         variant="outlined"
@@ -419,7 +419,7 @@ export default function AddType(props: IProps): ReactElement {
                         fullWidth
                         value={state.validateFunctionsTextarea}
                         name={"type-validate-functions-textfield"}
-                        required
+                        label={"Validate Functions"}
                         multiline
                         rows={5}
                         variant="outlined"
