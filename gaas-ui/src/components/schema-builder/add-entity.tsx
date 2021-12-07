@@ -1,17 +1,17 @@
 import React, { ReactElement } from "react";
 import {
+    Box,
     Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
     FormControl,
     Grid,
+    IconButton,
     InputLabel,
     MenuItem,
     Select,
     TextField,
-    Box,
-    Dialog,
-    IconButton,
-    DialogTitle,
-    DialogContent,
 } from "@material-ui/core";
 import { useImmerReducer } from "use-immer";
 import AddProperty from "./add-property";
@@ -22,6 +22,7 @@ interface IProps {
 
     types: Array<string>;
 }
+
 interface IState {
     entityName: {
         value: string;
@@ -129,6 +130,10 @@ export default function AddEntity(props: IProps): ReactElement {
         );
     }
 
+    function closeProperty() {
+        dispatch({ type: "handleClickCloseProperties", value: false });
+    }
+
     return (
         <Grid container spacing={2} direction="column" id={"add-entity-inputs"}>
             <Grid item>
@@ -214,15 +219,12 @@ export default function AddEntity(props: IProps): ReactElement {
                     fullWidth
                     maxWidth="xs"
                     open={state.openProperties}
-                    onClose={(e) => dispatch({ type: "handleClickCloseProperties", value: false })}
+                    onClose={closeProperty}
                     id={"add-properties-dialog"}
                     aria-labelledby="add-properties-dialog"
                 >
                     <Box display="flex" alignItems="right" justifyContent="right">
-                        <IconButton
-                            id="close-add-properties-button"
-                            onClick={(e) => dispatch({ type: "handleClickCloseProperties", value: false })}
-                        >
+                        <IconButton id="close-add-properties-button" onClick={closeProperty}>
                             <ClearIcon />
                         </IconButton>
                     </Box>
