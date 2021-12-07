@@ -167,6 +167,18 @@ export default function AddType(props: IProps): ReactElement {
         dispatch({ type: "reset" });
     }
 
+    function closeAggregateFunction() {
+        dispatch({ type: "handleClickCloseAggregateFunction", value: false });
+    }
+
+    function closeSerialiser() {
+        dispatch({ type: "handleClickCloseSerialiser", value: false });
+    }
+
+    function closeValidateFunctions() {
+        dispatch({ type: "handleClickCloseValidateFunctions", value: false });
+    }
+
     return (
         <Grid id={"add-type-component"}>
             <Grid container spacing={2} direction="column" id={"add-type-inputs"}>
@@ -245,15 +257,12 @@ export default function AddType(props: IProps): ReactElement {
                         fullWidth
                         maxWidth="xs"
                         open={state.openAggregateFunction}
-                        onClose={(e) => dispatch({ type: "handleClickCloseAggregateFunction", value: false })}
+                        onClose={closeAggregateFunction}
                         id={"add-aggregate-function-dialog"}
                         aria-labelledby="add-aggregate-function-dialog"
                     >
                         <Box display="flex" alignItems="right" justifyContent="right">
-                            <IconButton
-                                id="close-add-aggregate-function-button"
-                                onClick={(e) => dispatch({ type: "handleClickCloseAggregateFunction", value: false })}
-                            >
+                            <IconButton id="close-add-aggregate-function-button" onClick={closeAggregateFunction}>
                                 <ClearIcon />
                             </IconButton>
                         </Box>
@@ -309,15 +318,12 @@ export default function AddType(props: IProps): ReactElement {
                         fullWidth
                         maxWidth="xs"
                         open={state.openSerialiser}
-                        onClose={(e) => dispatch({ type: "handleClickCloseSerialiser", value: false })}
+                        onClose={closeSerialiser}
                         id={"add-serialiser-dialog"}
                         aria-labelledby="add-serialiser-dialog"
                     >
                         <Box display="flex" alignItems="right" justifyContent="right">
-                            <IconButton
-                                id="close-serialiser-button"
-                                onClick={(e) => dispatch({ type: "handleClickCloseSerialiser", value: false })}
-                            >
+                            <IconButton id="close-serialiser-button" onClick={closeSerialiser}>
                                 <ClearIcon />
                             </IconButton>
                         </Box>
@@ -371,15 +377,12 @@ export default function AddType(props: IProps): ReactElement {
                         fullWidth
                         maxWidth="xs"
                         open={state.openValidateFunctions}
-                        onClose={(e) => dispatch({ type: "handleClickCloseValidateFunctions", value: false })}
+                        onClose={closeValidateFunctions}
                         id={"add-validate-functions-dialog"}
                         aria-labelledby="add-validate-functions-dialog"
                     >
                         <Box display="flex" alignItems="right" justifyContent="right">
-                            <IconButton
-                                id="close-validate-functions-button"
-                                onClick={(e) => dispatch({ type: "handleClickCloseValidateFunctions", value: false })}
-                            >
+                            <IconButton id="close-validate-functions-button" onClick={closeValidateFunctions}>
                                 <ClearIcon />
                             </IconButton>
                         </Box>
