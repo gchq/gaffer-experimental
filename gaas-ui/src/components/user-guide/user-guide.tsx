@@ -100,6 +100,44 @@ export default class UserGuide extends React.Component<{}, {}> {
                                     displayObjectSize={false}
                                 />
                             </div>
+                            <Box my={3} />
+                            <Grid id={"schema-builder-tutorial"}>
+                                <Typography gutterBottom variant="h5" component="h2">
+                                    Schema Builder
+                                </Typography>
+                                <Box my={1} />
+                                <Typography variant="body1" style={{ color: "#0000000" }} component="p">
+                                    This feature is in the Create Graph section below the Graph Id, Description and
+                                    Storetype. Click the Schema Builder button to access this feature.
+                                </Typography>
+                                <Box my={1} />
+                                <Typography variant="body1" style={{ color: "#0000000" }} component="p">
+                                    The Schema builder allows you to build your elements and types schemas.
+                                </Typography>
+                                <Box my={1} />
+                                <Typography gutterBottom variant="h5" component="h3">
+                                    Types Schema
+                                </Typography>
+                                <Box my={1} />
+                                <Typography variant="body1" style={{ color: "#0000000" }} component="p">
+                                    Click on Add Type.
+                                    <Typography variant="body1" style={{ color: "#0000000" }} component="p">
+                                        The following fields are mandatory: Type Name, Description, and Class. The
+                                        following fields are optional: Aggregate Function, Serialiser, and Validate
+                                        Functions.
+                                    </Typography>
+                                </Typography>
+                                <Box my={1} />
+                                <Typography variant="body1" style={{ color: "#0000000" }} component="p">
+                                    For Aggregate Function, Serialiser, and Validate Functions, you can either type in
+                                    the text areas or click on the buttons for an easier way to build them.
+                                </Typography>
+                                <Box my={1} />
+                                <Typography variant="body1" style={{ color: "#0000000" }} component="p">
+                                    Once you have filled out the details for the type, click Add Type. You can add
+                                    another type or exit the dialogue to view your Types Schema.
+                                </Typography>
+                            </Grid>
                         </CardContent>
 
                         <CardActions style={{ justifyContent: "center" }}>
