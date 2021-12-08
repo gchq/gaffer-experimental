@@ -30,11 +30,14 @@ describe("Add Property UI Component", () => {
             expect(onAddSerialiserMockCallBack).toHaveBeenLastCalledWith(expectedResult);
         });
     });
-    describe("Add Aggregate Function Button", () => {
+    describe("Add Serialiser Button", () => {
         it("should have an add serialiser button", () => {
             const addSerialiserButton = wrapper.find("button#add-serialiser-button");
 
             expect(addSerialiserButton.text()).toBe("Add Serialiser");
+        });
+        it("should be disabled when the Serialiser text area is empty", () => {
+            expect(wrapper.find("button#add-serialiser-button").props().disabled).toBe(true);
         });
     });
 });

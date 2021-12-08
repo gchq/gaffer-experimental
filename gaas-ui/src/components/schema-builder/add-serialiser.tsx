@@ -35,6 +35,7 @@ export default function AddSerialiser(props: IProps): ReactElement {
                 return;
         }
     }
+
     const [state, dispatch] = useImmerReducer(addEdgeReducer, initialState);
 
     return (
@@ -63,6 +64,7 @@ export default function AddSerialiser(props: IProps): ReactElement {
                     name={"Add Serialiser"}
                     variant="outlined"
                     onClick={onAddSerialiserSubmit}
+                    disabled={!state.serialiser.class}
                 >
                     Add Serialiser
                 </Button>
