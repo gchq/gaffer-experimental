@@ -115,10 +115,11 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                     onChange={(e) => dispatch({ type: "validateClass", value: e.target.value })}
                 />
             </Grid>
-            <Grid item>
+            <Box display="flex" alignItems="center">
                 <TextField
+                    style={{ margin: 10 }}
                     id={"additional-key-input"}
-                    label={"Validate Functions Key"}
+                    label={"Key"}
                     aria-label="additional-key-input"
                     inputProps={{
                         name: "Validate Functions Key",
@@ -128,15 +129,12 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                     name={"additional-key"}
                     value={state.additionalKey}
                     variant="outlined"
-                    fullWidth
-                    required
                     onChange={(e) => dispatch({ type: "validateAdditionalKey", value: e.target.value })}
                 />
-            </Grid>
-            <Grid item>
+                <Box my={1} />
                 <TextField
                     id={"additional-value-input"}
-                    label={"Validate Functions Value"}
+                    label={"Value"}
                     aria-label="additional-value-input"
                     inputProps={{
                         name: "Validate Functions Value",
@@ -146,11 +144,9 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                     name={"additional-value"}
                     value={state.additionalValue}
                     variant="outlined"
-                    fullWidth
-                    required
                     onChange={(e) => dispatch({ type: "validateAdditionalValue", value: e.target.value })}
                 />
-            </Grid>
+            </Box>
             <Box display="flex" alignItems="center" justifyContent="center">
                 <Button
                     id={"add-additional-kv-button"}
@@ -162,37 +158,38 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                     Add Key Value Pair
                 </Button>
             </Box>
-            <TableContainer style={{ margin: 10 }}>
-                <Table id={"key-value-table"}>
-                    <TableHead id={"key-value-table-table-head"}>
-                        <TableRow style={{ background: "#F4F2F2" }}>
-                            <TableCell>Key</TableCell>
-                            <TableCell>Value</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody id={"key-value-table-table-body"}>
-                        {state.keyValueArray.map(([key, value]) => (
-                            <TableRow>
-                                <TableCell>{key}</TableCell>
-                                <TableCell>{value}</TableCell>
-                                <TableCell>
-                                    <IconButton
-                                        id={`${key}-delete-button`}
-                                        edge="end"
-                                        aria-label="delete"
-                                        onClick={() => {
-                                            dispatch({ type: "deleteKVPair", value: key });
-                                        }}
-                                    >
-                                        <DeleteOutlineOutlinedIcon />
-                                    </IconButton>
-                                </TableCell>
+            <Box display="flex" alignItems="center" justifyContent="center">
+                <TableContainer style={{ margin: 10, width: "xs" }}>
+                    <Table id={"key-value-table"}>
+                        <TableHead id={"key-value-table-table-head"}>
+                            <TableRow style={{ background: "#F4F2F2" }}>
+                                <TableCell>Key</TableCell>
+                                <TableCell>Value</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody id={"key-value-table-table-body"}>
+                            {state.keyValueArray.map(([key, value]) => (
+                                <TableRow>
+                                    <TableCell>{key}</TableCell>
+                                    <TableCell>
+                                        {value}
+                                        <IconButton
+                                            id={`${key}-delete-button`}
+                                            edge="end"
+                                            aria-label="delete"
+                                            onClick={() => {
+                                                dispatch({ type: "deleteKVPair", value: key });
+                                            }}
+                                        >
+                                            <DeleteOutlineOutlinedIcon />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
 
             <Grid item>
                 <Grid id={"json-validate-functions-schema-viewer"}>

@@ -117,6 +117,10 @@ export default class UserGuide extends React.Component<{}, {}> {
                                     The Schema builder allows you to build your elements and types schemas.
                                 </Typography>
                                 <Box my={1} />
+                                <Typography variant="body1" style={{ color: "#0000000" }} component="p">
+                                    Required fields are indicated by *.
+                                </Typography>
+                                <Box my={1} />
                                 <Typography gutterBottom variant="h5" component="h3">
                                     Types Schema
                                 </Typography>
@@ -138,6 +142,11 @@ export default class UserGuide extends React.Component<{}, {}> {
                                     In Validate Functions, hover over the JSON viewer and click the plus button to add
                                     values. You can also edit or delete any values you've added (hover to access this
                                     functionality).
+                                </Typography>
+                                <Box my={1} />
+                                <Typography variant="body1" style={{ color: "#0000000" }} component="p">
+                                    In Validate Functions, you can add multiple key value pairs. Each pair you add will
+                                    appear in the table. You can delete the key value pair by clicking the delete icon.
                                 </Typography>
                                 <Box my={1} />
                                 <Typography variant="body1" style={{ color: "#0000000" }} component="p">
