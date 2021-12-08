@@ -1,7 +1,22 @@
-import { Box, Button, Grid, List, TextField } from "@material-ui/core";
+import {
+    Box,
+    Button,
+    Grid,
+    IconButton,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TextField,
+} from "@material-ui/core";
 import React, { ReactElement } from "react";
 import ReactJson from "react-json-view";
 import { useImmerReducer } from "use-immer";
+import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
+import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 
 interface IProps {
     onAddValidateFunctions(validateFunctions: object): void;
@@ -75,6 +90,8 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                 draft.additionalValue = "";
                 draft.additionalKey = "";
                 return;
+            case "deleteKVPair":
+                draft.keyValueArray = draft.keyValueArray.filter((item: [string, string]) => item[0] !== action.value);
         }
     }
 
@@ -136,9 +153,6 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                     onChange={(e) => dispatch({ type: "validateAdditionalValue", value: e.target.value })}
                 />
             </Grid>
-            <Grid item>
-                <List></List>
-            </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">
                 <Button
                     id={"add-additional-kv-button"}
@@ -150,6 +164,40 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                     Add Key Value Pair
                 </Button>
             </Box>
+            <TableContainer component={Paper} style={{ margin: 10 }}>
+                <Table>
+                    <TableHead>
+                        <TableRow style={{ background: "#F4F2F2" }}>
+                            <TableCell>Key</TableCell>
+                            <TableCell>Value</TableCell>
+                            <TableCell>Actions</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {state.keyValueArray.map(([key, value]) => (
+                            <TableRow>
+                                <TableCell>{key}</TableCell>
+                                <TableCell>{value}</TableCell>
+                                <TableCell>
+                                    <IconButton edge="end" aria-label="delete">
+                                        <EditOutlinedIcon />
+                                    </IconButton>
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="delete"
+                                        onClick={() => {
+                                            dispatch({ type: "deleteKVPair", value: key });
+                                        }}
+                                    >
+                                        <DeleteOutlineOutlinedIcon />
+                                    </IconButton>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
             <Grid item>
                 <Grid id={"json-validate-functions-schema-viewer"}>
                     <ReactJson
