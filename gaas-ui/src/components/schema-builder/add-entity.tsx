@@ -256,7 +256,7 @@ export default function AddEntity(props: IProps): ReactElement {
                     fullWidth
                     value={state.propertiesTextarea}
                     name="entity-properties"
-                    required
+                    label={"Properties"}
                     multiline
                     rows={5}
                     variant="outlined"
