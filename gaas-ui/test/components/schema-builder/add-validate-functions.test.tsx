@@ -66,6 +66,12 @@ describe("Add Property UI Component", () => {
 
             expect(addButton.props().disabled).toBe(true);
         });
+        it("should delete the key and value from the table when the delete icon is clicked", () => {
+            addAdditionalKeyValue("testKey", "testValue");
+            expect(wrapper.find("table").text()).toEqual("KeyValueActionstestKeytestValue");
+            wrapper.find("button#testKey-delete-button").simulate("click");
+            expect(wrapper.find("tbody#key-value-table-table-body").text()).toEqual("");
+        });
     });
 });
 

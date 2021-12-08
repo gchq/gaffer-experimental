@@ -3,7 +3,6 @@ import {
     Button,
     Grid,
     IconButton,
-    Paper,
     Table,
     TableBody,
     TableCell,
@@ -16,7 +15,6 @@ import React, { ReactElement } from "react";
 import ReactJson from "react-json-view";
 import { useImmerReducer } from "use-immer";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
-import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 
 interface IProps {
     onAddValidateFunctions(validateFunctions: object): void;
@@ -164,25 +162,23 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                     Add Key Value Pair
                 </Button>
             </Box>
-            <TableContainer component={Paper} style={{ margin: 10 }}>
-                <Table>
-                    <TableHead>
+            <TableContainer style={{ margin: 10 }}>
+                <Table id={"key-value-table"}>
+                    <TableHead id={"key-value-table-table-head"}>
                         <TableRow style={{ background: "#F4F2F2" }}>
                             <TableCell>Key</TableCell>
                             <TableCell>Value</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody id={"key-value-table-table-body"}>
                         {state.keyValueArray.map(([key, value]) => (
                             <TableRow>
                                 <TableCell>{key}</TableCell>
                                 <TableCell>{value}</TableCell>
                                 <TableCell>
-                                    <IconButton edge="end" aria-label="delete">
-                                        <EditOutlinedIcon />
-                                    </IconButton>
                                     <IconButton
+                                        id={`${key}-delete-button`}
                                         edge="end"
                                         aria-label="delete"
                                         onClick={() => {
