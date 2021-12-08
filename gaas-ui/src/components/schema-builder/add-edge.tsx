@@ -355,7 +355,7 @@ export default function AddEdge(props: IProps): ReactElement {
                     fullWidth
                     value={state.propertiesTextarea}
                     name={"edge-properties"}
-                    required
+                    label={"Properties"}
                     multiline
                     rows={5}
                     variant="outlined"
@@ -415,7 +415,7 @@ export default function AddEdge(props: IProps): ReactElement {
                     fullWidth
                     value={state.groupByTextarea}
                     name={"edge-groupby"}
-                    required
+                    label={"Group By"}
                     multiline
                     rows={5}
                     variant="outlined"
