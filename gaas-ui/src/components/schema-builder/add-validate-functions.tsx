@@ -1,4 +1,4 @@
-import { Box, Button, Grid, TextField } from "@material-ui/core";
+import { Box, Button, Grid, List, TextField } from "@material-ui/core";
 import React, { ReactElement } from "react";
 import ReactJson from "react-json-view";
 import { useImmerReducer } from "use-immer";
@@ -8,30 +8,37 @@ interface IProps {
 }
 
 interface IState {
-    validateFunctionObject: {
-        class: string;
-    };
-    nestedObject: {};
+    valueObject: {};
     classValue: string;
     additionalKey: string;
     additionalValue: string;
+    keyValueArray: Array<[string, string]>;
 }
 
 export default function AddValidateFunctions(props: IProps): ReactElement {
     const { onAddValidateFunctions } = props;
 
     const initialState: IState = {
-        validateFunctionObject: {
-            class: "",
-        },
-        nestedObject: {},
+        keyValueArray: [],
+        valueObject: {},
         classValue: "",
         additionalKey: "",
         additionalValue: "",
     };
 
     function onAddValidateFunctionsSubmit() {
-        onAddValidateFunctions(state.validateFunctionObject);
+        const validateFunctionObject = {
+            class: state.classValue,
+        };
+        state.keyValueArray.forEach(([first, second]: [string, string]) => {
+            // @ts-ignore
+            validateFunctionObject[first] = second;
+        });
+        if (Object.keys(state.valueObject).length !== 0) {
+            // @ts-ignore
+            validateFunctionObject["value"] = state.valueObject;
+        }
+        onAddValidateFunctions(validateFunctionObject);
         dispatch({ type: "reset" });
     }
 
@@ -40,7 +47,7 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
     }
 
     function disableAddValidateFunctionsButton(): boolean {
-        return state.validateFunctionObject.class.length === 0;
+        return state.classValue.length === 0;
     }
 
     function disableKVButton(): boolean {
@@ -53,11 +60,9 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                 return initialState;
             case "validateClass":
                 draft.classValue = action.value;
-                draft.validateFunctionObject.class = draft.classValue;
                 return;
-            case "handleUpdateNestedObject":
+            case "handleUpdateValueObject":
                 draft.nestedObject = Object.assign(draft.nestedObject, action.value);
-                draft.validateFunctionObject["value"] = draft.nestedObject;
                 return;
             case "validateAdditionalKey":
                 draft.additionalKey = action.value;
@@ -66,7 +71,7 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                 draft.additionalValue = action.value;
                 return;
             case "submitKVPair":
-                draft.validateFunctionObject[draft.additionalKey] = draft.additionalValue;
+                draft.keyValueArray[draft.keyValueArray.length] = [draft.additionalKey, draft.additionalValue];
                 draft.additionalValue = "";
                 draft.additionalKey = "";
                 return;
@@ -131,6 +136,9 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
                     onChange={(e) => dispatch({ type: "validateAdditionalValue", value: e.target.value })}
                 />
             </Grid>
+            <Grid item>
+                <List></List>
+            </Grid>
             <Box display="flex" alignItems="center" justifyContent="center">
                 <Button
                     id={"add-additional-kv-button"}
@@ -145,17 +153,17 @@ export default function AddValidateFunctions(props: IProps): ReactElement {
             <Grid item>
                 <Grid id={"json-validate-functions-schema-viewer"}>
                     <ReactJson
-                        src={state.nestedObject}
+                        src={state.valueObject}
                         name={"value"}
                         theme="bright"
                         onAdd={(e) => {
-                            dispatch({ type: "handleUpdateNestedObject", value: e.updated_src });
+                            dispatch({ type: "handleUpdateValueObject", value: e.updated_src });
                         }}
                         onEdit={(e) => {
-                            dispatch({ type: "handleUpdateNestedObject", value: e.updated_src });
+                            dispatch({ type: "handleUpdateValueObject", value: e.updated_src });
                         }}
                         onDelete={(e) => {
-                            dispatch({ type: "handleUpdateNestedObject", value: e.updated_src });
+                            dispatch({ type: "handleUpdateValueObject", value: e.updated_src });
                         }}
                         displayDataTypes={false}
                         displayObjectSize={false}
