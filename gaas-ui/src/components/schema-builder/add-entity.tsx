@@ -86,7 +86,7 @@ export default function AddEntity(props: IProps): ReactElement {
                 draft.entityName.hasErrors = false;
                 draft.entityName.value = action.value;
                 draft.entityName.message = "";
-                if (draft.entityName.value && !/^[a-zA-Z]*$/.test(draft.entityName.value)) {
+                if (draft.entityName.value && !/^[a-zA-Z]+$/.test(draft.entityName.value)) {
                     draft.entityName.hasErrors = true;
                     draft.entityName.message = "Entity name can only contain letters";
                 }
@@ -96,7 +96,7 @@ export default function AddEntity(props: IProps): ReactElement {
                 draft.entityDescription.hasErrors = false;
                 draft.entityDescription.value = action.value;
                 draft.entityDescription.message = "";
-                if (draft.entityDescription.value && !/^[a-zA-Z0-9\s]*$/.test(draft.entityDescription.value)) {
+                if (draft.entityDescription.value && !/^[a-zA-Z0-9\s]+$/.test(draft.entityDescription.value)) {
                     draft.entityDescription.hasErrors = true;
                     draft.entityDescription.message =
                         "Entity description can only contain alpha numeric letters and spaces";
@@ -146,6 +146,7 @@ export default function AddEntity(props: IProps): ReactElement {
                         name: "Entity Name",
                         id: "entity-name-input",
                         "aria-label": "entity-name-input",
+                        maxLength: 20,
                     }}
                     variant="outlined"
                     fullWidth
@@ -167,6 +168,7 @@ export default function AddEntity(props: IProps): ReactElement {
                         name: "Entity Description",
                         id: "entity-description-input",
                         "aria-label": "entity-description-input",
+                        maxLength: 120,
                     }}
                     variant="outlined"
                     fullWidth
