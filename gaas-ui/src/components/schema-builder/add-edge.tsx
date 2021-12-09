@@ -119,7 +119,7 @@ export default function AddEdge(props: IProps): ReactElement {
                 draft.edgeName.value = action.value;
                 draft.edgeName.message = "";
 
-                if (!/^[a-zA-Z]*$/.test(draft.edgeName.value)) {
+                if (!/^[a-zA-Z]+$/.test(draft.edgeName.value)) {
                     draft.edgeName.hasErrors = true;
                     draft.edgeName.message = "Edge name can only contain letters";
                 }
@@ -130,7 +130,7 @@ export default function AddEdge(props: IProps): ReactElement {
                 draft.edgeDescription.value = action.value;
                 draft.edgeDescription.message = "";
 
-                if (draft.edgeDescription.value && !/^[a-zA-Z0-9\s]*$/.test(draft.edgeDescription.value)) {
+                if (draft.edgeDescription.value && !/^[a-zA-Z0-9\s]+$/.test(draft.edgeDescription.value)) {
                     draft.edgeDescription.hasErrors = true;
                     draft.edgeDescription.message =
                         "Edge description can only contain alpha numeric letters and spaces";
@@ -205,6 +205,7 @@ export default function AddEdge(props: IProps): ReactElement {
                         name: "Edge Name",
                         id: "edge-name-input",
                         "aria-label": "edge-name-input",
+                        maxLength: 20,
                     }}
                     name={"edge-name"}
                     value={state.edgeName.value}
@@ -225,6 +226,7 @@ export default function AddEdge(props: IProps): ReactElement {
                         name: "Edge Description",
                         id: "edge-description-input",
                         "aria-label": "edge-description-input",
+                        maxLength: 120,
                     }}
                     name={"edge-description"}
                     value={state.edgeDescription.value}
