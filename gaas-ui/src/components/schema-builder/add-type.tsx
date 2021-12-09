@@ -79,7 +79,7 @@ export default function AddType(props: IProps): ReactElement {
                 draft.typeName.value = action.value;
                 draft.typeName.message = "";
 
-                if (!/^[a-zA-Z]*$/.test(draft.typeName.value)) {
+                if (!/^[a-zA-Z]+$/.test(draft.typeName.value)) {
                     draft.typeName.hasErrors = true;
                     draft.typeName.message = "Type name can only contain letters";
                 }
@@ -89,7 +89,7 @@ export default function AddType(props: IProps): ReactElement {
                 draft.typeDescription.hasErrors = false;
                 draft.typeDescription.value = action.value;
                 draft.typeDescription.message = "";
-                if (draft.typeDescription.value && !/^[\w\s.?_,'"-]*$/.test(draft.typeDescription.value)) {
+                if (draft.typeDescription.value && !/^[a-zA-Z0-9\s]+$/.test(draft.typeDescription.value)) {
                     draft.typeDescription.hasErrors = true;
                     draft.typeDescription.message =
                         "Type description can only contain alpha numeric letters and spaces";
@@ -100,9 +100,9 @@ export default function AddType(props: IProps): ReactElement {
                 draft.typeClass.hasErrors = false;
                 draft.typeClass.value = action.value;
                 draft.typeClass.message = "";
-                if (draft.typeClass.value && !/^[a-zA-Z.]*$/.test(draft.typeClass.value)) {
+                if (draft.typeClass.value && !/^[a-zA-Z.]+$/.test(draft.typeClass.value)) {
                     draft.typeClass.hasErrors = true;
-                    draft.typeClass.message = "Type class can only contain letters";
+                    draft.typeClass.message = "Type class can only contain letters and .";
                 }
                 return;
             case "handleUpdateSerialiserTextarea":
@@ -193,6 +193,7 @@ export default function AddType(props: IProps): ReactElement {
                             name: "Type Name",
                             id: "type-name-input",
                             "aria-label": "type-name-input",
+                            maxLength: 20,
                         }}
                         variant="outlined"
                         fullWidth
@@ -214,6 +215,7 @@ export default function AddType(props: IProps): ReactElement {
                             name: "Type Description",
                             id: "type-description-input",
                             "aria-label": "type-description-input",
+                            maxLength: 120,
                         }}
                         variant="outlined"
                         fullWidth
@@ -235,6 +237,7 @@ export default function AddType(props: IProps): ReactElement {
                             name: "Type Class",
                             id: "type-class-input",
                             "aria-label": "type-class-input",
+                            maxLength: 30,
                         }}
                         variant="outlined"
                         fullWidth
