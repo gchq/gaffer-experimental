@@ -21,6 +21,8 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import LocalLibraryIcon from "@material-ui/icons/LocalLibrary";
 import CategoryIcon from "@material-ui/icons/Category";
 import LoginModal from "../login/login-modal";
+import { Config } from "../../rest/config";
+import { RestClient } from "../../rest/clients/rest-client";
 
 const drawerWidth = 240;
 
@@ -123,7 +125,9 @@ const NavigationAppbar: React.FC = (props: any) => {
                     <Typography variant="h6" className={classes.title}>
                         Kai: Graph As A Service
                     </Typography>
-                    <LoginModal onLogin={(username) => setUsername(username)} />
+                    {Config.REACT_APP_API_PLATFORM !== "OPENSHIFT" && (
+                        <LoginModal onLogin={(username) => setUsername(username)} />
+                    )}
                 </Toolbar>
             </AppBar>
 

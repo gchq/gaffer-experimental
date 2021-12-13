@@ -93,73 +93,68 @@ class LoginModal extends React.Component<IProps, IState> {
 
         return (
             <div id="login-modal">
-                {Config.REACT_APP_API_PLATFORM !== "OPENSHIFT" && (
-                    <>
-                        <Button
-                            id="sign-out-button"
-                            color="inherit"
-                            startIcon={<ExitToAppIcon />}
-                            onClick={() => {
-                                const onSuccess = () => this.setState({ status: UserStatus.SIGNED_OUT });
-                                const onError = (errorMessage: string) => {
-                                    this.setState({
-                                        openSignOutModal: true,
-                                        signOutMessage: errorMessage,
-                                    });
-                                };
-                                if (Config.REACT_APP_API_PLATFORM === "AWS") {
-                                    window.open(CognitoIdentityClient.buildCognitoLogoutURL(), "_self");
-                                } else {
-                                    this.authClient.signOut(onSuccess, onError);
-                                }
-                            }}
-                        >
-                            Sign out
-                        </Button>
-                        <Dialog id="login-modal-dialog" fullScreen open={status === UserStatus.SIGNED_OUT}>
-                            <DialogContent style={{ padding: 30 }}>
-                                <Logo />
-                                {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM !== "AWS" && (
-                                    <LoginForm
-                                        onChangeForm={(formType: FormType) => this.setState({ formType })}
-                                        onSuccess={(username: string) => {
-                                            this.setState({ status: UserStatus.SIGNED_IN });
-                                            this.props.onLogin(username);
-                                        }}
-                                    />
-                                )}
-                                {formType === FormType.EXISTING_USER_LOGIN &&
-                                    Config.REACT_APP_API_PLATFORM === "AWS" && (
-                                        <LoginOptions cognitoLoginURL={CognitoIdentityClient.buildCognitoLoginURL()} />
-                                    )}
-                                {formType === FormType.TEMP_PASSWORD_LOGIN && (
-                                    <TempPasswordLoginForm
-                                        onChangeForm={(formType: FormType) => this.setState({ formType })}
-                                        onSuccess={(username: string) => {
-                                            this.setState({ status: UserStatus.SIGNED_IN });
-                                            this.props.onLogin(username);
-                                        }}
-                                    />
-                                )}
-                            </DialogContent>
-                        </Dialog>
-                        <Dialog id="signout-outcome-modal" open={openSignOutModal}>
-                            <IconButton
-                                id="close-signout-outcome-modal"
-                                aria-label="close"
-                                className={classes.closeButton}
-                                onClick={() => {
-                                    this.setState({ openSignOutModal: false });
+                <Button
+                    id="sign-out-button"
+                    color="inherit"
+                    startIcon={<ExitToAppIcon />}
+                    onClick={() => {
+                        const onSuccess = () => this.setState({ status: UserStatus.SIGNED_OUT });
+                        const onError = (errorMessage: string) => {
+                            this.setState({
+                                openSignOutModal: true,
+                                signOutMessage: errorMessage,
+                            });
+                        };
+                        if (Config.REACT_APP_API_PLATFORM === "AWS") {
+                            window.open(CognitoIdentityClient.buildCognitoLogoutURL(), "_self");
+                        } else {
+                            this.authClient.signOut(onSuccess, onError);
+                        }
+                    }}
+                >
+                    Sign out
+                </Button>
+                <Dialog id="login-modal-dialog" fullScreen open={status === UserStatus.SIGNED_OUT}>
+                    <DialogContent style={{ padding: 30 }}>
+                        <Logo />
+                        {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM !== "AWS" && (
+                            <LoginForm
+                                onChangeForm={(formType: FormType) => this.setState({ formType })}
+                                onSuccess={(username: string) => {
+                                    this.setState({ status: UserStatus.SIGNED_IN });
+                                    this.props.onLogin(username);
                                 }}
-                            >
-                                <CloseIcon />
-                            </IconButton>
-                            <DialogTitle id="alert-dialog-title" style={{ padding: 40 }}>
-                                {this.state.signOutMessage}
-                            </DialogTitle>
-                        </Dialog>
-                    </>
-                )}
+                            />
+                        )}
+                        {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM === "AWS" && (
+                            <LoginOptions cognitoLoginURL={CognitoIdentityClient.buildCognitoLoginURL()} />
+                        )}
+                        {formType === FormType.TEMP_PASSWORD_LOGIN && (
+                            <TempPasswordLoginForm
+                                onChangeForm={(formType: FormType) => this.setState({ formType })}
+                                onSuccess={(username: string) => {
+                                    this.setState({ status: UserStatus.SIGNED_IN });
+                                    this.props.onLogin(username);
+                                }}
+                            />
+                        )}
+                    </DialogContent>
+                </Dialog>
+                <Dialog id="signout-outcome-modal" open={openSignOutModal}>
+                    <IconButton
+                        id="close-signout-outcome-modal"
+                        aria-label="close"
+                        className={classes.closeButton}
+                        onClick={() => {
+                            this.setState({ openSignOutModal: false });
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                    <DialogTitle id="alert-dialog-title" style={{ padding: 40 }}>
+                        {this.state.signOutMessage}
+                    </DialogTitle>
+                </Dialog>
             </div>
         );
     }
