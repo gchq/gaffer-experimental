@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse, Method } from "axios";
 import status from "statuses";
 import { RestApiError } from "../RestApiError";
+import { Config } from "../config";
 
 export interface IApiResponse<T = any> {
     status: number;
@@ -9,9 +10,16 @@ export interface IApiResponse<T = any> {
 
 export class RestClient<T> {
     private static jwtToken: string;
+    private static email: string;
 
     public static setJwtToken(jwtToken: string) {
         this.jwtToken = jwtToken;
+    }
+    private static setEmail(email: string) {
+        this.email = email;
+    }
+    public static getEmail(): string {
+        return this.email;
     }
 
     private baseURL: string;
@@ -108,6 +116,15 @@ export class RestClient<T> {
                     headers: restClient.headers,
                     data: restClient.data,
                 });
+                if (
+                    Config.REACT_APP_API_PLATFORM === "OPENSHIFT" &&
+                    Object.keys(response.headers).includes("x-email")
+                ) {
+                    RestClient.setEmail(
+                        Object.entries(response.headers).filter((item) => item[0] === "x-email")[0][1] as string
+                    );
+                }
+
                 return RestClient.convert(response);
             } catch (e) {
                 const error = e as AxiosError<any>;
