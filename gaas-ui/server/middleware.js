@@ -14,6 +14,7 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://localhost:3000/");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Methods", "OPTIONS,POST,GET");
+    res.header("x-email", "testEmail@something.com")
     next();
 });
 
@@ -25,7 +26,7 @@ app.use(cors());
 app.post("/auth", (req, res) => {
     const username = String(req.body.username).toLowerCase();
     if (users.has(username) && users.get(username) === req.body.password) {
-        token = jwt.sign({ data: username }, process.env.JWT_SECRET, { expiresIn: "1 week" });
+        token = jwt.sign({data: username}, process.env.JWT_SECRET, {expiresIn: "1 week"});
         res.status(200).send(token);
     } else {
         res.status(403).end();
@@ -43,7 +44,7 @@ app.post("/graphs", (req, res) => {
     try {
         jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
             if (req.body.graphId === "fail") {
-                res.status(500).send({ title: "Server Error", detail: "Failed to delete graph" });
+                res.status(500).send({title: "Server Error", detail: "Failed to delete graph"});
             } else {
                 res.status(201).end();
             }
@@ -202,7 +203,7 @@ app.get("/storetypes", (req, res) => {
 });
 
 app.get("/up/graph/status", (req, res) => {
-    res.status(200).send({ status: "UP" });
+    res.status(200).send({status: "UP"});
 });
 
 app.get("/up/graph/config/graphId", (req, res) => {
@@ -214,7 +215,7 @@ app.get("/up/graph/config/description", (req, res) => {
 });
 
 app.get("/down/graph/status", (req, res) => {
-    res.status(200).send({ status: "DOWN" });
+    res.status(200).send({status: "DOWN"});
 });
 
 app.post("/rest/graph/operations/execute", (req, res) => {
