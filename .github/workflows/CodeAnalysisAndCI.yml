@@ -49,6 +49,7 @@ jobs:
         node_version:
         - 14
         - 16
+        - 17
     defaults:
       run:
         working-directory: gaas-ui/
