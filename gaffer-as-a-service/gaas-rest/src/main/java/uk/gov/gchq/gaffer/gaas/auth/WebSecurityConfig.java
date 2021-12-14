@@ -40,6 +40,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${cognito.enabled: false}")
     boolean cognitoEnabled;
 
+    @Value("${jwt.enabled: false}")
+    boolean jwtEnabled;
+
     @Autowired(required = false)
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
@@ -85,7 +88,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                             jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))
                                     )
                     );
-        } else {
+        }
+        if (jwtEnabled) {
             http.csrf().disable() // nosemgrep: java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
                     //csrf is disabled as the application uses JWT and stateless and cookieless authentication when using this configuration
                     // dont authenticate this particular request
