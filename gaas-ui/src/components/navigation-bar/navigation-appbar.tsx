@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, withRouter } from "react-router-dom";
 import Routes from "./Routes";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
@@ -116,7 +116,11 @@ const NavigationAppbar: React.FC = (props: any) => {
     };
 
     const buildUsername = () => (username.includes("@") ? username.slice(0, username.indexOf("@")) : username);
-
+    useEffect(() => {
+        if (Config.REACT_APP_API_PLATFORM === "OPENSHIFT" && RestClient.getEmail() !== null) {
+            setUsername(RestClient.getEmail());
+        }
+    });
     return (
         <div className={classes.root} aria-label={"navigation-appbar"}>
             <CssBaseline />
