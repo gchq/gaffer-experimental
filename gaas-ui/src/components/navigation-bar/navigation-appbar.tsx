@@ -117,7 +117,7 @@ const NavigationAppbar: React.FC = (props: any) => {
 
     const buildUsername = () => (username.includes("@") ? username.slice(0, username.indexOf("@")) : username);
     useEffect(() => {
-        if (Config.REACT_APP_API_PLATFORM === "OPENSHIFT" && RestClient.getEmail() !== null) {
+        if ((Config.REACT_APP_API_PLATFORM === "OPENSHIFT" && RestClient.getEmail() !== "") || undefined) {
             setUsername(RestClient.getEmail());
         }
     });

@@ -19,6 +19,9 @@ export class RestClient<T> {
         this.email = email;
     }
     public static getEmail(): string {
+        if (this.email === undefined) {
+            return "";
+        }
         return this.email;
     }
 
