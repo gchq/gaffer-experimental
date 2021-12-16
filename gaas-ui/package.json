@@ -11,7 +11,7 @@
     "watch": "jest --watchAll",
     "deploy": "aws s3 sync build/ s3://kai-ui",
     "eject": "react-scripts eject",
-    "lint": "eslint './src/**/*.{ts,tsx}' --fix",
+    "lint": "eslint './src/**/*.{ts,tsx, js, jsx}' --fix",
     "lint-errors": "eslint './src/**/*.{ts,tsx, js, jsx}'",
     "owasp": "owasp-dependency-check --project \"gaas-ui\" "
   },
