@@ -207,6 +207,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
+            <version>1.9</version>
         </dependency>
         <!--The following dependencies are used by some of the above dependencies. Some of the above use out of date sub-dependencies which may have security flaws so this forces them to use up to date versions.-->
         <dependency>
@@ -223,6 +224,21 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.70</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-auth</artifactId>
+            <version>3.3.1</version>
         </dependency>
         <!--End of sub dependencies -->
     </dependencies>
