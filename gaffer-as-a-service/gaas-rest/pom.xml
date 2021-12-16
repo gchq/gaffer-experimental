@@ -240,6 +240,12 @@
             <artifactId>hadoop-auth</artifactId>
             <version>3.3.1</version>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>4.1.72.Final</version>
+        </dependency>
+
         <!--End of sub dependencies -->
     </dependencies>
 
