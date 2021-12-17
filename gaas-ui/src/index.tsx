@@ -7,8 +7,6 @@ import { CssBaseline } from "@material-ui/core";
 import { StylesProvider } from "@material-ui/styles";
 import GlobalStyles from "../src/components/GlobalStyles";
 import "./styles/_App.scss";
-import "core-js/stable";
-import "regenerator-runtime/runtime";
 
 ReactDOM.render(
     <React.StrictMode>

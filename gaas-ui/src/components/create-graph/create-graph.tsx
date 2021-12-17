@@ -21,8 +21,8 @@ import { CreateStoreTypesGraphRepo, ICreateGraphConfig } from "../../rest/reposi
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../domain/graph";
-import { ElementsSchema } from "../../domain/elements-schema";
-import { TypesSchema } from "../../domain/types-schema";
+import { ElementsSchema, IElementsSchema } from "../../domain/elements-schema";
+import { ITypesSchema, TypesSchema } from "../../domain/types-schema";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 import ClearIcon from "@material-ui/icons/Clear";
 import { DropzoneArea } from "material-ui-dropzone";
@@ -35,6 +35,7 @@ import ProxyGraphsTable from "./proxy-graphs-table";
 import { GetStoreTypesRepo, IStoreTypes } from "../../rest/repositories/get-store-types-repo";
 import { CreateFederatedGraphRepo } from "../../rest/repositories/create-federated-graph-repo";
 import { Copyright } from "../copyright/copyright";
+import SchemaBuilderDialog from "./schema-builder-dialog";
 
 interface IState {
     graphId: string;
@@ -97,7 +98,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
         try {
             const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
             this.setState({ graphs });
-        } catch (e) {
+        } catch (e: any) {
             this.setState({
                 outcome: AlertType.FAILED,
                 outcomeMessage: `Failed to get all graphs. ${e as Error}`,
@@ -112,7 +113,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                 storeTypes: storeTypes.storeTypes,
                 federatedStoreTypes: storeTypes.federatedStoreTypes,
             });
-        } catch (e) {
+        } catch (e: any) {
             this.setState({
                 outcome: AlertType.FAILED,
                 outcomeMessage: `Storetypes unavailable: ${e as Error}`,
@@ -154,7 +155,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                 outcomeMessage: `${graphId} was successfully added`,
             });
             this.resetForm();
-        } catch (e) {
+        } catch (e: any) {
             this.setState({
                 outcome: AlertType.FAILED,
                 outcomeMessage: `Failed to Add '${graphId}' Graph. ${(e as Error).message}`,
@@ -220,6 +221,26 @@ export default class CreateGraph extends React.Component<{}, IState> {
 
     private currentStoreTypeIsFederated(): boolean {
         return this.state.federatedStoreTypes.includes(this.state.storeType);
+    }
+
+    private createElementsSchema(): IElementsSchema {
+        let elementsSchema: IElementsSchema = { entities: {}, edges: {} };
+        try {
+            if (this.state.elements.length !== 0) {
+                elementsSchema = JSON.parse(this.state.elements);
+            }
+        } catch (error) {}
+        return elementsSchema;
+    }
+
+    private createTypesSchema(): ITypesSchema {
+        let typesSchema: ITypesSchema = { types: {} };
+        try {
+            if (this.state.types.length !== 0) {
+                typesSchema = JSON.parse(this.state.types);
+            }
+        } catch (error) {}
+        return typesSchema;
     }
 
     public render() {
@@ -299,6 +320,18 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                 alignItems="center"
                                                 id={"test"}
                                             >
+                                                <Tooltip TransitionComponent={Zoom} title="Use Schema builder">
+                                                    <SchemaBuilderDialog
+                                                        typesSchema={this.createTypesSchema()}
+                                                        elementsSchema={this.createElementsSchema()}
+                                                        onCreateSchema={(schema) => {
+                                                            this.setState({
+                                                                elements: JSON.stringify(schema.elements),
+                                                                types: JSON.stringify(schema.types),
+                                                            });
+                                                        }}
+                                                    />
+                                                </Tooltip>
                                                 <Tooltip
                                                     TransitionComponent={Zoom}
                                                     title="Add Empty Elements and Types Schema Templates"
@@ -336,7 +369,6 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                         <ClearIcon />
                                                     </IconButton>
                                                 </Tooltip>
-
                                                 <Dialog
                                                     id="dropzone"
                                                     open={this.state.dialogIsOpen}
@@ -421,6 +453,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                     />
                                 </Grid>
                             </form>
+
                             <AddProxyGraphInput
                                 hide={federatedStoreIsNotSelected()}
                                 proxyURLValue={this.state.proxyURL}

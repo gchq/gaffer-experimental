@@ -7,12 +7,13 @@ import { Config } from "../config";
 export class CognitoIdentityClient implements IAuthClient {
     private static cognitoUser: CognitoUser;
     private static authenticationDetails: AuthenticationDetails;
+
     public static buildCognitoLoginURL(): string {
         return (
             Config.REACT_APP_AUTH_ENDPOINT +
             "/login" +
             "?client_id=" +
-            Config.REACT_APP_COGNITO_CLIENTID +
+            Config.REACT_APP_COGNITO_CLIENT_ID +
             "&response_type=token" +
             "&scope=" +
             Config.REACT_APP_COGNITO_SCOPE +
@@ -20,16 +21,18 @@ export class CognitoIdentityClient implements IAuthClient {
             Config.REACT_APP_COGNITO_REDIRECT_URI
         );
     }
+
     public static buildCognitoLogoutURL(): string {
         return (
             Config.REACT_APP_AUTH_ENDPOINT +
             "/logout" +
             "?client_id=" +
-            Config.REACT_APP_COGNITO_CLIENTID +
+            Config.REACT_APP_COGNITO_CLIENT_ID +
             "&logout_uri=" +
             Config.REACT_APP_COGNITO_REDIRECT_URI
         );
     }
+
     public login(username: string, password: string, onSuccess: Function, onError: Function) {
         CognitoIdentityClient.initCognitoUser(username, password);
 
