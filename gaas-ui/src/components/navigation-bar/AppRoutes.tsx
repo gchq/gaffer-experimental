@@ -3,7 +3,7 @@ import ClusterNamespaces from "../cluster-namespaces/cluster-namespaces";
 import UserGuide from "../user-guide/user-guide";
 import ViewGraph from "../view-graphs/view-graphs";
 
-const Routes = [
+const AppRoutes = [
     {
         path: "/creategraph",
         sidebarName: "Create Graph",
@@ -26,4 +26,4 @@ const Routes = [
     },
 ];
 
-export default Routes;
+export default AppRoutes;

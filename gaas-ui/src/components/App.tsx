@@ -1,8 +1,9 @@
 import { Box } from "@material-ui/core";
 import React from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import AppRoutes from "./navigation-bar/AppRoutes";
 import NavigationAppbar from "./navigation-bar/navigation-appbar";
-import Routes from "./navigation-bar/Routes";
+import ViewGraph from "./view-graphs/view-graphs";
 
 function App() {
     return (
@@ -17,15 +18,14 @@ function App() {
             <Box display="flex" alignSelf="left" id={"navigation-appbar-and-drawer"}>
                 <NavigationAppbar />
             </Box>
+
             <Box display="flex" alignSelf="right" alignItems="right" justifyContent="right">
-                <Switch>
-                    <Redirect exact from="/" to="/viewgraphs" />
-                    {Routes.map((route: any) => (
-                        <Route exact path={route.path} key={route.path}>
-                            <route.component />
-                        </Route>
+                <Routes>
+                    <Route path="/" element={<ViewGraph />} />
+                    {AppRoutes.map((route: any) => (
+                        <Route path={route.path} key={route.path} element={<route.component />} />
                     ))}
-                </Switch>
+                </Routes>
             </Box>
         </Box>
     );
