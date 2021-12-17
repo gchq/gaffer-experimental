@@ -18,6 +18,7 @@ module.exports = {
             diagnostics: false,
         },
     },
+    testEnvironment: "jsdom",
     setupFiles: ["./test/setupTests.ts"],
     setupFilesAfterEnv: ["<rootDir>test/setupTests.ts"],
     snapshotSerializers: ["enzyme-to-json/serializer"],
