@@ -10,7 +10,7 @@ WORKDIR /workspace
 
 COPY ./target ./gaffer-experimental/target
 
-RUN if [ ! -f ./gaffer-experimental/target/gaffer-controller-1.13.0-exec.jar ]; then \
+RUN if [ ! -f ./gaffer-experimental/target/gaffer-controller-1.17.1-exec.jar ]; then \
         rm -rf ./gaffer-experimental && \
         git clone https://github.com/gchq/gaffer-experimental.git && \
         cd gaffer-experimental && \
@@ -29,5 +29,5 @@ RUN mkdir -p /usr/share/man/man1 && \
 
 USER ${USER}
 WORKDIR /spring
-COPY --from=builder /workspace/gaffer-experimental/target/gaffer-controller-1.13.0-exec.jar ./gaffer-controller.jar
+COPY --from=builder /workspace/gaffer-experimental/target/gaffer-controller-1.17.1-exec.jar ./gaffer-controller.jar
 ENTRYPOINT [ "java", "-jar", "./gaffer-controller.jar"]
