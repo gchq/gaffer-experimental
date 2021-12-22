@@ -18,16 +18,19 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
+import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,15 +38,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 public class CreateFederatedGraphIT extends AbstractTest {
 
-    private static final String VALID_GRAPH_HOST = "testproxygraph-kai-dev.apps.ocp1.purplesky.cloud";
+    private static final String VALID_GRAPH_HOST = "testproxygraph";
     private static final String VALID_ROOT = "/rest";
 
     @Autowired
     private ApiClient apiClient;
+    @Autowired
+    private CreateGraphService createGraphService;
 
+    @Value("${instanceToBeProxied}")
+    private String hostUrl;
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
-        final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("bgraph", VALID_GRAPH_HOST, VALID_ROOT));
+        final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("bgraph", hostUrl, VALID_ROOT));
         final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody("igraph", TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 
         final MockHttpServletResponse response = mvc.perform(post("/graphs/federated")
@@ -75,7 +82,18 @@ public class CreateFederatedGraphIT extends AbstractTest {
         assertEquals(400, result.getStatus());
     }
 
-    @AfterAll
+    private LinkedHashMap<String, Object> getSchema() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("entities", new Object());
+        elementsSchema.put("edges", new Object());
+
+        final LinkedHashMap<String, Object> types = new LinkedHashMap<>();
+        types.put("types", new Object());
+        elementsSchema.put("types", types);
+        return elementsSchema;
+    }
+
+    @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
         final String group = "gchq.gov.uk"; // String | the custom resource's group
