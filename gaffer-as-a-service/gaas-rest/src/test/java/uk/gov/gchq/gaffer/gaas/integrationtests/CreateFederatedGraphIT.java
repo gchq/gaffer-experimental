@@ -38,7 +38,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 public class CreateFederatedGraphIT extends AbstractTest {
 
-    private static final String VALID_GRAPH_HOST = "testproxygraph";
     private static final String VALID_ROOT = "/rest";
 
     @Autowired
@@ -46,14 +45,12 @@ public class CreateFederatedGraphIT extends AbstractTest {
     @Autowired
     private CreateGraphService createGraphService;
 
-    @Value("${instanceToBeProxied}")
-    private String hostUrl;
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
-        final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("bgraph", hostUrl, VALID_ROOT));
+        final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph(proxyGraphId, proxyGraphHost, VALID_ROOT));
         final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody("igraph", TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 
-        final MockHttpServletResponse response = mvc.perform(post("/graphs/federated")
+        final MockHttpServletResponse response = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(mapToJson(federatedRequestBody)))
@@ -67,9 +64,9 @@ public class CreateFederatedGraphIT extends AbstractTest {
     @Test
     public void whenSubGraphURLIsInvalid_shouldReturnBadRequest() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("TestGraph", "http://invalid.url", "/rest"));
-        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
+        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody("igraph", TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 
-        final MockHttpServletResponse result = mvc.perform(post("/graphs/federated")
+        final MockHttpServletResponse result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(mapToJson(federatedRequestBody)))
@@ -77,7 +74,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
                 .getResponse();
 
         final String expected = "{\"title\":\"Bad Request\",\"detail\":\"Invalid Proxy Graph URL(s):" +
-                " [TestGraph: Get Status request for 'TestGraph' failed. Reason: failed to resolve 'http' after 2 queries  at http://http/invalid.url/rest/graph/status]\"}";
+                " [TestGraph: Get Status request for 'TestGraph' failed. Reason: failed to resolve 'http' after 4 queries  at http://http/invalid.url/rest/graph/status]\"}";
         assertEquals(expected, result.getContentAsString());
         assertEquals(400, result.getStatus());
     }
@@ -99,7 +96,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
         final String group = "gchq.gov.uk"; // String | the custom resource's group
         final String version = "v1"; // String | the custom resource's version
         final String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        final String name = TEST_GRAPH_ID; // String | the custom object's name
+        final String name = "igraph"; // String | the custom object's name
         try {
             apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
         } catch (Exception e) {
