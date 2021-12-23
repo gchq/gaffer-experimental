@@ -16,8 +16,10 @@
 
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsOperation;
 import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
@@ -28,21 +30,22 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 @SpringBootTest
-public class GraphCommandsIT {
+public class GraphCommandsIT extends AbstractTest{
 
-    private final GraphUrl validFederatedStoreURL = new GraphUrl("localhost:8080", "/rest/v2");
-    private final List<ProxySubGraph> subGraphs = Collections.singletonList(new ProxySubGraph("validgraph", "graph-kubernetes.cluster.cloud", "/rest"));
+    private final GraphUrl invalidFederatedStoreURL = new GraphUrl("myinvalidhost.cluster", "/rest");
+    private final List<ProxySubGraph> subGraphs = Collections.singletonList(new ProxySubGraph("test5", "somehost.cluster", "/rest"));
 
     @Test
     public void addGraphs_shouldNotThrowAnything_whenSuccessfullyAddsGraph() {
-        assertDoesNotThrow(() -> new AddGraphsOperation(validFederatedStoreURL, subGraphs).execute());
+        final GraphUrl validFederatedStoreURL = new GraphUrl(fedStoreUrl, "/rest");
+        final List<ProxySubGraph> subGraphsForValidFedStore = Collections.singletonList(new ProxySubGraph(proxyGraphId, proxyGraphHost, "/rest"));
+        assertDoesNotThrow(() -> new AddGraphsOperation(validFederatedStoreURL, subGraphsForValidFedStore).execute());
     }
 
     @Test
     public void addGraphs_shouldThrowGraphOpException_whenUrlIsInvalid() {
-        assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(validFederatedStoreURL, subGraphs).execute());
+        assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(invalidFederatedStoreURL, subGraphs).execute());
     }
 
     @Test
