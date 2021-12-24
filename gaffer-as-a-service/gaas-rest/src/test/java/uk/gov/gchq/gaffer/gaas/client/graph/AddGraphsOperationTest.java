@@ -126,7 +126,7 @@ public class AddGraphsOperationTest {
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(url, SUB_GRAPHS).execute());
 
-        final String expected = "AddGraph OperationChain request to Federated Store Graph failed. Reason: Failed to resolve 'invalid-host' after 4 queries , at http://invalid-host:8080/rest/graph/operations/execute";
-        assertTrue(actual.getMessage().equals(expected));
+        final String expected = "AddGraph OperationChain request to Federated Store Graph failed. Reason: Failed to resolve 'invalid-host'";
+        assertTrue(actual.getMessage().contains(expected));
     }
 }
