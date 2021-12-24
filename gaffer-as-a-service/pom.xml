@@ -36,7 +36,7 @@
 
     <properties>
         <gaffer.version>1.17.1</gaffer.version>
-        <springboot.version>2.4.2</springboot.version>
+        <springboot.version>2.5.8</springboot.version>
         <kubernetes.version>11.0.1</kubernetes.version>
         <fasterxml.jackson.version>2.11.2</fasterxml.jackson.version>
         <javax.xml.bind.version>2.3.0</javax.xml.bind.version>

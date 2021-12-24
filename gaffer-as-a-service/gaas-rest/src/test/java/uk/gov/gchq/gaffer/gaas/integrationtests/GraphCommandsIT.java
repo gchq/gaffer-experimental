@@ -16,7 +16,6 @@
 
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
@@ -30,8 +29,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @SpringBootTest
-public class GraphCommandsIT extends AbstractTest{
+public class GraphCommandsIT extends AbstractTest {
 
     private final GraphUrl invalidFederatedStoreURL = new GraphUrl("myinvalidhost.cluster", "/rest");
     private final List<ProxySubGraph> subGraphs = Collections.singletonList(new ProxySubGraph("test5", "somehost.cluster", "/rest"));
