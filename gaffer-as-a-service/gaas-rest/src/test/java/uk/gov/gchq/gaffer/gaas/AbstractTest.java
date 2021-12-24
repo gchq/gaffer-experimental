@@ -51,8 +51,14 @@ public abstract class AbstractTest {
     @Value("${cognito.enabled}")
     protected boolean cognitoEnabled;
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-    protected String issuerUri;
+    @Value("${it.validFedStore}")
+    protected String fedStoreUrl;
+
+    @Value("${it.proxyGraphId}")
+    protected String proxyGraphId;
+
+    @Value("${it.proxyGraphHost}")
+    protected String proxyGraphHost;
 
     protected String mapToJson(final Object obj) {
         return new Gson().toJson(obj);

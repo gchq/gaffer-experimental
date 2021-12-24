@@ -1,6 +1,6 @@
-import { mount, ReactWrapper } from "enzyme";
-import React from "react";
-import SchemaInput from "../../../src/components/create-graph/schema-inputs";
+import { mount, ReactWrapper } from 'enzyme';
+import React from 'react';
+import SchemaInput from '../../../src/components/create-graph/schema-inputs';
 
 const elementsMockCallBack = jest.fn();
 let component: ReactWrapper;

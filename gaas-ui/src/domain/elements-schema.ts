@@ -6,7 +6,7 @@ export class ElementsSchema {
     constructor(elements: string) {
         this.elements = elements;
     }
-    public getElements(): IElements {
+    public getElements(): IElementsSchema {
         return this.elements;
     }
 
@@ -123,22 +123,22 @@ export class ElementsSchema {
     }
 }
 
-export interface IElements {
+export interface IElementsSchema {
     entities: object;
     edges: object;
 }
 
-interface IEntity {
+export interface IEntity {
     description: string;
     vertex: string;
     properties: object;
     groupBy: Array<string>;
 }
 
-interface IEdge {
+export interface IEdge {
     description: string;
     source: string;
     destination: string;
     directed: string;
-    properties: string;
+    properties: object;
 }
