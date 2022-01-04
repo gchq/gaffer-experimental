@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class CreateFederatedGraphIT extends AbstractTest {
 
     private static final String VALID_ROOT = "/rest";
-    private static final String Graph_ID = "TEST_GRAPH_ID";
+    private static final String GRAPH_ID = "TEST_GRAPH_ID";
 
     @Autowired
     private ApiClient apiClient;
@@ -48,7 +48,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
     @Test
     public void testAddGraphReturns201OnSuccess() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph(proxyGraphId, proxyGraphHost, VALID_ROOT));
-        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(Graph_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
+        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 
         final MockHttpServletResponse response = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -64,7 +64,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
     @Test
     public void whenSubGraphURLIsInvalid_shouldReturnBadRequest() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("TestGraph", "http://invalid.url", "/rest"));
-        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(Graph_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
+        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 
         final MockHttpServletResponse result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -97,7 +97,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
         final String version = "v1"; // String | the custom resource's version
         final String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
         try {
-            apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, Graph_ID, null, null, null, null, null);
+            apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, GRAPH_ID, null, null, null, null, null);
         } catch (Exception e) {
             // Do nothing
         }
