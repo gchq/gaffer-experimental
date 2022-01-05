@@ -23,5 +23,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("uk.gov.gchq.gaffer.gaas.stores")
 @ComponentScan("uk.gov.gchq.gaffer.gaas.auth")
 @ComponentScan("uk.gov.gchq.gaffer.gaas.controller")
+@ComponentScan("uk.gov.gchq.gaffer.gaas.handlers")
+@ComponentScan("uk.gov.gchq.gaffer.gaas.client")
 public class SpringContext {
 }

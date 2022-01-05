@@ -16,7 +16,9 @@
  *
  */
 
-package uk.gov.gchq.gaffer.gaas;public enum HelmCommand {
+package uk.gov.gchq.gaffer.gaas;
+
+public enum HelmCommand {
     INSTALL("install"),
     UPGRADE("upgrade"),
     UNINSTALL("uninstall");

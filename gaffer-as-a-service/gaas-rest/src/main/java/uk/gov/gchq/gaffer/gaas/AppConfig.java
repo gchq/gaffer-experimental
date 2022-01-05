@@ -59,26 +59,6 @@ public class AppConfig {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(
-            final SharedInformerFactory sharedInformerFactory,
-            @Qualifier("gaffer-deployment-handler") final Controller gafferController,
-            @Qualifier("gaffer-state-handler") final Controller stateController) {
-        return args -> {
-            //LOGGER.info("Starting Informers");
-            sharedInformerFactory.startAllRegisteredInformers();
-            //LOGGER.info("Starting Controllers");
-            gafferController.run();
-            stateController.run();
-        };
-    }
-
-    @Bean(name = "gaffer-deployment-handler")
-    public KubernetesControllerFactory gafferDeploymentFactory(
-            final SharedInformerFactory sharedInformerFactory, final DeploymentHandler reconciler) {
-        return new KubernetesControllerFactory(sharedInformerFactory, reconciler);
-    }
-
-    @Bean
     public DeploymentHandler deploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory, final ApiClient apiClient) {
         return new DeploymentHandler(environment, kubernetesObjectFactory, apiClient);
     }

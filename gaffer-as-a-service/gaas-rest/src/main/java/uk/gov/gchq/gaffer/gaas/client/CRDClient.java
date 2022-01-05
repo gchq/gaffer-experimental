@@ -28,6 +28,7 @@ import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferList;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import java.util.List;
@@ -53,17 +54,21 @@ public class CRDClient {
     @Autowired
     private CoreV1Api coreV1Api;
 
+    @Autowired
+    private DeploymentHandler deploymentHandler;
+
     public GraphUrl createCRD(final Gaffer requestBody) throws GaaSRestApiException {
         try {
-            customObjectsApi.createNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, requestBody, PRETTY, DRY_RUN, FIELD_MANAGER);
+            //customObjectsApi.createNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, requestBody, PRETTY, DRY_RUN, FIELD_MANAGER);
+            deploymentHandler.onGafferCreate(requestBody);
             return GraphUrl.from(requestBody);
-        } catch (ApiException e) {
+        } catch (Exception e) {
             if (requestBody == null || requestBody.getMetadata() == null) {
-                LOGGER.debug("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+                LOGGER.debug("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " , e);
             } else {
-                LOGGER.debug("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+                LOGGER.debug("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " , e);
             }
-            throw from(e);
+            throw (e);
         }
     }
 

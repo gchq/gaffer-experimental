@@ -119,7 +119,7 @@ public class DeploymentHandler implements Reconciler {
                         coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
                         LOGGER.debug("Install Pod deployment successful");
                     } catch (final ApiException e) {
-                        LOGGER.error("Failed to create worker pod", e);
+                        LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e);
                     }
                 } else {
                     LOGGER.error("Failed to create Secret for new install", err);
