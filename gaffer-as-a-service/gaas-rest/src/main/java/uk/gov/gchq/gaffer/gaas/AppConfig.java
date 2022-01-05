@@ -16,14 +16,23 @@
 
 package uk.gov.gchq.gaffer.gaas;
 
+import io.kubernetes.client.extended.controller.Controller;
+import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
+import io.kubernetes.client.spring.extended.controller.factory.KubernetesControllerFactory;
 import io.kubernetes.client.util.ClientBuilder;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
+import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
+import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import java.io.IOException;
 
 @Configuration
@@ -42,6 +51,36 @@ public class AppConfig {
     @Bean
     public CoreV1Api coreV1Api() throws IOException {
         return new CoreV1Api(apiClient());
+    }
+
+    @Bean
+    public IKubernetesObjectFactory kubernetesObjectFactory(final Environment environment) {
+        return new KubernetesObjectFactory(environment);
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner(
+            final SharedInformerFactory sharedInformerFactory,
+            @Qualifier("gaffer-deployment-handler") final Controller gafferController,
+            @Qualifier("gaffer-state-handler") final Controller stateController) {
+        return args -> {
+            //LOGGER.info("Starting Informers");
+            sharedInformerFactory.startAllRegisteredInformers();
+            //LOGGER.info("Starting Controllers");
+            gafferController.run();
+            stateController.run();
+        };
+    }
+
+    @Bean(name = "gaffer-deployment-handler")
+    public KubernetesControllerFactory gafferDeploymentFactory(
+            final SharedInformerFactory sharedInformerFactory, final DeploymentHandler reconciler) {
+        return new KubernetesControllerFactory(sharedInformerFactory, reconciler);
+    }
+
+    @Bean
+    public DeploymentHandler deploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory, final ApiClient apiClient) {
+        return new DeploymentHandler(environment, kubernetesObjectFactory, apiClient);
     }
 
     @Bean
