@@ -40,7 +40,8 @@
         <kubernetes.version>11.0.1</kubernetes.version>
         <fasterxml.jackson.version>2.11.2</fasterxml.jackson.version>
         <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
-        <slf4j.api.version>1.7.25</slf4j.api.version>
+        <slf4j.api.version>1.7.32</slf4j.api.version>
+        <log4j.version>1.2.17</log4j.version>
         <junit.version>5.7.0</junit.version>
         <apache.commons.text.version>1.9</apache.commons.text.version>
         <compiler.plugin.version>2.3.2</compiler.plugin.version>
@@ -80,6 +81,11 @@
                 <artifactId>gaas-common</artifactId>
                 <version>${gaffer.version}</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
