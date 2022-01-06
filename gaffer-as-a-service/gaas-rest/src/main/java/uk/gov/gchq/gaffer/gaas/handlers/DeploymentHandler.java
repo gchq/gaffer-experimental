@@ -114,6 +114,10 @@ public class DeploymentHandler implements Reconciler {
                         // This would be really weird and we'd want to know about it.
                         throw new RuntimeException("A secret was generated without a name. Unable to proceed");
                     }
+                    gaffer.metaData(new V1ObjectMeta()
+                            .namespace(workerNamespace)
+                            .name(secretname)
+                    );
                     V1Pod pod = kubernetesObjectFactory.createHelmPod(gaffer, HelmCommand.INSTALL, secretname);
                     try {
                         coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
