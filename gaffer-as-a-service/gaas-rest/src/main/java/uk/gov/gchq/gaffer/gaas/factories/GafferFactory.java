@@ -18,8 +18,8 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.jose4j.json.internal.json_simple.JSONObject;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
@@ -91,6 +91,7 @@ public final class GafferFactory {
             config.putNestedObject(createOperationDeclaration(config), GAFFER_OPERATION_DECLARATION_KEY);
         } else {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             try {
                 config.putNestedObject(objectMapper.writeValueAsString(overrides.getSchema()), SCHEMA_FILE_KEY);
             } catch (JsonProcessingException e) {
