@@ -64,9 +64,9 @@ public class CRDClient {
             return GraphUrl.from(requestBody);
         } catch (Exception e) {
             if (requestBody == null || requestBody.getMetadata() == null) {
-                LOGGER.debug("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " , e);
+                LOGGER.debug("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: ", e);
             } else {
-                LOGGER.debug("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " , e);
+                LOGGER.debug("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: ", e);
             }
             throw (e);
         }
