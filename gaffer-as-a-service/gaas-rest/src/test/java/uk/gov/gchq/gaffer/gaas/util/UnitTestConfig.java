@@ -28,6 +28,7 @@ import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.client.CRDClient;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
+import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
@@ -124,5 +125,10 @@ public class UnitTestConfig {
     @Bean
     public GafferSpecConfigsLoader propertiesLoader() {
         return new GafferSpecConfigsLoader();
+    }
+
+    @Bean
+    public DeploymentHandler deploymentHandler() {
+        return mock(DeploymentHandler.class);
     }
 }
