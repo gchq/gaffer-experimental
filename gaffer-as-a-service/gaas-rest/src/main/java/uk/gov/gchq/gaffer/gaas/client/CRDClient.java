@@ -59,9 +59,9 @@ public class CRDClient {
             return GraphUrl.from(requestBody);
         } catch (ApiException e) {
             if (requestBody == null || requestBody.getMetadata() == null) {
-                LOGGER.info("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+                LOGGER.error("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             } else {
-                LOGGER.info("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+                LOGGER.error("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             }
             throw from(e);
         }
@@ -72,7 +72,7 @@ public class CRDClient {
             final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null);
             return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));
         } catch (ApiException e) {
-            LOGGER.info("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+            LOGGER.error("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
     }
@@ -81,7 +81,7 @@ public class CRDClient {
         try {
             customObjectsApi.deleteNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
         } catch (ApiException e) {
-            LOGGER.info("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+            LOGGER.error("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
     }
@@ -93,7 +93,7 @@ public class CRDClient {
                             "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE);
             return namespacesAsList(v1NamespaceList);
         } catch (ApiException e) {
-            LOGGER.info("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: " + e.getCode(), e);
+            LOGGER.error("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
     }
