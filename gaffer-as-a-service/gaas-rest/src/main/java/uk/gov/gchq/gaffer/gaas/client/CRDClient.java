@@ -20,7 +20,8 @@ import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
@@ -40,7 +41,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 @Repository
 public class CRDClient {
-    private final Logger logger = Logger.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
     private static final String PRETTY = null;
     private static final String DRY_RUN = null;
     private static final String FIELD_MANAGER = null;
@@ -52,14 +53,15 @@ public class CRDClient {
     private CoreV1Api coreV1Api;
 
     public GraphUrl createCRD(final Gaffer requestBody) throws GaaSRestApiException {
+
         try {
             customObjectsApi.createNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, requestBody, PRETTY, DRY_RUN, FIELD_MANAGER);
             return GraphUrl.from(requestBody);
         } catch (ApiException e) {
             if (requestBody == null || requestBody.getMetadata() == null) {
-                logger.debug("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+                LOGGER.info("Failed to create CRD \"\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             } else {
-                logger.debug("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+                LOGGER.info("Failed to create CRD with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             }
             throw from(e);
         }
@@ -70,7 +72,7 @@ public class CRDClient {
             final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null);
             return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));
         } catch (ApiException e) {
-            logger.debug("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+            LOGGER.info("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
     }
@@ -79,7 +81,7 @@ public class CRDClient {
         try {
             customObjectsApi.deleteNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
         } catch (ApiException e) {
-            logger.debug("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+            LOGGER.info("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
     }
@@ -91,7 +93,7 @@ public class CRDClient {
                             "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE);
             return namespacesAsList(v1NamespaceList);
         } catch (ApiException e) {
-            logger.debug("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: " + e.getCode(), e);
+            LOGGER.info("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
     }

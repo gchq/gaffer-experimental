@@ -29,12 +29,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import org.apache.log4j.Logger;
 @Component
 
 @ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "jwt")
 public class JwtRequestFilter extends OncePerRequestFilter {
-    private final Logger logger = Logger.getLogger(this.getClass());
+
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
