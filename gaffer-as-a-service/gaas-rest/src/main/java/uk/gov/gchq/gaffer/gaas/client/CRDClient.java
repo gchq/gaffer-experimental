@@ -74,7 +74,7 @@ public class CRDClient {
 
     public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
         try {
-            final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null);
+            final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null, null, null);
             return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));
         } catch (ApiException e) {
             LOGGER.debug("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
@@ -84,7 +84,8 @@ public class CRDClient {
 
     public void deleteCRD(final String crdName) throws GaaSRestApiException {
         try {
-            customObjectsApi.deleteNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
+            deploymentHandler.onGafferDelete(crdName, false);
+            //customObjectsApi.deleteNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
         } catch (ApiException e) {
             LOGGER.debug("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);

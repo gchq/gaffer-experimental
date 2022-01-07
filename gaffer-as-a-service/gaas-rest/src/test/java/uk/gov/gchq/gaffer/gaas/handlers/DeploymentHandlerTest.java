@@ -211,7 +211,7 @@ class DeploymentHandlerTest {
         }.getType();
         when(client.execute(null, podType)).thenReturn(new ApiResponse<>(200, new HashMap<>(), new V1Pod()));
 
-        handler.onGafferDelete(gaffer, false);
+        handler.onGafferDelete(gaffer.getMetadata().getName(), false);
 
         // Then
         V1Pod expected = kubernetesObjectFactory.createHelmPod(gaffer, HelmCommand.UNINSTALL, null);
