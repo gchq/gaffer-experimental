@@ -38,6 +38,7 @@ import java.util.Set;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_K8S_METADATA_LABEL;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_OPERATION_DECLARATION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
@@ -86,6 +87,7 @@ public final class GafferFactory {
         final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
         config.putNestedObject(overrides.getGraphId(), GRAPH_ID_KEY);
         config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
+        config.putNestedObject(overrides.getConfigName(), CONFIG_NAME_KEY);
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
             config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(HOOKS_KEY))), HOOKS_KEY);
             config.putNestedObject(createOperationDeclaration(config), GAFFER_OPERATION_DECLARATION_KEY);
