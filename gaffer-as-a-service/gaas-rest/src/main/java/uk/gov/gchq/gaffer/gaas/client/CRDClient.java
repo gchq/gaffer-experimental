@@ -49,6 +49,7 @@ import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.factories.GaaSGraphsFactory.from;
 import static uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory.from;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 @Repository
@@ -101,6 +102,7 @@ public class CRDClient {
                 gaaSGraph.description(getValueOfConfig(description, "description"));
                 Collection<String> secret = kubernetesClient.secrets().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-store-properties").get().getData().values();
                 //gaaSGraph.description(kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().get("description"));
+                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + INGRESS_SUFFIX + "/ui");
                 graphs.add(gaaSGraph);
             }
             final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null, null, null);
