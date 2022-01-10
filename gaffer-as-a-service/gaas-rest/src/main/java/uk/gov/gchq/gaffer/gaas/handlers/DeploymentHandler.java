@@ -203,6 +203,7 @@ public class DeploymentHandler implements Reconciler {
             kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-graph-config").delete();
             kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-schema").delete();
             kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui-config").delete();
+            kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer + "-gaffer-store-properties").delete();
         } catch (Exception e) {
             LOGGER.error("Failed to delete deployments of " + gaffer, e);
             throw e;
@@ -476,18 +477,4 @@ public class DeploymentHandler implements Reconciler {
                 });
     }
 
-    private void deleteAllPodsWithLabel(final String gafferName) {
-        String label = "app.kubernetes.io/instance=" + gafferName;
-        try {
-            V1PodList pods = coreV1Api.listNamespacedPod(workerNamespace, null, null, null, null, label, null, null, null, null, null);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private V1APIResourceList listAllResources(final String gafferName) throws ApiException {
-        String label = "app.kubernetes.io/instance=" + gafferName;
-        V1APIResourceList resources = coreV1Api.getAPIResources();
-        return resources;
-    }
 }

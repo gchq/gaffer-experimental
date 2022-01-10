@@ -16,12 +16,18 @@
 
 package uk.gov.gchq.gaffer.gaas.client;
 
+import com.google.gson.Gson;
+import io.fabric8.kubernetes.api.model.Secret;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +39,9 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
@@ -75,7 +84,25 @@ public class CRDClient {
     }
 
     public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
+            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
+            List<String> apiDeployments = new ArrayList<>();
+            List<GaaSGraph> graphs = new ArrayList<>();
+            for (final Deployment deployment : deploymentList) {
+                if (deployment.getMetadata().getName().contains("-gaffer-api")) {
+                    apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
+                }
+            }
+            for (final String gaffer : apiDeployments) {
+                GaaSGraph gaaSGraph = new GaaSGraph();
+                gaaSGraph.graphId(gaffer);
+                Collection<String> description = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
+                gaaSGraph.description(getValueOfConfig(description, "description"));
+                Collection<String> secret = kubernetesClient.secrets().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-store-properties").get().getData().values();
+                //gaaSGraph.description(kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().get("description"));
+                graphs.add(gaaSGraph);
+            }
             final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null, null, null);
             return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));
         } catch (ApiException e) {
@@ -114,4 +141,16 @@ public class CRDClient {
                         .collect(Collectors.toList());
         return list;
     }
+
+    private String getValueOfConfig(final Collection<String> value, final String fieldToGet) {
+        JSONArray jsonArray = new JSONArray(value.toString());
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject object = jsonArray.getJSONObject(i);
+            if (object.get(fieldToGet) != null) {
+                return (object.get(fieldToGet).toString());
+            }
+        }
+        return null;
+    }
+
 }
