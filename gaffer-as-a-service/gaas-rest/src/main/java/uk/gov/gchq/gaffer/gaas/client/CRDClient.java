@@ -69,7 +69,7 @@ public class CRDClient {
 
     public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
         try {
-            final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null);
+            final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null, null, null);
             return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));
         } catch (ApiException e) {
             LOGGER.debug("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);

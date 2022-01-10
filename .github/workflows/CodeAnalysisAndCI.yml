@@ -36,7 +36,6 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: unittests # optional
           name: jacoco-report-uploader # optional
-          fail_ci_if_error: true # optional (default = false)
       - name: Upload Dependancy Check Results
         uses: actions/upload-artifact@master
         with:

@@ -3,6 +3,9 @@ GaaS REST
 
 The Gaffer-as-a-Service REST API services requests to create, get and delete graphs.
 
+## Building gaas-rest 
+To build gaas-rest without needing to build the entire of gaffer-as-a-service run the command `mvn clean install -pl gaas-rest -am` from the `gaffer-as-a-service` directory. 
+This command will build gaas-rest with any projects it depends on.
 
 ## Using jib plugin to build and push images
 The docker image built by Jib plugin you can change the default image using configuration
