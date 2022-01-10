@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.handlers;
 
 import com.google.common.collect.Lists;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.kubernetes.client.extended.controller.reconciler.Reconciler;
 import io.kubernetes.client.extended.controller.reconciler.Request;
@@ -49,7 +48,6 @@ import uk.gov.gchq.gaffer.common.model.v1.GafferStatus;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.callback.SimpleApiCallback;
-import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import java.util.List;
 import java.util.Map;
@@ -197,8 +195,7 @@ public class DeploymentHandler implements Reconciler {
      * @return True if the uninstall process started, false if not
      */
     @DeleteWatchEventFilter(apiTypeClass = Gaffer.class)
-    public boolean onGafferDelete(final String gaffer, final boolean isCacheStale) throws ApiException {
-        final KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+    public boolean onGafferDelete(final String gaffer, final boolean isCacheStale, final KubernetesClient kubernetesClient) throws ApiException {
         try {
             kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-api").delete();
             kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui").delete();

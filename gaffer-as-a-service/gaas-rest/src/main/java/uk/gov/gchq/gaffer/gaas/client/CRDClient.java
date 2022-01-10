@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.client;
 
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
@@ -83,8 +85,9 @@ public class CRDClient {
     }
 
     public void deleteCRD(final String crdName) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
-            deploymentHandler.onGafferDelete(crdName, false);
+            deploymentHandler.onGafferDelete(crdName, false, kubernetesClient);
             //customObjectsApi.deleteNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
         } catch (ApiException e) {
             LOGGER.debug("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);

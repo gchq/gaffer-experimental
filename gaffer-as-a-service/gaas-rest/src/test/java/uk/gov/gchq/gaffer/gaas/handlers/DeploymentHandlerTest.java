@@ -17,6 +17,11 @@
 package uk.gov.gchq.gaffer.gaas.handlers;
 
 import com.google.gson.reflect.TypeToken;
+import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
+import io.fabric8.kubernetes.api.model.apps.DeploymentList;
+import io.fabric8.kubernetes.api.model.apps.DeploymentListBuilder;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.kubernetes.client.openapi.ApiCallback;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
@@ -37,6 +42,7 @@ import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -58,9 +64,12 @@ import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
+@EnableKubernetesMockClient(crud = true)
 class DeploymentHandlerTest {
 
     private Environment environment;
+
+    static KubernetesClient kubernetesClient;
 
     @BeforeEach
     public void beforeEach() {
@@ -83,10 +92,10 @@ class DeploymentHandlerTest {
         // Mimicking successful secret creation call
         when(client.buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(),
                 any(String[].class), any(ApiCallback.class))).then(invocationOnMock -> {
-                    ApiCallback callback = invocationOnMock.getArgument(9);
-                    callback.onSuccess(invocationOnMock.getArgument(4), 200, null);
-                    return null;
-                });
+            ApiCallback callback = invocationOnMock.getArgument(9);
+            callback.onSuccess(invocationOnMock.getArgument(4), 200, null);
+            return null;
+        });
 
         Type podType = new TypeToken<V1Pod>() {
         }.getType();
@@ -195,35 +204,23 @@ class DeploymentHandlerTest {
         // Given
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
-
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(environment);
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
 
-        // When
-        Gaffer gaffer = new Gaffer()
-                .metaData(new V1ObjectMeta()
-                        .namespace("gaffer-namespace")
-                        .name("name")
-                        .generation(1L)
-                );
 
-        Type podType = new TypeToken<V1Pod>() {
-        }.getType();
-        when(client.execute(null, podType)).thenReturn(new ApiResponse<>(200, new HashMap<>(), new V1Pod()));
+        DeploymentList deploymentList = new DeploymentListBuilder().withItems(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build(), new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build()).build();
 
-        handler.onGafferDelete(gaffer.getMetadata().getName(), false);
+        kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build());
+        kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
+        when(handler.onGafferDelete("test", false, kubernetesClient));
 
-        // Then
-        V1Pod expected = kubernetesObjectFactory.createHelmPod(gaffer, HelmCommand.UNINSTALL, null);
-        verify(client, times(1)).executeAsync(any(), eq(podType), any());
-        verify(client, times(1)).buildCall(eq("/api/v1/namespaces/gaffer-workers/pods"),
-                eq("POST"), anyList(), anyList(), eq(expected), anyMap(), anyMap(), anyMap(), any(String[].class), any());
+        assertTrue(kubernetesClient.apps().deployments().list().getItems().size() != deploymentList.getItems().size());
     }
 
     @Test
     public void shouldClearUpRemainingResourcesLeftAfterSuccessfulUninstall() throws ApiException {
         // Given
-       ApiClient client = mock(ApiClient.class);
+        ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
 
         DeploymentHandler handler = new DeploymentHandler(environment, mock(KubernetesObjectFactory.class), client);
@@ -232,16 +229,16 @@ class DeploymentHandlerTest {
         V1Pod uninstallWorker = new V1Pod()
                 .status(
                         new V1PodStatus()
-                        .phase("Succeeded")
+                                .phase("Succeeded")
                 )
                 .metadata(
-                    new V1ObjectMeta()
-                        .name("my-uninstall-worker")
-                        .namespace("gaffer-workers")
-                        .putLabelsItem("goal", "uninstall") // <---- This will be checked
-                        .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
-                        .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
-                        .putLabelsItem(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
+                        new V1ObjectMeta()
+                                .name("my-uninstall-worker")
+                                .namespace("gaffer-workers")
+                                .putLabelsItem("goal", "uninstall") // <---- This will be checked
+                                .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
+                                .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
+                                .putLabelsItem(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
                 );
 
         handler.onPodUpdate(null, uninstallWorker);
@@ -284,13 +281,13 @@ class DeploymentHandlerTest {
                         )
                 )
                 .metadata(
-                    new V1ObjectMeta()
-                        .name("my-install-worker")
-                        .namespace("gaffer-workers")
-                        .putLabelsItem("goal", "install")
-                        .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
-                        .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
-                        .putLabelsItem(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
+                        new V1ObjectMeta()
+                                .name("my-install-worker")
+                                .namespace("gaffer-workers")
+                                .putLabelsItem("goal", "install")
+                                .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
+                                .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
+                                .putLabelsItem(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
                 );
 
         // Mimicking successful pod deletion call
@@ -417,13 +414,13 @@ class DeploymentHandlerTest {
                         )
                 )
                 .metadata(
-                    new V1ObjectMeta()
-                        .name("my-install-worker")
-                        .namespace("gaffer-workers")
-                        .putLabelsItem("goal", "install")
-                        .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
-                        .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
-                        .putLabelsItem(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
+                        new V1ObjectMeta()
+                                .name("my-install-worker")
+                                .namespace("gaffer-workers")
+                                .putLabelsItem("goal", "install")
+                                .putLabelsItem(GAFFER_NAME_LABEL, "my-gaffer")
+                                .putLabelsItem(GAFFER_NAMESPACE_LABEL, "my-gaffer-namespace")
+                                .putLabelsItem(K8S_INSTANCE_LABEL, GAAS_LABEL_VALUE)
                 );
 
         when(client.buildCall(eq("/api/v1/namespaces/gaffer-workers/pods/my-install-worker/log"), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(),
