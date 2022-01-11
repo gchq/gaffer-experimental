@@ -17,6 +17,7 @@
 package uk.gov.gchq.gaffer.gaas.handlers;
 
 import com.google.common.collect.Lists;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.kubernetes.client.extended.controller.reconciler.Reconciler;
 import io.kubernetes.client.extended.controller.reconciler.Request;
@@ -25,10 +26,8 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
-import io.kubernetes.client.openapi.models.V1APIResourceList;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
-import io.kubernetes.client.openapi.models.V1PodList;
 import io.kubernetes.client.openapi.models.V1PodSpec;
 import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1SecretVolumeSource;
@@ -40,15 +39,21 @@ import io.kubernetes.client.spring.extended.controller.annotation.KubernetesReco
 import io.kubernetes.client.spring.extended.controller.annotation.KubernetesReconcilerWatch;
 import io.kubernetes.client.spring.extended.controller.annotation.KubernetesReconcilerWatches;
 import io.kubernetes.client.spring.extended.controller.annotation.UpdateWatchEventFilter;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferStatus;
+import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.callback.SimpleApiCallback;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,6 +67,8 @@ import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.gaas.HelmCommand.UNINSTALL;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
+import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 /**
  * Responds to changes in Gaffer objects and manages Gaffer Helm deployments
@@ -210,6 +217,52 @@ public class DeploymentHandler implements Reconciler {
         }
         cleanUpGafferDeploymentAfterTearDown(gaffer, workerNamespace);
         return true;
+    }
+
+    public List<GaaSGraph> getDeployments(KubernetesClient kubernetesClient) {
+        try {
+            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
+            List<String> apiDeployments = new ArrayList<>();
+            List<GaaSGraph> graphs = new ArrayList<>();
+            for (final Deployment deployment : deploymentList) {
+                if (deployment.getMetadata().getName().contains("-gaffer-api")) {
+                    apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
+                }
+            }
+            for (final String gaffer : apiDeployments) {
+                GaaSGraph gaaSGraph = new GaaSGraph();
+                gaaSGraph.graphId(gaffer);
+                Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
+                gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
+                if (getValueOfConfig(graphConfig, "configName") != null) {
+                    gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
+                }
+                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-api").get().getStatus().getAvailableReplicas();
+                if (availableReplicas >= 1) {
+                    gaaSGraph.status(RestApiStatus.UP);
+                } else {
+                    gaaSGraph.status(RestApiStatus.DOWN);
+                }
+                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + INGRESS_SUFFIX + "/ui");
+                graphs.add(gaaSGraph);
+
+            }
+            return graphs;
+        } catch (Exception e) {
+            LOGGER.debug("Failed to list all Gaffers. Error: ", e);
+            throw e;
+        }
+    }
+
+    private String getValueOfConfig(final Collection<String> value, final String fieldToGet) {
+        JSONArray jsonArray = new JSONArray(value.toString());
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject object = jsonArray.getJSONObject(i);
+            if (object.get(fieldToGet) != null) {
+                return (object.get(fieldToGet).toString());
+            }
+        }
+        return null;
     }
 
     // Pod events

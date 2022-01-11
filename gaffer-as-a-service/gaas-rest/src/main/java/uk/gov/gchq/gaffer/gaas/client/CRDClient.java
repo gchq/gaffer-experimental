@@ -16,10 +16,6 @@
 
 package uk.gov.gchq.gaffer.gaas.client;
 
-import com.google.gson.Gson;
-import io.fabric8.kubernetes.api.model.Secret;
-import io.fabric8.kubernetes.api.model.apps.Deployment;
-import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.kubernetes.client.openapi.ApiException;
@@ -33,25 +29,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.common.model.v1.GafferList;
-import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
-import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.common.util.Constants.PLURAL;
-import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
-import static uk.gov.gchq.gaffer.gaas.factories.GaaSGraphsFactory.from;
 import static uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory.from;
-import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
-import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 @Repository
 public class CRDClient {
@@ -72,7 +57,6 @@ public class CRDClient {
 
     public GraphUrl createCRD(final Gaffer requestBody) throws GaaSRestApiException {
         try {
-            //customObjectsApi.createNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, requestBody, PRETTY, DRY_RUN, FIELD_MANAGER);
             deploymentHandler.onGafferCreate(requestBody);
             return GraphUrl.from(requestBody);
         } catch (Exception e) {
@@ -87,47 +71,13 @@ public class CRDClient {
 
     public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
-        try {
-            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
-            List<String> apiDeployments = new ArrayList<>();
-            List<GaaSGraph> graphs = new ArrayList<>();
-            for (final Deployment deployment : deploymentList) {
-                if (deployment.getMetadata().getName().contains("-gaffer-api")) {
-                    apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
-                }
-            }
-            for (final String gaffer : apiDeployments) {
-                GaaSGraph gaaSGraph = new GaaSGraph();
-                gaaSGraph.graphId(gaffer);
-                Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
-                gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
-                if (getValueOfConfig(graphConfig, "configName") != null) {
-                    gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
-                }
-                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-api").get().getStatus().getAvailableReplicas();
-                if (availableReplicas >= 1) {
-                    gaaSGraph.status(RestApiStatus.UP);
-                } else {
-                    gaaSGraph.status(RestApiStatus.DOWN);
-                }
-                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + INGRESS_SUFFIX + "/ui");
-                graphs.add(gaaSGraph);
-
-            }
-            //final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null, null, null);
-            //return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));
-            return graphs;
-        } catch (Exception e) {
-            LOGGER.debug("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: ", e);
-            throw (e);
-        }
+        return deploymentHandler.getDeployments(kubernetesClient);
     }
 
     public void deleteCRD(final String crdName) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
             deploymentHandler.onGafferDelete(crdName, false, kubernetesClient);
-            //customObjectsApi.deleteNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, crdName, null, null, null, this.DRY_RUN, null);
         } catch (ApiException e) {
             LOGGER.debug("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);
