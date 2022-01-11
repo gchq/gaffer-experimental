@@ -1,0 +1,1 @@
+The dockerfile in this folder is for the worker which installs Gaffer instances.
