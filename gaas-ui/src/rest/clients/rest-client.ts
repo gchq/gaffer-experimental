@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse, Method } from "axios";
+import axios, { AxiosError, AxiosRequestHeaders, AxiosResponse, Method } from "axios";
 import status from "statuses";
 import { RestApiError } from "../RestApiError";
 
@@ -17,7 +17,7 @@ export class RestClient<T> {
     private baseURL: string;
     private url: string;
     private method: Method;
-    private headers: object;
+    private headers: AxiosRequestHeaders;
     private data: T | undefined;
     constructor() {
         this.baseURL = "";
