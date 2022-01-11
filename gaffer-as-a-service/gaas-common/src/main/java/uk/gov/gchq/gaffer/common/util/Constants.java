@@ -33,7 +33,7 @@ public final class Constants {
     public static final String SERIALISED_NAME_REST_API_STATUS = "restApiStatus";
 
     // Configuration
-    public static final String WORKER_NAMESPACE = "worker.namespace";
+    public static final String WORKER_NAMESPACE = "gaffer.namespace";
     public static final String WORKER_IMAGE = "worker.image";
     public static final String WORKER_IMAGE_PULL_POLICY = "worker.imagePullPolicy";
     public static final String WORKER_HELM_REPO = "worker.helm.repo";
