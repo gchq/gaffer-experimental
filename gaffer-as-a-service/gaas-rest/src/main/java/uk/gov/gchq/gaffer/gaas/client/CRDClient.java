@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferList;
+import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
@@ -103,16 +104,22 @@ public class CRDClient {
                 if (getValueOfConfig(graphConfig, "configName") != null) {
                     gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
                 }
-                Collection<String> secret = kubernetesClient.secrets().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-store-properties").get().getData().values();
+                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-api").get().getStatus().getAvailableReplicas();
+                if (availableReplicas >= 1) {
+                    gaaSGraph.status(RestApiStatus.UP);
+                } else {
+                    gaaSGraph.status(RestApiStatus.DOWN);
+                }
                 gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + INGRESS_SUFFIX + "/ui");
                 graphs.add(gaaSGraph);
 
             }
-            final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null, null, null);
-            return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));
-        } catch (ApiException e) {
-            LOGGER.debug("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
-            throw from(e);
+            //final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null, null, null);
+            //return from(CommonUtil.convertToCustomObject(customObject, GafferList.class));
+            return graphs;
+        } catch (Exception e) {
+            LOGGER.debug("Failed to list all CRDs. Kubernetes CustomObjectsApi returned Status Code: ", e);
+            throw (e);
         }
     }
 
