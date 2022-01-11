@@ -15,7 +15,7 @@
 replicaCount: 1
 image:
   #Set the repository value below to your own
-  repository: dockerhub/repo
+  repository: dockerhub/image
   pullPolicy: Always
   tag: latest
   containerPort: 8080
@@ -32,21 +32,11 @@ serviceAccount:
 
 controller:
   applicationProperties:
-    controller.scope.cluster: false
     worker.image: somerepo/gaffer-worker
     worker.imagePullPolicy: Always
-  serviceAccount:
-    create: true
-    name: gaffer-controller
-  image:
-    repository: somerepo/gaffer-controller
-    tag: latest
-    imagePullPolicy: Always
 worker:
   serviceAccount:
     create: true
     name: gaffer-workers
-crd:
-  create: true
 
 namespace: kai-dev
