@@ -199,6 +199,8 @@ public class DeploymentHandler implements Reconciler {
      *
      * @param gaffer       The Gaffer Object
      * @param isCacheStale Whether the cache entry for the Gaffer resource is stale
+     * @param kubernetesClient kubernetesClient
+     * @throws ApiException exception
      * @return True if the uninstall process started, false if not
      */
     @DeleteWatchEventFilter(apiTypeClass = Gaffer.class)
@@ -219,7 +221,7 @@ public class DeploymentHandler implements Reconciler {
         return true;
     }
 
-    public List<GaaSGraph> getDeployments(KubernetesClient kubernetesClient) {
+    public List<GaaSGraph> getDeployments(final KubernetesClient kubernetesClient) {
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
             List<String> apiDeployments = new ArrayList<>();
@@ -243,7 +245,7 @@ public class DeploymentHandler implements Reconciler {
                 } else {
                     gaaSGraph.status(RestApiStatus.DOWN);
                 }
-                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + INGRESS_SUFFIX + "/ui");
+                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
                 graphs.add(gaaSGraph);
 
             }
