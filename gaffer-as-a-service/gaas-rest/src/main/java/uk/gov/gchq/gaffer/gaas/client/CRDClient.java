@@ -69,7 +69,7 @@ public class CRDClient {
         }
     }
 
-    public List<GaaSGraph> listAllCRDs() throws GaaSRestApiException {
+    public List<GaaSGraph> listAllCRDs() {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         return deploymentHandler.getDeployments(kubernetesClient);
     }

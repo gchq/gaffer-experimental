@@ -126,7 +126,7 @@ public class KubernetesObjectFactoryTest {
                 createHelmPod(gaffer, HelmCommand.INSTALL, "my-secret");
 
         // Then
-        String serviceAccountName = helmPod.getSpec().getServiceAccount();
+        String serviceAccountName = helmPod.getSpec().getServiceAccountName();
         assertEquals("alice", serviceAccountName);
     }
 

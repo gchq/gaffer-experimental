@@ -111,6 +111,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                 .and()
                 .withNewSpec()
                 .withServiceAccountName(serviceAccountName)
+                .withRestartPolicy(restartPolicy)
                 .withContainers(new V1Container()
                         .name(GAFFER_WORKER_CONTAINER_NAME)
                         .image(helmImage)
