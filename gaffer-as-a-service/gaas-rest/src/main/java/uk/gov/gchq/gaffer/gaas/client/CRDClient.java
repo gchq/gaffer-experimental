@@ -96,16 +96,16 @@ public class CRDClient {
                 }
             }
             for (final String gaffer : apiDeployments) {
-                    GaaSGraph gaaSGraph = new GaaSGraph();
-                    gaaSGraph.graphId(gaffer);
-                    Collection<String> description = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
-                    gaaSGraph.description(getValueOfConfig(description, "description"));
-                    if (getValueOfConfig(description, "configName") != null) {
-                        gaaSGraph.configName(getValueOfConfig(description, "configName"));
-                    }
-                    Collection<String> secret = kubernetesClient.secrets().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-store-properties").get().getData().values();
-                    gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + INGRESS_SUFFIX + "/ui");
-                    graphs.add(gaaSGraph);
+                GaaSGraph gaaSGraph = new GaaSGraph();
+                gaaSGraph.graphId(gaffer);
+                Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
+                gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
+                if (getValueOfConfig(graphConfig, "configName") != null) {
+                    gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
+                }
+                Collection<String> secret = kubernetesClient.secrets().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-store-properties").get().getData().values();
+                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + INGRESS_SUFFIX + "/ui");
+                graphs.add(gaaSGraph);
 
             }
             final Object customObject = customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, PRETTY, null, null, null, null, null, null, null, null, null);
