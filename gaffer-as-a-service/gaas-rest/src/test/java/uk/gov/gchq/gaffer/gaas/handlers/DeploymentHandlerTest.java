@@ -212,7 +212,7 @@ class DeploymentHandlerTest {
 
         kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build());
         kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
-        when(handler.onGafferDelete("test", false, kubernetesClient));
+        handler.onGafferDelete("test", false, kubernetesClient);
 
         assertTrue(kubernetesClient.apps().deployments().list().getItems().size() != deploymentList.getItems().size());
     }
