@@ -27,9 +27,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static uk.gov.gchq.gaffer.gaas.util.ApiExceptionTestFactory.makeApiException_timeout;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 
 @UnitTest
 public class GafferClientTest {
@@ -62,6 +67,21 @@ public class GafferClientTest {
     private final String pretty = null;
 
     @Test
+    public void createGraph_ShouldReturnGraphUrl() throws GaaSRestApiException {
+        GafferSpec gafferSpec = new GafferSpec();
+        gafferSpec.putNestedObject("testgraph.apps.k8s.example.com", INGRESS_HOST_KEY);
+        gafferSpec.putNestedObject("/rest", INGRESS_API_PATH_KEY);
+        Gaffer gaffer = new Gaffer()
+                .metaData(new V1ObjectMeta()
+                        .namespace("gaffer-namespace")
+                        .name("testgraph")
+                ).spec(gafferSpec);
+        GraphUrl expected = new GraphUrl("testgraph.apps.k8s.example.com", "/rest");
+        assertEquals(expected.buildUrl(), gafferClient.createCRD(gaffer).buildUrl());
+
+    }
+
+    @Test
     public void getAllNameSpaces_ShouldThrowGaaSRestApiException_WhenCoreV1ApiThrowsApiEx() throws ApiException {
         final ApiException apiException = makeApiException_timeout();
         when(coreV1Api.listNamespace("true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE))
@@ -74,7 +94,7 @@ public class GafferClientTest {
 
 
     @Test
-    public void getGraphs_ShouldReturnEmptyWhenNoGraphsExists()  {
+    public void getGraphs_ShouldReturnEmptyWhenNoGraphsExists() {
 
         List<GaaSGraph> graphs = new ArrayList<>();
         when(deploymentHandler.getDeployments(kubernetesClient)).thenReturn(graphs);
