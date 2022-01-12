@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.client;
 
+import io.fabric8.kubernetes.client.KubernetesClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
@@ -27,28 +28,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
+import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
-import static uk.gov.gchq.gaffer.gaas.util.ApiExceptionTestFactory.makeApiException_loggedOutOfCluster;
 import static uk.gov.gchq.gaffer.gaas.util.ApiExceptionTestFactory.makeApiException_timeout;
 
 @UnitTest
-public class CRDClientTest {
+public class GafferClientTest {
 
     @Autowired
-    private CRDClient crdClient;
+    private GafferClient gafferClient;
 
     @MockBean
     private CoreV1Api coreV1Api;
 
     @MockBean
     private CustomObjectsApi customObjectsApi;
+
+    @MockBean
+    private DeploymentHandler deploymentHandler;
+
+    @MockBean
+    KubernetesClient kubernetesClient;
 
     @Value("${gaffer.namespace}")
     private String namespace;
@@ -61,32 +67,20 @@ public class CRDClientTest {
         when(coreV1Api.listNamespace("true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE))
                 .thenThrow(apiException);
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.getAllNameSpaces());
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.getAllNameSpaces());
 
         assertEquals("Kubernetes Cluster Error: java.net.SocketTimeoutException: connect timed out", exception.getMessage());
     }
 
 
     @Test
-    public void getGraphCRDs_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsTimeoutEx() throws ApiException {
-        final ApiException apiException = makeApiException_timeout();
-        when(customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, this.namespace, this.plural, null, null, null, null, null, null, null, null, null, null))
-                .thenThrow(apiException);
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.listAllCRDs());
+    public void getGraphs_ShouldReturnEmptyWhenNoGraphsExists()  {
 
-        assertEquals("Kubernetes Cluster Error: java.net.SocketTimeoutException: connect timed out", exception.getMessage());
-    }
+        List<GaaSGraph> graphs = new ArrayList<>();
+        when(deploymentHandler.getDeployments(kubernetesClient)).thenReturn(graphs);
+        List<GaaSGraph> gaaSGraphs = gafferClient.listAllCRDs();
 
-    @Test
-    public void getGraphCRDs_ShouldThrowGaaSRestApiException_WhenCustomApiThrowsApiEx() throws ApiException {
-        final ApiException apiException = makeApiException_loggedOutOfCluster();
-        when(customObjectsApi.listNamespacedCustomObject(GROUP, VERSION, this.namespace, this.plural, null, null, null, null, null, null, null, null, null, null))
-                .thenThrow(apiException);
-
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.listAllCRDs());
-
-        assertEquals("Kubernetes Cluster Error: Invalid authentication credentials for Kubernetes cluster", exception.getMessage());
-        assertEquals(401, exception.getStatusCode());
+        assertEquals(graphs, gaaSGraphs);
     }
 
     @Test
@@ -107,7 +101,7 @@ public class CRDClientTest {
                 "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE))
                 .thenReturn(v1NamespaceList);
 
-        List<String> allNameSpaces = crdClient.getAllNameSpaces();
+        List<String> allNameSpaces = gafferClient.getAllNameSpaces();
 
         assertEquals("mockNameSpac", allNameSpaces.get(0));
     }

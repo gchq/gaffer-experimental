@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
@@ -42,7 +42,7 @@ import static uk.gov.gchq.gaffer.gaas.util.GafferKubernetesObjectFactory.from;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 @SpringBootTest
-public class CRDClientIT {
+public class GafferClientIT {
 
     private static final String TEST_GRAPH_ID = "testgraphid";
     private static final String TEST_GRAPH_DESCRIPTION = "Test Graph Description";
@@ -51,7 +51,7 @@ public class CRDClientIT {
     @Autowired
     private CreateGraphService createGraphService;
     @Autowired
-    private CRDClient crdClient;
+    private GafferClient gafferClient;
     @Autowired
     private ApiClient apiClient;
 
@@ -64,7 +64,7 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenNullRequestObject_throwsMissingRequestBodyGaasException() {
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(null));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createCRD(null));
 
         final String expected = "Kubernetes Cluster Error: Missing the required parameter 'body' when calling createNamespacedCustomObject(Async)";
         assertEquals(expected, exception.getMessage());
@@ -76,7 +76,7 @@ public class CRDClientIT {
     public void createCRD_whenGraphIdHasUppercase_throws422GaasException() {
         final Gaffer gafferRequest = from(new GaaSCreateRequestBody("UPPERCASEgraph", "A description", getSchema(), ACCUMULO_ENABLED));
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createCRD(gafferRequest));
 
         assertEquals(422, exception.getStatusCode());
         assertEquals("Unprocessable Entity", exception.getTitle());
@@ -88,7 +88,7 @@ public class CRDClientIT {
     public void createCRD_whenGraphIdHasSpecialChars_throws422GaasException() {
         final Gaffer gafferRequest = from(new GaaSCreateRequestBody("sp£ci@l_char$", "A description", getSchema(), ACCUMULO_ENABLED));
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(gafferRequest));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createCRD(gafferRequest));
 
         assertEquals(422, exception.getStatusCode());
         assertEquals("Unprocessable Entity", exception.getTitle());
@@ -100,7 +100,7 @@ public class CRDClientIT {
     public void createCRD_whenCreateRequestBodyHasNullValues_throws_400GaasException() {
         final Gaffer requestBody = new Gaffer();
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.createCRD(requestBody));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createCRD(requestBody));
 
         assertEquals(400, exception.getStatusCode());
         assertEquals("Bad Request", exception.getTitle());
@@ -113,19 +113,19 @@ public class CRDClientIT {
         final GaaSCreateRequestBody gafferRequest = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED);
         createGraphService.createGraph(gafferRequest);
 
-        assertTrue(crdClient.listAllCRDs().toString().contains("testgraphid"));
+        assertTrue(gafferClient.listAllCRDs().toString().contains("testgraphid"));
     }
 
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
         final List<GraphConfig> list = new ArrayList<>();
 
-        assertEquals(list, crdClient.listAllCRDs());
+        assertEquals(list, gafferClient.listAllCRDs());
     }
 
     @Test
     public void deleteCRD_whenGraphDoesntExist_throws404GaasException() {
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> crdClient.deleteCRD("non-existing-crd"));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.deleteCRD("non-existing-crd"));
 
         assertEquals(404, exception.getStatusCode());
         assertEquals("Not Found", exception.getTitle());
@@ -139,12 +139,12 @@ public class CRDClientIT {
         final GaaSCreateRequestBody gafferRequest = new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED);
         createGraphService.createGraph(gafferRequest);
 
-        assertDoesNotThrow(() -> crdClient.deleteCRD(existingGraph));
+        assertDoesNotThrow(() -> gafferClient.deleteCRD(existingGraph));
     }
 
     @Test
     void testGetAllNamespacesReturnsSuccessResponseWithExistingNamespace() throws GaaSRestApiException {
-        final List<String> allNameSpaces = crdClient.getAllNameSpaces();
+        final List<String> allNameSpaces = gafferClient.getAllNameSpaces();
 
         assertTrue(allNameSpaces.contains(NAMESPACE));
     }

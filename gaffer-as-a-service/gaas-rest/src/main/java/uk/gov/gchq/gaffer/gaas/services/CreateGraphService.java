@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.util.GafferSpecConfigsLoader;
@@ -37,7 +37,7 @@ public class CreateGraphService {
     @Autowired
     private GafferSpecConfigsLoader loader;
     @Autowired
-    private CRDClient crdClient;
+    private GafferClient gafferClient;
 
     @Timed(value = "createGraph.time", description = "Time taken to create graph", percentiles = 0)
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
@@ -45,7 +45,7 @@ public class CreateGraphService {
 
         final GafferSpec config = loader.getConfig(CONFIG_YAML_CLASSPATH, gaaSCreateRequestBodyInput.getConfigName());
 
-        crdClient.createCRD(overrideConfig(config, gaaSCreateRequestBodyInput));
+        gafferClient.createCRD(overrideConfig(config, gaaSCreateRequestBodyInput));
     }
 
     private Gaffer overrideConfig(final GafferSpec gafferSpecConfig, final GaaSCreateRequestBody overrides) {

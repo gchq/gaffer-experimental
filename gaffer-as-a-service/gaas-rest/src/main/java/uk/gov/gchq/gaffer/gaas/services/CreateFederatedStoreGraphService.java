@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.client.graph.AddGraphsOperation;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
@@ -40,7 +40,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
 public class CreateFederatedStoreGraphService {
 
     @Autowired
-    private CRDClient crdClient;
+    private GafferClient gafferClient;
     @Autowired
     private GafferSpecConfigsLoader loader;
     @Autowired
@@ -58,7 +58,7 @@ public class CreateFederatedStoreGraphService {
 
         validateProxyGraphURLs(request.getProxySubGraphs());
 
-        final GraphUrl url = crdClient.createCRD(GafferFactory.from(config, request));
+        final GraphUrl url = gafferClient.createCRD(GafferFactory.from(config, request));
 
         addSubGraphsToFederatedStore(url, request);
     }

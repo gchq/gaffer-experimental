@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
@@ -43,7 +43,7 @@ public class CreateGraphServiceTest {
     private CreateGraphService createGraphService;
 
     @MockBean
-    private CRDClient crdClient;
+    private GafferClient gafferClient;
 
     @MockBean
     private MeterRegistry meterRegistry;
@@ -56,7 +56,7 @@ public class CreateGraphServiceTest {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", getSchema(), "accumulo"));
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
-        verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
+        verify(gafferClient, times(1)).createCRD(argumentCaptor.capture());
         final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
 

@@ -39,9 +39,9 @@ import java.util.stream.Collectors;
 import static uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory.from;
 
 @Repository
-public class CRDClient {
+public class GafferClient {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GafferClient.class);
     private static final String PRETTY = null;
     private static final String DRY_RUN = null;
     private static final String FIELD_MANAGER = null;

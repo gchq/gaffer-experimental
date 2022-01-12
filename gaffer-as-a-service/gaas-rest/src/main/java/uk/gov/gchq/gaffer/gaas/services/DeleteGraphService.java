@@ -20,14 +20,14 @@ import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 
 @Service
 public class DeleteGraphService {
 
     @Autowired
-    private CRDClient crdClient;
+    private GafferClient gafferClient;
 
     @Autowired
     private MeterRegistry meterRegistry;
@@ -35,6 +35,6 @@ public class DeleteGraphService {
     @Timed(value = "deleteGraph.time", description = "Time taken to delete graph", percentiles = 0)
     public void deleteGraph(final String graphId) throws GaaSRestApiException {
         meterRegistry.counter("DeleteGraphService", "action", "delete").increment();
-        crdClient.deleteCRD(graphId);
+        gafferClient.deleteCRD(graphId);
     }
 }

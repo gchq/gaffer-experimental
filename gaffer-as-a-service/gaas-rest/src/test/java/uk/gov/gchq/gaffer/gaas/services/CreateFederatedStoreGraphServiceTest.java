@@ -23,7 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
@@ -56,7 +56,7 @@ class CreateFederatedStoreGraphServiceTest {
     @Autowired
     private CreateFederatedStoreGraphService service;
     @MockBean
-    private CRDClient crdClient;
+    private GafferClient gafferClient;
     @MockBean
     private GraphCommandExecutor graphCommandExecutor;
     @MockBean
@@ -119,20 +119,20 @@ class CreateFederatedStoreGraphServiceTest {
     @Test
     public void shouldCreateAFedStoreGraph_whenAllURLsAreValid() throws GraphOperationException, GaaSRestApiException {
         doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
-        when(crdClient.createCRD(any(Gaffer.class))).thenReturn(new GraphUrl("localhost:8080", "/rest"));
+        when(gafferClient.createCRD(any(Gaffer.class))).thenReturn(new GraphUrl("localhost:8080", "/rest"));
         final ProxySubGraph subGraph = new ProxySubGraph("test-graph-2", "localhost:4000", "/rest");
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(subGraph);
         when(loader.getConfig("/config", "federated")).thenReturn(getFederatedStoreGafferSpec());
 
         service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", proxySubGraphsList));
 
-        verify(crdClient, times(1)).createCRD(any(Gaffer.class));
+        verify(gafferClient, times(1)).createCRD(any(Gaffer.class));
     }
 
     @Test
     public void shouldThrowGaaSException_whenCreateCRDThrowsGaaSException() throws GaaSRestApiException, GraphOperationException {
         doNothing().when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
-        doThrow(GaaSRestApiException.class).when(crdClient).createCRD(any(Gaffer.class));
+        doThrow(GaaSRestApiException.class).when(gafferClient).createCRD(any(Gaffer.class));
         final ProxySubGraph subGraph = new ProxySubGraph("TestGraph2", "invalid", "invalid");
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(subGraph);
         when(loader.getConfig("/config", "federated_config")).thenReturn(getFederatedStoreGafferSpec());
@@ -142,13 +142,13 @@ class CreateFederatedStoreGraphServiceTest {
 
     @Test
     public void shouldSendTheCorrectRequestToTheCRDClientWhenCreatingAFederatedGraph() throws GaaSRestApiException {
-        when(crdClient.createCRD(any(Gaffer.class))).thenReturn(new GraphUrl("localhost:8080", "/root"));
+        when(gafferClient.createCRD(any(Gaffer.class))).thenReturn(new GraphUrl("localhost:8080", "/root"));
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph, proxySubGraph2);
         when(loader.getConfig("/config", "federated")).thenReturn(getFederatedStoreGafferSpec());
         service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", proxySubGraphsList));
 
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
-        verify(crdClient, times(1)).createCRD(argumentCaptor.capture());
+        verify(gafferClient, times(1)).createCRD(argumentCaptor.capture());
         final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
         assertEquals(TEST_GRAPH_ID, gafferRequestBody.getMetadata().getName());
 
