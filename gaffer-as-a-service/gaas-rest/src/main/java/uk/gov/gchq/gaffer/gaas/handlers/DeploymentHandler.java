@@ -133,7 +133,7 @@ public class DeploymentHandler implements Reconciler {
                     V1Pod pod = kubernetesObjectFactory.createHelmPod(gaffer, HelmCommand.INSTALL, secretname);
                     try {
                         coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
-                        LOGGER.debug("Install Pod deployment successful");
+                        LOGGER.info("Install Pod deployment successful");
                     } catch (final ApiException e) {
                         LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e);
                         throw e;
