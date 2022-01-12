@@ -39,7 +39,7 @@ describe("Auth", () => {
 });
 
 describe("Graph API", () => {
-    beforeAll(async (done) => {
+    beforeAll(async () => {
         await request(server)
             .post("/auth")
             .send({
@@ -48,7 +48,6 @@ describe("Graph API", () => {
             })
             .then((response) => {
                 token = response.body;
-                done();
             });
     });
     it("Should respond with a 201 code when post is called with the graphs path and user is signed in", async () => {
@@ -171,7 +170,7 @@ describe("Graph API", () => {
     });
 });
 describe("Namespaces", () => {
-    beforeAll(async (done) => {
+    beforeAll(async () => {
         await request(server)
             .post("/auth")
             .send({
@@ -180,7 +179,6 @@ describe("Namespaces", () => {
             })
             .then((response) => {
                 token = response.body;
-                done();
             });
     });
     it("namespaces endpoint with Authorization token should return namespaces array", async () => {
@@ -195,7 +193,7 @@ describe("Namespaces", () => {
     });
 });
 describe("Storetypes", () => {
-    beforeAll(async (done) => {
+    beforeAll(async () => {
         await request(server)
             .post("/auth")
             .send({
@@ -204,7 +202,6 @@ describe("Storetypes", () => {
             })
             .then((response) => {
                 token = response.body;
-                done();
             });
     });
     it("storetypes endpoint with Authorization token should return storetypes", async () => {
