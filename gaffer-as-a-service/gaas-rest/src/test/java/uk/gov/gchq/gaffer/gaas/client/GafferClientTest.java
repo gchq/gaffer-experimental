@@ -82,6 +82,15 @@ public class GafferClientTest {
     }
 
     @Test
+    public void createGraph_ShouldThrowGaasRestApiException_WhenRequestFails() throws GaaSRestApiException, ApiException {
+        when(deploymentHandler.onGafferCreate(null)).thenThrow(new ApiException("Failed to create Gaffer as it is null"));
+        //when(gafferClient.createCRD(null)).thenThrow(expectedException);
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createCRD(null));
+
+        assertEquals("Failed to create Gaffer as it is null", exception.getTitle());
+    }
+
+    @Test
     public void getAllNameSpaces_ShouldThrowGaaSRestApiException_WhenCoreV1ApiThrowsApiEx() throws ApiException {
         final ApiException apiException = makeApiException_timeout();
         when(coreV1Api.listNamespace("true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE))

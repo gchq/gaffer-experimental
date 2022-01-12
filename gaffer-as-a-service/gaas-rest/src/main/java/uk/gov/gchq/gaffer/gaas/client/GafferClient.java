@@ -59,13 +59,13 @@ public class GafferClient {
         try {
             deploymentHandler.onGafferCreate(requestBody);
             return GraphUrl.from(requestBody);
-        } catch (Exception e) {
+        } catch (ApiException e) {
             if (requestBody == null || requestBody.getMetadata() == null) {
                 LOGGER.debug("Failed to create Gaffer \"\". Error: ", e);
             } else {
-                LOGGER.debug("Failed to create Gaffer with name \"" + requestBody.getMetadata().getName() + "\". Kubernetes CustomObjectsApi returned Status Code: ", e);
+                LOGGER.debug("Failed to create Gaffer with name \"" + requestBody.getMetadata().getName() + "\". Error: ", e);
             }
-            throw (e);
+            throw from(e);
         }
     }
 

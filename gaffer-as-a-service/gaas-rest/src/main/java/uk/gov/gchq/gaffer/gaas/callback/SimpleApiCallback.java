@@ -28,16 +28,24 @@ import java.util.Map;
  */
 public interface SimpleApiCallback<T> extends ApiCallback<T> {
 
-    void handle(final T result, final ApiException e);
+    void handle(final T result, final ApiException e) throws ApiException;
 
     @Override
     default void onSuccess(T result, int statusCode, Map<String, List<String>> responseHeaders) {
-        handle(result, null);
+        try {
+            handle(result, null);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     default void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
-        handle(null, e);
+        try {
+            handle(null, e);
+        } catch (ApiException apiException) {
+            apiException.printStackTrace();
+        }
     }
 
     @Override

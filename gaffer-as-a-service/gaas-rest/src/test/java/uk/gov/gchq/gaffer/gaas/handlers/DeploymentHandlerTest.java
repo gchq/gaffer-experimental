@@ -42,6 +42,8 @@ import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -123,6 +125,21 @@ class DeploymentHandlerTest {
         verify(client, times(1)).execute(null, podType);
         verify(client, times(1)).buildCall(eq("/api/v1/namespaces/gaffer-workers/pods"),
                 eq("POST"), anyList(), anyList(), eq(expected), anyMap(), anyMap(), anyMap(), any(String[].class), any());
+
+    }
+
+    @Test
+    public void shouldThrowException_WhenGafferIsNull() {
+        // Given
+        ApiClient client = mock(ApiClient.class);
+        when(client.escapeString(anyString())).thenCallRealMethod();
+        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(environment);
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
+
+        final ApiException exception = assertThrows(ApiException.class, () -> handler.onGafferCreate(null));
+
+        assertEquals("io.kubernetes.client.openapi.ApiException", exception.toString());
+
 
     }
 

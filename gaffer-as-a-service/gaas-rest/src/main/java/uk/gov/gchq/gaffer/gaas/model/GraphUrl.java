@@ -28,6 +28,7 @@ public class GraphUrl {
     public static GraphUrl from(final Gaffer gaffer) {
         final GafferSpec spec = gaffer.getSpec();
         return new GraphUrl(spec.getNestedObject(INGRESS_HOST_KEY).toString(), spec.getNestedObject(INGRESS_API_PATH_KEY).toString());
+
     }
 
     private String root;

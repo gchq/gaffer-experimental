@@ -111,13 +111,13 @@ public class DeploymentHandler implements Reconciler {
      *
      * @param gaffer the name of the Gaffer graph
      * @return true if the deployment was started, false if not
+     * @throws ApiException throws exception
      */
     @AddWatchEventFilter(apiTypeClass = Gaffer.class)
-    public boolean onGafferCreate(final Gaffer gaffer) {
-        V1Secret helmValuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
+    public boolean onGafferCreate(final Gaffer gaffer) throws ApiException {
         LOGGER.info("Received new add request");
-
         try {
+            V1Secret helmValuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
             coreV1Api.createNamespacedSecretAsync(workerNamespace, helmValuesSecret, null, null, null, (SimpleApiCallback<V1Secret>) (result, err) -> {
                 if (err == null) {
                     LOGGER.debug("Successfully created secret for new install. Trying pod deployment now...");
@@ -136,6 +136,7 @@ public class DeploymentHandler implements Reconciler {
                         LOGGER.debug("Install Pod deployment successful");
                     } catch (final ApiException e) {
                         LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e);
+                        throw e;
                     }
                 } else {
                     LOGGER.error("Failed to create Secret for new install", err);
@@ -143,7 +144,9 @@ public class DeploymentHandler implements Reconciler {
             });
         } catch (final ApiException e) {
             LOGGER.error("Failed to create Secret", e);
-            return false;
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException(e.getLocalizedMessage());
         }
 
         return true;
@@ -197,11 +200,11 @@ public class DeploymentHandler implements Reconciler {
     /**
      * Starts the Uninstall process for a Gaffer Graph.
      *
-     * @param gaffer       The Gaffer Object
-     * @param isCacheStale Whether the cache entry for the Gaffer resource is stale
+     * @param gaffer           The Gaffer Object
+     * @param isCacheStale     Whether the cache entry for the Gaffer resource is stale
      * @param kubernetesClient kubernetesClient
-     * @throws ApiException exception
      * @return True if the uninstall process started, false if not
+     * @throws ApiException exception
      */
     @DeleteWatchEventFilter(apiTypeClass = Gaffer.class)
     public boolean onGafferDelete(final String gaffer, final boolean isCacheStale, final KubernetesClient kubernetesClient) throws ApiException {
