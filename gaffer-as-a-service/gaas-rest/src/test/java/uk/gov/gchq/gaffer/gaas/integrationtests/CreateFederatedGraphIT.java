@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class CreateFederatedGraphIT extends AbstractTest {
 
     private static final String VALID_ROOT = "/rest";
-    private static final String GRAPH_ID = "TEST_GRAPH_ID";
+    private static final String GRAPH_ID = "testfederaredgraphid";
 
     @Autowired
     private ApiClient apiClient;
