@@ -57,9 +57,9 @@ public class CRDClientIT {
 
     @Test
     public void createCRD_whenCorrectRequest_shouldNotThrowAnyException() {
-        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED));
+        final GaaSCreateRequestBody gafferRequest = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED);
 
-        assertDoesNotThrow(() -> crdClient.createCRD(gafferRequest));
+        assertDoesNotThrow(() -> createGraphService.createGraph(gafferRequest));
     }
 
     @Test
@@ -110,8 +110,8 @@ public class CRDClientIT {
 
     @Test
     public void getAllCRD_whenAGraphExists_itemsIsNotEmpty() throws GaaSRestApiException {
-        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED));
-        crdClient.createCRD(gafferRequest);
+        final GaaSCreateRequestBody gafferRequest = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED);
+        createGraphService.createGraph(gafferRequest);
 
         assertTrue(crdClient.listAllCRDs().toString().contains("testgraphid"));
     }
@@ -136,8 +136,8 @@ public class CRDClientIT {
     public void deleteCRD_whenGraphDoesExist_doesNotThrowException() throws GaaSRestApiException {
         final String existingGraph = "existing-graph-2";
 
-        final Gaffer gafferRequest = from(new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED));
-        crdClient.createCRD(gafferRequest);
+        final GaaSCreateRequestBody gafferRequest = new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION, getSchema(), ACCUMULO_ENABLED);
+        createGraphService.createGraph(gafferRequest);
 
         assertDoesNotThrow(() -> crdClient.deleteCRD(existingGraph));
     }

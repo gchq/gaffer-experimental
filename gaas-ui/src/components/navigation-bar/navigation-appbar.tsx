@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, withRouter } from "react-router-dom";
-import Routes from "./Routes";
+import AppRoutes from "./AppRoutes";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import {
     AppBar,
@@ -21,6 +20,7 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import LocalLibraryIcon from "@material-ui/icons/LocalLibrary";
 import CategoryIcon from "@material-ui/icons/Category";
 import LoginModal from "../login/login-modal";
+import { NavLink } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -95,9 +95,6 @@ const NavigationAppbar: React.FC = (props: any) => {
     // @ts-ignore
     const classes = useStyles();
     const [username, setUsername] = useState("");
-
-    const activeRoute = (routeName: string) => props.location.pathname === routeName;
-
     const getSideNavIcon = (sidebarName: string) => {
         switch (sidebarName) {
             case "Create Graph":
@@ -154,17 +151,17 @@ const NavigationAppbar: React.FC = (props: any) => {
                         </List>
                         <Divider />
                         <List>
-                            {Routes.map((prop, key) => (
+                            {AppRoutes.map((route: any) => (
                                 <NavLink
-                                    to={prop.path}
+                                    to={route.path}
                                     style={{ color: "inherit", textDecoration: "inherit" }}
-                                    key={key}
+                                    key={route.key}
                                 >
-                                    <ListItem className={classes.listItem} selected={activeRoute(prop.path)}>
-                                        <ListItemIcon>{getSideNavIcon(prop.sidebarName)}</ListItemIcon>
+                                    <ListItem className={classes.listItem} selected={route.path}>
+                                        <ListItemIcon>{getSideNavIcon(route.sidebarName)}</ListItemIcon>
                                         <ListItemText
                                             classes={{ primary: classes.listItemText }}
-                                            primary={prop.sidebarName}
+                                            primary={route.sidebarName}
                                         />
                                     </ListItem>
                                 </NavLink>
@@ -178,4 +175,4 @@ const NavigationAppbar: React.FC = (props: any) => {
     );
 };
 
-export default withRouter(NavigationAppbar);
+export default NavigationAppbar;

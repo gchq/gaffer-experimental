@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { NavLink, withRouter } from "react-router-dom";
-import Routes from "./Routes";
+import { NavLink } from "react-router-dom";
+import AppRoutes from "./AppRoutes";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { AppBar, Drawer, IconButton, ListItemText, MenuItem, MenuList, Toolbar, Typography } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -95,7 +95,7 @@ const NavigationDrawer: React.FC = (props: any) => {
                     onKeyDown={toggleDrawer(false)}
                 >
                     <MenuList id={"navigation-drawer-menu-list"} aria-label={"navigation-drawer-menu-list"}>
-                        {Routes.map((prop, key) => (
+                        {AppRoutes.map((prop, key) => (
                             <NavLink to={prop.path} style={{ color: "inherit", textDecoration: "inherit" }} key={key}>
                                 <MenuItem className={classes.listItem} selected={activeRoute(prop.path)}>
                                     <ListItemText
@@ -112,4 +112,4 @@ const NavigationDrawer: React.FC = (props: any) => {
     );
 };
 
-export default withRouter(NavigationDrawer);
+export default NavigationDrawer;
