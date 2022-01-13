@@ -119,24 +119,24 @@ public class DeploymentHandler implements Reconciler {
         V1Secret helmValuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
         try {
             coreV1Api.createNamespacedSecret(workerNamespace, helmValuesSecret, null, null, null);
-                    LOGGER.info("Successfully created secret for new install. Trying pod deployment now...");
-                    String secretname = gaffer.getSpec().getNestedObject("graph","config", "graphId").toString();
-                    if (secretname == null) {
-                        // This would be really weird and we'd want to know about it.
-                        throw new RuntimeException("A secret was generated without a name. Unable to proceed");
-                    }
-                    gaffer.metaData(new V1ObjectMeta()
-                            .namespace(workerNamespace)
-                            .name(secretname)
-                    );
-                    V1Pod pod = kubernetesObjectFactory.createHelmPod(gaffer, HelmCommand.INSTALL, secretname);
-                    try {
-                        coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
-                        LOGGER.info("Install Pod deployment successful");
-                    } catch (final ApiException e) {
-                        LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e);
-                        throw e;
-                    }
+            LOGGER.info("Successfully created secret for new install. Trying pod deployment now...");
+            String secretname = gaffer.getSpec().getNestedObject("graph", "config", "graphId").toString();
+            if (secretname == null) {
+                // This would be really weird and we'd want to know about it.
+                throw new RuntimeException("A secret was generated without a name. Unable to proceed");
+            }
+            gaffer.metaData(new V1ObjectMeta()
+                    .namespace(workerNamespace)
+                    .name(secretname)
+            );
+            V1Pod pod = kubernetesObjectFactory.createHelmPod(gaffer, HelmCommand.INSTALL, secretname);
+            try {
+                coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
+                LOGGER.info("Install Pod deployment successful");
+            } catch (final ApiException e) {
+                LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e);
+                throw e;
+            }
         } catch (final ApiException e) {
             LOGGER.error("Failed to create Secret", e);
             throw e;
@@ -211,6 +211,9 @@ public class DeploymentHandler implements Reconciler {
             kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-schema").delete();
             kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui-config").delete();
             kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer + "-gaffer-store-properties").delete();
+            kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer).delete();
+            kubernetesClient.secrets().inNamespace(workerNamespace).withName("sh.helm.release.v1." + gaffer + ".v1").delete();
+            kubernetesClient.pods().inNamespace(workerNamespace).withName(gaffer + "-install-worker");
         } catch (Exception e) {
             LOGGER.error("Failed to delete deployments of " + gaffer, e);
             throw e;
