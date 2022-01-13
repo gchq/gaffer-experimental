@@ -116,12 +116,11 @@ public class DeploymentHandler implements Reconciler {
     @AddWatchEventFilter(apiTypeClass = Gaffer.class)
     public boolean onGafferCreate(final Gaffer gaffer) throws ApiException {
         LOGGER.info("Received new add request");
+        V1Secret helmValuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
         try {
-            V1Secret helmValuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
-            coreV1Api.createNamespacedSecretAsync(workerNamespace, helmValuesSecret, null, null, null, (SimpleApiCallback<V1Secret>) (result, err) -> {
-                if (err == null) {
-                    LOGGER.debug("Successfully created secret for new install. Trying pod deployment now...");
-                    String secretname = result.getMetadata() == null ? null : result.getMetadata().getName();
+            coreV1Api.createNamespacedSecret(workerNamespace, helmValuesSecret, null, null, null);
+                    LOGGER.info("Successfully created secret for new install. Trying pod deployment now...");
+                    String secretname = gaffer.getSpec().getNestedObject("graph","config", "graphId").toString();
                     if (secretname == null) {
                         // This would be really weird and we'd want to know about it.
                         throw new RuntimeException("A secret was generated without a name. Unable to proceed");
@@ -138,10 +137,6 @@ public class DeploymentHandler implements Reconciler {
                         LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e);
                         throw e;
                     }
-                } else {
-                    LOGGER.error("Failed to create Secret for new install", err);
-                }
-            });
         } catch (final ApiException e) {
             LOGGER.error("Failed to create Secret", e);
             throw e;
