@@ -41,7 +41,6 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 @Repository
 public class CRDClient {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
     private static final String PRETTY = null;
     private static final String DRY_RUN = null;
@@ -54,6 +53,7 @@ public class CRDClient {
     private CoreV1Api coreV1Api;
 
     public GraphUrl createCRD(final Gaffer requestBody) throws GaaSRestApiException {
+
         try {
             customObjectsApi.createNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, requestBody, PRETTY, DRY_RUN, FIELD_MANAGER);
             return GraphUrl.from(requestBody);
