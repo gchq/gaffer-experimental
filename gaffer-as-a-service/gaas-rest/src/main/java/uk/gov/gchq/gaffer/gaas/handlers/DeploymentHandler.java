@@ -81,7 +81,6 @@ public class DeploymentHandler {
      * @return true if the deployment was started, false if not
      * @throws ApiException throws exception
      */
-    @AddWatchEventFilter(apiTypeClass = Gaffer.class)
     public boolean onGafferCreate(final Gaffer gaffer) throws ApiException {
         LOGGER.info("Received new add request");
         V1Secret helmValuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
@@ -124,7 +123,6 @@ public class DeploymentHandler {
      * @return True if the uninstall process started, false if not
      * @throws ApiException exception
      */
-    @DeleteWatchEventFilter(apiTypeClass = Gaffer.class)
     public boolean onGafferDelete(final String gaffer, final boolean isCacheStale, final KubernetesClient kubernetesClient) throws ApiException {
         try {
             kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-api").delete();
