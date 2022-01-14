@@ -60,7 +60,7 @@ public class UnitTestConfig {
 
     @Bean
     public CoreV1Api coreV1Api() {
-        return new CoreV1Api(apiClient());
+        return mock(CoreV1Api.class);
     }
 
     @Bean

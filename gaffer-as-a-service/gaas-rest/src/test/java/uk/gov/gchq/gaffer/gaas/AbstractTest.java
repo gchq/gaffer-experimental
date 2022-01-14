@@ -17,6 +17,7 @@
 package uk.gov.gchq.gaffer.gaas;
 
 import com.google.gson.Gson;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +40,9 @@ public abstract class AbstractTest {
 
     @Autowired
     private GafferClient gafferClient;
+
+    @Autowired
+    private CoreV1Api coreV1Api;
 
     protected MvcResult token;
 

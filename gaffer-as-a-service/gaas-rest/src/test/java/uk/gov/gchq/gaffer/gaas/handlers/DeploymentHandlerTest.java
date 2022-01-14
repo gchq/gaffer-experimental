@@ -26,6 +26,8 @@ import io.kubernetes.client.openapi.ApiCallback;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.ApiResponse;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1PodSpec;
@@ -36,10 +38,18 @@ import io.kubernetes.client.openapi.models.V1Status;
 import io.kubernetes.client.openapi.models.V1Volume;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
+import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,6 +60,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -65,13 +76,21 @@ import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_IMAGE_PULL_POLICY;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 
 @EnableKubernetesMockClient(crud = true)
+@UnitTest
 class DeploymentHandlerTest {
 
     private Environment environment;
 
-    static KubernetesClient kubernetesClient;
+    @MockBean
+    CoreV1Api coreV1Api;
+
+    @MockBean
+    KubernetesClient kubernetesClient;
 
     @BeforeEach
     public void beforeEach() {
@@ -83,6 +102,29 @@ class DeploymentHandlerTest {
         when(environment.getProperty(WORKER_RESTART_POLICY)).thenReturn("Never");
         when(environment.getProperty(WORKER_SERVICE_ACCOUNT_NAME)).thenReturn("gaffer-workers");
         when(environment.getProperty(WORKER_HELM_REPO)).thenReturn("https://gchq.github.io/gaffer-workers");
+    }
+
+    @Test
+    public void shouldCreateDeployment() throws ApiException {
+        ApiClient client = mock(ApiClient.class);
+        //doReturn(new V1Secret()).when(coreV1Api).createNamespacedSecret(anyString(), any(), any(), any(), any());
+        GafferSpec gafferSpec = new GafferSpec();
+        gafferSpec.putNestedObject("name", GRAPH_ID_KEY);
+        gafferSpec.putNestedObject("somedesc", DESCRIPTION_KEY);
+        gafferSpec.putNestedObject("mapStore", CONFIG_NAME_KEY);
+        Gaffer gaffer = new Gaffer()
+                .metaData(new V1ObjectMeta()
+                        .namespace("gaffer-namespace")
+                        .name("name")
+                ).spec(gafferSpec);
+        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(environment);
+
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
+//        V1Secret helmValuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
+        //coreV1Api.createNamespacedSecret("workerNamespace", helmValuesSecret, null, null, null);
+        handler.onGafferCreate(gaffer);
+
+
     }
 
     @Test

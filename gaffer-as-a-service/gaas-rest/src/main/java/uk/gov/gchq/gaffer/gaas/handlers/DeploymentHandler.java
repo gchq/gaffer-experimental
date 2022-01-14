@@ -43,6 +43,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferStatus;
@@ -70,21 +71,8 @@ import static uk.gov.gchq.gaffer.gaas.HelmCommand.UNINSTALL;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
-/**
- * Responds to changes in Gaffer objects and manages Gaffer Helm deployments
- */
-@KubernetesReconciler(
-        watches =
-        @KubernetesReconcilerWatches({
-                @KubernetesReconcilerWatch(
-                        apiTypeClass = Gaffer.class
-                ),
-                @KubernetesReconcilerWatch(
-                        apiTypeClass = V1Pod.class
-                )
-        })
-)
-public class DeploymentHandler implements Reconciler {
+
+public class DeploymentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeploymentHandler.class);
     // worker pod phases
@@ -92,7 +80,10 @@ public class DeploymentHandler implements Reconciler {
     private static final String FAILED = "Failed";
 
     private final String workerNamespace;
-    private final CoreV1Api coreV1Api;
+
+    @Autowired
+    private CoreV1Api coreV1Api;
+
     private final CustomObjectsApi customObjectsApi;
     private final IKubernetesObjectFactory kubernetesObjectFactory;
 
@@ -100,7 +91,6 @@ public class DeploymentHandler implements Reconciler {
     public DeploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory, final ApiClient apiClient) {
         this.workerNamespace = environment.getProperty(WORKER_NAMESPACE);
         this.kubernetesObjectFactory = kubernetesObjectFactory;
-        this.coreV1Api = new CoreV1Api(apiClient);
         this.customObjectsApi = new CustomObjectsApi(apiClient);
     }
 
