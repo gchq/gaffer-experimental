@@ -59,6 +59,7 @@ public class UnitTestConfig {
     }
 
     @Bean
+    @Primary
     public CoreV1Api coreV1Api() {
         return mock(CoreV1Api.class);
     }
