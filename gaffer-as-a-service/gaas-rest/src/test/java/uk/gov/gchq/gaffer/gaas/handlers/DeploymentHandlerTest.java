@@ -25,13 +25,14 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import io.kubernetes.client.openapi.models.V1Secret;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
-import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
+import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -61,6 +62,9 @@ class DeploymentHandlerTest {
     @MockBean
     private KubernetesClient kubernetesClient;
 
+    @MockBean
+    IKubernetesObjectFactory kubernetesObjectFactory;
+
     @BeforeEach
     public void beforeEach() {
         environment = mock(Environment.class);
@@ -76,25 +80,11 @@ class DeploymentHandlerTest {
     @Test
     public void shouldCreateDeployment() throws ApiException {
         ApiClient client = mock(ApiClient.class);
-        //doReturn(new V1Secret()).when(coreV1Api).createNamespacedSecret(anyString(), any(), any(), any(), any());
-        GafferSpec gafferSpec = new GafferSpec();
-        gafferSpec.putNestedObject("name", GRAPH_ID_KEY);
-        gafferSpec.putNestedObject("somedesc", DESCRIPTION_KEY);
-        gafferSpec.putNestedObject("mapStore", CONFIG_NAME_KEY);
-        Gaffer gaffer = new Gaffer()
-                .metaData(new V1ObjectMeta()
-                        .namespace("gaffer-namespace")
-                        .name("name")
-                ).spec(gafferSpec);
-        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(environment);
+        Gaffer gaffer = getGaffer();
 
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
-//        V1Secret helmValuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
-        //coreV1Api.createNamespacedSecret("workerNamespace", helmValuesSecret, null, null, null);
         handler.setCoreV1Api(mock(CoreV1Api.class));
         handler.onGafferCreate(gaffer);
-
-
     }
 
     @Test
@@ -102,10 +92,10 @@ class DeploymentHandlerTest {
         // Given
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
-        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(environment);
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
         handler.setCoreV1Api(mock(CoreV1Api.class));
-
+        Gaffer gaffer = getGaffer();
+        when(kubernetesObjectFactory.createValuesSecret(gaffer, true)).thenReturn(new V1Secret());
         final ApiException exception = assertThrows(ApiException.class, () -> handler.onGafferCreate(null));
 
         assertEquals("io.kubernetes.client.openapi.ApiException", exception.toString());
@@ -118,7 +108,6 @@ class DeploymentHandlerTest {
         // Given
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
-        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(environment);
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
         handler.setCoreV1Api(mock(CoreV1Api.class));
 
@@ -129,6 +118,18 @@ class DeploymentHandlerTest {
         handler.onGafferDelete("test", false, kubernetesClient);
 
         assertTrue(kubernetesClient.apps().deployments().list().getItems().size() != deploymentList.getItems().size());
+    }
+
+    private Gaffer getGaffer() {
+        GafferSpec gafferSpec = new GafferSpec();
+        gafferSpec.putNestedObject("name", GRAPH_ID_KEY);
+        gafferSpec.putNestedObject("somedesc", DESCRIPTION_KEY);
+        gafferSpec.putNestedObject("mapStore", CONFIG_NAME_KEY);
+        return new Gaffer()
+                .metaData(new V1ObjectMeta()
+                        .namespace("gaffer-namespace")
+                        .name("name")
+                ).spec(gafferSpec);
     }
 
 }
