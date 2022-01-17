@@ -16,6 +16,9 @@
 
 package uk.gov.gchq.gaffer.gaas.handlers;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentList;
@@ -30,13 +33,17 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Secret;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+
 import java.util.HashMap;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -78,6 +85,30 @@ class DeploymentHandlerTest {
         when(environment.getProperty(WORKER_RESTART_POLICY)).thenReturn("Never");
         when(environment.getProperty(WORKER_SERVICE_ACCOUNT_NAME)).thenReturn("gaffer-workers");
         when(environment.getProperty(WORKER_HELM_REPO)).thenReturn("https://gchq.github.io/gaffer-workers");
+    }
+
+    @Test
+    public void shouldLogMessagesCorrectlyWhenOnGafferCreate() throws ApiException {
+        Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
+
+        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+        listAppender.start();
+
+        deploymentHandlerLogger.addAppender(listAppender);
+
+        Gaffer gaffer = getGaffer();
+        DeploymentHandler deploymentHandler = new DeploymentHandler(environment, kubernetesObjectFactory, mock(ApiClient.class));
+        deploymentHandler.setCoreV1Api(mock(CoreV1Api.class));
+        deploymentHandler.onGafferCreate(gaffer);
+
+        List<ILoggingEvent> logsList = listAppender.list;
+        assertEquals("Received new add request", logsList.get(0).getMessage());
+        assertEquals("Successfully created secret for new install. Trying pod deployment now...", logsList.get(1).getMessage());
+        assertEquals("Install Pod deployment successful", logsList.get(2).getMessage());
+
+
+
+
     }
 
     @Test
