@@ -97,7 +97,7 @@ class DeploymentHandlerTest {
         deploymentHandlerLogger.addAppender(listAppender);
 
         Gaffer gaffer = getGaffer();
-        DeploymentHandler deploymentHandler = new DeploymentHandler(environment, kubernetesObjectFactory, mock(ApiClient.class));
+        DeploymentHandler deploymentHandler = new DeploymentHandler(environment, kubernetesObjectFactory);
         deploymentHandler.setCoreV1Api(mock(CoreV1Api.class));
         deploymentHandler.onGafferCreate(gaffer);
 
@@ -115,10 +115,9 @@ class DeploymentHandlerTest {
         listAppender.start();
         deploymentHandlerLogger.addAppender(listAppender);
 
-        ApiClient client = mock(ApiClient.class);
         Gaffer gaffer = getGaffer();
 
-        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
         try {
             handler.onGafferCreate(gaffer);
         } catch(Exception ignored) {}
@@ -135,7 +134,7 @@ class DeploymentHandlerTest {
         listAppender.start();
         deploymentHandlerLogger.addAppender(listAppender);
 
-        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, mock(ApiClient.class));
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
         handler.setCoreV1Api(mock(CoreV1Api.class));
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build());
         try {
@@ -150,8 +149,7 @@ class DeploymentHandlerTest {
 
     @Test
     void shouldReturnDeploymentsWhenGetDeploymentsCalled() {
-        ApiClient client = mock(ApiClient.class);
-        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
         handler.setCoreV1Api(mock(CoreV1Api.class));
 
         HashMap<String, String> labels = new HashMap<>();
@@ -168,10 +166,9 @@ class DeploymentHandlerTest {
 
     @Test
     void shouldReturnTrueWhenCreateDeploymentSuccessful() throws ApiException {
-        ApiClient client = mock(ApiClient.class);
         Gaffer gaffer = getGaffer();
 
-        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
         handler.setCoreV1Api(mock(CoreV1Api.class));
         assertTrue(handler.onGafferCreate(gaffer));
     }
@@ -181,7 +178,7 @@ class DeploymentHandlerTest {
         // Given
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
-        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
         handler.setCoreV1Api(mock(CoreV1Api.class));
         Gaffer gaffer = getGaffer();
         when(kubernetesObjectFactory.createValuesSecret(gaffer, true)).thenReturn(new V1Secret());
@@ -197,7 +194,7 @@ class DeploymentHandlerTest {
         // Given
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
-        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
         handler.setCoreV1Api(mock(CoreV1Api.class));
 
         DeploymentList deploymentList = new DeploymentListBuilder().withItems(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build(), new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build()).build();
@@ -218,7 +215,7 @@ class DeploymentHandlerTest {
         listAppender.start();
         deploymentHandlerLogger.addAppender(listAppender);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(environment, kubernetesObjectFactory, mock(ApiClient.class));
+        DeploymentHandler deploymentHandler = new DeploymentHandler(environment, kubernetesObjectFactory);
         deploymentHandler.setCoreV1Api(mock(CoreV1Api.class));
         try {
             deploymentHandler.onGafferDelete("test", new DefaultKubernetesClient());

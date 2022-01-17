@@ -28,6 +28,7 @@ import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
+
 import java.io.IOException;
 
 @Configuration
@@ -55,7 +56,7 @@ public class AppConfig {
 
     @Bean
     public DeploymentHandler deploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory, final ApiClient apiClient) {
-        return new DeploymentHandler(environment, kubernetesObjectFactory, apiClient);
+        return new DeploymentHandler(environment, kubernetesObjectFactory);
     }
 
     @Bean

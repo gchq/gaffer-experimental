@@ -18,10 +18,8 @@ package uk.gov.gchq.gaffer.gaas.handlers;
 
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
-import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
@@ -60,14 +58,12 @@ public class DeploymentHandler {
     @Autowired
     private CoreV1Api coreV1Api;
 
-    private final CustomObjectsApi customObjectsApi;
     private final IKubernetesObjectFactory kubernetesObjectFactory;
 
 
-    public DeploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory, final ApiClient apiClient) {
+    public DeploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory) {
         this.workerNamespace = environment.getProperty(WORKER_NAMESPACE);
         this.kubernetesObjectFactory = kubernetesObjectFactory;
-        this.customObjectsApi = new CustomObjectsApi(apiClient);
     }
 
     // Gaffer events
