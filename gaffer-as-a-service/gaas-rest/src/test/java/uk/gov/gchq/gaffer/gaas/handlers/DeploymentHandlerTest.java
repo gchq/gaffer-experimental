@@ -16,9 +16,11 @@
 
 package uk.gov.gchq.gaffer.gaas.handlers;
 
+import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.api.model.apps.DeploymentListBuilder;
+import io.fabric8.kubernetes.api.model.apps.DeploymentStatusBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.kubernetes.client.openapi.ApiClient;
@@ -34,6 +36,7 @@ import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -75,6 +78,24 @@ class DeploymentHandlerTest {
         when(environment.getProperty(WORKER_RESTART_POLICY)).thenReturn("Never");
         when(environment.getProperty(WORKER_SERVICE_ACCOUNT_NAME)).thenReturn("gaffer-workers");
         when(environment.getProperty(WORKER_HELM_REPO)).thenReturn("https://gchq.github.io/gaffer-workers");
+    }
+
+    @Test
+    public void shouldReturnDeploymentsWhenGetDeploymentsCalled() {
+        ApiClient client = mock(ApiClient.class);
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+
+        HashMap<String, String> labels = new HashMap<>();
+        labels.put("app.kubernetes.io/instance", "test");
+
+        HashMap<String, String> data = new HashMap<>();
+        data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
+        assertTrue(handler.getDeployments(kubernetesClient).size() == 1);
     }
 
     @Test
