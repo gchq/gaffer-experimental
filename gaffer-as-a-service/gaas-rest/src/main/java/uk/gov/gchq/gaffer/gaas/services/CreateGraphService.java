@@ -45,7 +45,7 @@ public class CreateGraphService {
 
         final GafferSpec config = loader.getConfig(CONFIG_YAML_CLASSPATH, gaaSCreateRequestBodyInput.getConfigName());
 
-        gafferClient.createCRD(overrideConfig(config, gaaSCreateRequestBodyInput));
+        gafferClient.createGaffer(overrideConfig(config, gaaSCreateRequestBodyInput));
     }
 
     private Gaffer overrideConfig(final GafferSpec gafferSpecConfig, final GaaSCreateRequestBody overrides) {

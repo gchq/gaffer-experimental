@@ -55,7 +55,7 @@ public class GafferClient {
     @Autowired
     private DeploymentHandler deploymentHandler;
 
-    public GraphUrl createCRD(final Gaffer requestBody) throws GaaSRestApiException {
+    public GraphUrl createGaffer(final Gaffer requestBody) throws GaaSRestApiException {
         try {
             deploymentHandler.onGafferCreate(requestBody);
             return GraphUrl.from(requestBody);
@@ -69,12 +69,12 @@ public class GafferClient {
         }
     }
 
-    public List<GaaSGraph> listAllCRDs() {
+    public List<GaaSGraph> listAllGaffers() {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         return deploymentHandler.getDeployments(kubernetesClient);
     }
 
-    public void deleteCRD(final String crdName) throws GaaSRestApiException {
+    public void deleteGaffer(final String crdName) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
             deploymentHandler.onGafferDelete(crdName, false, kubernetesClient);

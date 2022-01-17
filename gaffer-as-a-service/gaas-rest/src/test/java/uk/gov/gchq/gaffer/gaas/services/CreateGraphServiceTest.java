@@ -56,7 +56,7 @@ public class CreateGraphServiceTest {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", getSchema(), "accumulo"));
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
-        verify(gafferClient, times(1)).createCRD(argumentCaptor.capture());
+        verify(gafferClient, times(1)).createGaffer(argumentCaptor.capture());
         final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
 

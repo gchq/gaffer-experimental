@@ -23,6 +23,7 @@ import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.V1Namespace;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import java.util.ArrayList;
 import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -74,18 +76,31 @@ public class GafferClientTest {
         Gaffer gaffer = new Gaffer()
                 .metaData(new V1ObjectMeta()
                         .namespace("gaffer-namespace")
-                        .name("testgraph")
+                        .name("")
                 ).spec(gafferSpec);
         GraphUrl expected = new GraphUrl("testgraph.apps.k8s.example.com", "/rest");
-        assertEquals(expected.buildUrl(), gafferClient.createCRD(gaffer).buildUrl());
+        assertEquals(expected.buildUrl(), gafferClient.createGaffer(gaffer).buildUrl());
 
     }
 
     @Test
     public void createGraph_ShouldThrowGaasRestApiException_WhenRequestFails() throws GaaSRestApiException, ApiException {
         when(deploymentHandler.onGafferCreate(null)).thenThrow(new ApiException("Failed to create Gaffer as it is null"));
-        //when(gafferClient.createCRD(null)).thenThrow(expectedException);
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createCRD(null));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(null));
+
+        assertEquals("Failed to create Gaffer as it is null", exception.getTitle());
+    }
+
+//create Gaffer with name
+    @Test
+    public void createGraph_ShouldThrowGaasRestApiException_WhenFailsToCreateGaffer() throws GaaSRestApiException, ApiException {
+        GafferSpec gafferSpec = new GafferSpec();
+        Gaffer gaffer = new Gaffer()
+                .metaData(new V1ObjectMeta()
+                        .namespace("gaffer-namespace")
+                ).spec(gafferSpec);
+        when(deploymentHandler.onGafferCreate(gaffer)).thenThrow(new ApiException("Failed to create Gaffer as it is null"));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(gaffer));
 
         assertEquals("Failed to create Gaffer as it is null", exception.getTitle());
     }
@@ -107,7 +122,7 @@ public class GafferClientTest {
 
         List<GaaSGraph> graphs = new ArrayList<>();
         when(deploymentHandler.getDeployments(kubernetesClient)).thenReturn(graphs);
-        List<GaaSGraph> gaaSGraphs = gafferClient.listAllCRDs();
+        List<GaaSGraph> gaaSGraphs = gafferClient.listAllGaffers();
 
         assertEquals(graphs, gaaSGraphs);
     }
@@ -134,4 +149,20 @@ public class GafferClientTest {
 
         assertEquals("mockNameSpac", allNameSpaces.get(0));
     }
+
+    @Test
+    public void delete_ShouldThrowGaasRestApiException_WhenRequestFails() throws ApiException {
+        when(deploymentHandler.onGafferDelete("gaffer", false, kubernetesClient)).thenReturn(true);
+        assertDoesNotThrow(() -> gafferClient.deleteGaffer("gaffer"));
+
+    }
+
+    @Ignore
+    public void deleteGraph_ShouldThrowGaasRestApiException_WhenRequestFails() throws GaaSRestApiException, ApiException {
+        when(deploymentHandler.onGafferDelete(null,  false, kubernetesClient)).thenThrow(new ApiException("Failed to delete Gaffer as it is null"));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.deleteGaffer(null));
+
+        assertEquals("Failed to delete Gaffer as it is null", exception.getTitle());
+    }
+
 }

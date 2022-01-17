@@ -64,7 +64,7 @@ public class GafferClientIT {
 
     @Test
     public void createCRD_whenNullRequestObject_throwsMissingRequestBodyGaasException() {
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createCRD(null));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(null));
 
         final String expected = "Kubernetes Cluster Error: Missing the required parameter 'body' when calling createNamespacedCustomObject(Async)";
         assertEquals(expected, exception.getMessage());
@@ -76,7 +76,7 @@ public class GafferClientIT {
     public void createCRD_whenGraphIdHasUppercase_throws422GaasException() {
         final Gaffer gafferRequest = from(new GaaSCreateRequestBody("UPPERCASEgraph", "A description", getSchema(), MAP_ENABLED));
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createCRD(gafferRequest));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(gafferRequest));
 
         assertEquals(422, exception.getStatusCode());
         assertEquals("Unprocessable Entity", exception.getTitle());
@@ -88,7 +88,7 @@ public class GafferClientIT {
     public void createCRD_whenGraphIdHasSpecialChars_throws422GaasException() {
         final Gaffer gafferRequest = from(new GaaSCreateRequestBody("sp£ci@l_char$", "A description", getSchema(), MAP_ENABLED));
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createCRD(gafferRequest));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(gafferRequest));
 
         assertEquals(422, exception.getStatusCode());
         assertEquals("Unprocessable Entity", exception.getTitle());
@@ -100,7 +100,7 @@ public class GafferClientIT {
     public void createCRD_whenCreateRequestBodyHasNullValues_throws_400GaasException() {
         final Gaffer requestBody = new Gaffer();
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createCRD(requestBody));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(requestBody));
 
         //assertEquals(400, exception.getStatusCode());
         assertEquals("Bad Request", exception.getMessage());
@@ -113,19 +113,19 @@ public class GafferClientIT {
         final GaaSCreateRequestBody gafferRequest = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), MAP_ENABLED);
         createGraphService.createGraph(gafferRequest);
 
-        assertTrue(gafferClient.listAllCRDs().toString().contains("testgraphid"));
+        assertTrue(gafferClient.listAllGaffers().toString().contains("testgraphid"));
     }
 
     @Test
     public void getAllCRD_whenNoGraphs_itemsIsEmpty() throws GaaSRestApiException {
         final List<GraphConfig> list = new ArrayList<>();
 
-        assertEquals(list, gafferClient.listAllCRDs());
+        assertEquals(list, gafferClient.listAllGaffers());
     }
 
     @Test
     public void deleteCRD_whenGraphDoesntExist_throws404GaasException() {
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.deleteCRD("non-existing-crd"));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.deleteGaffer("non-existing-crd"));
 
         assertEquals(404, exception.getStatusCode());
         assertEquals("Not Found", exception.getTitle());
@@ -139,7 +139,7 @@ public class GafferClientIT {
         final GaaSCreateRequestBody gafferRequest = new GaaSCreateRequestBody(existingGraph, TEST_GRAPH_DESCRIPTION, getSchema(), MAP_ENABLED);
         createGraphService.createGraph(gafferRequest);
 
-        assertDoesNotThrow(() -> gafferClient.deleteCRD(existingGraph));
+        assertDoesNotThrow(() -> gafferClient.deleteGaffer(existingGraph));
     }
 
     @Test

@@ -37,6 +37,6 @@ public class GetGaffersService {
     public List<GaaSGraph> getAllGraphs() throws GaaSRestApiException {
         meterRegistry.counter("GetGafferService", "action", "get").increment();
 
-        return gafferClient.listAllCRDs();
+        return gafferClient.listAllGaffers();
     }
 }

@@ -70,7 +70,7 @@ class GetGaffersServiceTest {
                 .problems(TEST_GRAPH_PROBLEMS);
         final List<GaaSGraph> graphList = new ArrayList<>();
         graphList.add(graph);
-        when(gafferClient.listAllCRDs()).thenReturn(graphList);
+        when(gafferClient.listAllGaffers()).thenReturn(graphList);
 
         final List<GaaSGraph> actual = getGafferService.getAllGraphs();
 
@@ -86,7 +86,7 @@ class GetGaffersServiceTest {
     void testGetGraphs_whenGraphRequestIsEmpty() throws GaaSRestApiException {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final List<GaaSGraph> graphList = new ArrayList<>();
-        when(gafferClient.listAllCRDs()).thenReturn(graphList);
+        when(gafferClient.listAllGaffers()).thenReturn(graphList);
 
         final List<GaaSGraph> actual = getGafferService.getAllGraphs();
 
