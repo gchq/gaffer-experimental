@@ -106,8 +106,9 @@ class DeploymentHandlerTest {
         assertEquals("Successfully created secret for new install. Trying pod deployment now...", logsList.get(1).getMessage());
         assertEquals("Install Pod deployment successful", logsList.get(2).getMessage());
     }
+
     @Test
-    void shouldLogMessagesWhenOnGafferCreateThrows(){
+    void shouldLogMessagesWhenOnGafferCreateThrows() {
         Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
         deploymentHandlerLogger.setLevel(Level.ALL);
 
@@ -120,11 +121,13 @@ class DeploymentHandlerTest {
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
         try {
             handler.onGafferCreate(gaffer);
-        } catch(Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         List<ILoggingEvent> logsList = listAppender.list;
         assertEquals("Failed, Error:", logsList.get(1).getMessage());
     }
+
     @Test
     void shouldLogMessagesWhenGetDeploymentsThrows() {
         Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
@@ -139,7 +142,8 @@ class DeploymentHandlerTest {
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build());
         try {
             handler.getDeployments(kubernetesClient);
-        } catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
 
 
         List<ILoggingEvent> logsList = listAppender.list;
@@ -203,7 +207,7 @@ class DeploymentHandlerTest {
         kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
         handler.onGafferDelete("test", kubernetesClient);
 
-        assertNotEquals(deploymentList.getItems().size(), kubernetesClient.apps().deployments().list().getItems().size() );
+        assertNotEquals(deploymentList.getItems().size(), kubernetesClient.apps().deployments().list().getItems().size());
     }
 
     @Test
@@ -219,7 +223,8 @@ class DeploymentHandlerTest {
         deploymentHandler.setCoreV1Api(mock(CoreV1Api.class));
         try {
             deploymentHandler.onGafferDelete("test", new DefaultKubernetesClient());
-        } catch(Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
 
         List<ILoggingEvent> logsList = listAppender.list;
