@@ -18,10 +18,8 @@ package uk.gov.gchq.gaffer.gaas.handlers;
 
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
-import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
@@ -53,23 +51,19 @@ public class DeploymentHandler {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeploymentHandler.class);
-    // worker pod phases
-    private static final String SUCCEEDED = "Succeeded";
-    private static final String FAILED = "Failed";
+
 
     private final String workerNamespace;
 
     @Autowired
     private CoreV1Api coreV1Api;
 
-    private final CustomObjectsApi customObjectsApi;
     private final IKubernetesObjectFactory kubernetesObjectFactory;
 
 
-    public DeploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory, final ApiClient apiClient) {
+    public DeploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory) {
         this.workerNamespace = environment.getProperty(WORKER_NAMESPACE);
         this.kubernetesObjectFactory = kubernetesObjectFactory;
-        this.customObjectsApi = new CustomObjectsApi(apiClient);
     }
 
     // Gaffer events
@@ -101,14 +95,15 @@ public class DeploymentHandler {
                 coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
                 LOGGER.info("Install Pod deployment successful");
             } catch (final ApiException e) {
-                LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e);
+                LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e.getCause());
                 throw e;
             }
         } catch (final ApiException e) {
-            LOGGER.error("Failed to create Secret", e);
+            LOGGER.error("Failed to create Secret", e.getCause());
             throw e;
         } catch (Exception e) {
-            throw new ApiException(e.getLocalizedMessage());
+            LOGGER.error("Failed, Error:", e.getLocalizedMessage());
+            throw new ApiException(e.getCause());
         }
 
         return true;
@@ -118,12 +113,11 @@ public class DeploymentHandler {
      * Starts the Uninstall process for a Gaffer Graph.
      *
      * @param gaffer           The Gaffer Object
-     * @param isCacheStale     Whether the cache entry for the Gaffer resource is stale
      * @param kubernetesClient kubernetesClient
      * @return True if the uninstall process started, false if not
      * @throws ApiException exception
      */
-    public boolean onGafferDelete(final String gaffer, final boolean isCacheStale, final KubernetesClient kubernetesClient) throws ApiException {
+    public boolean onGafferDelete(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
         try {
             kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-api").delete();
             kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui").delete();
@@ -173,7 +167,7 @@ public class DeploymentHandler {
             }
             return graphs;
         } catch (Exception e) {
-            LOGGER.debug("Failed to list all Gaffers. Error: ", e);
+            LOGGER.debug("Failed to list all Gaffers. Error: ", e.getMessage());
             throw e;
         }
     }

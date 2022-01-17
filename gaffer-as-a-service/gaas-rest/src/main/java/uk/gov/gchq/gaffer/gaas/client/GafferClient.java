@@ -33,9 +33,11 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory.from;
 
 @Repository
@@ -77,7 +79,7 @@ public class GafferClient {
     public void deleteGaffer(final String crdName) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
-            deploymentHandler.onGafferDelete(crdName, false, kubernetesClient);
+            deploymentHandler.onGafferDelete(crdName, kubernetesClient);
         } catch (ApiException e) {
             LOGGER.debug("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);
