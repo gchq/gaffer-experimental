@@ -147,13 +147,13 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    public void shouldCreateDeployment() throws ApiException {
+    public void shouldReturnTrueWhenCreateDeploymentSuccessful() throws ApiException {
         ApiClient client = mock(ApiClient.class);
         Gaffer gaffer = getGaffer();
 
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
         handler.setCoreV1Api(mock(CoreV1Api.class));
-        handler.onGafferCreate(gaffer);
+        assertTrue(handler.onGafferCreate(gaffer));
     }
 
     @Test
