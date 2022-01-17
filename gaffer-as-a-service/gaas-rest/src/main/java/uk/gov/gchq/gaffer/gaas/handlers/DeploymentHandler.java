@@ -101,14 +101,15 @@ public class DeploymentHandler {
                 coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
                 LOGGER.info("Install Pod deployment successful");
             } catch (final ApiException e) {
-                LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e);
+                LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e.getCause());
                 throw e;
             }
         } catch (final ApiException e) {
-            LOGGER.error("Failed to create Secret", e);
+            LOGGER.error("Failed to create Secret", e.getCause());
             throw e;
         } catch (Exception e) {
-            throw new ApiException(e.getLocalizedMessage());
+            LOGGER.error("Failed, Error:", e.getLocalizedMessage());
+            throw new ApiException(e.getCause());
         }
 
         return true;

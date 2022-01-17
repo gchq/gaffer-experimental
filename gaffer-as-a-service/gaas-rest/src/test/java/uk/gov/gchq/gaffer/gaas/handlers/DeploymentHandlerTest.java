@@ -91,10 +91,10 @@ class DeploymentHandlerTest {
     @Test
     public void shouldLogMessagesWhenOnGafferCreateCalled() throws ApiException {
         Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
+        deploymentHandlerLogger.setLevel(Level.ALL);
 
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         listAppender.start();
-
         deploymentHandlerLogger.addAppender(listAppender);
 
         Gaffer gaffer = getGaffer();
@@ -108,12 +108,32 @@ class DeploymentHandlerTest {
         assertEquals("Install Pod deployment successful", logsList.get(2).getMessage());
     }
     @Test
+    public void shouldLogMessagesWhenOnGafferCreateThrows(){
+        Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
+        deploymentHandlerLogger.setLevel(Level.ALL);
+
+        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+        listAppender.start();
+        deploymentHandlerLogger.addAppender(listAppender);
+
+        ApiClient client = mock(ApiClient.class);
+        Gaffer gaffer = getGaffer();
+
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
+        try {
+            handler.onGafferCreate(gaffer);
+        } catch(Exception e) {}
+
+        List<ILoggingEvent> logsList = listAppender.list;
+        assertEquals("Failed, Error:", logsList.get(1).getMessage());
+    }
+    @Test
     public void shouldLogMessagesWhenGetDeploymentsThrows() throws ApiException {
         Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
         deploymentHandlerLogger.setLevel(Level.ALL);
+
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         listAppender.start();
-
         deploymentHandlerLogger.addAppender(listAppender);
 
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, mock(ApiClient.class));
@@ -125,6 +145,7 @@ class DeploymentHandlerTest {
 
 
         List<ILoggingEvent> logsList = listAppender.list;
+
         assertEquals("Failed to list all Gaffers. Error: ", logsList.get(0).getMessage());
     }
 
