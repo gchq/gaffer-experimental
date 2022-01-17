@@ -173,7 +173,7 @@ public class DeploymentHandler {
             }
             return graphs;
         } catch (Exception e) {
-            LOGGER.debug("Failed to list all Gaffers. Error: ", e);
+            LOGGER.debug("Failed to list all Gaffers. Error: ", e.getMessage());
             throw e;
         }
     }

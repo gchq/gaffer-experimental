@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.handlers;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
@@ -88,7 +89,7 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    public void shouldLogMessagesCorrectlyWhenOnGafferCreate() throws ApiException {
+    public void shouldLogMessagesWhenOnGafferCreateCalled() throws ApiException {
         Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
 
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
@@ -105,10 +106,26 @@ class DeploymentHandlerTest {
         assertEquals("Received new add request", logsList.get(0).getMessage());
         assertEquals("Successfully created secret for new install. Trying pod deployment now...", logsList.get(1).getMessage());
         assertEquals("Install Pod deployment successful", logsList.get(2).getMessage());
+    }
+    @Test
+    public void shouldLogMessagesWhenGetDeploymentsThrows() throws ApiException {
+        Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
+        deploymentHandlerLogger.setLevel(Level.ALL);
+        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+        listAppender.start();
+
+        deploymentHandlerLogger.addAppender(listAppender);
+
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, mock(ApiClient.class));
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build());
+        try {
+            handler.getDeployments(kubernetesClient);
+        } catch (Exception e){}
 
 
-
-
+        List<ILoggingEvent> logsList = listAppender.list;
+        assertEquals("Failed to list all Gaffers. Error: ", logsList.get(0).getMessage());
     }
 
     @Test
