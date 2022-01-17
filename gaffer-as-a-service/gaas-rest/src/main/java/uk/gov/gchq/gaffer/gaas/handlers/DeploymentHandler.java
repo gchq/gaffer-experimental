@@ -53,9 +53,7 @@ public class DeploymentHandler {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeploymentHandler.class);
-    // worker pod phases
-    private static final String SUCCEEDED = "Succeeded";
-    private static final String FAILED = "Failed";
+
 
     private final String workerNamespace;
 
@@ -119,7 +117,6 @@ public class DeploymentHandler {
      * Starts the Uninstall process for a Gaffer Graph.
      *
      * @param gaffer           The Gaffer Object
-     * @param isCacheStale     Whether the cache entry for the Gaffer resource is stale
      * @param kubernetesClient kubernetesClient
      * @return True if the uninstall process started, false if not
      * @throws ApiException exception
