@@ -25,6 +25,7 @@ import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.api.model.apps.DeploymentListBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentStatusBuilder;
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.kubernetes.client.openapi.ApiClient;
@@ -46,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -68,9 +70,6 @@ class DeploymentHandlerTest {
     private Environment environment;
 
     @MockBean
-    private CoreV1Api coreV1Api;
-
-    @MockBean
     private KubernetesClient kubernetesClient;
 
     @MockBean
@@ -89,7 +88,7 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    public void shouldLogMessagesWhenOnGafferCreateCalled() throws ApiException {
+    void shouldLogMessagesWhenOnGafferCreateCalled() throws ApiException {
         Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
         deploymentHandlerLogger.setLevel(Level.ALL);
 
@@ -108,7 +107,7 @@ class DeploymentHandlerTest {
         assertEquals("Install Pod deployment successful", logsList.get(2).getMessage());
     }
     @Test
-    public void shouldLogMessagesWhenOnGafferCreateThrows(){
+    void shouldLogMessagesWhenOnGafferCreateThrows(){
         Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
         deploymentHandlerLogger.setLevel(Level.ALL);
 
@@ -122,13 +121,13 @@ class DeploymentHandlerTest {
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
         try {
             handler.onGafferCreate(gaffer);
-        } catch(Exception e) {}
+        } catch(Exception ignored) {}
 
         List<ILoggingEvent> logsList = listAppender.list;
         assertEquals("Failed, Error:", logsList.get(1).getMessage());
     }
     @Test
-    public void shouldLogMessagesWhenGetDeploymentsThrows() throws ApiException {
+    void shouldLogMessagesWhenGetDeploymentsThrows() {
         Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
         deploymentHandlerLogger.setLevel(Level.ALL);
 
@@ -141,7 +140,7 @@ class DeploymentHandlerTest {
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build());
         try {
             handler.getDeployments(kubernetesClient);
-        } catch (Exception e){}
+        } catch (Exception ignored){}
 
 
         List<ILoggingEvent> logsList = listAppender.list;
@@ -150,7 +149,7 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    public void shouldReturnDeploymentsWhenGetDeploymentsCalled() {
+    void shouldReturnDeploymentsWhenGetDeploymentsCalled() {
         ApiClient client = mock(ApiClient.class);
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory, client);
         handler.setCoreV1Api(mock(CoreV1Api.class));
@@ -164,11 +163,11 @@ class DeploymentHandlerTest {
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
         kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
-        assertTrue(handler.getDeployments(kubernetesClient).size() == 1);
+        assertEquals(1, handler.getDeployments(kubernetesClient).size());
     }
 
     @Test
-    public void shouldReturnTrueWhenCreateDeploymentSuccessful() throws ApiException {
+    void shouldReturnTrueWhenCreateDeploymentSuccessful() throws ApiException {
         ApiClient client = mock(ApiClient.class);
         Gaffer gaffer = getGaffer();
 
@@ -178,7 +177,7 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    public void shouldThrowException_WhenGafferIsNull() {
+    void shouldThrowException_WhenGafferIsNull() {
         // Given
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
@@ -194,7 +193,7 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    public void shouldUninstallTheHelmDeploymentOnDelete() throws ApiException {
+    void shouldUninstallTheHelmDeploymentOnDelete() throws ApiException {
         // Given
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
@@ -205,10 +204,31 @@ class DeploymentHandlerTest {
 
         kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build());
         kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
-        handler.onGafferDelete("test", false, kubernetesClient);
+        handler.onGafferDelete("test", kubernetesClient);
 
-        assertTrue(kubernetesClient.apps().deployments().list().getItems().size() != deploymentList.getItems().size());
+        assertNotEquals(deploymentList.getItems().size(), kubernetesClient.apps().deployments().list().getItems().size() );
     }
+
+    @Test
+    void shouldLogMessagesWhenOnGafferDeleteThrows() {
+        Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
+        deploymentHandlerLogger.setLevel(Level.ALL);
+
+        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+        listAppender.start();
+        deploymentHandlerLogger.addAppender(listAppender);
+
+        DeploymentHandler deploymentHandler = new DeploymentHandler(environment, kubernetesObjectFactory, mock(ApiClient.class));
+        deploymentHandler.setCoreV1Api(mock(CoreV1Api.class));
+        try {
+            deploymentHandler.onGafferDelete("test", new DefaultKubernetesClient());
+        } catch(Exception ignored) {}
+
+
+        List<ILoggingEvent> logsList = listAppender.list;
+        assertEquals("Failed to delete deployments of test", logsList.get(0).getMessage());
+    }
+
 
     private Gaffer getGaffer() {
         GafferSpec gafferSpec = new GafferSpec();

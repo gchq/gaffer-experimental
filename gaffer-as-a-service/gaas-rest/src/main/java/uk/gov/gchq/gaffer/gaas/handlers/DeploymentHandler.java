@@ -124,7 +124,7 @@ public class DeploymentHandler {
      * @return True if the uninstall process started, false if not
      * @throws ApiException exception
      */
-    public boolean onGafferDelete(final String gaffer, final boolean isCacheStale, final KubernetesClient kubernetesClient) throws ApiException {
+    public boolean onGafferDelete(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
         try {
             kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-api").delete();
             kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui").delete();
