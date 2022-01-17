@@ -26,8 +26,6 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1Status;
-import io.kubernetes.client.spring.extended.controller.annotation.AddWatchEventFilter;
-import io.kubernetes.client.spring.extended.controller.annotation.DeleteWatchEventFilter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -40,9 +38,11 @@ import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.callback.SimpleApiCallback;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_NAMESPACE;
@@ -253,7 +253,7 @@ public class DeploymentHandler {
     }
 
 
-    public void setCoreV1Api(CoreV1Api coreV1Api) {
+    public void setCoreV1Api(final CoreV1Api coreV1Api) {
         this.coreV1Api = coreV1Api;
     }
 

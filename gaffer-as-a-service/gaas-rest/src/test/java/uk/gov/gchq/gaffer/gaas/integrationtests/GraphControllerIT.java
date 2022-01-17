@@ -18,7 +18,6 @@ package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import com.google.gson.Gson;
 import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+
 import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -37,7 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 public class GraphControllerIT extends AbstractTest {
-    private String graphName = "testcontrolleritgraph";
+    private final String graphName = "testcontrolleritgraph";
 
     @Autowired
     private ApiClient apiClient;
