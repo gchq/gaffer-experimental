@@ -28,9 +28,11 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.graph.GraphConfig;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -152,9 +154,8 @@ public class GafferClientIT {
     @AfterEach
     void tearDown() {
         final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        final String name = TEST_GRAPH_ID;
         try {
-            apiInstance.deleteNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, name, null, null, null, null, null);
+            apiInstance.deleteNamespacedCustomObject(GROUP, VERSION, NAMESPACE, PLURAL, TEST_GRAPH_ID, null, null, null, null, null);
         } catch (Exception e) {
             // Do nothing
         }

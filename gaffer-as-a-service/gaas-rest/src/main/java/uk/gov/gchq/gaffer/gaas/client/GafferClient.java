@@ -101,11 +101,9 @@ public class GafferClient {
     }
 
     private List<String> namespacesAsList(final V1NamespaceList v1NamespaceList) {
-        final List<String> list =
-                v1NamespaceList.getItems().stream()
-                        .map(v1Namespace -> v1Namespace.getMetadata().getName())
-                        .collect(Collectors.toList());
-        return list;
+        return v1NamespaceList.getItems().stream()
+                .map(v1Namespace -> v1Namespace.getMetadata().getName())
+                .collect(Collectors.toList());
     }
 
 }
