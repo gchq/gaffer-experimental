@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
@@ -136,7 +137,7 @@ public final class GafferFactory {
             if (notFormattedAuths != null) {
                 notFormattedAuths.forEach((key, value) -> {
                     List<String> auths = formatExistingAuths(key, value);
-                    if (key != null && auths != null && auths.size() != 0) {
+                    if (key != null && auths != null && !auths.isEmpty()) {
                         formattedAuths.put(key, auths);
                     }
                 });
@@ -174,9 +175,9 @@ public final class GafferFactory {
             final List<String> result = new ArrayList();
             if (exsistingAuths instanceof List) {
                 List<String> authsResult = (ArrayList) exsistingAuths;
-                for (int i = 0; i < authsResult.size(); i++) {
-                    if (authsResult.get(i) != "" && authsResult.get(i) != "null" && authsResult.get(i) != null) {
-                        result.add(authsResult.get(i));
+                for (String s : authsResult) {
+                    if (!Objects.equals(s, "") && !Objects.equals(s, "null") && s != null) {
+                        result.add(s);
                     }
                 }
             }
