@@ -33,8 +33,10 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.util.GafferSpecConfigsLoader;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_YAML_CLASSPATH;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
 
@@ -47,7 +49,7 @@ public class CreateFederatedStoreGraphService {
     private GafferSpecConfigsLoader loader;
     @Autowired
     private GraphCommandExecutor graphOperationExecutor;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GafferClient.class);
 
     public void createFederatedStore(final GaaSCreateRequestBody request) throws GaaSRestApiException {
         if (request.getProxySubGraphs().isEmpty()) {
@@ -78,8 +80,8 @@ public class CreateFederatedStoreGraphService {
             }
         });
         if (errorNotifications.size() > 0) {
-            LOGGER.warn("Bad Request, Invalid Proxy Graph URL(s) " + errorNotifications.toString() + 400);
-            throw new GaaSRestApiException("Bad Request", "Invalid Proxy Graph URL(s): " + errorNotifications.toString(), 400);
+            LOGGER.warn("Bad Request, Invalid Proxy Graph URL(s) " + errorNotifications + 400);
+            throw new GaaSRestApiException("Bad Request", "Invalid Proxy Graph URL(s): " + errorNotifications, 400);
         }
     }
 
