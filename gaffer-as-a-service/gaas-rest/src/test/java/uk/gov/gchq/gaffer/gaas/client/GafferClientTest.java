@@ -35,8 +35,10 @@ import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -118,10 +120,14 @@ public class GafferClientTest {
 
 
     @Test
-    public void getGraphs_ShouldReturnEmptyWhenNoGraphsExists() {
+    public void getGraphs_ShouldReturnEmptyWhenNoGraphsExists() throws GaaSRestApiException {
 
         List<GaaSGraph> graphs = new ArrayList<>();
-        when(deploymentHandler.getDeployments(kubernetesClient)).thenReturn(graphs);
+        try {
+            when(deploymentHandler.getDeployments(kubernetesClient)).thenReturn(graphs);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
         List<GaaSGraph> gaaSGraphs = gafferClient.listAllGaffers();
 
         assertEquals(graphs, gaaSGraphs);

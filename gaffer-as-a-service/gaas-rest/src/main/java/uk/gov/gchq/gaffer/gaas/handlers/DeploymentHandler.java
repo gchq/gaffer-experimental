@@ -60,6 +60,8 @@ public class DeploymentHandler {
 
     private final IKubernetesObjectFactory kubernetesObjectFactory;
 
+    private static final String GAFFER_NAME_SUFFIX = "-gaffer-api";
+
 
     public DeploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory) {
         this.workerNamespace = environment.getProperty(WORKER_NAMESPACE);
@@ -95,15 +97,12 @@ public class DeploymentHandler {
                 coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
                 LOGGER.info("Install Pod deployment successful");
             } catch (final ApiException e) {
-                LOGGER.error("Failed to create worker pod" + e.getResponseBody(), e.getCause());
+                LOGGER.debug("Failed to create worker pod");
                 throw e;
             }
-        } catch (final ApiException e) {
-            LOGGER.error("Failed to create Secret", e.getCause());
-            throw e;
-        } catch (Exception e) {
-            LOGGER.error("Failed, Error:", e.getLocalizedMessage());
-            throw new ApiException(e.getCause());
+        } catch (final Exception e) {
+            LOGGER.debug("Failed to create Gaffer");
+            throw new ApiException(e.getLocalizedMessage() );
         }
 
         return true;
@@ -119,7 +118,7 @@ public class DeploymentHandler {
      */
     public boolean onGafferDelete(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
         try {
-            kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-api").delete();
+            kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + GAFFER_NAME_SUFFIX).delete();
             kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui").delete();
             kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-application-properties").delete();
             kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-graph-config").delete();
@@ -130,20 +129,20 @@ public class DeploymentHandler {
             kubernetesClient.secrets().inNamespace(workerNamespace).withName("sh.helm.release.v1." + gaffer + ".v1").delete();
             kubernetesClient.pods().inNamespace(workerNamespace).withName(gaffer + "-install-worker");
         } catch (Exception e) {
-            LOGGER.error("Failed to delete deployments of " + gaffer, e.getLocalizedMessage());
+            LOGGER.debug(String.format("Failed to delete deployments of %s", gaffer));
             throw new ApiException(e.getLocalizedMessage());
         }
         cleanUpGafferDeploymentAfterTearDown(gaffer, workerNamespace);
         return true;
     }
 
-    public List<GaaSGraph> getDeployments(final KubernetesClient kubernetesClient) {
+    public List<GaaSGraph> getDeployments(final KubernetesClient kubernetesClient) throws ApiException {
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
             List<String> apiDeployments = new ArrayList<>();
             List<GaaSGraph> graphs = new ArrayList<>();
             for (final Deployment deployment : deploymentList) {
-                if (deployment.getMetadata().getName().contains("-gaffer-api")) {
+                if (deployment.getMetadata().getName().contains(GAFFER_NAME_SUFFIX)) {
                     apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
                 }
             }
@@ -155,7 +154,7 @@ public class DeploymentHandler {
                 if (getValueOfConfig(graphConfig, "configName") != null) {
                     gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
                 }
-                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-api").get().getStatus().getAvailableReplicas();
+                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
                 if (availableReplicas >= 1) {
                     gaaSGraph.status(RestApiStatus.UP);
                 } else {
@@ -167,8 +166,8 @@ public class DeploymentHandler {
             }
             return graphs;
         } catch (Exception e) {
-            LOGGER.debug("Failed to list all Gaffers. Error: ", e.getMessage());
-            throw e;
+            LOGGER.debug("Failed to list all Gaffers.");
+            throw new ApiException(e.getLocalizedMessage());
         }
     }
 
