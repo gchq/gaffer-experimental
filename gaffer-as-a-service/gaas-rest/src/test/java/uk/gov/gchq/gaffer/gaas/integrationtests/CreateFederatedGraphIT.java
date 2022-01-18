@@ -28,9 +28,11 @@ import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -38,7 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class CreateFederatedGraphIT extends AbstractTest {
 
     private static final String VALID_ROOT = "/rest";
-    private static final String GRAPH_ID = "testfederaredgraphid";
+    private static final String GRAPH_ID = "testfederatedgraphid";
 
     @Autowired
     private ApiClient apiClient;

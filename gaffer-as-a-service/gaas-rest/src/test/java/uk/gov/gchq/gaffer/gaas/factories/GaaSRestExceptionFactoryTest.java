@@ -20,6 +20,7 @@ import io.kubernetes.client.openapi.ApiException;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.gchq.gaffer.gaas.util.ApiExceptionTestFactory.makeApiException_custom;
@@ -53,7 +54,7 @@ public class GaaSRestExceptionFactoryTest {
     }
 
     @Test
-    public void convertAlreadyExistsApiExceptionToGaasApiException() {
+    public void convertAlreadyExistsApiExceptionToGaaSApiException() {
         final ApiException apiException = makeApiException_duplicateGraph();
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
@@ -64,7 +65,7 @@ public class GaaSRestExceptionFactoryTest {
     }
 
     @Test
-    public void convertApiExceptionToGaasApiException() {
+    public void convertApiExceptionToGaaSApiException() {
         final ApiException apiException = makeApiException_timeout();
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);

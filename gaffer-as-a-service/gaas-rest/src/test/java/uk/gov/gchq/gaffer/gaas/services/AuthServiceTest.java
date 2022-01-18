@@ -30,6 +30,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -82,7 +83,7 @@ public class AuthServiceTest {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final JwtRequest user = new JwtRequest();
         user.setUsername("invalid_username");
-        user.setPassword("paaaassword");
+        user.setPassword("invalid_password");
 
         assertThrows(UsernameNotFoundException.class, () -> authService.getToken(user));
     }

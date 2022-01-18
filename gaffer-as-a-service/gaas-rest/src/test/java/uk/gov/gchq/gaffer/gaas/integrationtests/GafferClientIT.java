@@ -65,7 +65,7 @@ public class GafferClientIT {
     }
 
     @Test
-    public void createCRD_whenNullRequestObject_throwsMissingRequestBodyGaasException() {
+    public void createCRD_whenNullRequestObject_throwsMissingRequestBodyGaaSException() {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(null));
 
         final String expected = "Kubernetes Cluster Error: Missing the required parameter 'body' when calling createNamespacedCustomObject(Async)";
@@ -75,7 +75,7 @@ public class GafferClientIT {
     }
 
     @Test
-    public void createCRD_whenGraphIdHasUppercase_throws422GaasException() {
+    public void createCRD_whenGraphIdHasUppercase_throws422GaaSException() {
         final Gaffer gafferRequest = from(new GaaSCreateRequestBody("UPPERCASEgraph", "A description", getSchema(), MAP_ENABLED));
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(gafferRequest));
@@ -87,7 +87,7 @@ public class GafferClientIT {
     }
 
     @Test
-    public void createCRD_whenGraphIdHasSpecialChars_throws422GaasException() {
+    public void createCRD_whenGraphIdHasSpecialChars_throws422GaaSException() {
         final Gaffer gafferRequest = from(new GaaSCreateRequestBody("sp£ci@l_char$", "A description", getSchema(), MAP_ENABLED));
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(gafferRequest));
@@ -99,7 +99,7 @@ public class GafferClientIT {
     }
 
     @Test
-    public void createCRD_whenCreateRequestBodyHasNullValues_throws_400GaasException() {
+    public void createCRD_whenCreateRequestBodyHasNullValues_throws_400GaaSException() {
         final Gaffer requestBody = new Gaffer();
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(requestBody));
@@ -126,7 +126,7 @@ public class GafferClientIT {
     }
 
     @Test
-    public void deleteCRD_whenGraphDoesntExist_throws404GaasException() {
+    public void deleteCRD_whenGraphDoesntExist_throws404GaaSException() {
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.deleteGaffer("non-existing-crd"));
 
         assertEquals(404, exception.getStatusCode());
