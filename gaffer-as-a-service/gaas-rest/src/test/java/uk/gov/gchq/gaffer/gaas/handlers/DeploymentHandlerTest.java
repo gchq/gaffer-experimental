@@ -125,7 +125,7 @@ class DeploymentHandlerTest {
         }
 
         List<ILoggingEvent> logsList = listAppender.list;
-        assertEquals("Failed, Error:", logsList.get(1).getMessage());
+        assertEquals("Failed to create Gaffer", logsList.get(1).getMessage());
     }
 
     @Test
@@ -148,11 +148,11 @@ class DeploymentHandlerTest {
 
         List<ILoggingEvent> logsList = listAppender.list;
 
-        assertEquals("Failed to list all Gaffers. Error: ", logsList.get(0).getMessage());
+        assertEquals("Failed to list all Gaffers.", logsList.get(0).getMessage());
     }
 
     @Test
-    void shouldReturnDeploymentsWhenGetDeploymentsCalled() {
+    void shouldReturnDeploymentsWhenGetDeploymentsCalled() throws ApiException {
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
         handler.setCoreV1Api(mock(CoreV1Api.class));
 
