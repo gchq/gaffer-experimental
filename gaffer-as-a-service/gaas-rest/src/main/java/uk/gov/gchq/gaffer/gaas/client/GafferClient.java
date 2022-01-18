@@ -22,8 +22,6 @@ import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +31,6 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
-
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,17 +100,6 @@ public class GafferClient {
                         .map(v1Namespace -> v1Namespace.getMetadata().getName())
                         .collect(Collectors.toList());
         return list;
-    }
-
-    private String getValueOfConfig(final Collection<String> value, final String fieldToGet) {
-        JSONArray jsonArray = new JSONArray(value.toString());
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject object = jsonArray.getJSONObject(i);
-            if (object.get(fieldToGet) != null) {
-                return (object.get(fieldToGet).toString());
-            }
-        }
-        return null;
     }
 
 }
