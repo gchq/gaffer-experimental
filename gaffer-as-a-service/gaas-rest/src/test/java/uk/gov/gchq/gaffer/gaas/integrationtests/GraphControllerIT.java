@@ -218,7 +218,7 @@ public class GraphControllerIT extends AbstractTest {
 
     @AfterEach
     void tearDown() throws InterruptedException {
-        //This is necessary due to the fact that after each deployment OpenShift needs a few seconds to delete all of the resources associated with the
+        //This is necessary due to the fact that after each deployment OpenShift needs a few seconds to delete all the resources associated with the
         // graph which is created in the tests.
         TimeUnit.SECONDS.sleep(60);
         try {

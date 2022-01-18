@@ -26,6 +26,7 @@ import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,25 +36,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_K8S_METADATA_LABEL;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_OPERATION_DECLARATION_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.HOOKS_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.*;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 /**
  * GafferHelmValuesFactory is a factory class that creates a Gaffer Helm Values Object that can be passed to the
- * Kubernetes java client and use helm to deploy a Gaffer custom resource instance to a Kubernetes cluster..
+ * Kubernetes java client and use helm to deploy a Gaffer custom resource instance to a Kubernetes cluster.
  * <p>
  * See <a href="https://github.com/gchq/gaffer-docker/blob/develop/kubernetes/gaffer/values.yaml">values.yaml</a> for
  * the default helm chart values and documentation how Gaffer is deployed to Kubernetes via helm.
