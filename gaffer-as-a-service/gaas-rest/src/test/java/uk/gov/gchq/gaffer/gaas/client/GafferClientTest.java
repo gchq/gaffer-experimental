@@ -152,15 +152,15 @@ public class GafferClientTest {
 
     @Test
     public void delete_ShouldThrowGaasRestApiException_WhenRequestFails() throws ApiException {
-        when(deploymentHandler.onGafferDelete("gaffer",  kubernetesClient)).thenReturn(true);
+        when(deploymentHandler.onGafferDelete("gaffer", kubernetesClient)).thenReturn(true);
         assertDoesNotThrow(() -> gafferClient.deleteGaffer("gaffer"));
 
     }
 
     @Ignore
     public void deleteGraph_ShouldThrowGaasRestApiException_WhenRequestFails() throws GaaSRestApiException, ApiException {
-        when(deploymentHandler.onGafferDelete("Gaffer", kubernetesClient)).thenThrow(new ApiException("Failed to delete Gaffer as it is null"));
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.deleteGaffer("Gaffer"));
+        when(deploymentHandler.onGafferDelete(null, kubernetesClient)).thenThrow(new ApiException("Failed to delete Gaffer as it is null"));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.deleteGaffer(null));
 
         assertEquals("Failed to delete Gaffer as it is null", exception.getTitle());
     }
