@@ -84,7 +84,7 @@ public class DeploymentHandler {
             String secretName = gaffer.getSpec().getNestedObject("graph", "config", "graphId").toString();
             if (secretName == null) {
                 // This would be really weird, and we'd want to know about it.
-                throw new RuntimeException("A secret was generated without a name. Unable to proceed");
+                throw new ApiException("A secret was generated without a name. Unable to proceed");
             }
             gaffer.metaData(new V1ObjectMeta()
                     .namespace(workerNamespace)
@@ -130,8 +130,8 @@ public class DeploymentHandler {
             kubernetesClient.secrets().inNamespace(workerNamespace).withName("sh.helm.release.v1." + gaffer + ".v1").delete();
             kubernetesClient.pods().inNamespace(workerNamespace).withName(gaffer + "-install-worker");
         } catch (Exception e) {
-            LOGGER.error("Failed to delete deployments of " + gaffer, e);
-            throw e;
+            LOGGER.error("Failed to delete deployments of " + gaffer, e.getLocalizedMessage());
+            throw new ApiException(e.getLocalizedMessage());
         }
         cleanUpGafferDeploymentAfterTearDown(gaffer, workerNamespace);
         return true;

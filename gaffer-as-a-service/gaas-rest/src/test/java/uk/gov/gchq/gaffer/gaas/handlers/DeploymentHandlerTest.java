@@ -235,7 +235,7 @@ class DeploymentHandlerTest {
     private Gaffer getGaffer() {
         GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject("name", GRAPH_ID_KEY);
-        gafferSpec.putNestedObject("somedesc", DESCRIPTION_KEY);
+        gafferSpec.putNestedObject("someDescription", DESCRIPTION_KEY);
         gafferSpec.putNestedObject("mapStore", CONFIG_NAME_KEY);
         return new Gaffer()
                 .metaData(new V1ObjectMeta()
