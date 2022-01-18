@@ -102,7 +102,7 @@ public class DeploymentHandler {
             }
         } catch (final Exception e) {
             LOGGER.debug("Failed to create Gaffer");
-            throw new ApiException(e.getLocalizedMessage() );
+            throw new ApiException(e.getLocalizedMessage());
         }
 
         return true;
