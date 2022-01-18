@@ -86,7 +86,7 @@ public class GafferClientTest {
     }
 
     @Test
-    public void createGraph_ShouldThrowGaasRestApiException_WhenRequestFails() throws GaaSRestApiException, ApiException {
+    public void createGraph_ShouldThrowGaaSRestApiException_WhenRequestFails() throws GaaSRestApiException, ApiException {
         when(deploymentHandler.onGafferCreate(null)).thenThrow(new ApiException("Failed to create Gaffer as it is null"));
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.createGaffer(null));
 
@@ -95,7 +95,7 @@ public class GafferClientTest {
 
 //create Gaffer with name
     @Test
-    public void createGraph_ShouldThrowGaasRestApiException_WhenFailsToCreateGaffer() throws GaaSRestApiException, ApiException {
+    public void createGraph_ShouldThrowGaaSRestApiException_WhenFailsToCreateGaffer() throws GaaSRestApiException, ApiException {
         GafferSpec gafferSpec = new GafferSpec();
         Gaffer gaffer = new Gaffer()
                 .metaData(new V1ObjectMeta()
@@ -141,8 +141,8 @@ public class GafferClientTest {
         List<V1Namespace> v1Namespace = new ArrayList<>();
         V1Namespace v1Namespace1 = new V1Namespace();
         V1ObjectMeta metadata = new V1ObjectMeta();
-        metadata.setName("mockNameSpac");
-        metadata.setNamespace("mockNameSpac");
+        metadata.setName("mockNameSpace");
+        metadata.setNamespace("mockNameSpace");
         v1Namespace1.setMetadata(metadata);
         v1Namespace.add(v1Namespace1);
         v1NamespaceList.setItems(v1Namespace);
@@ -153,18 +153,18 @@ public class GafferClientTest {
 
         List<String> allNameSpaces = gafferClient.getAllNameSpaces();
 
-        assertEquals("mockNameSpac", allNameSpaces.get(0));
+        assertEquals("mockNameSpace", allNameSpaces.get(0));
     }
 
     @Test
-    public void delete_ShouldThrowGaasRestApiException_WhenRequestFails() throws ApiException {
+    public void delete_ShouldThrowGaaSRestApiException_WhenRequestFails() throws ApiException {
         when(deploymentHandler.onGafferDelete("gaffer", kubernetesClient)).thenReturn(true);
         assertDoesNotThrow(() -> gafferClient.deleteGaffer("gaffer"));
 
     }
 
     @Ignore
-    public void deleteGraph_ShouldThrowGaasRestApiException_WhenRequestFails() throws GaaSRestApiException, ApiException {
+    public void deleteGraph_ShouldThrowGaaSRestApiException_WhenRequestFails() throws GaaSRestApiException, ApiException {
         when(deploymentHandler.onGafferDelete(null, kubernetesClient)).thenThrow(new ApiException("Failed to delete Gaffer as it is null"));
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> gafferClient.deleteGaffer(null));
 
