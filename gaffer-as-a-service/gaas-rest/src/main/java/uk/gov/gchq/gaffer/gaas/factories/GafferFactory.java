@@ -28,7 +28,6 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +38,17 @@ import java.util.Set;
 
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.*;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_K8S_METADATA_LABEL;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_OPERATION_DECLARATION_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.HOOKS_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
@@ -76,7 +85,6 @@ public final class GafferFactory {
     }
 
     private static GafferSpec overrideGafferSpecConfig(final GafferSpec config, final GaaSCreateRequestBody overrides) {
-        final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
         config.putNestedObject(overrides.getGraphId(), GRAPH_ID_KEY);
         config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
         config.putNestedObject(overrides.getConfigName(), CONFIG_NAME_KEY);
@@ -105,8 +113,8 @@ public final class GafferFactory {
 
         final Map<String, List> formattedAuths = getFormattedAuths(existingAuths);
 
-        if (formattedAuths.isEmpty() || (formattedAuths != null && !formattedAuths.containsKey(AddGraph.class.getName()))) {
-            formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList(DEFAULT_SYSTEM_USER)));
+        if (formattedAuths.isEmpty() || !formattedAuths.containsKey(AddGraph.class.getName())) {
+            formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Collections.singletonList(DEFAULT_SYSTEM_USER)));
         }
         final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
         opAuthoriser.put("class", OperationAuthoriser.class.getName());
@@ -177,7 +185,7 @@ public final class GafferFactory {
             }
             return result;
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private GafferFactory() {
