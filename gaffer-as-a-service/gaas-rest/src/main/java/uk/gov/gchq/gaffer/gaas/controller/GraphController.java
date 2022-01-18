@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.controller;
 import io.kubernetes.client.openapi.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
@@ -71,6 +73,9 @@ public class GraphController {
     @Value("${cognito.enabled: false}")
     boolean cognitoEnabled;
 
+    @Value("${openshift.enabled: false}")
+    boolean openshiftEnabled;
+
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
         if (!cognitoEnabled) {
@@ -81,40 +86,55 @@ public class GraphController {
     }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody) throws GaaSRestApiException {
+    public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader HttpHeaders headers) throws GaaSRestApiException {
         if (requestBody.isFederatedStoreRequest()) {
             createFederatedStoreGraphService.createFederatedStore(requestBody);
         } else {
             createGraphService.createGraph(requestBody);
         }
-        return new ResponseEntity(HttpStatus.CREATED);
+        return getResponseEntity(new ResponseEntity(HttpStatus.CREATED),headers);
     }
 
     @GetMapping(path = "/graphs", produces = "application/json")
-    public ResponseEntity<List<GaaSGraph>> getAllGraphs() throws GaaSRestApiException {
+    public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("graphs", getGaffersService.getAllGraphs());
-
-        return new ResponseEntity(responseBody, HttpStatus.OK);
+        return getResponseEntity(new ResponseEntity(responseBody, HttpStatus.OK),headers);
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
-    public ResponseEntity<List<GafferConfigSpec>> getGafferConfigSpecs() throws GaaSRestApiException {
+    public ResponseEntity<List<GafferConfigSpec>> getGafferConfigSpecs(@RequestHeader HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> body = new HashMap<>();
         body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
 
-        return new ResponseEntity(body, HttpStatus.OK);
+        return getResponseEntity(new ResponseEntity(body, HttpStatus.OK),headers);
     }
 
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
-    public ResponseEntity<?> deleteGraph(@PathVariable final String graphId) throws GaaSRestApiException {
+    public ResponseEntity<?> deleteGraph(@PathVariable final String graphId, @RequestHeader HttpHeaders headers) throws GaaSRestApiException {
         deleteGraphService.deleteGraph(graphId);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return getResponseEntity(new ResponseEntity(HttpStatus.NO_CONTENT), headers);
     }
 
     @GetMapping(path = "/namespaces", produces = "application/json")
-    public ResponseEntity<?> getNamespaces() throws GaaSRestApiException {
+    public ResponseEntity<?> getNamespaces(@RequestHeader HttpHeaders headers) throws GaaSRestApiException {
         final List<String> namespaces = getNamespacesService.getNamespaces();
-        return new ResponseEntity(namespaces, HttpStatus.OK);
+        return getResponseEntity(new ResponseEntity(namespaces, HttpStatus.OK), headers);
+    }
+
+    private Boolean checkForXEmail(HttpHeaders headers) {
+        return (headers.get("x-email") != null);
+    }
+
+    public ResponseEntity getResponseEntity(ResponseEntity responseEntity, HttpHeaders headers) {
+        if (openshiftEnabled) {
+            if (checkForXEmail(headers)) {
+                return responseEntity;
+            } else {
+                return new ResponseEntity(HttpStatus.FORBIDDEN);
+            }
+        } else {
+            return responseEntity;
+        }
     }
 }

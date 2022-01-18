@@ -64,6 +64,7 @@ class LoginModal extends React.Component<IProps, IState> {
             signOutMessage: "",
         };
     }
+
     getQueryStringParams = (query: any) =>
         query
             ? (/^[?#]/.test(query) ? query.slice(1) : query).split("&").reduce((params: any, param: any) => {
@@ -72,6 +73,7 @@ class LoginModal extends React.Component<IProps, IState> {
                   return params;
               }, {})
             : {};
+
     public async componentDidMount() {
         const idToken = this.getQueryStringParams(window.location.href.split("#").pop())["id_token"];
         if (idToken) {
@@ -82,6 +84,7 @@ class LoginModal extends React.Component<IProps, IState> {
             this.props.onLogin(username);
         }
     }
+
     private readonly authClient: IAuthClient = new AuthClientFactory().create();
 
     public render() {

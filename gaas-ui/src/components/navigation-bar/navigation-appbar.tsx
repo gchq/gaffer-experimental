@@ -111,7 +111,11 @@ const NavigationAppbar: React.FC = (props: any) => {
     };
 
     const buildUsername = () => (username.includes("@") ? username.slice(0, username.indexOf("@")) : username);
-
+    useEffect(() => {
+        if ((Config.REACT_APP_API_PLATFORM === "OPENSHIFT" && RestClient.getEmail() !== "") || undefined) {
+            setUsername(RestClient.getEmail());
+        }
+    });
     return (
         <div className={classes.root} aria-label={"navigation-appbar"}>
             <CssBaseline />
@@ -120,7 +124,9 @@ const NavigationAppbar: React.FC = (props: any) => {
                     <Typography variant="h6" className={classes.title}>
                         Kai: Graph As A Service
                     </Typography>
-                    <LoginModal onLogin={(username) => setUsername(username)} />
+                    {Config.REACT_APP_API_PLATFORM !== "OPENSHIFT" && (
+                        <LoginModal onLogin={(username) => setUsername(username)} />
+                    )}
                 </Toolbar>
             </AppBar>
 
