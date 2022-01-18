@@ -26,12 +26,13 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest
-public class GraphControllerAuthTest {
+class GraphControllerAuthTest {
 
     protected MockMvc mvc;
 
@@ -45,7 +46,7 @@ public class GraphControllerAuthTest {
     private WebApplicationContext webApplicationContext;
 
     @Test
-    public void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
+    void authEndpointShouldReturn401StatusWhenValidUsernameAndPassword() throws Exception {
         this.mvc = webAppContextSetup(webApplicationContext).build();
         final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
 

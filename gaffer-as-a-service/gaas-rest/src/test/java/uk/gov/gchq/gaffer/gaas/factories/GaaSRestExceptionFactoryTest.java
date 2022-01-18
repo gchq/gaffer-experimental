@@ -29,10 +29,10 @@ import static uk.gov.gchq.gaffer.gaas.util.ApiExceptionTestFactory.makeApiExcept
 import static uk.gov.gchq.gaffer.gaas.util.ApiExceptionTestFactory.makeApiException_timeout;
 
 @UnitTest
-public class GaaSRestExceptionFactoryTest {
+class GaaSRestExceptionFactoryTest {
 
     @Test
-    public void convertApiExceptionWhenResponseBodyIsNotJson() {
+    void convertApiExceptionWhenResponseBodyIsNotJson() {
         final ApiException apiException = makeApiException_custom("ServerError", 500, "Not JSON");
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
@@ -43,7 +43,7 @@ public class GaaSRestExceptionFactoryTest {
     }
 
     @Test
-    public void convertApiExceptionWhenApiNotLoggedInToCluster() {
+    void convertApiExceptionWhenApiNotLoggedInToCluster() {
         final ApiException apiException = makeApiException_loggedOutOfCluster();
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
@@ -54,7 +54,7 @@ public class GaaSRestExceptionFactoryTest {
     }
 
     @Test
-    public void convertAlreadyExistsApiExceptionToGaaSApiException() {
+    void convertAlreadyExistsApiExceptionToGaaSApiException() {
         final ApiException apiException = makeApiException_duplicateGraph();
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
@@ -65,7 +65,7 @@ public class GaaSRestExceptionFactoryTest {
     }
 
     @Test
-    public void convertApiExceptionToGaaSApiException() {
+    void convertApiExceptionToGaaSApiException() {
         final ApiException apiException = makeApiException_timeout();
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);

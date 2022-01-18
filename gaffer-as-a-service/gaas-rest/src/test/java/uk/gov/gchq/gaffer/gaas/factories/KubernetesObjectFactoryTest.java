@@ -24,7 +24,9 @@ import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
+
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -35,7 +37,7 @@ import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
-public class KubernetesObjectFactoryTest {
+class KubernetesObjectFactoryTest {
 
     private Environment env;
 
@@ -51,7 +53,7 @@ public class KubernetesObjectFactoryTest {
     }
 
     @Test
-    public void shouldUseEnvironmentToDetermineHelmRepo() {
+    void shouldUseEnvironmentToDetermineHelmRepo() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
@@ -71,7 +73,7 @@ public class KubernetesObjectFactoryTest {
     }
 
     @Test
-    public void shouldUseEnvironmentToDetermineImage() {
+    void shouldUseEnvironmentToDetermineImage() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
@@ -90,7 +92,7 @@ public class KubernetesObjectFactoryTest {
     }
 
     @Test
-    public void shouldUseEnvironmentToDetermineRestartPolicy() {
+    void shouldUseEnvironmentToDetermineRestartPolicy() {
         // Given
         when(env.getProperty(WORKER_RESTART_POLICY)).thenReturn("OnFailure");
 
@@ -112,7 +114,7 @@ public class KubernetesObjectFactoryTest {
     }
 
     @Test
-    public void shouldUseEnvironmentToDetermineServiceAccountName() {
+    void shouldUseEnvironmentToDetermineServiceAccountName() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
@@ -131,7 +133,7 @@ public class KubernetesObjectFactoryTest {
     }
 
     @Test
-    public void shouldRunTheHelmDeploymentInTheSameNamespaceThatTheGafferGraphHas() {
+    void shouldRunTheHelmDeploymentInTheSameNamespaceThatTheGafferGraphHas() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
