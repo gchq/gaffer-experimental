@@ -81,16 +81,16 @@ public class DeploymentHandler {
         try {
             coreV1Api.createNamespacedSecret(workerNamespace, helmValuesSecret, null, null, null);
             LOGGER.info("Successfully created secret for new install. Trying pod deployment now...");
-            String secretname = gaffer.getSpec().getNestedObject("graph", "config", "graphId").toString();
-            if (secretname == null) {
-                // This would be really weird and we'd want to know about it.
+            String secretName = gaffer.getSpec().getNestedObject("graph", "config", "graphId").toString();
+            if (secretName == null) {
+                // This would be really weird, and we'd want to know about it.
                 throw new RuntimeException("A secret was generated without a name. Unable to proceed");
             }
             gaffer.metaData(new V1ObjectMeta()
                     .namespace(workerNamespace)
-                    .name(secretname)
+                    .name(secretName)
             );
-            V1Pod pod = kubernetesObjectFactory.createHelmPod(gaffer, HelmCommand.INSTALL, secretname);
+            V1Pod pod = kubernetesObjectFactory.createHelmPod(gaffer, HelmCommand.INSTALL, secretName);
             try {
                 coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
                 LOGGER.info("Install Pod deployment successful");
@@ -110,11 +110,11 @@ public class DeploymentHandler {
     }
 
     /**
-     * Starts the Uninstall process for a Gaffer Graph.
+     * Starts the Uninstallation process for a Gaffer Graph.
      *
      * @param gaffer           The Gaffer Object
      * @param kubernetesClient kubernetesClient
-     * @return True if the uninstall process started, false if not
+     * @return True if the uninstallation process started, false if not
      * @throws ApiException exception
      */
     public boolean onGafferDelete(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
@@ -184,7 +184,7 @@ public class DeploymentHandler {
     }
 
     /**
-     * Removes any resources left after a successful uninstall including:
+     * Removes any resources left after a successful uninstallation including:
      * <ul>
      *     <li>Any orphaned pods - typically post install hooks</li>
      *     <li>Any PVCs associated with the deployment</li>
