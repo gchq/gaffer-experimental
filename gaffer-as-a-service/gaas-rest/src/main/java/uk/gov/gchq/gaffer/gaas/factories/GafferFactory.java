@@ -162,9 +162,7 @@ public final class GafferFactory {
         final Set<Object> objects = new HashSet<>();
         objects.add(proxyUrlDeclaration);
 
-        for (final Object operation : operations) {
-            objects.add(operation);
-        }
+        objects.addAll(operations);
 
         return objects;
     }
