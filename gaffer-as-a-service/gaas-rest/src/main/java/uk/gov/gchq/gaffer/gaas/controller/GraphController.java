@@ -117,4 +117,13 @@ public class GraphController {
         final List<String> namespaces = getNamespacesService.getNamespaces();
         return new ResponseEntity(namespaces, HttpStatus.OK);
     }
+
+    @GetMapping(path = "/whoami", produces = "application/json")
+    public ResponseEntity<String> getOwner(@RequestBody final JwtRequest authenticationRequest) throws Exception {
+        if (!cognitoEnabled) {
+            final String ownerName = authService.getOwnerName(authenticationRequest);
+            return ResponseEntity.ok(ownerName);
+        }
+        return null;
+    }
 }
