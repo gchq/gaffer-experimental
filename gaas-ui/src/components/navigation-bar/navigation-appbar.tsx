@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppRoutes from "./AppRoutes";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import {
@@ -21,6 +21,8 @@ import LocalLibraryIcon from "@material-ui/icons/LocalLibrary";
 import CategoryIcon from "@material-ui/icons/Category";
 import LoginModal from "../login/login-modal";
 import { NavLink } from "react-router-dom";
+import { RestClient } from "../../rest/clients/rest-client";
+import { Config } from "../../rest/config";
 
 const drawerWidth = 240;
 
