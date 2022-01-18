@@ -21,13 +21,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @UnitTest
-public class GafferSpecConfigsLoaderTest {
+class GafferSpecConfigsLoaderTest {
 
     private static final String[] GAFFER_STORE_CLASS_NESTED_KEYS = {"graph", "storeProperties", "gaffer.store.class"};
     private static final String[] GAFFER_INVALID_STORE_CLASS_NESTED_KEYS = {"graph", "invalidStoreProperties", "gaffer.store.class"};
@@ -38,7 +40,7 @@ public class GafferSpecConfigsLoaderTest {
     private GafferSpecConfigsLoader loader;
 
     @Test
-    public void getConfig_shouldReturnNewGafferSpec_whenFileIsEmpty() throws GaaSRestApiException {
+    void getConfig_shouldReturnNewGafferSpec_whenFileIsEmpty() throws GaaSRestApiException {
         final GafferSpec actual = loader.getConfig("/invalidconfigs", "emptyConfig");
 
         final GafferSpec expected = new GafferSpec();
@@ -46,7 +48,7 @@ public class GafferSpecConfigsLoaderTest {
     }
 
     @Test
-    public void getConfig_shouldReturnConfigAsYamlTreeMap_whenFileNameExists() throws GaaSRestApiException {
+    void getConfig_shouldReturnConfigAsYamlTreeMap_whenFileNameExists() throws GaaSRestApiException {
         final GafferSpec actual = loader.getConfig("/testconfigs", "accumulo");
 
         final GafferSpec expected = new GafferSpec();
@@ -55,7 +57,7 @@ public class GafferSpecConfigsLoaderTest {
     }
 
     @Test
-    public void getConfig_shouldThrowNotFoundGaaSException_whenConfigFileDoesNotExist() {
+    void getConfig_shouldThrowNotFoundGaaSException_whenConfigFileDoesNotExist() {
         final GaaSRestApiException
                 exception = assertThrows(GaaSRestApiException.class, () -> loader.getConfig("/testconfigs", "doesnotexist_config"));
 
@@ -64,7 +66,7 @@ public class GafferSpecConfigsLoaderTest {
     }
 
     @Test
-    public void listConfigSpecs_shouldReturnProxiesConfigSpec_whenStorePropStoreClassIsFederatedStore() throws GaaSRestApiException {
+    void listConfigSpecs_shouldReturnProxiesConfigSpec_whenStorePropStoreClassIsFederatedStore() throws GaaSRestApiException {
         final Map<String, GafferSpec> specs = loader.listConfigSpecs("/testConfigOD");
         final String expected = "{\"federatedOpDeclaration\":{\"graph\":{\"storeProperties\":{\"gaffer.store.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStore\",\"gaffer.store.properties.class\":\"uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties\",\"gaffer.serialiser.json.modules\":\"uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules\"},\"operationDeclarations\":[{\"operation\":\"uk.gov.gchq.gaffer.operation.impl.generate.GenerateElements\",\"handler\":{\"class\":\"uk.gov.gchq.gaffer.store.operation.handler.generate.GenerateElementsHandler\"}},{\"operation\":\"uk.gov.gchq.gaffer.operation.impl.generate.GenerateTest\",\"handler\":{\"class\":\"uk.gov.gchq.gaffer.store.operation.handler.generate.GenerateTestHandler\"}}]}}}";
 
@@ -73,7 +75,7 @@ public class GafferSpecConfigsLoaderTest {
     }
 
     @Test
-    public void listConfigSpecs_shouldReturnSchemaConfigSpecsAsDefault_forAnyInvalidConfigSpecs() throws GaaSRestApiException {
+    void listConfigSpecs_shouldReturnSchemaConfigSpecsAsDefault_forAnyInvalidConfigSpecs() throws GaaSRestApiException {
         final Map<String, GafferSpec> specs = loader.listConfigSpecs("/invalidconfigs");
 
         final HashMap<String, GafferSpec> expected = new HashMap<>();
