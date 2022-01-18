@@ -38,7 +38,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @UnitTest
-public class AuthServiceTest {
+class AuthServiceTest {
 
     @Autowired
     AuthService authService;
@@ -53,7 +53,7 @@ public class AuthServiceTest {
     private Counter mockCounter;
 
     @Test
-    public void getToken_shouldThrowBadCredentials_whenUserHasNullUsernameAndPassword() {
+    void getToken_shouldThrowBadCredentials_whenUserHasNullUsernameAndPassword() {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final JwtRequest user = new JwtRequest();
 
@@ -61,7 +61,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void getToken_shouldThrowBadCredentials_whenUserHasNullUsername() {
+    void getToken_shouldThrowBadCredentials_whenUserHasNullUsername() {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final JwtRequest user = new JwtRequest();
         user.setPassword("p@$$word");
@@ -70,7 +70,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void getToken_shouldThrowBadCredentials_whenUserHasNullPassword() {
+    void getToken_shouldThrowBadCredentials_whenUserHasNullPassword() {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final JwtRequest user = new JwtRequest();
         user.setUsername("username");
@@ -79,7 +79,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void getToken_shouldThrowBadCredentials_whenUserIsNotValid() {
+    void getToken_shouldThrowBadCredentials_whenUserIsNotValid() {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final JwtRequest user = new JwtRequest();
         user.setUsername("invalid_username");
@@ -89,7 +89,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void getToken_shouldThrowBadCredentials_whenUsernameIsNotValid() {
+    void getToken_shouldThrowBadCredentials_whenUsernameIsNotValid() {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final JwtRequest user = new JwtRequest();
         user.setUsername("invalid_user");
@@ -99,7 +99,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void getToken_shouldReturnToken_whenUsernameIsValid() throws GaaSRestApiException {
+    void getToken_shouldReturnToken_whenUsernameIsValid() throws GaaSRestApiException {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final JwtRequest user = new JwtRequest();
         user.setUsername("javainuse");
@@ -111,7 +111,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void getToken_whenAuthManagerThrowsBadCredential_throwGafferWorkerExceptionWithBadCredMessage() {
+    void getToken_whenAuthManagerThrowsBadCredential_throwGafferWorkerExceptionWithBadCredMessage() {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenThrow(new BadCredentialsException("Bad credentials"));
         final JwtRequest user = new JwtRequest();
@@ -125,7 +125,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void getToken_whenAuthManagerThrowsAccountExpired_throwGafferWorkerExceptionWithAccountExpiredMessage() {
+    void getToken_whenAuthManagerThrowsAccountExpired_throwGafferWorkerExceptionWithAccountExpiredMessage() {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenThrow(new AccountExpiredException("This account has expired"));
         final JwtRequest user = new JwtRequest();
