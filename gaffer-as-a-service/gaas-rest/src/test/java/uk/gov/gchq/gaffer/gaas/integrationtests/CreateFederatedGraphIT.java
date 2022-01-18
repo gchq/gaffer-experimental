@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
-public class CreateFederatedGraphIT extends AbstractTest {
+class CreateFederatedGraphIT extends AbstractTest {
 
     private static final String VALID_ROOT = "/rest";
     private static final String GRAPH_ID = "testfederatedgraphid";
@@ -48,7 +48,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
     private CreateGraphService createGraphService;
 
     @Test
-    public void testAddGraphReturns201OnSuccess() throws Exception {
+    void testAddGraphReturns201OnSuccess() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph(proxyGraphId, proxyGraphHost, VALID_ROOT));
         final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 
@@ -64,7 +64,7 @@ public class CreateFederatedGraphIT extends AbstractTest {
     }
 
     @Test
-    public void whenSubGraphURLIsInvalid_shouldReturnBadRequest() throws Exception {
+    void whenSubGraphURLIsInvalid_shouldReturnBadRequest() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("TestGraph", "http://invalid.url", "/rest"));
         final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
 

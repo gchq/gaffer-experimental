@@ -39,7 +39,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @UnitTest
-public class CreateGraphServiceTest {
+class CreateGraphServiceTest {
 
     @Autowired
     private CreateGraphService createGraphService;
@@ -54,7 +54,7 @@ public class CreateGraphServiceTest {
     private Counter mockCounter;
 
     @Test
-    public void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
+    void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", getSchema(), "accumulo"));
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
