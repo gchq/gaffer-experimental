@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
@@ -45,14 +47,17 @@ public class CreateFederatedStoreGraphService {
     private GafferSpecConfigsLoader loader;
     @Autowired
     private GraphCommandExecutor graphOperationExecutor;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CRDClient.class);
 
     public void createFederatedStore(final GaaSCreateRequestBody request) throws GaaSRestApiException {
         if (request.getProxySubGraphs().isEmpty()) {
+            LOGGER.warn("Bad Request, There are no sub-graphs to add: " + 400);
             throw new GaaSRestApiException("Bad Request", "There are no sub-graphs to add", 400);
         }
 
         final GafferSpec config = loader.getConfig(CONFIG_YAML_CLASSPATH, request.getConfigName());
         if (!isFederatedStoreConfig(config)) {
+            LOGGER.warn("Bad Request, Graph is not a federated store: " + 400);
             throw new GaaSRestApiException("Bad Request", "Graph is not a federated store", 400);
         }
 
@@ -73,6 +78,7 @@ public class CreateFederatedStoreGraphService {
             }
         });
         if (errorNotifications.size() > 0) {
+            LOGGER.warn("Bad Request, Invalid Proxy Graph URL(s) " + errorNotifications.toString() + 400);
             throw new GaaSRestApiException("Bad Request", "Invalid Proxy Graph URL(s): " + errorNotifications.toString(), 400);
         }
     }
@@ -81,6 +87,7 @@ public class CreateFederatedStoreGraphService {
         try {
             graphOperationExecutor.execute(new AddGraphsOperation(url, request.getProxySubGraphs()));
         } catch (final GraphOperationException e) {
+            LOGGER.error("Failed to Add Graph(s) to \""  + request.getGraphId() + "\"", e.getMessage(), 502);
             throw new GaaSRestApiException("Failed to Add Graph(s) to \"" + request.getGraphId() + "\"", e.getMessage(), 502);
         }
     }
