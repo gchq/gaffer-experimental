@@ -29,7 +29,9 @@ import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+
 import java.util.LinkedHashMap;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -37,7 +39,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @UnitTest
-public class CreateGraphServiceTest {
+class CreateGraphServiceTest {
 
     @Autowired
     private CreateGraphService createGraphService;
@@ -52,12 +54,12 @@ public class CreateGraphServiceTest {
     private Counter mockCounter;
 
     @Test
-    public void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
+    void createAccumuloGraph_shouldCallCrdClientWithCreateGraphRequestAndCorrectGraphConfigAndAccumuloEnabled() throws GaaSRestApiException {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         createGraphService.createGraph(new GaaSCreateRequestBody("myGraph", "Another description", getSchema(), "accumulo"));
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(gafferClient, times(1)).createGaffer(argumentCaptor.capture());
-        final Gaffer gafferRequestBody = argumentCaptor.<Gaffer>getValue();
+        final Gaffer gafferRequestBody = argumentCaptor.getValue();
         assertEquals("myGraph", gafferRequestBody.getMetadata().getName());
 
         final GafferSpec spec = gafferRequestBody.getSpec();

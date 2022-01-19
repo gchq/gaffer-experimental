@@ -18,14 +18,18 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
+import io.kubernetes.client.openapi.models.V1Secret;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
+
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_HELM_REPO;
@@ -35,7 +39,7 @@ import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
-public class KubernetesObjectFactoryTest {
+class KubernetesObjectFactoryTest {
 
     private Environment env;
 
@@ -51,7 +55,7 @@ public class KubernetesObjectFactoryTest {
     }
 
     @Test
-    public void shouldUseEnvironmentToDetermineHelmRepo() {
+    void shouldUseEnvironmentToDetermineHelmRepo() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
@@ -71,7 +75,7 @@ public class KubernetesObjectFactoryTest {
     }
 
     @Test
-    public void shouldUseEnvironmentToDetermineImage() {
+    void shouldUseEnvironmentToDetermineImage() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
@@ -90,7 +94,7 @@ public class KubernetesObjectFactoryTest {
     }
 
     @Test
-    public void shouldUseEnvironmentToDetermineRestartPolicy() {
+    void shouldUseEnvironmentToDetermineRestartPolicy() {
         // Given
         when(env.getProperty(WORKER_RESTART_POLICY)).thenReturn("OnFailure");
 
@@ -112,7 +116,7 @@ public class KubernetesObjectFactoryTest {
     }
 
     @Test
-    public void shouldUseEnvironmentToDetermineServiceAccountName() {
+    void shouldUseEnvironmentToDetermineServiceAccountName() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
@@ -131,7 +135,7 @@ public class KubernetesObjectFactoryTest {
     }
 
     @Test
-    public void shouldRunTheHelmDeploymentInTheSameNamespaceThatTheGafferGraphHas() {
+    public void shouldUseEnvironmentWithUnInstallHelmCommandToDetermineServiceAccountName() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
 
@@ -139,15 +143,48 @@ public class KubernetesObjectFactoryTest {
         GafferSpec spec = new GafferSpec();
         spec.put("key", "value");
 
-        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob").namespace("gaffer-namespace"));
+        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob"));
 
         V1Pod helmPod = kubernetesObjectFactory.
-                createHelmPod(gaffer, HelmCommand.INSTALL, "my-secret");
+                createHelmPod(gaffer, HelmCommand.UNINSTALL, "my-secret");
 
         // Then
-        List<String> args = helmPod.getSpec().getContainers().get(0).getArgs();
-        Integer namespaceIndex = args.indexOf("--namespace") +  1;
-        assertEquals("gaffer-namespace", args.get(namespaceIndex));
+        String serviceAccountName = helmPod.getSpec().getServiceAccountName();
+        assertEquals("alice", serviceAccountName);
+    }
+
+    @Test
+    public void shouldUseEnvironmentWithUpgradeHelmCommandToDetermineServiceAccountName() {
+        // Given
+        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
+
+        // When
+        GafferSpec spec = new GafferSpec();
+        spec.put("key", "value");
+
+        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob"));
+
+        V1Pod helmPod = kubernetesObjectFactory.
+                createHelmPod(gaffer, HelmCommand.UPGRADE, "my-secret");
+
+        // Then
+        String serviceAccountName = helmPod.getSpec().getServiceAccountName();
+        assertEquals("alice", serviceAccountName);
+    }
+
+    @Test
+    public void shouldCreateValuesSecret() {
+
+        // Given
+        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
+        // When
+        GafferSpec spec = new GafferSpec();
+        spec.put("key", "value");
+
+        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob").namespace("gaffer-namespace"));
+
+        V1Secret valuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, false);
+        assertNotNull(valuesSecret);
     }
 
 }

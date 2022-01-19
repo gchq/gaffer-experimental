@@ -49,11 +49,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired(required = false)
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    @Autowired(required = false)
-    private UserDetailsService jwtUserDetailsService;
+    private final UserDetailsService jwtUserDetailsService;
 
-    @Autowired(required = false)
-    private JwtRequestFilter jwtRequestFilter;
+    private final JwtRequestFilter jwtRequestFilter;
+
+    public WebSecurityConfig(final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, final UserDetailsService jwtUserDetailsService, final JwtRequestFilter jwtRequestFilter) {
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.jwtUserDetailsService = jwtUserDetailsService;
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
 
     @Autowired(required = false)
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -95,7 +99,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         if (jwtEnabled) {
             http.csrf().disable() // nosemgrep: java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
                     //csrf is disabled as the application uses JWT and stateless and cookieless authentication when using this configuration
-                    // dont authenticate this particular request
+                    // don't authenticate this particular request
                     .authorizeRequests()
                     .antMatchers("/auth", "/v2/api-docs", "/swagger-ui.html", "/swagger-ui/", "/swagger-ui/**", "/swagger-resources",
                             "/swagger-resources/**", "/webjars/**", "/actuator/**")

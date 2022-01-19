@@ -31,6 +31,7 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,9 +68,14 @@ public class GafferClient {
         }
     }
 
-    public List<GaaSGraph> listAllGaffers() {
+    public List<GaaSGraph> listAllGaffers() throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
-        return deploymentHandler.getDeployments(kubernetesClient);
+        try {
+            return deploymentHandler.getDeployments(kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.debug("Failed to list all Gaffers");
+            throw from(e);
+        }
     }
 
     public void deleteGaffer(final String crdName) throws GaaSRestApiException {
@@ -95,11 +101,9 @@ public class GafferClient {
     }
 
     private List<String> namespacesAsList(final V1NamespaceList v1NamespaceList) {
-        final List<String> list =
-                v1NamespaceList.getItems().stream()
-                        .map(v1Namespace -> v1Namespace.getMetadata().getName())
-                        .collect(Collectors.toList());
-        return list;
+        return v1NamespaceList.getItems().stream()
+                .map(v1Namespace -> v1Namespace.getMetadata().getName())
+                .collect(Collectors.toList());
     }
 
 }

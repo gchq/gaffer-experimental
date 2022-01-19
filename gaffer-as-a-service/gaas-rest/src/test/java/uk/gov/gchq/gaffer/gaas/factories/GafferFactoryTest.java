@@ -26,22 +26,25 @@ import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import uk.gov.gchq.gaffer.operation.Operation;
 import uk.gov.gchq.gaffer.operation.impl.get.GetAllElements;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @UnitTest
-public class GafferFactoryTest {
+class GafferFactoryTest {
 
     private final Gson gson = new Gson();
     private static final String DEFAULT_SYSTEM_USER = "GAAS_SYSTEM_USER";
 
     @Test
-    public void emptyGafferSpec_shouldReturnGafferWithOverridesOnly() {
+    void emptyGafferSpec_shouldReturnGafferWithOverridesOnly() {
         final Gaffer gaffer = GafferFactory.from(new GafferSpec(), new GaaSCreateRequestBody("empty_config_id", "Empty graph config", getSchema(), "empty_config"));
 
         final String expected = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"empty_config\"},\"name\":\"empty_config_id\"},\"spec\":{\"graph\":{\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"},\"config\":{\"configName\":\"empty_config\",\"description\":\"Empty graph config\",\"graphId\":\"empty_config_id\"}},\"ingress\":{\"host\":\"empty_config_id-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
@@ -49,7 +52,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void proxyStoreRequest_shouldReturnProxyStoreRequestBody() {
+    void proxyStoreRequest_shouldReturnProxyStoreRequestBody() {
         final GafferSpec proxyConfig = new GafferSpec();
         proxyConfig.putNestedObject("http://my.graph.co.uk", "graph", "storeProperties", "gaffer.host");
         proxyConfig.putNestedObject("uk.gov.gchq.gaffer.proxystore.ProxyStore", "graph", "storeProperties", "gaffer.store.class");
@@ -61,7 +64,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedStoreRequest_shouldReturnFederatedRequestBody() {
+    void federatedStoreRequest_shouldReturnFederatedRequestBody() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -75,7 +78,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedStoreRequest_shouldReturnFederatedRequestBodyWithAllOperations() {
+    void federatedStoreRequest_shouldReturnFederatedRequestBodyWithAllOperations() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -98,7 +101,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void accumuloStoreRequestShouldReturnAccumuloRequestBody() {
+    void accumuloStoreRequestShouldReturnAccumuloRequestBody() {
         final GafferSpec accumuloConfig = new GafferSpec();
         accumuloConfig.putNestedObject(true, "accumulo", "enabled");
 
@@ -110,7 +113,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void mapStoreStoreRequestShouldReturnMapStoreRequestBody() {
+    void mapStoreStoreRequestShouldReturnMapStoreRequestBody() {
         final GafferSpec mapStoreConfig = new GafferSpec();
         mapStoreConfig.putNestedObject("uk.gov.gchq.gaffer.cache.impl.HashMapCacheService", "graph", "storeProperties", "gaffer.cache.service.class");
         mapStoreConfig.putNestedObject(true, "graph", "storeProperties", "gaffer.store.job.tracker.enabled");
@@ -123,7 +126,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedBigStoreRequest_shouldReturnFederatedRequestBody() {
+    void federatedBigStoreRequest_shouldReturnFederatedRequestBody() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -137,7 +140,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedBigStoreRequestWithValidOpAuthsInTheConfigYamlWithoutAddGraphClass_shouldOverrideToOneConfiguredInGafferSpecConfig() {
+    void federatedBigStoreRequestWithValidOpAuthsInTheConfigYamlWithoutAddGraphClass_shouldOverrideToOneConfiguredInGafferSpecConfig() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -152,7 +155,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedBigStoreRequestOperationAuthorisationForAddGraphClassWithDefaultSystemUserValueAndOtherUsers_shouldOverrideToOneConfiguredinGafferSpecConfig() {
+    void federatedBigStoreRequestOperationAuthorisationForAddGraphClassWithDefaultSystemUserValueAndOtherUsers_shouldOverrideToOneConfiguredInGafferSpecConfig() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -167,7 +170,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedBigStoreRequestWithAddGraphClassEmptyStringValueInOpAuthsConfigYaml_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
+    void federatedBigStoreRequestWithAddGraphClassEmptyStringValueInOpAuthsConfigYaml_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -182,7 +185,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedBigStoreRequestWithIncorrectUserValuesOpAuthsInTheConfigYaml_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
+    void federatedBigStoreRequestWithIncorrectUserValuesOpAuthsInTheConfigYaml_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -197,7 +200,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedBigStoreRequestOperationAuthorisationWithNullValueInAddGraphClass_shouldNotOverrideToOneConfiguredinGafferSpecConfig() {
+    void federatedBigStoreRequestOperationAuthorisationWithNullValueInAddGraphClass_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -212,7 +215,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedBigStoreRequestOperationAuthorisationWithEmptyAuths_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
+    void federatedBigStoreRequestOperationAuthorisationWithEmptyAuths_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -227,7 +230,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedBigStoreRequestOperationAuthorisationWithAddGraphClassInvalidUserValue_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
+    void federatedBigStoreRequestOperationAuthorisationWithAddGraphClassInvalidUserValue_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -242,7 +245,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedBigStoreRequestOperationAuthorisationForAddGraphClassWithInvalidDefaultSystemUserValue_shouldOverrideToOneConfiguredInGafferSpecConfig() {
+    void federatedBigStoreRequestOperationAuthorisationForAddGraphClassWithInvalidDefaultSystemUserValue_shouldOverrideToOneConfiguredInGafferSpecConfig() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -257,7 +260,7 @@ public class GafferFactoryTest {
     }
 
     @Test
-    public void federatedBigStoreRequestWithoutOperationAuthorisationClass_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
+    void federatedBigStoreRequestWithoutOperationAuthorisationClass_shouldNotOverrideToOneConfiguredInGafferSpecConfig() {
         final GafferSpec federatedConfig = new GafferSpec();
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules", "graph", "storeProperties", "gaffer.serialiser.json.modules");
         federatedConfig.putNestedObject("uk.gov.gchq.gaffer.federatedstore.FederatedStore", "graph", "storeProperties", "gaffer.store.class");
@@ -281,15 +284,15 @@ public class GafferFactoryTest {
 
     private static List<Object> getOperationAuthorizerHookWithValidOpAuthsInTheConfigYamlWithoutAddGraphClass() {
         final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
-        auths.put(Operation.class.getName(), new ArrayList<>(Arrays.asList("User")));
+        auths.put(Operation.class.getName(), new ArrayList<>(Collections.singletonList("User")));
         auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("AdminUser", "SuperUser")));
         return getOperationAuthoriserHook(auths);
     }
 
     private static List<Object> getOperationAuthorizerHookWithValidOpAuthsInTheConfigYamlWithAddGraphClass() {
         final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
-        auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList(DEFAULT_SYSTEM_USER)));
-        auths.put(Operation.class.getName(), new ArrayList<>(Arrays.asList("User")));
+        auths.put(AddGraph.class.getName(), new ArrayList<>(Collections.singletonList(DEFAULT_SYSTEM_USER)));
+        auths.put(Operation.class.getName(), new ArrayList<>(Collections.singletonList("User")));
         auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("AdminUser", "SuperUser")));
         return getOperationAuthoriserHook(auths);
     }
@@ -297,7 +300,7 @@ public class GafferFactoryTest {
     private static List<Object> getOperationAuthorizerHookWithIncorrectUserValues() {
         final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
         auths.put(Operation.class.getName(), null);
-        auths.put(GetAllElements.class.getName(), new ArrayList<>(Arrays.asList("")));
+        auths.put(GetAllElements.class.getName(), new ArrayList<>(Collections.singletonList("")));
         return getOperationAuthoriserHook(auths);
     }
 
@@ -309,7 +312,7 @@ public class GafferFactoryTest {
 
     private static List<Object> getOperationAuthorizerHookWithEmptyStringValueInAddGraphClass() {
         final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
-        auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("")));
+        auths.put(AddGraph.class.getName(), new ArrayList<>(Collections.singletonList("")));
         return getOperationAuthoriserHook(auths);
     }
 
@@ -326,13 +329,13 @@ public class GafferFactoryTest {
 
     private static List<Object> getOperationAuthorizerHookWithAddGraphClassInvalidUserValue() {
         final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
-        auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("null")));
+        auths.put(AddGraph.class.getName(), new ArrayList<>(Collections.singletonList("null")));
         return getOperationAuthoriserHook(auths);
     }
 
     private static List<Object> getOperationAuthorizerHookWithoutOperationAuthorisationClass() {
         final Map<String, ArrayList<String>> auths = new LinkedHashMap<>();
-        auths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList("null")));
+        auths.put(AddGraph.class.getName(), new ArrayList<>(Collections.singletonList("null")));
         return getOperationAuthorizerHookWithoutOperationAuthorisationClass(auths);
     }
 

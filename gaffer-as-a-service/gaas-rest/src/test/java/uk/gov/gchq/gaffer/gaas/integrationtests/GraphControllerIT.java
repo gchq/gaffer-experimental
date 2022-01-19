@@ -17,10 +17,8 @@
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import com.google.gson.Gson;
-import io.kubernetes.client.openapi.ApiClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
@@ -37,14 +35,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
-public class GraphControllerIT extends AbstractTest {
+class GraphControllerIT extends AbstractTest {
     private final String graphName = "testcontrolleritgraph";
 
-    @Autowired
-    private ApiClient apiClient;
 
     @Test
-    public void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
+    void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
         final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
         final MvcResult result = mvc.perform(post("/auth")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -54,7 +50,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testAddGraph_WithSchema_Returns201OnSuccess() throws Exception {
+    void testAddGraph_WithSchema_Returns201OnSuccess() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
         final Gson gson = new Gson();
         final String inputJson = gson.toJson(gaaSCreateRequestBody);
@@ -68,7 +64,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphReturns201OnSuccess() throws Exception {
+    void testAddGraphReturns201OnSuccess() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         final MvcResult mvcResult = mvc.perform(post("/graphs")
@@ -79,7 +75,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphNotNullShouldReturn400() throws Exception {
+    void testAddGraphNotNullShouldReturn400() throws Exception {
         final String jsonRequest = "{\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -90,7 +86,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
+    void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
         final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -105,7 +101,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void getGraphEndpointReturnsGraph() throws Exception {
+    void getGraphEndpointReturnsGraph() throws Exception {
         final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult addGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -121,7 +117,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWithSpacesShouldReturn400() throws Exception {
+    void testGraphIdWithSpacesShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -133,7 +129,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
+    void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -144,7 +140,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWitCapitalLettersShouldReturn400() throws Exception {
+    void testGraphIdWitCapitalLettersShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -155,7 +151,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testDescriptionEmptyShouldReturn400() throws Exception {
+    void testDescriptionEmptyShouldReturn400() throws Exception {
         final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -166,7 +162,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testDeleteShouldReturn200AndRemoveDeployment() throws Exception {
+    void testDeleteShouldReturn200AndRemoveDeployment() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         final MvcResult createGraphResponse = mvc.perform(post("/graphs")
@@ -183,7 +179,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testDeleteShouldReturn404WhenGraphNotExisting() throws Exception {
+    void testDeleteShouldReturn404WhenGraphNotExisting() throws Exception {
         final MvcResult deleteGraphResponse = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
@@ -192,7 +188,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void namespacesEndpointShouldReturn200AndArrayWithNamespacesWhenNamespacesPresent() throws Exception {
+    void namespacesEndpointShouldReturn200AndArrayWithNamespacesWhenNamespacesPresent() throws Exception {
         final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
@@ -202,7 +198,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphFederatedStoreWithHook_WithSchema_Returns201OnSuccess() throws Exception {
+    void testAddGraphFederatedStoreWithHook_WithSchema_Returns201OnSuccess() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, null, "federated");
         final Gson gson = new Gson();
         final String inputJson = gson.toJson(gaaSCreateRequestBody);
@@ -218,11 +214,11 @@ public class GraphControllerIT extends AbstractTest {
 
     @AfterEach
     void tearDown() throws InterruptedException {
-        //This is necessary due to the fact that after each deployment OpenShift needs a few seconds to delete all of the resources associated with the
+        //This is necessary due to the fact that after each deployment OpenShift needs a few seconds to delete all the resources associated with the
         // graph which is created in the tests.
         TimeUnit.SECONDS.sleep(60);
         try {
-            final MvcResult getGraphsResponse = mvc.perform(delete("/graphs/" + graphName)
+             mvc.perform(delete("/graphs/" + graphName)
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .header("Authorization", token))
                     .andReturn();

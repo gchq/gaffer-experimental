@@ -24,32 +24,34 @@ import uk.gov.gchq.gaffer.gaas.client.graph.ValidateGraphHostOperation;
 import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
+
 import java.util.Collections;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-public class GraphCommandsIT extends AbstractTest {
+class GraphCommandsIT extends AbstractTest {
 
     private final GraphUrl invalidFederatedStoreURL = new GraphUrl("myinvalidhost.cluster", "/rest");
     private final List<ProxySubGraph> subGraphs = Collections.singletonList(new ProxySubGraph("test5", "somehost.cluster", "/rest"));
 
     @Test
-    public void addGraphs_shouldNotThrowAnything_whenSuccessfullyAddsGraph() {
+    void addGraphs_shouldNotThrowAnything_whenSuccessfullyAddsGraph() {
         final GraphUrl validFederatedStoreURL = new GraphUrl(fedStoreUrl, "/rest");
         final List<ProxySubGraph> subGraphsForValidFedStore = Collections.singletonList(new ProxySubGraph(proxyGraphId, proxyGraphHost, "/rest"));
         assertDoesNotThrow(() -> new AddGraphsOperation(validFederatedStoreURL, subGraphsForValidFedStore).execute());
     }
 
     @Test
-    public void addGraphs_shouldThrowGraphOpException_whenUrlIsInvalid() {
+    void addGraphs_shouldThrowGraphOpException_whenUrlIsInvalid() {
         assertThrows(GraphOperationException.class, () -> new AddGraphsOperation(invalidFederatedStoreURL, subGraphs).execute());
     }
 
     @Test
-    public void validateGraphHost_shouldThrowGraphOpEx_whenIncorrectRoot() {
+    void validateGraphHost_shouldThrowGraphOpEx_whenIncorrectRoot() {
         final ProxySubGraph proxySubGraph = new ProxySubGraph("notfoundroot", "localhost:8080", "/not-found-root");
 
         final GraphOperationException exception = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
@@ -58,7 +60,7 @@ public class GraphCommandsIT extends AbstractTest {
     }
 
     @Test
-    public void validateGraphHost_shouldThrowGraphOpEx_whenHostIsntHostingAGraph() {
+    void validateGraphHost_shouldThrowGraphOpEx_whenHostIsntHostingAGraph() {
         final ProxySubGraph proxySubGraph = new ProxySubGraph("invalidhost", "localhost:8082", "/rest");
 
         final GraphOperationException exception = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());

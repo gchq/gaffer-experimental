@@ -137,4 +137,20 @@ public class GraphController {
             return responseEntity;
         }
     }
+
+    @GetMapping(path = "/whoami", produces = "application/json")
+    ResponseEntity<String> whoami(@RequestHeader("x-email") String email) {
+        return new ResponseEntity<String>(email, HttpStatus.OK);
+    }
+
+    @GetMapping("/listHeaders")
+    public ResponseEntity<String> listAllHeaders(
+            @RequestHeader Map<String, String> headers) {
+        headers.forEach((key, value) -> {
+            String.format("Header '%s' = %s", key, value);
+        });
+
+        return new ResponseEntity<String>(
+                String.format("Listed %s headers", headers.toString()), HttpStatus.OK);
+    }
 }

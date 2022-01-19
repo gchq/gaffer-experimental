@@ -26,15 +26,17 @@ import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
 import uk.gov.gchq.gaffer.gaas.util.GafferSpecConfigsLoader;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import uk.gov.gchq.gaffer.mapstore.MapStore;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.mockito.Mockito.when;
 
 @UnitTest
-public class GetGaaSGraphConfigsServiceTest {
+class GetGaaSGraphConfigsServiceTest {
 
     @Autowired
     private GetGaaSGraphConfigsService service;

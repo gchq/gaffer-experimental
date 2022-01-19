@@ -26,15 +26,17 @@ import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_K8S_METADATA_LABEL;
@@ -53,7 +55,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
 /**
  * GafferHelmValuesFactory is a factory class that creates a Gaffer Helm Values Object that can be passed to the
- * Kubernetes java client and use helm to deploy a Gaffer custom resource instance to a Kubernetes cluster..
+ * Kubernetes java client and use helm to deploy a Gaffer custom resource instance to a Kubernetes cluster.
  * <p>
  * See <a href="https://github.com/gchq/gaffer-docker/blob/develop/kubernetes/gaffer/values.yaml">values.yaml</a> for
  * the default helm chart values and documentation how Gaffer is deployed to Kubernetes via helm.
@@ -84,7 +86,6 @@ public final class GafferFactory {
     }
 
     private static GafferSpec overrideGafferSpecConfig(final GafferSpec config, final GaaSCreateRequestBody overrides) {
-        final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
         config.putNestedObject(overrides.getGraphId(), GRAPH_ID_KEY);
         config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
         config.putNestedObject(overrides.getConfigName(), CONFIG_NAME_KEY);
@@ -113,8 +114,8 @@ public final class GafferFactory {
 
         final Map<String, List> formattedAuths = getFormattedAuths(existingAuths);
 
-        if (formattedAuths.isEmpty() || (formattedAuths != null && !formattedAuths.containsKey(AddGraph.class.getName()))) {
-            formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Arrays.asList(DEFAULT_SYSTEM_USER)));
+        if (formattedAuths.isEmpty() || !formattedAuths.containsKey(AddGraph.class.getName())) {
+            formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Collections.singletonList(DEFAULT_SYSTEM_USER)));
         }
         final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
         opAuthoriser.put("class", OperationAuthoriser.class.getName());
@@ -136,7 +137,7 @@ public final class GafferFactory {
             if (notFormattedAuths != null) {
                 notFormattedAuths.forEach((key, value) -> {
                     List<String> auths = formatExistingAuths(key, value);
-                    if (key != null && auths != null && auths.size() != 0) {
+                    if (key != null && auths != null && !auths.isEmpty()) {
                         formattedAuths.put(key, auths);
                     }
                 });
@@ -161,9 +162,7 @@ public final class GafferFactory {
         final Set<Object> objects = new HashSet<>();
         objects.add(proxyUrlDeclaration);
 
-        for (final Object operation : operations) {
-            objects.add(operation);
-        }
+        objects.addAll(operations);
 
         return objects;
     }
@@ -174,9 +173,9 @@ public final class GafferFactory {
             final List<String> result = new ArrayList();
             if (exsistingAuths instanceof List) {
                 List<String> authsResult = (ArrayList) exsistingAuths;
-                for (int i = 0; i < authsResult.size(); i++) {
-                    if (authsResult.get(i) != "" && authsResult.get(i) != "null" && authsResult.get(i) != null) {
-                        result.add(authsResult.get(i));
+                for (final String auth : authsResult) {
+                    if (!Objects.equals(auth, "") && !Objects.equals(auth, "null") && auth != null) {
+                        result.add(auth);
                     }
                 }
             }
@@ -185,7 +184,7 @@ public final class GafferFactory {
             }
             return result;
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private GafferFactory() {
