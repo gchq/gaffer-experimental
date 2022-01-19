@@ -23,6 +23,7 @@ import LoginModal from "../login/login-modal";
 import { NavLink } from "react-router-dom";
 import { RestClient } from "../../rest/clients/rest-client";
 import { Config } from "../../rest/config";
+import { GetWhoAmIRepo } from "../../rest/repositories/get-whoami-repo";
 
 const drawerWidth = 240;
 
@@ -114,6 +115,7 @@ const NavigationAppbar: React.FC = (props: any) => {
 
     const buildUsername = () => (username.includes("@") ? username.slice(0, username.indexOf("@")) : username);
     useEffect(() => {
+        new GetWhoAmIRepo().getWhoAmI();
         if ((Config.REACT_APP_API_PLATFORM === "OPENSHIFT" && RestClient.getEmail() !== "") || undefined) {
             setUsername(RestClient.getEmail());
         }
