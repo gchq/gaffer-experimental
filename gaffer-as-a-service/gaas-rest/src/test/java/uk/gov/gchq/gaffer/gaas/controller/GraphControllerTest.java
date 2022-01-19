@@ -462,6 +462,33 @@ class GraphControllerTest extends AbstractTest {
         verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
     }
 
+    @Test
+    void whoamiShouldReturnUserEmailWhenSuccessful() throws Exception {
+
+        final MvcResult result = mvc.perform(get("/whoami")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("x-email", "test@gmail.com")
+        )
+                .andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("test@gmail.com", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    void whoamiShouldReturnUser400WhenHeaderEmailIsNull() throws Exception {
+
+        final MvcResult result = mvc.perform(get("/whoami")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token))
+                .andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+    }
+
+    //createGraph_whenGraphIdIsNull_shouldReturn400
+
     private LinkedHashMap<String, Object> getSchema() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("entities", new Object());
