@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
@@ -119,11 +120,18 @@ public class GraphController {
     }
 
     @GetMapping(path = "/whoami", produces = "application/json")
-    public ResponseEntity<String> getOwner(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-        if (!cognitoEnabled) {
-            final String ownerName = authService.getOwnerName(authenticationRequest);
-            return ResponseEntity.ok(ownerName);
-        }
-        return null;
+    ResponseEntity<String> whoami(@RequestHeader("x-email") String email) {
+        return new ResponseEntity<String>(email, HttpStatus.OK);
+    }
+
+    @GetMapping("/listHeaders")
+    public ResponseEntity<String> listAllHeaders(
+            @RequestHeader Map<String, String> headers) {
+        headers.forEach((key, value) -> {
+            String.format("Header '%s' = %s", key, value);
+        });
+
+        return new ResponseEntity<String>(
+                String.format("Listed %s headers", headers.toString()), HttpStatus.OK);
     }
 }
