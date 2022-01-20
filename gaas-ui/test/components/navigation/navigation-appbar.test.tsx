@@ -3,17 +3,16 @@ import NavigationAppbar from "../../../src/components/navigation-bar/navigation-
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
+import { Config } from "../../../src/rest/config";
+import { GetWhoAmIRepo } from "../../../src/rest/repositories/get-whoami-repo";
+import { act } from "@testing-library/react";
+import { RestApiError } from "../../../src/rest/RestApiError";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
+jest.mock("../../../src/rest/repositories/get-whoami-repo");
 
 let component: ReactWrapper;
 
-beforeAll(
-    () =>
-        (process.env = Object.assign(process.env, {
-            REACT_APP_API_PLATFORM: "test",
-        }))
-);
 beforeEach(() => {
     component = mount(
         <MemoryRouter>
@@ -21,8 +20,14 @@ beforeEach(() => {
         </MemoryRouter>
     );
 });
-afterEach(() => component.unmount());
-afterAll(() => (process.env = Object.assign(process.env, { REACT_APP_API_PLATFORM: "" })));
+afterEach(() => {
+    component.unmount();
+    jest.resetAllMocks();
+});
+afterAll(() => {
+    process.env = Object.assign(process.env, { REACT_APP_API_PLATFORM: "" });
+    Config.REACT_APP_API_PLATFORM = "";
+});
 
 describe("Navigation Appbar Component", () => {
     it("should display appbar", () => {
@@ -68,26 +73,66 @@ describe("Navigation Appbar Component", () => {
             expect(getAttribute).toBe(Target[index].href);
         }
     });
-});
+    describe("When REACT_APP_API_PLATFORM is set to OPENSHIFT", () => {
+        beforeAll(() => {
+            Config.REACT_APP_API_PLATFORM = "OPENSHIFT";
+        });
 
-describe("Display Signed In User Details", () => {
-    it("should display the username & email of the User who signed in", () => {
-        mockAuthClient();
-        inputUsername("Harry@gmail.com");
-        inputPassword("asdfgh");
+        it("Should not show the login modal and should display the username and email", async () => {
+            await mockGetWhoAmIRepoToReturn("test@test.com");
+            await act(async () => {
+                component = mount(
+                    <MemoryRouter>
+                        <NavigationAppbar />
+                    </MemoryRouter>
+                );
+            });
+            await component.update();
+            await component.update();
 
-        clickSubmitSignIn();
-
-        expect(component.find("div#signedin-user-details").text()).toBe("HarryHarry@gmail.com");
+            expect(component.find("input#username").length).toBe(0);
+            expect(component.find("input#password").length).toBe(0);
+            expect(component.find("div#signedin-user-details").text()).toBe("TESTtest@test.com");
+        });
+        it("Should display an error when getting the email has failed", async () => {
+            mockGetWhoAmIRepoToThrow(() => {
+                throw new RestApiError("Server Error", "Timeout exception");
+            });
+            await act(async () => {
+                component = mount(
+                    <MemoryRouter>
+                        <NavigationAppbar />
+                    </MemoryRouter>
+                );
+            });
+            console.log(component.html());
+            expect(component.find("div#user-details-error-message").text()).toBe(
+                "Failed to get user email: Server Error: Timeout exception"
+            );
+        });
     });
-    it("should display the non-email username of the User who signed in", () => {
-        mockAuthClient();
-        inputUsername("Batman");
-        inputPassword("zxcvb");
+    describe("Display Signed In User Details", () => {
+        beforeAll(() => {
+            Config.REACT_APP_API_PLATFORM = "OTHER";
+        });
+        it("should display the username & email of the User who signed in", () => {
+            mockAuthClient();
+            inputUsername("Harry@gmail.com");
+            inputPassword("asdfgh");
 
-        clickSubmitSignIn();
+            clickSubmitSignIn();
 
-        expect(component.find("div#signedin-user-details").text()).toBe("BatmanBatman");
+            expect(component.find("div#signedin-user-details").text()).toBe("HARRYHarry@gmail.com");
+        });
+        it("should display the non-email username of the User who signed in", () => {
+            mockAuthClient();
+            inputUsername("Batman");
+            inputPassword("zxcvb");
+
+            clickSubmitSignIn();
+
+            expect(component.find("div#signedin-user-details").text()).toBe("BATMANBatman");
+        });
     });
 });
 
@@ -116,4 +161,19 @@ function mockAuthClient() {
             onSuccess();
         }
     );
+}
+async function mockGetWhoAmIRepoToReturn(email: string) {
+    // @ts-ignore
+    GetWhoAmIRepo.mockImplementationOnce(() => ({
+        getWhoAmI: () =>
+            new Promise((resolve, reject) => {
+                resolve(email);
+            }),
+    }));
+}
+async function mockGetWhoAmIRepoToThrow(f: () => void) {
+    // @ts-ignore
+    GetWhoAmIRepo.mockImplementationOnce(() => ({
+        getWhoAmI: f,
+    }));
 }

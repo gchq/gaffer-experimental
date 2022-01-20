@@ -21,7 +21,6 @@ import LocalLibraryIcon from "@material-ui/icons/LocalLibrary";
 import CategoryIcon from "@material-ui/icons/Category";
 import LoginModal from "../login/login-modal";
 import { NavLink } from "react-router-dom";
-import { RestClient } from "../../rest/clients/rest-client";
 import { Config } from "../../rest/config";
 import { GetWhoAmIRepo } from "../../rest/repositories/get-whoami-repo";
 
@@ -98,6 +97,7 @@ const NavigationAppbar: React.FC = (props: any) => {
     // @ts-ignore
     const classes = useStyles();
     const [userEmail, setUserEmail] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
     const getSideNavIcon = (sidebarName: string) => {
         switch (sidebarName) {
             case "Create Graph":
@@ -113,17 +113,44 @@ const NavigationAppbar: React.FC = (props: any) => {
         }
     };
     const getUserEmail = async () => {
-        const email = await new GetWhoAmIRepo().getWhoAmI();
-        setUserEmail(email);
+        try {
+            const email = await new GetWhoAmIRepo().getWhoAmI();
+            setUserEmail(email);
+        } catch (e) {
+            setErrorMessage(`Failed to get user email: ${e as Error}`);
+        }
     };
 
     const buildUsername = () => (userEmail.includes("@") ? userEmail.slice(0, userEmail.indexOf("@")) : userEmail);
-    const userEmailFromRestClient = RestClient.getEmail();
     useEffect(() => {
         if (Config.REACT_APP_API_PLATFORM === "OPENSHIFT") {
             getUserEmail();
         }
     }, []);
+    const displayUserEmail = () => {
+        if (userEmail) {
+            return (
+                <ListItem className={classes.listItem}>
+                    <ListItemAvatar>
+                        <Avatar style={{ color: "#ffffff", backgroundColor: "#5A7C81" }}>
+                            {userEmail.slice(0, 1)}
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                        id="signedin-user-details"
+                        primary={buildUsername().toUpperCase()}
+                        secondary={userEmail}
+                    />
+                </ListItem>
+            );
+        } else {
+            return (
+                <ListItem className={classes.listItem}>
+                    <ListItemText id="user-details-error-message" secondary={errorMessage} />
+                </ListItem>
+            );
+        }
+    };
     return (
         <div className={classes.root} aria-label={"navigation-appbar"}>
             <CssBaseline />
@@ -150,18 +177,7 @@ const NavigationAppbar: React.FC = (props: any) => {
                     <Toolbar />
                     <div className={classes.drawerContainer}>
                         <List id={"navigation-drawer-list"} aria-label={"navigation-drawer-list"}>
-                            <ListItem className={classes.listItem}>
-                                <ListItemAvatar>
-                                    <Avatar style={{ color: "#ffffff", backgroundColor: "#5A7C81" }}>
-                                        {userEmailFromRestClient.slice(0, 1)}
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                    id="signedin-user-details"
-                                    primary={buildUsername()}
-                                    secondary={userEmailFromRestClient}
-                                />
-                            </ListItem>
+                            {displayUserEmail()}
                         </List>
                         <Divider />
                         <List>
