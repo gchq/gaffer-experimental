@@ -37,6 +37,39 @@ describe("Auth", () => {
         await request(server).post("/auth/signout").expect(204);
     });
 });
+describe("whoami", () => {
+    beforeAll(async () => {
+        await request(server)
+            .post("/auth")
+            .send({
+                username: "user@yahoo.com",
+                password: "abc123",
+            })
+            .then((response) => {
+                token = response.body;
+            });
+    });
+    it("Should respond to a GET request with 200 code and email when user is logged in", async () => {
+        await request(server)
+            .post("/auth")
+            .send({
+                username: "user@yahoo.com",
+                password: "abc123",
+            })
+            .then((response) => {
+                token = response.body;
+            });
+        await request(server)
+            .get("/whoami")
+            .set("Authorization", token)
+            .then((response) => {
+                expect(response.statusCode).toEqual(200);
+                expect(response.body).toEqual({
+                    "x-email": "testEmail@something.com",
+                });
+            });
+    });
+});
 
 describe("Graph API", () => {
     beforeAll(async () => {
