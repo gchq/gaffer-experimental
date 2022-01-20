@@ -1,15 +1,16 @@
 import { IApiResponse, RestClient } from "../clients/rest-client";
 import { Config } from "../config";
+import { IWhoAmIResponse } from "../http-message-interfaces/response-interfaces";
 
 export class GetWhoAmIRepo {
     public async getWhoAmI(): Promise<string> {
-        const response: IApiResponse<string> = await new RestClient()
+        const response: IApiResponse<IWhoAmIResponse> = await new RestClient()
             .baseUrl(Config.REACT_APP_KAI_REST_API_HOST)
             .get()
             .whoAmI()
             .execute();
-        const email = await response.data;
+        const email = response.data["x-email"];
         RestClient.setEmail(email);
-        return response.data;
+        return email;
     }
 }
