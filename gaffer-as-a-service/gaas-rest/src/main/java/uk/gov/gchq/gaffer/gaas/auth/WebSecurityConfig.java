@@ -49,15 +49,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired(required = false)
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    private final UserDetailsService jwtUserDetailsService;
+    @Autowired(required = false)
+    private UserDetailsService jwtUserDetailsService;
 
-    private final JwtRequestFilter jwtRequestFilter;
+    @Autowired(required = false)
+    private JwtRequestFilter jwtRequestFilter;
 
-    public WebSecurityConfig(final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, final UserDetailsService jwtUserDetailsService, final JwtRequestFilter jwtRequestFilter) {
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.jwtUserDetailsService = jwtUserDetailsService;
-        this.jwtRequestFilter = jwtRequestFilter;
-    }
 
     @Autowired(required = false)
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
