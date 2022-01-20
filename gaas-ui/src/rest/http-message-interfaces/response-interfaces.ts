@@ -16,7 +16,7 @@ export interface IGraphStatusResponse {
     status: string;
 }
 
-export interface IWhoAmI {
+export interface IWhoAmIResponse {
     "x-email": string;
 }
 
