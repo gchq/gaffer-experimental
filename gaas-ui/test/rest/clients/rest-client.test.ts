@@ -3,7 +3,31 @@ import MockAdapter from "axios-mock-adapter";
 import { RestClient } from "../../../src/rest/clients/rest-client";
 
 const mock = new MockAdapter(axios);
+describe("RestClient whoami responses", () => {
+    afterAll(() => mock.resetHandlers());
+    it("should return a 200 status and response when GET is successful", async () => {
+        mock.onGet("/whoami").reply(200, { "x-email": "test@test.com" });
+        const actual = await new RestClient().create().get().whoAmI().execute();
 
+        expect(actual).toEqual({
+            status: 200,
+            data: {
+                "x-email": "test@test.com",
+            },
+        });
+    });
+    it("should throw 404 Error Message when api returns 404", async () => {
+        mock.onGet("/whoami").reply(404, {
+            title: "Not Found",
+            detail: "User Email not found",
+        });
+        try {
+            await new RestClient().create().get().whoAmI().execute();
+        } catch (e) {
+            expect(e).toEqual({ detail: "User Email not found", title: "Not Found" });
+        }
+    });
+});
 describe("RestClient 2** Responses", () => {
     beforeAll(() =>
         mock
