@@ -97,7 +97,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const NavigationAppbar: React.FC = (props: any) => {
     // @ts-ignore
     const classes = useStyles();
-    const [username, setUsername] = useState("");
+    const [userEmail, setUserEmail] = useState("");
     const getSideNavIcon = (sidebarName: string) => {
         switch (sidebarName) {
             case "Create Graph":
@@ -112,14 +112,18 @@ const NavigationAppbar: React.FC = (props: any) => {
                 return null;
         }
     };
+    const getUserEmail = async () => {
+        const email = await new GetWhoAmIRepo().getWhoAmI();
+        setUserEmail(email);
+    };
 
-    const buildUsername = () => (username.includes("@") ? username.slice(0, username.indexOf("@")) : username);
+    const buildUsername = () => (userEmail.includes("@") ? userEmail.slice(0, userEmail.indexOf("@")) : userEmail);
+    const userEmailFromRestClient = RestClient.getEmail();
     useEffect(() => {
-        new GetWhoAmIRepo().getWhoAmI();
-        if ((Config.REACT_APP_API_PLATFORM === "OPENSHIFT" && RestClient.getEmail() !== "") || undefined) {
-            setUsername(RestClient.getEmail());
+        if (Config.REACT_APP_API_PLATFORM === "OPENSHIFT") {
+            getUserEmail();
         }
-    });
+    }, []);
     return (
         <div className={classes.root} aria-label={"navigation-appbar"}>
             <CssBaseline />
@@ -129,7 +133,7 @@ const NavigationAppbar: React.FC = (props: any) => {
                         Kai: Graph As A Service
                     </Typography>
                     {Config.REACT_APP_API_PLATFORM !== "OPENSHIFT" && (
-                        <LoginModal onLogin={(username) => setUsername(username)} />
+                        <LoginModal onLogin={(username) => setUserEmail(username)} />
                     )}
                 </Toolbar>
             </AppBar>
@@ -149,13 +153,13 @@ const NavigationAppbar: React.FC = (props: any) => {
                             <ListItem className={classes.listItem}>
                                 <ListItemAvatar>
                                     <Avatar style={{ color: "#ffffff", backgroundColor: "#5A7C81" }}>
-                                        {username.slice(0, 1)}
+                                        {userEmailFromRestClient.slice(0, 1)}
                                     </Avatar>
                                 </ListItemAvatar>
                                 <ListItemText
                                     id="signedin-user-details"
                                     primary={buildUsername()}
-                                    secondary={username}
+                                    secondary={userEmailFromRestClient}
                                 />
                             </ListItem>
                         </List>
