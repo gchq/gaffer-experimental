@@ -116,25 +116,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             // Add a filter to validate the tokens with every request
             http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         }
-        if (openshiftEnabled) {
-            http.csrf().disable() // nosemgrep: java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
-                    //csrf is disabled as the application uses JWT and stateless and cookieless authentication when using this configuration
-                    // dont authenticate this particular request
-                    .authorizeRequests()
-                    .antMatchers("/auth", "/v2/api-docs", "/swagger-ui.html", "/swagger-ui/", "/swagger-ui/**", "/swagger-resources",
-                            "/swagger-resources/**", "/webjars/**", "/actuator/**")
-                    .permitAll()
-                    // all other requests need to be authenticated
-                    .anyRequest()
-                    .authenticated()
-                    .and()
-                    // make sure we use stateless session; session won't be used to
-                    // store user's state.
-                    .exceptionHandling()
-                    .and()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        }
         http.cors();
 
     }

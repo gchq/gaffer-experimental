@@ -122,6 +122,7 @@ export class RestClient<T> {
                     method: restClient.method,
                     headers: restClient.headers,
                     data: restClient.data,
+                    withCredentials: true,
                 });
                 return RestClient.convert(response);
             } catch (e) {
