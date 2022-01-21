@@ -116,6 +116,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             // Add a filter to validate the tokens with every request
             http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         }
+        if (openshiftEnabled) {
+            http.csrf().disable().authorizeRequests().antMatchers("/**").permitAll();
+        }
         http.cors();
 
     }
