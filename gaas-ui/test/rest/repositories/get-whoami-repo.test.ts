@@ -1,16 +1,13 @@
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { GetWhoAmIRepo } from "../../../src/rest/repositories/get-whoami-repo";
-import { IWhoAmIResponse } from "../../../src/rest/http-message-interfaces/response-interfaces";
 import { RestApiError } from "../../../src/rest/RestApiError";
 
 const mock = new MockAdapter(axios);
 const getWhoAmIRepo = new GetWhoAmIRepo();
 describe("GetWhoAmIRepo", () => {
     it("Should return an email string when request is successful", async () => {
-        const apiResponse: IWhoAmIResponse = {
-            "x-email": "test@test.com",
-        };
+        const apiResponse: string = "test@test.com";
         mock.onGet("/whoami").reply(200, apiResponse);
         const actualResponse = await getWhoAmIRepo.getWhoAmI();
         expect(actualResponse).toEqual("test@test.com");

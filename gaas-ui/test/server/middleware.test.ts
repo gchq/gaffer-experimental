@@ -64,9 +64,7 @@ describe("whoami", () => {
             .set("Authorization", token)
             .then((response) => {
                 expect(response.statusCode).toEqual(200);
-                expect(response.body).toEqual({
-                    "x-email": "testEmail@something.com",
-                });
+                expect(response.text).toEqual("testEmail@something.com");
             });
     });
 });

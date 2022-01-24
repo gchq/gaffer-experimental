@@ -14,7 +14,6 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://localhost:3000/");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Methods", "OPTIONS,POST,GET");
-    res.header("x-email", "testEmail@something.com");
     next();
 });
 
@@ -42,9 +41,7 @@ app.post("/auth/signout", (req, res) => {
 app.get("/whoami", (req, res, next) => {
     try {
         jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
-            res.status(200).send({
-                "x-email": "testEmail@something.com",
-            });
+            res.status(200).send("testEmail@something.com");
         });
     } catch (e) {
         res.status(404).send(e.message).end();
