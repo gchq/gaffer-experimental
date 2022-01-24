@@ -24,6 +24,7 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1Status;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -81,17 +82,7 @@ public class DeploymentHandler {
         LOGGER.info("Received new add request");
         V1Secret helmValuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
         try {
-            coreV1Api.createNamespacedSecret(workerNamespace, helmValuesSecret, null, null, null);
-            LOGGER.info("Successfully created secret for new install. Trying pod deployment now...");
-            String secretName = gaffer.getSpec().getNestedObject("graph", "config", "graphId").toString();
-            if (secretName == null) {
-                // This would be really weird, and we'd want to know about it.
-                throw new ApiException("A secret was generated without a name. Unable to proceed");
-            }
-            gaffer.metaData(new V1ObjectMeta()
-                    .namespace(workerNamespace)
-                    .name(secretName)
-            );
+            String secretName = getSecretName(gaffer, helmValuesSecret);
             V1Pod pod = kubernetesObjectFactory.createHelmPod(gaffer, HelmCommand.INSTALL, secretName);
             try {
                 coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
@@ -108,6 +99,22 @@ public class DeploymentHandler {
         return true;
     }
 
+    @NotNull
+    private String getSecretName(final Gaffer gaffer, final V1Secret helmValuesSecret) throws ApiException {
+        coreV1Api.createNamespacedSecret(workerNamespace, helmValuesSecret, null, null, null);
+        LOGGER.info("Successfully created secret for new install. Trying pod deployment now...");
+        String secretName = gaffer.getSpec().getNestedObject("graph", "config", "graphId").toString();
+        if (secretName == null) {
+            // This would be really weird, and we'd want to know about it.
+            throw new ApiException("A secret was generated without a name. Unable to proceed");
+        }
+        gaffer.metaData(new V1ObjectMeta()
+                .namespace(workerNamespace)
+                .name(secretName)
+        );
+        return secretName;
+    }
+
     /**
      * Starts the Uninstallation process for a Gaffer Graph.
      *
@@ -118,16 +125,7 @@ public class DeploymentHandler {
      */
     public boolean onGafferDelete(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
         try {
-            kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + GAFFER_NAME_SUFFIX).delete();
-            kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui").delete();
-            kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-application-properties").delete();
-            kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-graph-config").delete();
-            kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-schema").delete();
-            kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui-config").delete();
-            kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer + "-gaffer-store-properties").delete();
-            kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer).delete();
-            kubernetesClient.secrets().inNamespace(workerNamespace).withName("sh.helm.release.v1." + gaffer + ".v1").delete();
-            kubernetesClient.pods().inNamespace(workerNamespace).withName(gaffer + "-install-worker");
+            deleteGaffer(gaffer, kubernetesClient);
         } catch (Exception e) {
             LOGGER.debug(String.format("Failed to delete deployments of %s", gaffer));
             throw new ApiException(e.getLocalizedMessage());
@@ -136,39 +134,57 @@ public class DeploymentHandler {
         return true;
     }
 
+    private void deleteGaffer(final String gaffer, final KubernetesClient kubernetesClient) {
+        kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + GAFFER_NAME_SUFFIX).delete();
+        kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui").delete();
+        kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-application-properties").delete();
+        kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-graph-config").delete();
+        kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-schema").delete();
+        kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui-config").delete();
+        kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer + "-gaffer-store-properties").delete();
+        kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer).delete();
+        kubernetesClient.secrets().inNamespace(workerNamespace).withName("sh.helm.release.v1." + gaffer + ".v1").delete();
+        kubernetesClient.pods().inNamespace(workerNamespace).withName(gaffer + "-install-worker");
+    }
+
     public List<GaaSGraph> getDeployments(final KubernetesClient kubernetesClient) throws ApiException {
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
             List<String> apiDeployments = new ArrayList<>();
-            List<GaaSGraph> graphs = new ArrayList<>();
             for (final Deployment deployment : deploymentList) {
                 if (deployment.getMetadata().getName().contains(GAFFER_NAME_SUFFIX)) {
                     apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
                 }
             }
-            for (final String gaffer : apiDeployments) {
-                GaaSGraph gaaSGraph = new GaaSGraph();
-                gaaSGraph.graphId(gaffer);
-                Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
-                gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
-                if (getValueOfConfig(graphConfig, "configName") != null) {
-                    gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
-                }
-                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
-                if (availableReplicas >= 1) {
-                    gaaSGraph.status(RestApiStatus.UP);
-                } else {
-                    gaaSGraph.status(RestApiStatus.DOWN);
-                }
-                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
-                graphs.add(gaaSGraph);
-
-            }
+            List<GaaSGraph> graphs = listGraphs(kubernetesClient, apiDeployments);
             return graphs;
         } catch (Exception e) {
             LOGGER.debug("Failed to list all Gaffers.");
             throw new ApiException(e.getLocalizedMessage());
         }
+    }
+
+    private  List<GaaSGraph> listGraphs(final KubernetesClient kubernetesClient, final List<String> apiDeployments) {
+        List<GaaSGraph> graphs = new ArrayList<>();
+        for (final String gaffer : apiDeployments) {
+            GaaSGraph gaaSGraph = new GaaSGraph();
+            gaaSGraph.graphId(gaffer);
+            Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
+            gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
+            if (getValueOfConfig(graphConfig, "configName") != null) {
+                gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
+            }
+            int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
+            if (availableReplicas >= 1) {
+                gaaSGraph.status(RestApiStatus.UP);
+            } else {
+                gaaSGraph.status(RestApiStatus.DOWN);
+            }
+            gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
+            graphs.add(gaaSGraph);
+
+        }
+        return graphs;
     }
 
     private String getValueOfConfig(final Collection<String> value, final String fieldToGet) {
@@ -202,6 +218,47 @@ public class DeploymentHandler {
         final String hdfsLabelSelector = "app.kubernetes.io/name=hdfs," + gafferLabelSelector;
         final String zookeeperLabelSelector = "app=zookeeper,release=" + gafferName;
         LOGGER.debug("Removing any workers working on this gaffer deployment");
+        deleteCollectionNamespacePod(gafferNamespace, workerLabelSelector);
+        LOGGER.debug("Removing HDFS PVCs");
+        deleteCollectionNamespacedPersistentVolumeClaimWithHDFsLabelSelector(gafferNamespace, hdfsLabelSelector);
+        LOGGER.debug("Removing Zookeeper PVCs");
+        deleteCollectionNamespacePersistentVolumeClaimWithZookeeperLabels(gafferNamespace, zookeeperLabelSelector);
+        LOGGER.debug("Removing any stranded pods");
+        deleteCollectionNamespaceStandardPod(gafferNamespace, gafferLabelSelector);
+
+    }
+
+    private void deleteCollectionNamespaceStandardPod(final String gafferNamespace, final String gafferLabelSelector) throws ApiException {
+        this.coreV1Api.deleteCollectionNamespacedPodAsync(gafferNamespace, null, null, null,
+                null, 0, gafferLabelSelector, null, null,
+                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
+                    if (e != null) {
+                        LOGGER.error("Failed to remove stranded pods", e);
+                    }
+                });
+    }
+
+    private void deleteCollectionNamespacePersistentVolumeClaimWithZookeeperLabels(final String gafferNamespace, final String zookeeperLabelSelector) throws ApiException {
+        this.coreV1Api.deleteCollectionNamespacedPersistentVolumeClaimAsync(gafferNamespace, null, null,
+                null, null, 0, zookeeperLabelSelector, null, null,
+                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
+                    if (e != null) {
+                        LOGGER.error("Failed to remove Zookeeper PVCs", e);
+                    }
+                });
+    }
+
+    private void deleteCollectionNamespacedPersistentVolumeClaimWithHDFsLabelSelector(final String gafferNamespace, final String hdfsLabelSelector) throws ApiException {
+        this.coreV1Api.deleteCollectionNamespacedPersistentVolumeClaimAsync(gafferNamespace, null, null,
+                null, null, 0, hdfsLabelSelector, null, null,
+                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
+                    if (e != null) {
+                        LOGGER.error("Failed to remove HDFS PVCs", e);
+                    }
+                });
+    }
+
+    private void deleteCollectionNamespacePod(final String gafferNamespace, final String workerLabelSelector) throws ApiException {
         this.coreV1Api.deleteCollectionNamespacedPodAsync(workerNamespace, null, null, null,
                 null, 0, workerLabelSelector, null, null,
                 null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, err) -> {
@@ -218,31 +275,6 @@ public class DeploymentHandler {
                         LOGGER.error("Failed to remove worker pods", err);
                     }
                 });
-        LOGGER.debug("Removing HDFS PVCs");
-        this.coreV1Api.deleteCollectionNamespacedPersistentVolumeClaimAsync(gafferNamespace, null, null,
-                null, null, 0, hdfsLabelSelector, null, null,
-                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
-                    if (e != null) {
-                        LOGGER.error("Failed to remove HDFS PVCs", e);
-                    }
-                });
-        LOGGER.debug("Removing Zookeeper PVCs");
-        this.coreV1Api.deleteCollectionNamespacedPersistentVolumeClaimAsync(gafferNamespace, null, null,
-                null, null, 0, zookeeperLabelSelector, null, null,
-                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
-                    if (e != null) {
-                        LOGGER.error("Failed to remove Zookeeper PVCs", e);
-                    }
-                });
-        LOGGER.debug("Removing any stranded pods");
-        this.coreV1Api.deleteCollectionNamespacedPodAsync(gafferNamespace, null, null, null,
-                null, 0, gafferLabelSelector, null, null,
-                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
-                    if (e != null) {
-                        LOGGER.error("Failed to remove stranded pods", e);
-                    }
-                });
-
     }
 
 
