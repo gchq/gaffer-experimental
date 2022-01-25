@@ -69,8 +69,6 @@ public class DeploymentHandler {
         this.kubernetesObjectFactory = kubernetesObjectFactory;
     }
 
-    // Gaffer events
-
     /**
      * Deploys a Gaffer Graph
      *
@@ -134,6 +132,25 @@ public class DeploymentHandler {
         return true;
     }
 
+
+    public List<GaaSGraph> getDeployments(final KubernetesClient kubernetesClient) throws ApiException {
+        try {
+            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
+            List<String> apiDeployments = new ArrayList<>();
+            for (final Deployment deployment : deploymentList) {
+                if (deployment.getMetadata().getName().contains(GAFFER_NAME_SUFFIX)) {
+                    apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
+                }
+            }
+            List<GaaSGraph> graphs = listAllGraphs(kubernetesClient, apiDeployments);
+            return graphs;
+        } catch (Exception e) {
+            LOGGER.debug("Failed to list all Gaffers.");
+            throw new ApiException(e.getLocalizedMessage());
+        }
+    }
+
+
     private void deleteGaffer(final String gaffer, final KubernetesClient kubernetesClient) {
         kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + GAFFER_NAME_SUFFIX).delete();
         kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui").delete();
@@ -147,24 +164,90 @@ public class DeploymentHandler {
         kubernetesClient.pods().inNamespace(workerNamespace).withName(gaffer + "-install-worker");
     }
 
-    public List<GaaSGraph> getDeployments(final KubernetesClient kubernetesClient) throws ApiException {
-        try {
-            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
-            List<String> apiDeployments = new ArrayList<>();
-            for (final Deployment deployment : deploymentList) {
-                if (deployment.getMetadata().getName().contains(GAFFER_NAME_SUFFIX)) {
-                    apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
-                }
-            }
-            List<GaaSGraph> graphs = listGraphs(kubernetesClient, apiDeployments);
-            return graphs;
-        } catch (Exception e) {
-            LOGGER.debug("Failed to list all Gaffers.");
-            throw new ApiException(e.getLocalizedMessage());
-        }
+
+    /**
+     * Removes any resources left after a successful uninstallation including:
+     * <ul>
+     *     <li>Any orphaned pods - typically post install hooks</li>
+     *     <li>Any PVCs associated with the deployment</li>
+     * </ul>
+     * <p>
+     * Also deletes any possible workers which may be upgrading or installing this release.
+     *
+     * @param gafferName      The name of the Gaffer release
+     * @param gafferNamespace The namespace that the Gaffer graph is located
+     * @throws ApiException if there is an issue with a Kubernetes API call
+     */
+    private void cleanUpGafferDeploymentAfterTearDown(final String gafferName, final String gafferNamespace) throws ApiException {
+        LOGGER.info("Cleaning up after deployment");
+        final String workerLabelSelector = GAFFER_NAME_LABEL + "=" + gafferName + "," + GAFFER_NAMESPACE_LABEL + "=" + gafferNamespace;
+        final String gafferLabelSelector = "app.kubernetes.io/instance=" + gafferName;
+        final String hdfsLabelSelector = "app.kubernetes.io/name=hdfs," + gafferLabelSelector;
+        final String zookeeperLabelSelector = "app=zookeeper,release=" + gafferName;
+
+        LOGGER.debug("Removing any workers working on this gaffer deployment");
+        deleteCollectionNamespacePod(gafferNamespace, workerLabelSelector);
+
+        LOGGER.debug("Removing HDFS PVCs");
+        deleteCollectionNamespacePersistentVolumeClaimWithHDFsLabelSelector(gafferNamespace, hdfsLabelSelector);
+
+        LOGGER.debug("Removing Zookeeper PVCs");
+        deleteCollectionNamespacePersistentVolumeClaimWithZookeeperLabels(gafferNamespace, zookeeperLabelSelector);
+
+        LOGGER.debug("Removing any stranded pods");
+        deleteCollectionNamespaceStandardPod(gafferNamespace, gafferLabelSelector);
+
     }
 
-    private  List<GaaSGraph> listGraphs(final KubernetesClient kubernetesClient, final List<String> apiDeployments) {
+    private void deleteCollectionNamespacePod(final String gafferNamespace, final String workerLabelSelector) throws ApiException {
+        this.coreV1Api.deleteCollectionNamespacedPodAsync(workerNamespace, null, null, null,
+                null, 0, workerLabelSelector, null, null,
+                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, err) -> {
+                    if (err == null) {
+                        try {
+                            LOGGER.debug("All worker pods have been removed. Removing any attached secrets");
+                            coreV1Api.deleteCollectionNamespacedSecret(workerNamespace, null, null,
+                                    null, null, 0, workerLabelSelector, null,
+                                    null, null, null, null, null, null);
+                        } catch (final ApiException e) {
+                            LOGGER.error("Failed to remove worker secrets", e);
+                        }
+                    } else {
+                        LOGGER.error("Failed to remove worker pods", err);
+                    }
+                });
+    }
+
+    private void deleteCollectionNamespacePersistentVolumeClaimWithHDFsLabelSelector(final String gafferNamespace, final String hdfsLabelSelector) throws ApiException {
+        deleteCollectionNamespacePersistentVolumeClaimAsync(gafferNamespace, hdfsLabelSelector, "Failed to remove HDFS PVCs");
+    }
+
+    private void deleteCollectionNamespacePersistentVolumeClaimWithZookeeperLabels(final String gafferNamespace, final String zookeeperLabelSelector) throws ApiException {
+        deleteCollectionNamespacePersistentVolumeClaimAsync(gafferNamespace, zookeeperLabelSelector, "Failed to remove Zookeeper PVCs");
+    }
+
+    private void deleteCollectionNamespacePersistentVolumeClaimAsync(final String gafferNamespace, final String labelSelector, final String loggerMessage) throws ApiException {
+        this.coreV1Api.deleteCollectionNamespacedPersistentVolumeClaimAsync(gafferNamespace, null, null,
+                null, null, 0, labelSelector, null, null,
+                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
+                    if (e != null) {
+                        LOGGER.error(loggerMessage, e);
+                    }
+                });
+    }
+
+
+    private void deleteCollectionNamespaceStandardPod(final String gafferNamespace, final String gafferLabelSelector) throws ApiException {
+        this.coreV1Api.deleteCollectionNamespacedPodAsync(gafferNamespace, null, null, null,
+                null, 0, gafferLabelSelector, null, null,
+                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
+                    if (e != null) {
+                        LOGGER.error("Failed to remove stranded pods", e);
+                    }
+                });
+    }
+
+    private  List<GaaSGraph> listAllGraphs(final KubernetesClient kubernetesClient, final List<String> apiDeployments) {
         List<GaaSGraph> graphs = new ArrayList<>();
         for (final String gaffer : apiDeployments) {
             GaaSGraph gaaSGraph = new GaaSGraph();
@@ -196,85 +279,6 @@ public class DeploymentHandler {
             }
         }
         return null;
-    }
-
-    /**
-     * Removes any resources left after a successful uninstallation including:
-     * <ul>
-     *     <li>Any orphaned pods - typically post install hooks</li>
-     *     <li>Any PVCs associated with the deployment</li>
-     * </ul>
-     * <p>
-     * Also deletes any possible workers which may be upgrading or installing this release.
-     *
-     * @param gafferName      The name of the Gaffer release
-     * @param gafferNamespace The namespace that the Gaffer graph is located
-     * @throws ApiException if there is an issue with a Kubernetes API call
-     */
-    private void cleanUpGafferDeploymentAfterTearDown(final String gafferName, final String gafferNamespace) throws ApiException {
-        LOGGER.info("Cleaning up after deployment");
-        final String workerLabelSelector = GAFFER_NAME_LABEL + "=" + gafferName + "," + GAFFER_NAMESPACE_LABEL + "=" + gafferNamespace;
-        final String gafferLabelSelector = "app.kubernetes.io/instance=" + gafferName;
-        final String hdfsLabelSelector = "app.kubernetes.io/name=hdfs," + gafferLabelSelector;
-        final String zookeeperLabelSelector = "app=zookeeper,release=" + gafferName;
-        LOGGER.debug("Removing any workers working on this gaffer deployment");
-        deleteCollectionNamespacePod(gafferNamespace, workerLabelSelector);
-        LOGGER.debug("Removing HDFS PVCs");
-        deleteCollectionNamespacedPersistentVolumeClaimWithHDFsLabelSelector(gafferNamespace, hdfsLabelSelector);
-        LOGGER.debug("Removing Zookeeper PVCs");
-        deleteCollectionNamespacePersistentVolumeClaimWithZookeeperLabels(gafferNamespace, zookeeperLabelSelector);
-        LOGGER.debug("Removing any stranded pods");
-        deleteCollectionNamespaceStandardPod(gafferNamespace, gafferLabelSelector);
-
-    }
-
-    private void deleteCollectionNamespaceStandardPod(final String gafferNamespace, final String gafferLabelSelector) throws ApiException {
-        this.coreV1Api.deleteCollectionNamespacedPodAsync(gafferNamespace, null, null, null,
-                null, 0, gafferLabelSelector, null, null,
-                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
-                    if (e != null) {
-                        LOGGER.error("Failed to remove stranded pods", e);
-                    }
-                });
-    }
-
-    private void deleteCollectionNamespacePersistentVolumeClaimWithZookeeperLabels(final String gafferNamespace, final String zookeeperLabelSelector) throws ApiException {
-        this.coreV1Api.deleteCollectionNamespacedPersistentVolumeClaimAsync(gafferNamespace, null, null,
-                null, null, 0, zookeeperLabelSelector, null, null,
-                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
-                    if (e != null) {
-                        LOGGER.error("Failed to remove Zookeeper PVCs", e);
-                    }
-                });
-    }
-
-    private void deleteCollectionNamespacedPersistentVolumeClaimWithHDFsLabelSelector(final String gafferNamespace, final String hdfsLabelSelector) throws ApiException {
-        this.coreV1Api.deleteCollectionNamespacedPersistentVolumeClaimAsync(gafferNamespace, null, null,
-                null, null, 0, hdfsLabelSelector, null, null,
-                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, e) -> {
-                    if (e != null) {
-                        LOGGER.error("Failed to remove HDFS PVCs", e);
-                    }
-                });
-    }
-
-    private void deleteCollectionNamespacePod(final String gafferNamespace, final String workerLabelSelector) throws ApiException {
-        this.coreV1Api.deleteCollectionNamespacedPodAsync(workerNamespace, null, null, null,
-                null, 0, workerLabelSelector, null, null,
-                null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, err) -> {
-                    if (err == null) {
-                        try {
-                            LOGGER.debug("All worker pods have been removed. Removing any attached secrets");
-                            coreV1Api.deleteCollectionNamespacedSecret(workerNamespace, null, null,
-                                    null, null, 0, workerLabelSelector, null,
-                                    null, null, null, null, null, null);
-                        } catch (final ApiException e) {
-                            LOGGER.error("Failed to remove worker secrets", e);
-                        }
-                    } else {
-                        LOGGER.error("Failed to remove worker pods", err);
-                    }
-                });
     }
 
 
