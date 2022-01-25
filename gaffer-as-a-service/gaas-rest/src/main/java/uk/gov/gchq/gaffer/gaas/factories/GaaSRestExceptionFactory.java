@@ -33,6 +33,9 @@ public final class GaaSRestExceptionFactory {
         if (e.getCode() == 401 && isEmpty(e.getMessage())) {
             return new GaaSRestApiException(MESSAGE_PREFIX + "Invalid authentication credentials for Kubernetes cluster", e.getCode(), e);
         }
+        if(e.getMessage().equals("Unauthorized")){
+            return new GaaSRestApiException(MESSAGE_PREFIX + e.getMessage(), 401, e);
+        }
 
         if (e.getResponseBody() != null && isValidJson(e.getResponseBody())) {
             final Gson gson = new Gson();

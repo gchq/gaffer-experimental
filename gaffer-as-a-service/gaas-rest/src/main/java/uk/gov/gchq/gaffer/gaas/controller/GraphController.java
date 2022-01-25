@@ -152,7 +152,6 @@ public class GraphController {
         headers.forEach((key, value) -> {
             String.format("Header '%s' = %s", key, value);
         });
-
         return new ResponseEntity<String>(
                 String.format("Listed %s headers", headers.toString()), HttpStatus.OK);
     }
