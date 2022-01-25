@@ -133,7 +133,7 @@ public class DeploymentHandler {
 
             List<Secret> secrets = kubernetesClient.secrets().inNamespace(workerNamespace).list().getItems();
             List<Secret> secretsToDelete = new ArrayList<>();
-            for (Secret secret : secrets) {
+            for (final Secret secret : secrets) {
                 if (secret.getMetadata().getName().equals(gaffer + "-gaffer-store-properties") || secret.getMetadata().getName().equals(gaffer) || secret.getMetadata().getName().equals("sh.helm.release.v1." + gaffer + ".v1")) {
                     secretsToDelete.add(secret);
                 }
