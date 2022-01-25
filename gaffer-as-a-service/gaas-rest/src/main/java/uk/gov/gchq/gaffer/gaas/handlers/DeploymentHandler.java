@@ -166,24 +166,30 @@ public class DeploymentHandler {
                     apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
                 }
             }
-            for (final String gaffer : apiDeployments) {
-                GaaSGraph gaaSGraph = new GaaSGraph();
-                gaaSGraph.graphId(gaffer);
-                Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
-                gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
-                if (getValueOfConfig(graphConfig, "configName") != null) {
-                    gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
-                }
-                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
-                if (availableReplicas >= 1) {
-                    gaaSGraph.status(RestApiStatus.UP);
-                } else {
-                    gaaSGraph.status(RestApiStatus.DOWN);
-                }
-                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
-                graphs.add(gaaSGraph);
 
-            }
+                for (final String gaffer : apiDeployments) {
+                    try {
+                        GaaSGraph gaaSGraph = new GaaSGraph();
+                        gaaSGraph.graphId(gaffer);
+                        Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
+                        gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
+                        if (getValueOfConfig(graphConfig, "configName") != null) {
+                            gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
+                        }
+                        int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
+                        if (availableReplicas >= 1) {
+                            gaaSGraph.status(RestApiStatus.UP);
+                        } else {
+                            gaaSGraph.status(RestApiStatus.DOWN);
+                        }
+                        gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
+                        graphs.add(gaaSGraph);
+                    } catch( Exception e) {
+                        LOGGER.info(gaffer + " could not be retrieved ");
+                    }
+
+
+                }
             return graphs;
         } catch (Exception e) {
             LOGGER.debug("Failed to list all Gaffers.");
