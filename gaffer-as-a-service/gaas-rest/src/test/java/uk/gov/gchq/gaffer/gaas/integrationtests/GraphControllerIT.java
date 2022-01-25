@@ -64,17 +64,6 @@ class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    void testAddGraphReturns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
-        final String inputJson = mapToJson(gaaSCreateRequestBody);
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token)
-                .content(inputJson)).andReturn();
-        assertEquals(201, mvcResult.getResponse().getStatus());
-    }
-
-    @Test
     void testAddGraphNotNullShouldReturn400() throws Exception {
         final String jsonRequest = "{\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
