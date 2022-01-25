@@ -33,6 +33,7 @@ import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
@@ -130,7 +131,7 @@ public class UnitTestConfig {
     }
 
     @Bean
-    KubernetesClient kubernetesClient()  {
+    KubernetesClient kubernetesClient() {
         return mock(KubernetesClient.class);
     }
 
@@ -139,4 +140,8 @@ public class UnitTestConfig {
         return mock(DeploymentHandler.class);
     }
 
+    @Bean
+    public DeleteGraphService deleteGraphService() {
+        return mock(DeleteGraphService.class);
+    }
 }

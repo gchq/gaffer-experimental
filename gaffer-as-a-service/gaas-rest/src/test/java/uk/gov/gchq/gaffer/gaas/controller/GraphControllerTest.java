@@ -46,6 +46,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -223,7 +224,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void deleteGraph_whenGraphExistsAndCanDelete_shouldReturn204() throws Exception {
-        doNothing().when(deleteGraphService).deleteGraph(TEST_GRAPH_ID);
+        doReturn(true).when(deleteGraphService).deleteGraph(TEST_GRAPH_ID);
 
         final MvcResult result = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

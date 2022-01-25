@@ -78,10 +78,10 @@ public class GafferClient {
         }
     }
 
-    public void deleteGaffer(final String crdName) throws GaaSRestApiException {
+    public boolean deleteGaffer(final String crdName) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
-            deploymentHandler.onGafferDelete(crdName, kubernetesClient);
+            return deploymentHandler.onGafferDelete(crdName, kubernetesClient);
         } catch (ApiException e) {
             LOGGER.debug("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
             throw from(e);

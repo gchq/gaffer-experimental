@@ -228,7 +228,7 @@ class DeploymentHandlerTest {
 
 
         List<ILoggingEvent> logsList = listAppender.list;
-        assertEquals("Failed to delete deployments of test", logsList.get(0).getMessage());
+        assertEquals("No deployments of test to delete", logsList.get(0).getMessage());
     }
 
 

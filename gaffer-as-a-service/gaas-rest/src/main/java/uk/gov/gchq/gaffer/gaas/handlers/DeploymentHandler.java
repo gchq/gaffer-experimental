@@ -16,8 +16,11 @@
 
 package uk.gov.gchq.gaffer.gaas.handlers;
 
+import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
@@ -118,19 +121,36 @@ public class DeploymentHandler {
      */
     public boolean onGafferDelete(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
         try {
-            kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + GAFFER_NAME_SUFFIX).delete();
-            kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui").delete();
-            kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-application-properties").delete();
-            kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-graph-config").delete();
-            kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-schema").delete();
-            kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui-config").delete();
-            kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer + "-gaffer-store-properties").delete();
-            kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer).delete();
-            kubernetesClient.secrets().inNamespace(workerNamespace).withName("sh.helm.release.v1." + gaffer + ".v1").delete();
-            kubernetesClient.pods().inNamespace(workerNamespace).withName(gaffer + "-install-worker");
-        } catch (Exception e) {
+            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("app.kubernetes.io/instance", gaffer).list().getItems();
+            if (!deploymentList.isEmpty()) {
+                kubernetesClient.apps().deployments().inNamespace(workerNamespace).delete(deploymentList);
+            }
+
+            List<ConfigMap> configMapList = kubernetesClient.configMaps().inNamespace(workerNamespace).withLabel("app.kubernetes.io/instance", gaffer).list().getItems();
+            if (!configMapList.isEmpty()) {
+                kubernetesClient.configMaps().inNamespace(workerNamespace).delete(configMapList);
+            }
+
+            List<Secret> secrets = kubernetesClient.secrets().inNamespace(workerNamespace).list().getItems();
+            List<Secret> secretsToDelete = new ArrayList<>();
+            for (Secret secret : secrets) {
+                if (secret.getMetadata().getName().equals(gaffer + "-gaffer-store-properties") || secret.getMetadata().getName().equals(gaffer) || secret.getMetadata().getName().equals("sh.helm.release.v1." + gaffer + ".v1")) {
+                    secretsToDelete.add(secret);
+                }
+            }
+            if (!secretsToDelete.isEmpty()) {
+                kubernetesClient.secrets().inNamespace(workerNamespace).delete(secretsToDelete);
+            }
+            if (secretsToDelete.isEmpty() & configMapList.isEmpty() & deploymentList.isEmpty()) {
+                //If all 3 are empty it means the gaffer which the user is trying to delete does not exist therefore
+                //we return false
+                LOGGER.debug(String.format("No deployments of %s to delete", gaffer));
+                return false;
+            }
+
+        } catch (KubernetesClientException e) {
             LOGGER.debug(String.format("Failed to delete deployments of %s", gaffer));
-            throw new ApiException(e.getLocalizedMessage());
+            throw new ApiException(e.getCode(), e.getMessage());
         }
         cleanUpGafferDeploymentAfterTearDown(gaffer, workerNamespace);
         return true;
