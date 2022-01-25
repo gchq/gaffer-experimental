@@ -171,49 +171,11 @@ public class DeploymentHandler {
                     apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
                 }
             }
-
-                for (final String gaffer : apiDeployments) {
-                    try {
-                        GaaSGraph gaaSGraph = new GaaSGraph();
-                        gaaSGraph.graphId(gaffer);
-                        Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
-                        gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
-                        if (getValueOfConfig(graphConfig, "configName") != null) {
-                            gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
-                        }
-                        int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
-                        if (availableReplicas >= 1) {
-                            gaaSGraph.status(RestApiStatus.UP);
-                        } else {
-                            gaaSGraph.status(RestApiStatus.DOWN);
-                        }
-                        gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
-                        graphs.add(gaaSGraph);
-                    } catch( Exception e) {
-                        LOGGER.info(gaffer + " could not be retrieved ");
-                    }
-
-
-                }
-            return graphs;
+            return listAllGraphs(kubernetesClient, apiDeployments);
         } catch (Exception e) {
             LOGGER.debug("Failed to list all Gaffers.");
             throw new ApiException(e.getLocalizedMessage());
         }
-    }
-
-
-    private void deleteGaffer(final String gaffer, final KubernetesClient kubernetesClient) {
-        kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + GAFFER_NAME_SUFFIX).delete();
-        kubernetesClient.apps().deployments().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui").delete();
-        kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-application-properties").delete();
-        kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-graph-config").delete();
-        kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-schema").delete();
-        kubernetesClient.configMaps().inNamespace(workerNamespace).withName(gaffer + "-gaffer-ui-config").delete();
-        kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer + "-gaffer-store-properties").delete();
-        kubernetesClient.secrets().inNamespace(workerNamespace).withName(gaffer).delete();
-        kubernetesClient.secrets().inNamespace(workerNamespace).withName("sh.helm.release.v1." + gaffer + ".v1").delete();
-        kubernetesClient.pods().inNamespace(workerNamespace).withName(gaffer + "-install-worker");
     }
 
 
@@ -299,25 +261,28 @@ public class DeploymentHandler {
                 });
     }
 
-    private  List<GaaSGraph> listAllGraphs(final KubernetesClient kubernetesClient, final List<String> apiDeployments) {
+    private List<GaaSGraph> listAllGraphs(final KubernetesClient kubernetesClient, final List<String> apiDeployments) {
         List<GaaSGraph> graphs = new ArrayList<>();
         for (final String gaffer : apiDeployments) {
-            GaaSGraph gaaSGraph = new GaaSGraph();
-            gaaSGraph.graphId(gaffer);
-            Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
-            gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
-            if (getValueOfConfig(graphConfig, "configName") != null) {
-                gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
+            try {
+                GaaSGraph gaaSGraph = new GaaSGraph();
+                gaaSGraph.graphId(gaffer);
+                Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
+                gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
+                if (getValueOfConfig(graphConfig, "configName") != null) {
+                    gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
+                }
+                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
+                if (availableReplicas >= 1) {
+                    gaaSGraph.status(RestApiStatus.UP);
+                } else {
+                    gaaSGraph.status(RestApiStatus.DOWN);
+                }
+                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
+                graphs.add(gaaSGraph);
+            } catch (Exception e) {
+                LOGGER.info(gaffer + " could not be retrieved ");
             }
-            int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
-            if (availableReplicas >= 1) {
-                gaaSGraph.status(RestApiStatus.UP);
-            } else {
-                gaaSGraph.status(RestApiStatus.DOWN);
-            }
-            gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
-            graphs.add(gaaSGraph);
-
         }
         return graphs;
     }
