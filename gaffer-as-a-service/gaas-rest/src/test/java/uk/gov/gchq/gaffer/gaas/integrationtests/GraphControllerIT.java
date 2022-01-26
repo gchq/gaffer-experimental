@@ -26,7 +26,6 @@ import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 
 import java.util.LinkedHashMap;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -159,7 +158,6 @@ class GraphControllerIT extends AbstractTest {
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
         assertEquals(201, createGraphResponse.getResponse().getStatus());
-        TimeUnit.SECONDS.sleep(60);
         final MvcResult getGraphsResponse = mvc.perform(delete("/graphs/" + graphName)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
@@ -203,9 +201,6 @@ class GraphControllerIT extends AbstractTest {
 
     @AfterEach
     void tearDown() throws InterruptedException {
-        //This is necessary due to the fact that after each deployment OpenShift needs a few seconds to delete all the resources associated with the
-        // graph which is created in the tests.
-        TimeUnit.SECONDS.sleep(60);
         try {
              mvc.perform(delete("/graphs/" + graphName)
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
