@@ -84,7 +84,7 @@ class GraphControllerIT extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        assertEquals("{\"title\":\"\",\"detail\":\"Kubernetes Cluster Error: (AlreadyExists) secrets \\\"testcontrolleritgraph\\\" already exists\"}", createGraphResponse.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Conflict\",\"detail\":\"Kubernetes Cluster Error: (AlreadyExists) secrets \\\"testcontrolleritgraph\\\" already exists\"}", createGraphResponse.getResponse().getContentAsString());
         assertEquals(409, createGraphResponse.getResponse().getStatus());
     }
 
