@@ -125,7 +125,7 @@ class DeploymentHandlerTest {
         }
 
         List<ILoggingEvent> logsList = listAppender.list;
-        assertEquals("Failed to create Gaffer", logsList.get(1).getMessage());
+        assertEquals("Failed to create Gaffer", logsList.get(0).getMessage());
     }
 
     @Test
@@ -186,9 +186,9 @@ class DeploymentHandlerTest {
         handler.setCoreV1Api(mock(CoreV1Api.class));
         Gaffer gaffer = getGaffer();
         when(kubernetesObjectFactory.createValuesSecret(gaffer, true)).thenReturn(new V1Secret());
-        final ApiException exception = assertThrows(ApiException.class, () -> handler.onGafferCreate(null));
+        final NullPointerException exception = assertThrows(NullPointerException.class, () -> handler.onGafferCreate(null));
 
-        assertEquals("io.kubernetes.client.openapi.ApiException", exception.toString());
+        assertEquals("java.lang.NullPointerException", exception.toString());
 
 
     }
