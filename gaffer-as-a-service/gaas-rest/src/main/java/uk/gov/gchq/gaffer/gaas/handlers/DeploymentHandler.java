@@ -84,17 +84,20 @@ public class DeploymentHandler {
         V1Secret helmValuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, true);
         try {
             String secretName = getSecretName(gaffer, helmValuesSecret);
+
             V1Pod pod = kubernetesObjectFactory.createHelmPod(gaffer, HelmCommand.INSTALL, secretName);
             try {
                 coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
                 LOGGER.info("Install Pod deployment successful");
             } catch (final ApiException e) {
-                LOGGER.debug("Failed to create worker pod");
+                LOGGER.info("Failed to create worker pod");
                 throw e;
             }
-        } catch (final Exception e) {
-            LOGGER.debug("Failed to create Gaffer");
-            throw new ApiException(e.getLocalizedMessage());
+
+
+        } catch (final ApiException e) {
+            LOGGER.info("Failed to create Gaffer");
+            throw e;
         }
 
         return true;
