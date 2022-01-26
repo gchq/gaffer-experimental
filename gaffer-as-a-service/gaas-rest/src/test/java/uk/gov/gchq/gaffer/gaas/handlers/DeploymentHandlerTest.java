@@ -225,7 +225,7 @@ class DeploymentHandlerTest {
         DeploymentHandler deploymentHandler = new DeploymentHandler(environment, kubernetesObjectFactory);
         deploymentHandler.setCoreV1Api(mock(CoreV1Api.class));
         try {
-            deploymentHandler.onGafferDelete("test", new DefaultKubernetesClient());
+            deploymentHandler.onGafferDelete("test", kubernetesClient);
         } catch (Exception ignored) {
         }
 
