@@ -117,7 +117,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         }
         if (openshiftEnabled) {
-            http.csrf().disable().authorizeRequests().antMatchers("/**").permitAll();
+            http.csrf().disable().authorizeRequests().antMatchers("/**").permitAll(); // nosemgrep: java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
         }
         http.cors();
 
