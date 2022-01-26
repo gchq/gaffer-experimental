@@ -71,7 +71,7 @@ class GaaSRestExceptionFactoryTest {
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
 
         assertEquals("Kubernetes Cluster Error: java.net.SocketTimeoutException: connect timed out", actual.getMessage());
-        assertEquals(0, actual.getStatusCode());
+        assertEquals(500, actual.getStatusCode());
         assertTrue(actual.getCause() instanceof ApiException);
     }
 }

@@ -48,7 +48,7 @@ public final class GaaSRestExceptionFactory {
             if (e.getResponseBody() != null) {
                 message.concat(" " + e.getResponseBody());
             }
-            return new GaaSRestApiException(message, e.getCode(), e);
+            return new GaaSRestApiException(message, 500, e);
         }
     }
 
