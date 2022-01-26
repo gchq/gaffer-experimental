@@ -146,13 +146,4 @@ public class GraphController {
         return new ResponseEntity<String>(email, HttpStatus.OK);
     }
 
-    @GetMapping("/listHeaders")
-    public ResponseEntity<String> listAllHeaders(
-            @RequestHeader final Map<String, String> headers) {
-        headers.forEach((key, value) -> {
-            String.format("Header '%s' = %s", key, value);
-        });
-        return new ResponseEntity<String>(
-                String.format("Listed %s headers", headers.toString()), HttpStatus.OK);
-    }
 }
