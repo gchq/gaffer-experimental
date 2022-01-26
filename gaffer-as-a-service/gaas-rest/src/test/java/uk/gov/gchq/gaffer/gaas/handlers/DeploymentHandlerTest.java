@@ -38,18 +38,18 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
-
 import java.util.HashMap;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -74,6 +74,7 @@ class DeploymentHandlerTest {
 
     @MockBean
     IKubernetesObjectFactory kubernetesObjectFactory;
+
 
     @BeforeEach
     public void beforeEach() {
@@ -108,7 +109,7 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    void shouldLogMessagesWhenOnGafferCreateThrows() {
+    void shouldLogMessagesWhenOnGafferCreateThrows() throws ApiException {
         Logger deploymentHandlerLogger = (Logger) LoggerFactory.getLogger(DeploymentHandler.class);
         deploymentHandlerLogger.setLevel(Level.ALL);
 
@@ -116,16 +117,18 @@ class DeploymentHandlerTest {
         listAppender.start();
         deploymentHandlerLogger.addAppender(listAppender);
 
-        Gaffer gaffer = getGaffer();
 
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        CoreV1Api coreV1Api = mock(CoreV1Api.class);
+        ReflectionTestUtils.setField(handler, "coreV1Api", coreV1Api);
+        when(coreV1Api.createNamespacedSecret(anyString(), any(), any(), any(), any())).thenThrow(new ApiException());
         try {
-            handler.onGafferCreate(gaffer);
+            handler.onGafferCreate(null);
         } catch (Exception ignored) {
         }
 
         List<ILoggingEvent> logsList = listAppender.list;
-        assertEquals("Failed to create Gaffer", logsList.get(0).getMessage());
+        assertEquals("Failed to create Gaffer", logsList.get(1).getMessage());
     }
 
     @Test
