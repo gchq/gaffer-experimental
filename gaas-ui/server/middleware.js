@@ -188,10 +188,6 @@ app.get("/storetypes", (req, res) => {
                         parameters: ["schema"],
                     },
                     {
-                        name: "proxy",
-                        parameters: ["schema"],
-                    },
-                    {
                         name: "mapStore",
                         parameters: ["schema"],
                     },
