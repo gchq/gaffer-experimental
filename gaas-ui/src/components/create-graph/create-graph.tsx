@@ -29,7 +29,7 @@ import { DropzoneArea } from "material-ui-dropzone";
 import { TransitionProps } from "@material-ui/core/transitions";
 import GraphIdDescriptionInput from "./graph-id-description";
 import SchemaInput from "./schema-inputs";
-import StoreTypeSelect from "./storetype";
+import StoreTypeSelect from "./storetype-select";
 import AddProxyGraphInput from "./add-proxy-graph-input";
 import ProxyGraphsTable from "./proxy-graphs-table";
 import { GetStoreTypesRepo, IStoreTypes } from "../../rest/repositories/get-store-types-repo";
