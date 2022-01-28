@@ -29,4 +29,11 @@ module.exports = function (app) {
             changeOrigin: true,
         })
     );
+    app.use(
+        "/storetypes",
+        createProxyMiddleware({
+            target: "http://localhost:4000",
+            changeOrigin: true,
+        })
+    );
 };
