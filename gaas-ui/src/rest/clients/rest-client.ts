@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosRequestHeaders, AxiosResponse, Method } from "axios";
 import status from "statuses";
 import { RestApiError } from "../RestApiError";
+import { Config } from "../config";
 
 export interface IApiResponse<T = any> {
     status: number;
@@ -14,9 +15,11 @@ export class RestClient<T> {
     public static setJwtToken(jwtToken: string) {
         this.jwtToken = jwtToken;
     }
+
     public static setEmail(email: string) {
         this.email = email;
     }
+
     public static getEmail(): string {
         if (this.email === undefined) {
             return "";
@@ -29,6 +32,7 @@ export class RestClient<T> {
     private method: Method;
     private headers: AxiosRequestHeaders;
     private data: T | undefined;
+
     constructor() {
         this.baseURL = "";
         this.url = "";
@@ -116,14 +120,26 @@ export class RestClient<T> {
     private executeSpec = (restClient: RestClient<any>) => ({
         execute: async () => {
             try {
-                const response: AxiosResponse<any> = await axios({
-                    baseURL: restClient.baseURL,
-                    url: restClient.url,
-                    method: restClient.method,
-                    headers: restClient.headers,
-                    data: restClient.data,
-                    withCredentials: true,
-                });
+                let response: AxiosResponse<any>;
+                if (Config.REACT_APP_API_PLATFORM === "OPENSHIFT") {
+                    response = await axios({
+                        baseURL: restClient.baseURL,
+                        url: restClient.url,
+                        method: restClient.method,
+                        headers: restClient.headers,
+                        data: restClient.data,
+                        withCredentials: true,
+                    });
+                } else {
+                    response = await axios({
+                        baseURL: restClient.baseURL,
+                        url: restClient.url,
+                        method: restClient.method,
+                        headers: restClient.headers,
+                        data: restClient.data,
+                    });
+                }
+
                 return RestClient.convert(response);
             } catch (e) {
                 const error = e as AxiosError<any>;
