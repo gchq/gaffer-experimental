@@ -1,6 +1,7 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
-import StoreTypeSelect from "../../../src/components/create-graph/storetype";
+import StoreTypeSelect from "../../../src/components/create-graph/storetype-select";
+
 jest.mock("../../../src/rest/repositories/get-store-types-repo");
 let component: ReactWrapper;
 const onChangeMockCallBack = jest.fn();

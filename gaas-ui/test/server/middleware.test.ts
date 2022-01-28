@@ -253,10 +253,6 @@ describe("Storetypes", () => {
                             parameters: ["schema"],
                         },
                         {
-                            name: "proxy",
-                            parameters: ["schema"],
-                        },
-                        {
                             name: "mapStore",
                             parameters: ["schema"],
                         },
