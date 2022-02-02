@@ -125,7 +125,6 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
         if (secretName != null) {
             attachSecret(helmPod, secretName);
         }
-
         return helmPod;
     }
 
@@ -138,9 +137,9 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
         spec.addVolumesItem(
                 new V1Volume()
                         .name(VALUES_VOLUME_MOUNT_NAME)
-                .secret(new V1SecretVolumeSource()
-                        .optional(false)
-                        .secretName(secretName))
+                        .secret(new V1SecretVolumeSource()
+                                .optional(false)
+                                .secretName(secretName))
         );
 
         V1Container helmContainer = spec.getContainers().get(0);
@@ -159,6 +158,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                         GAFFER,
                         REPO_ARG, helmRepo,
                         VALUES_ARG, VALUES_YAML_LOCATION,
+                        "--set", "ingress.enabled=false",
                         NAMESPACE_ARG, gaffer.getMetadata().getNamespace());
             case UPGRADE:
                 return Lists.newArrayList(
