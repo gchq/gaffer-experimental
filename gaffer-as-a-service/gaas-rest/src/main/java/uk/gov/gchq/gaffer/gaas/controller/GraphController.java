@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
@@ -69,6 +70,8 @@ public class GraphController {
     private GetGaaSGraphConfigsService getStoreTypesService;
     @Autowired(required = false)
     private AuthService authService;
+    @Autowired
+    private HelmValuesOverridesHandler helmValuesOverridesHandler;
 
     @Value("${cognito.enabled: false}")
     boolean cognitoEnabled;
@@ -143,6 +146,7 @@ public class GraphController {
 
     @GetMapping(path = "/whoami", produces = "application/json")
     ResponseEntity<String> whoami(@RequestHeader("x-email") final String email) {
+        helmValuesOverridesHandler.addOverride("creator", email.substring(0, email.indexOf('@')));
         return new ResponseEntity<String>(email, HttpStatus.OK);
     }
 

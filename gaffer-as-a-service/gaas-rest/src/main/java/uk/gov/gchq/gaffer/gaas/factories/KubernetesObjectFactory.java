@@ -27,10 +27,14 @@ import io.kubernetes.client.openapi.models.V1SecretVolumeSource;
 import io.kubernetes.client.openapi.models.V1Volume;
 import io.kubernetes.client.openapi.models.V1VolumeMount;
 import io.kubernetes.client.util.Yaml;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
+import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
+import java.util.ArrayList;
 import java.util.List;
 import static uk.gov.gchq.gaffer.common.util.Constants.GAAS_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAMESPACE_LABEL;
@@ -73,6 +77,12 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private final String restartPolicy;
     private final String helmRepo;
     private final String workerPullPolicy;
+
+    @Autowired
+    private HelmValuesOverridesHandler helmValuesOverridesHandler;
+
+    @Value("${openshift.enabled: false}")
+    boolean openshiftEnabled;
 
     public KubernetesObjectFactory(final Environment env) {
         helmImage = env.getProperty(WORKER_IMAGE);
@@ -153,13 +163,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private List<String> createHelmArgs(final Gaffer gaffer, final HelmCommand helmCommand) {
         switch (helmCommand) {
             case INSTALL:
-                return Lists.newArrayList(helmCommand.getCommand(),
-                        gaffer.getMetadata().getName(),
-                        GAFFER,
-                        REPO_ARG, helmRepo,
-                        VALUES_ARG, VALUES_YAML_LOCATION,
-                        "--set", "ingress.enabled=false",
-                        NAMESPACE_ARG, gaffer.getMetadata().getNamespace());
+                return Lists.newArrayList(installHelmList(gaffer, helmCommand));
             case UPGRADE:
                 return Lists.newArrayList(
                         helmCommand.getCommand(),
@@ -180,5 +184,22 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
             default:
                 throw new RuntimeException("Unrecognized command: " + helmCommand);
         }
+    }
+
+    private ArrayList<String> installHelmList(final Gaffer gaffer, final HelmCommand helmCommand) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add(helmCommand.getCommand());
+        list.add(gaffer.getMetadata().getName());
+        list.add(GAFFER);
+        list.add(REPO_ARG);
+        list.add(helmRepo);
+        list.add(VALUES_ARG);
+        list.add(VALUES_YAML_LOCATION);
+        list.add(NAMESPACE_ARG);
+        list.add(gaffer.getMetadata().getNamespace());
+        if (openshiftEnabled) {
+            return helmValuesOverridesHandler.helmOverridesStringBuilder(list);
+        }
+        return list;
     }
 }
