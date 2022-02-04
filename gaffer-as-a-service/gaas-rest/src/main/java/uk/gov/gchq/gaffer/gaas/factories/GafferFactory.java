@@ -26,6 +26,10 @@ import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
+import uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl;
+import uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler;
+import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclaration;
+import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclarations;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,8 +94,15 @@ public final class GafferFactory {
         config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
         config.putNestedObject(overrides.getConfigName(), CONFIG_NAME_KEY);
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
-            config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(HOOKS_KEY))), HOOKS_KEY);
-            config.putNestedObject(createOperationDeclaration(config), GAFFER_OPERATION_DECLARATION_KEY);
+           // config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(HOOKS_KEY))), HOOKS_KEY);
+
+            final OperationDeclarations declarations = new OperationDeclarations.Builder()
+                    .declaration(new OperationDeclaration.Builder()
+                            .handler(new GetProxyUrlHandler())
+                            .operation(GetProxyUrl.class)
+                        .build())
+                    .build();
+            config.putNestedObject(declarations, GAFFER_OPERATION_DECLARATION_KEY);
         } else {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -115,7 +126,9 @@ public final class GafferFactory {
         final Map<String, List> formattedAuths = getFormattedAuths(existingAuths);
 
         if (formattedAuths.isEmpty() || !formattedAuths.containsKey(AddGraph.class.getName())) {
-            formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Collections.singletonList(DEFAULT_SYSTEM_USER)));
+          //  User user = new User(DEFAULT_SYSTEM_USER);
+
+            formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Collections.singletonList("DEFAULT_SYSTEM_USER")));
         }
         final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
         opAuthoriser.put("class", OperationAuthoriser.class.getName());
@@ -151,18 +164,18 @@ public final class GafferFactory {
         if (config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
             operations.add(config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY));
         }
-        final Map<String, Object> proxyUrlDeclaration = new HashMap<>();
-        final Map<String, String> proxyUrlClass = new HashMap<>();
-
-        proxyUrlClass.put("class", "uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler");
-
-        proxyUrlDeclaration.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl");
-        proxyUrlDeclaration.put("handler", proxyUrlClass);
+//        final Map<String, Object> proxyUrlDeclaration = new HashMap<>();
+//        final Map<String, String> proxyUrlClass = new HashMap<>();
+//
+//        proxyUrlClass.put("class", "uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler");
+//
+//        proxyUrlDeclaration.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl");
+//        proxyUrlDeclaration.put("handler", proxyUrlClass);
 
         final Set<Object> objects = new HashSet<>();
-        objects.add(proxyUrlDeclaration);
+       // objects.add(proxyUrlDeclaration);
 
-        objects.addAll(operations);
+        objects.add(operations);
 
         return objects;
     }

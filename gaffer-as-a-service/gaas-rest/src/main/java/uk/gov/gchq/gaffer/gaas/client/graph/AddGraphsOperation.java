@@ -44,6 +44,8 @@ public class AddGraphsOperation implements Command {
 
     public AddGraphsOperation(final GraphUrl url, final List<ProxySubGraph> graphs) {
         this.graphs = graphs;
+        String s = url.buildUrl();
+
         this.webClient = WebClient.create(url.buildUrl());
     }
 
@@ -56,9 +58,13 @@ public class AddGraphsOperation implements Command {
                     .body(Mono.just(makeOperationChainRequestBody()), OperationChain.class)
                     .retrieve()
                     .toBodilessEntity()
-                    .retryWhen(Retry.fixedDelay(40, Duration.ofSeconds(3))
+                    .retryWhen(Retry.fixedDelay(200, Duration.ofSeconds(3))
                             .filter(e -> is503ServiceUnavailable(e)))
+                    .doOnError(e -> {
+                       e.printStackTrace();
+                    })
                     .block();
+
 
         } catch (final WebClientRequestException e) {
             throw new GraphOperationException("AddGraph OperationChain request to Federated Store Graph failed. Reason: " +
@@ -70,7 +76,8 @@ public class AddGraphsOperation implements Command {
         }
     }
 
-    private OperationChain makeOperationChainRequestBody() {
+
+        private OperationChain makeOperationChainRequestBody() {
 
         final List<AddGraph> addGraphOperations = graphs.stream().map(subGraph -> {
 
@@ -85,6 +92,7 @@ public class AddGraphsOperation implements Command {
                     .graphId(subGraph.getGraphId())
                     .storeProperties(storeProperties)
                     .schema(new Schema())
+                    .isPublic(true)
                     .build();
         }).collect(Collectors.toList());
 
