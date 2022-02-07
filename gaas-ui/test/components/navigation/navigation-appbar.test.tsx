@@ -115,12 +115,12 @@ describe("Navigation Appbar Component", () => {
         });
         it("should display the non-email username of the User who signed in", () => {
             mockAuthClient();
-            inputUsername("Batman");
+            inputUsername("testUser");
             inputPassword("zxcvb");
 
             clickSubmitSignIn();
 
-            expect(component.find("div#signedin-user-details").text()).toBe("BATMANBatman");
+            expect(component.find("div#signedin-user-details").text()).toBe("TESTUSERtestUser");
         });
     });
 });
