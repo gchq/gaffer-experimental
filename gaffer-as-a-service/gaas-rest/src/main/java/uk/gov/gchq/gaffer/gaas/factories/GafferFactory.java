@@ -128,7 +128,7 @@ public final class GafferFactory {
         if (formattedAuths.isEmpty() || !formattedAuths.containsKey(AddGraph.class.getName())) {
           //  User user = new User(DEFAULT_SYSTEM_USER);
 
-            formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Collections.singletonList("DEFAULT_SYSTEM_USER")));
+            formattedAuths.put(AddGraph.class.getName(), new ArrayList<>(Collections.singletonList(DEFAULT_SYSTEM_USER)));
         }
         final Map<String, Object> opAuthoriser = new LinkedHashMap<>();
         opAuthoriser.put("class", OperationAuthoriser.class.getName());
@@ -164,16 +164,16 @@ public final class GafferFactory {
         if (config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
             operations.add(config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY));
         }
-//        final Map<String, Object> proxyUrlDeclaration = new HashMap<>();
-//        final Map<String, String> proxyUrlClass = new HashMap<>();
-//
-//        proxyUrlClass.put("class", "uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler");
-//
-//        proxyUrlDeclaration.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl");
-//        proxyUrlDeclaration.put("handler", proxyUrlClass);
+        final Map<String, Object> proxyUrlDeclaration = new HashMap<>();
+        final Map<String, String> proxyUrlClass = new HashMap<>();
+
+        proxyUrlClass.put("class", "uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler");
+
+        proxyUrlDeclaration.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl");
+        proxyUrlDeclaration.put("handler", proxyUrlClass);
 
         final Set<Object> objects = new HashSet<>();
-       // objects.add(proxyUrlDeclaration);
+       objects.add(proxyUrlDeclaration);
 
         objects.add(operations);
 

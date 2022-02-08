@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.client.graph;
 
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -31,6 +33,7 @@ import uk.gov.gchq.gaffer.proxystore.ProxyStore;
 import uk.gov.gchq.gaffer.store.schema.Schema;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
@@ -79,8 +82,10 @@ public class AddGraphsOperation implements Command {
 
         private OperationChain makeOperationChainRequestBody() {
 
-        final List<AddGraph> addGraphOperations = graphs.stream().map(subGraph -> {
+            KubernetesClient client = new DefaultKubernetesClient();
 
+        final List<AddGraph> addGraphOperations = graphs.stream().map(subGraph -> {
+            Map<String, String> data = client.configMaps().inNamespace("kai-dev").withName(subGraph.getGraphId() + "-gaffer-schema").get().getData();
             final ProxyProperties storeProperties = new ProxyProperties();
             storeProperties.setStoreClass(ProxyStore.class);
             storeProperties.setGafferHost(subGraph.getHost());
@@ -91,7 +96,7 @@ public class AddGraphsOperation implements Command {
             return new AddGraph.Builder()
                     .graphId(subGraph.getGraphId())
                     .storeProperties(storeProperties)
-                    .schema(new Schema())
+                    .schema((Schema) data)
                     .isPublic(true)
                     .build();
         }).collect(Collectors.toList());
