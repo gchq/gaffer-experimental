@@ -6,15 +6,7 @@ export class EntitiesSchema {
     constructor(entities: string) {
         this.entities = entities;
     }
-    private entitiesIsValidJson(notes: Notifications): boolean {
-        try {
-            this.entities = JSON.parse(this.entities);
-            return true;
-        } catch (e) {
-            notes.addError("Entities is not valid JSON");
-            return false;
-        }
-    }
+
     public validate(): Notifications {
         const notes: Notifications = new Notifications();
         if (this.entities.length !== 0) {
@@ -25,6 +17,15 @@ export class EntitiesSchema {
         }
 
         return notes;
+    }
+    private entitiesIsValidJson(notes: Notifications): boolean {
+        try {
+            this.entities = JSON.parse(this.entities);
+            return true;
+        } catch (e) {
+            notes.addError("Entities is not valid JSON");
+            return false;
+        }
     }
     private validateEntities(notes: Notifications): void {
         if (this.entities === undefined) {

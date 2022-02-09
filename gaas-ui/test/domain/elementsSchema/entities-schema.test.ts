@@ -7,6 +7,13 @@ describe("Entities Schema", () => {
 
             expect(notifications.isEmpty()).toBe(true);
         });
+        it("should return invalid JSON notifications when string is not JSON format", () => {
+            const invalidJsonString = "invalid: blahJson";
+
+            const notifications = new EntitiesSchema(invalidJsonString).validate();
+
+            expect(notifications.errorMessage()).toBe("Entities is not valid JSON");
+        });
         it("should not return any errors if entities have entity objects and description, vertex, props and groupBy", () => {
             const rawSchema = JSON.stringify({
                 Cardinality: {
