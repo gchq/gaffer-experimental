@@ -6,7 +6,9 @@ export class EntitiesSchema {
     constructor(entities: string) {
         this.entities = entities;
     }
-
+    public getEntities(): object {
+        return this.entities;
+    }
     public validate(): Notifications {
         const notes: Notifications = new Notifications();
         if (this.entities.length !== 0) {
