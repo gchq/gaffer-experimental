@@ -201,4 +201,66 @@ describe("Elements Validation", () => {
 
         expect(notifications.errorMessage()).toBe("");
     });
+    it("should allow getting edges and entities when they are valid", () => {
+        const rawSchema = JSON.stringify({
+            entities: {
+                Cardinality: {
+                    description: "An entity that is added to every vertex representing the connectivity of the vertex.",
+                    vertex: "anyVertex",
+                    properties: {
+                        edgeGroup: "set",
+                        hllp: "hllp",
+                        count: "count.long",
+                    },
+                    groupBy: ["edgeGroup"],
+                },
+            },
+            edges: {
+                RoadUse: {
+                    description: "A directed edge representing vehicles moving from junction A to junction B.",
+                    source: "junction",
+                    destination: "junction",
+                    directed: "true",
+                    properties: {
+                        startDate: "date.earliest",
+                        endDate: "date.latest",
+                        count: "count.long",
+                        countByVehicleType: "counts.freqmap",
+                    },
+                    groupBy: ["startDate", "endDate"],
+                },
+            },
+        });
+
+        const elementsSchema = new ElementsSchema(rawSchema);
+        elementsSchema.validate();
+
+        expect(elementsSchema.getEntities()).toEqual({
+            Cardinality: {
+                description: "An entity that is added to every vertex representing the connectivity of the vertex.",
+                vertex: "anyVertex",
+                properties: {
+                    edgeGroup: "set",
+                    hllp: "hllp",
+                    count: "count.long",
+                },
+                groupBy: ["edgeGroup"],
+            },
+        });
+        expect(elementsSchema.getEdges()).toEqual({
+            RoadUse: {
+                description: "A directed edge representing vehicles moving from junction A to junction B.",
+                source: "junction",
+                destination: "junction",
+                directed: "true",
+                properties: {
+                    startDate: "date.earliest",
+                    endDate: "date.latest",
+                    count: "count.long",
+                    countByVehicleType: "counts.freqmap",
+                },
+                groupBy: ["startDate", "endDate"],
+            },
+        });
+    });
 });
