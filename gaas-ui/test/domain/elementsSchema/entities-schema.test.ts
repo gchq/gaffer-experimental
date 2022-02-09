@@ -1,4 +1,4 @@
-import { EntitiesSchema } from "../../src/domain/entities-schema";
+import { EntitiesSchema } from "../../../src/domain/elementsSchema/entities-schema";
 
 describe("Entities Schema", () => {
     describe("Entities validation", () => {

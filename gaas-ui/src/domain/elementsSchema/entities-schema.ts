@@ -1,5 +1,5 @@
-import { Notifications } from "./notifications";
-import { IEntity } from "./elements-schema";
+import { Notifications } from "../notifications";
+import { IEntity } from "../elements-schema";
 
 export class EntitiesSchema {
     private entities: any;
