@@ -2,6 +2,11 @@ import { EntitiesSchema } from "../../../src/domain/elementsSchema/entities-sche
 
 describe("Entities Schema", () => {
     describe("Entities validation", () => {
+        it("should return no error when entities is empty", () => {
+            const notifications = new EntitiesSchema("").validate();
+
+            expect(notifications.isEmpty()).toBe(true);
+        });
         it("should not return any errors if entities have entity objects and description, vertex, props and groupBy", () => {
             const rawSchema = JSON.stringify({
                 Cardinality: {
