@@ -140,7 +140,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
             elements.validate();
             types.validate();
             config = {
-                schema: { elements: elements.getElements(), types: types.getTypes() },
+                schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
             };
         }
 
