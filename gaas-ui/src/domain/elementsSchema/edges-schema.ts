@@ -6,6 +6,9 @@ export class EdgesSchema {
     constructor(edges: string) {
         this.edges = edges;
     }
+    getEdges(): object {
+        return this.edges;
+    }
     public validate(): Notifications {
         const notes: Notifications = new Notifications();
         if (this.edges.length !== 0) {
