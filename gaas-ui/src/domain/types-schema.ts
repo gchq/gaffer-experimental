@@ -1,9 +1,5 @@
 import { Notifications } from "./notifications";
 
-export interface ITypesSchema {
-    types: object;
-}
-
 export interface IType {
     class: string;
     description?: string;
@@ -39,7 +35,6 @@ export class TypesSchema {
             return notes;
         }
         this.validateTypes(notes);
-        this.validateInvalidProperties(notes);
         return notes;
     }
     private typesIsValidJson(notes: Notifications): boolean {
@@ -52,15 +47,15 @@ export class TypesSchema {
         }
     }
     private validateTypes(notes: Notifications): void {
-        if (this.types.types === undefined) {
-            notes.addError("Types Schema does not contain property types");
+        if (this.types === undefined) {
+            notes.addError("Types Schema is undefined");
             return;
         }
-        if (typeof this.types.types !== "object") {
-            notes.addError(`Types is a ${typeof this.types.types} and not an object of types objects`);
+        if (typeof this.types !== "object") {
+            notes.addError(`Types is a ${typeof this.types} and not an object of types objects`);
             return;
         }
-        Object.entries(this.types.types).forEach(([typeName, value]) => {
+        Object.entries(this.types).forEach(([typeName, value]) => {
             const type: IType = value as IType;
             if (type.description !== undefined && typeof type.description !== "string") {
                 notes.addError(
@@ -136,14 +131,5 @@ export class TypesSchema {
                 }
             }
         });
-    }
-    private validateInvalidProperties(notes: Notifications): void {
-        const invalidProperties = Object.keys(this.types).filter((key) => key !== "types");
-
-        if (invalidProperties.length > 0) {
-            notes.addError(
-                '["' + invalidProperties.join('", "').toString() + '"] are invalid Types schema root properties'
-            );
-        }
     }
 }
