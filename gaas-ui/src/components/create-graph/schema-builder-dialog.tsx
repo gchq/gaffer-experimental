@@ -1,14 +1,13 @@
 import * as React from "react";
-import { Button, Dialog, DialogContent, DialogTitle, Box, IconButton } from "@material-ui/core";
+import { Box, Button, Dialog, DialogContent, DialogTitle, IconButton } from "@material-ui/core";
 import SchemaBuilder from "../schema-builder/schema-builder";
 import ClearIcon from "@material-ui/icons/Clear";
-import { ITypesSchema } from "../../domain/types-schema";
 import { IElementsSchema } from "../../domain/elements-schema";
 
 interface IProps {
-    onCreateSchema(schema: { types: ITypesSchema; elements: IElementsSchema }): void;
+    onCreateSchema(schema: { types: object; elements: IElementsSchema }): void;
 
-    typesSchema: ITypesSchema;
+    typesSchema: object;
     elementsSchema: IElementsSchema;
 }
 
