@@ -307,20 +307,20 @@ describe("CreateGraph UI component", () => {
             const mock = jest.fn();
             mockCreateStoreTypesGraphRepoWithFunction(mock);
 
-            inputGraphId("map-store-graph");
+            inputGraphId("mapstoregraph");
             inputDescription("Mappy description");
             selectStoreType(wrapper, "mapStore");
             await wrapper.update();
-            inputElements(elements);
-            inputTypes(types);
+            inputElements(elementsString);
+            inputTypes(typesAsString);
 
             await clickSubmit();
 
             const expectedConfig: ICreateGraphConfig = {
-                schema: { elements: elements, types: types },
+                schema: { entities: entities, edges: edges, types: typesAsObject },
             };
-            expect(mock).toHaveBeenLastCalledWith("map-store-graph", "Mappy description", "mapStore", expectedConfig);
-            expect(wrapper.find("div#notification-alert").text()).toBe("map-store-graph was successfully added");
+            expect(mock).toHaveBeenLastCalledWith("mapstoregraph", "Mappy description", "mapStore", expectedConfig);
+            expect(wrapper.find("div#notification-alert").text()).toBe("mapstoregraph was successfully added");
         });
     });
     describe("When Accumulo Store Is Selected", () => {
@@ -332,13 +332,13 @@ describe("CreateGraph UI component", () => {
             inputDescription("None");
             selectStoreType(wrapper, "accumulo");
             await wrapper.update();
-            inputElements(elements);
-            inputTypes(types);
+            inputElements(elementsString);
+            inputTypes(typesAsString);
 
             await clickSubmit();
 
             const expectedConfig: ICreateGraphConfig = {
-                schema: { elements: elements, types: types },
+                schema: { entities: entities, edges: edges, types: typesAsObject },
             };
             expect(mock).toHaveBeenLastCalledWith("accumulo-graph", "None", "accumulo", expectedConfig);
             expect(wrapper.find("div#notification-alert").text()).toBe("accumulo-graph was successfully added");
@@ -363,23 +363,23 @@ describe("CreateGraph UI component", () => {
         });
         it("should be disabled when Graph Name field is empty", () => {
             inputDescription("test");
-            inputElements(elements);
-            inputTypes(types);
+            inputElements(elementsString);
+            inputTypes(typesAsString);
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("should be disabled when Graph Description field is empty", () => {
             inputGraphId("test");
-            inputElements(elements);
-            inputTypes(types);
+            inputElements(elementsString);
+            inputTypes(typesAsString);
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("Should be enabled when Graph Name and Graph Description is not empty", () => {
             inputGraphId("test");
             inputDescription("test");
-            inputElements(elements);
-            inputTypes(types);
+            inputElements(elementsString);
+            inputTypes(typesAsString);
 
             selectStoreType(wrapper, "mapStore");
 
@@ -388,8 +388,8 @@ describe("CreateGraph UI component", () => {
         it("Should be enabled when Graph Name and Graph Description is not empty and Accumulo selected", () => {
             inputGraphId("test");
             inputDescription("test");
-            inputElements(elements);
-            inputTypes(types);
+            inputElements(elementsString);
+            inputTypes(typesAsString);
 
             selectStoreType(wrapper, "accumulo");
 
@@ -406,14 +406,14 @@ describe("CreateGraph UI component", () => {
         it("should be disabled when the elements field is empty", () => {
             inputGraphId("G");
             inputDescription("test");
-            inputElements(elements);
+            inputElements(elementsString);
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("should be disabled when the types field is empty", () => {
             inputGraphId("G");
             inputDescription("test");
-            inputTypes(types);
+            inputTypes(typesAsString);
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
@@ -422,8 +422,8 @@ describe("CreateGraph UI component", () => {
             inputDescription("test");
             selectStoreType(wrapper, "mapStore");
 
-            inputElements({ invalid: "json" });
-            inputTypes(types);
+            inputElements("invalid :json");
+            inputTypes(typesAsString);
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
@@ -432,8 +432,8 @@ describe("CreateGraph UI component", () => {
             inputDescription("test");
             selectStoreType(wrapper, "mapStore");
 
-            inputElements(elements);
-            inputTypes({ invalid: "json" });
+            inputElements(elementsString);
+            inputTypes("invalid:json");
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
@@ -441,8 +441,8 @@ describe("CreateGraph UI component", () => {
             inputGraphId("G");
             inputDescription("test");
             selectStoreType(wrapper, "accumulo");
-            inputElements({ invalid: "json" });
-            inputTypes(types);
+            inputElements("invalid: json");
+            inputTypes(typesAsString);
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
@@ -450,8 +450,8 @@ describe("CreateGraph UI component", () => {
             inputGraphId("G");
             inputDescription("test");
             selectStoreType(wrapper, "accumulo");
-            inputElements(elements);
-            inputTypes({ invalid: "json" });
+            inputElements(elementsString);
+            inputTypes("invalid:json");
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
@@ -462,8 +462,8 @@ describe("CreateGraph UI component", () => {
             mockCreateStoreTypesGraphRepoWithFunction(() => {});
             inputGraphId("OK Graph");
             inputDescription("test");
-            inputElements(elements);
-            inputTypes(types);
+            inputElements(elementsString);
+            inputTypes(typesAsString);
 
             await clickSubmit();
 
@@ -543,18 +543,18 @@ function inputDescription(description: string): void {
     expect(wrapper.find("textarea#graph-description-input").props().value).toBe(description);
 }
 
-function inputElements(elementsObject: object): void {
+function inputElements(elementsString: string): void {
     wrapper.find("textarea#schema-elements-input").simulate("change", {
-        target: { value: JSON.stringify(elementsObject) },
+        target: { value: elementsString },
     });
-    expect(wrapper.find("textarea#schema-elements-input").props().value).toBe(JSON.stringify(elementsObject));
+    expect(wrapper.find("textarea#schema-elements-input").props().value).toBe(elementsString);
 }
 
-function inputTypes(typesObject: object): void {
+function inputTypes(typesString: string): void {
     wrapper.find("textarea#schema-types-input").simulate("change", {
-        target: { value: JSON.stringify(typesObject) },
+        target: { value: typesString },
     });
-    expect(wrapper.find("textarea#schema-types-input").props().value).toBe(JSON.stringify(typesObject));
+    expect(wrapper.find("textarea#schema-types-input").props().value).toBe(typesString);
 }
 
 // @ts-ignore
@@ -671,57 +671,50 @@ async function mockGetStoreTypesRepoToThrow(f: () => void) {
         get: f,
     }));
 }
-
-const elements = {
-    entities: {
-        Cardinality: {
-            description: "An entity that is added to every vertex representing the connectivity of the vertex.",
-            vertex: "anyVertex",
-            properties: {
-                edgeGroup: "set",
-                hllp: "hllp",
-                count: "count.long",
-            },
-            groupBy: ["edgeGroup"],
+const elementsString =
+    '{"edges": {"RoadUse": {"description": "A directed edge representing vehicles moving from junction A to junction B.","source": "junction", "destination": "junction","directed": "true","properties": {"startDate": "date.earliest", "endDate": "date.latest","count": "count.long"},"groupBy": ["startDate","endDate"]},"RoadHasJunction": {"description": "A directed edge from each road to all the junctions on that road.","source": "road","destination": "junction","directed": "true"}},"entities": { "Cardinality": {"description": "An entity that is added to every vertex representing the connectivity of the vertex.","vertex": "anyVertex","properties": {"edgeGroup": "set","hllp": "hllp","count": "count.long"},"groupBy": ["edgeGroup"]}}}';
+const entities = {
+    Cardinality: {
+        description: "An entity that is added to every vertex representing the connectivity of the vertex.",
+        vertex: "anyVertex",
+        properties: {
+            edgeGroup: "set",
+            hllp: "hllp",
+            count: "count.long",
         },
+        groupBy: ["edgeGroup"],
     },
-    edges: {
-        RoadUse: {
-            description: "A directed edge representing vehicles moving from junction A to junction B.",
-            source: "junction",
-            destination: "junction",
-            directed: "true",
-            properties: {
-                startDate: "date.earliest",
-                endDate: "date.latest",
-                count: "count.long",
-                countByVehicleType: "counts.freqmap",
-            },
+};
+const edges = {
+    RoadUse: {
+        description: "A directed edge representing vehicles moving from junction A to junction B.",
+        source: "junction",
+        destination: "junction",
+        directed: "true",
+        properties: {
+            startDate: "date.earliest",
+            endDate: "date.latest",
+            count: "count.long",
         },
         groupBy: ["startDate", "endDate"],
     },
+    RoadHasJunction: {
+        description: "A directed edge from each road to all the junctions on that road.",
+        source: "road",
+        destination: "junction",
+        directed: "true",
+    },
 };
 
-const types = {
-    types: {
-        "count.long": {
-            description: "A long count that must be greater than or equal to 0.",
-            class: "java.lang.Long",
-            validateFunctions: [
-                {
-                    class: "uk.gov.gchq.koryphe.impl.predicate.IsMoreThan",
-                    orEqualTo: true,
-                    value: {
-                        "java.lang.Long": 0,
-                    },
-                },
-            ],
-            aggregateFunction: {
-                class: "uk.gov.gchq.koryphe.impl.binaryoperator.Sum",
-            },
-            serialiser: {
-                class: "uk.gov.gchq.gaffer.sketches.clearspring.cardinality.serialisation.HyperLogLogPlusSerialiser",
-            },
-        },
+const typesAsString =
+    '{"junction": {"description": "A road junction represented by a String.","class": "java.lang.String"},"road": {"description": "A road represented by a String.", "class": "java.lang.String"}}';
+const typesAsObject = {
+    junction: {
+        description: "A road junction represented by a String.",
+        class: "java.lang.String",
+    },
+    road: {
+        description: "A road represented by a String.",
+        class: "java.lang.String",
     },
 };
