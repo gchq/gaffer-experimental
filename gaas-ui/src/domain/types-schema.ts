@@ -26,7 +26,7 @@ export class TypesSchema {
     constructor(types: string) {
         this.types = types;
     }
-    public getTypes(): ITypesSchema {
+    public getTypes(): object {
         return this.types;
     }
     public validate(): Notifications {

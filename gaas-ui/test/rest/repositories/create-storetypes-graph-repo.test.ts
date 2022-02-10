@@ -39,7 +39,19 @@ const elements = new ElementsSchema(
         },
     })
 );
-const types = new TypesSchema(JSON.stringify({ types: {} }));
+const types = new TypesSchema(
+    JSON.stringify({
+        vertex: {
+            class: "java.lang.String",
+        },
+        count: {
+            class: "java.lang.Integer",
+            aggregateFunction: {
+                class: "uk.gov.gchq.koryphe.impl.binaryoperator.Sum",
+            },
+        },
+    })
+);
 beforeAll(() => {
     elements.validate();
 });

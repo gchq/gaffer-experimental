@@ -1,6 +1,5 @@
 import { RestClient } from "../clients/rest-client";
 import { ICreateGraphRequestBody } from "../http-message-interfaces/request-interfaces";
-import { ITypesSchema } from "../../domain/types-schema";
 import { Config } from "../config";
 
 export class CreateStoreTypesGraphRepo {
@@ -31,7 +30,7 @@ export interface ICreateGraphConfig {
     schema?: {
         entities: object;
         edges: object;
-        types: ITypesSchema;
+        types: object;
     };
     proxyContextRoot?: string;
     proxyHost?: string;

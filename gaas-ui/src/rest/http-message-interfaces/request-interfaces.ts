@@ -1,5 +1,3 @@
-import { ITypesSchema } from "../../domain/types-schema";
-
 export interface ICreateGraphInterface {
     graphId: string;
     description: string;
@@ -8,7 +6,7 @@ export interface ICreateGraphRequestBody extends ICreateGraphInterface {
     schema: {
         entities: object;
         edges: object;
-        types: ITypesSchema;
+        types: object;
     };
     configName: string;
 }
