@@ -20,15 +20,23 @@ afterEach(() => jest.resetAllMocks());
 describe("When ViewGraphs mounts", () => {
     it("should display Table Headers and Graphs when GetGraphs successful", async () => {
         mockGetGraphsToReturn([
-            new Graph("testId1", "deployed", "http://testId-1.app", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "testId1",
+                "deployed",
+                "http://testId-1.app/ui",
+                "http://testId-1.app/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
 
         const component = mount(<ViewGraph />);
         await component.update();
         await component.update();
 
-        expect(component.find("thead").text()).toBe("Graph IDStore TypeStatusURLActions");
-        expect(component.find("tbody").text()).toBe("testId1 MUPhttp://testId-1.app");
+        expect(component.find("thead").text()).toBe("Graph IDStore TypeStatusUI URLREST URLActions");
+        expect(component.find("tbody").text()).toBe("testId1 MUPhttp://testId-1.app/uihttp://testId-1.app/rest");
         expect(component.find("caption").length).toBe(0);
     });
     it("should display No Graphs caption when ", async () => {
@@ -52,7 +60,15 @@ describe("When ViewGraphs mounts", () => {
     });
     it("should not display Error AlertNotification when GetGraphs request successful", async () => {
         mockGetGraphsToReturn([
-            new Graph("roadTraffic", "DEPLOYED", "http://roadTraffic.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "roadTraffic",
+                "DEPLOYED",
+                "http://roadTraffic.graph/ui",
+                "http://roadTraffic.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
 
         const component = mount(<ViewGraph />);
@@ -60,37 +76,60 @@ describe("When ViewGraphs mounts", () => {
 
         const table = component.find("table");
         expect(table).toHaveLength(1);
-        expect(table.find("tbody").text()).toBe("roadTraffic MUPhttp://roadTraffic.graph");
+        expect(table.find("tbody").text()).toBe(
+            "roadTraffic MUPhttp://roadTraffic.graph/uihttp://roadTraffic.graph/rest"
+        );
         expect(component.find("div#notification-alert").length).toBe(0);
     });
     it("should display a down status in the status column when the graph status is down", async () => {
         mockGetGraphsToReturn([
-            new Graph("roadTraffic", "DEPLOYED", "http://roadTraffic.graph", "DOWN", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "roadTraffic",
+                "DEPLOYED",
+                "http://roadTraffic.graph/ui",
+                "http://roadTraffic.graph/rest",
+                "DOWN",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
 
         const component = mount(<ViewGraph />);
         await component.update();
 
         const table = component.find("table");
-        expect(table.find("tbody").text()).toBe("roadTraffic MDOWNhttp://roadTraffic.graph");
+        expect(table.find("tbody").text()).toBe(
+            "roadTraffic MDOWNhttp://roadTraffic.graph/uihttp://roadTraffic.graph/rest"
+        );
     });
 });
 
 describe("Refresh Button", () => {
     it("should call GetGraphs again when refresh button clicked", async () => {
         mockGetGraphsToReturn([
-            new Graph("roadTraffic", "DEPLOYING", "http://roadtraffic.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "roadTraffic",
+                "DEPLOYING",
+                "http://roadtraffic.graph/ui",
+                "http://roadtraffic.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
 
         const component = mount(<ViewGraph />);
         await component.update();
-        expect(component.find("tbody").text()).toBe("roadTraffic MUPhttp://roadtraffic.graph");
+        expect(component.find("tbody").text()).toBe(
+            "roadTraffic MUPhttp://roadtraffic.graph/uihttp://roadtraffic.graph/rest"
+        );
 
         mockGetGraphsToReturn([
             new Graph(
                 "roadTraffic",
                 "FINISHED DEPLOYMENT",
-                "http://roadTraffic.app",
+                "http://roadTraffic.app/ui",
+                "http://roadTraffic.app/rest",
                 "UP",
                 "mapStore",
                 GraphType.GAAS_GRAPH
@@ -98,7 +137,9 @@ describe("Refresh Button", () => {
         ]);
         await clickRefreshButton(component);
 
-        expect(component.find("tbody").text()).toBe("roadTraffic MUPhttp://roadTraffic.app");
+        expect(component.find("tbody").text()).toBe(
+            "roadTraffic MUPhttp://roadTraffic.app/uihttp://roadTraffic.app/rest"
+        );
     });
     it("should reset an existing error message when refresh button is clicked", async () => {
         mockGetAllGraphsThrowsError(() => {
@@ -111,7 +152,15 @@ describe("Refresh Button", () => {
         );
 
         mockGetGraphsToReturn([
-            new Graph("roadTraffic", "FINISHED DEPLOYMENT", "roadTraffic URL", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "roadTraffic",
+                "FINISHED DEPLOYMENT",
+                "http://roadTraffic.app/ui",
+                "http://roadTraffic.app/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
         await clickRefreshButton(component);
 
@@ -127,7 +176,15 @@ describe("Delete Button", () => {
     it("should send a delete request when the delete button has been clicked", async () => {
         DeleteGraphRepo.prototype.delete = jest.fn();
         mockGetGraphsToReturn([
-            new Graph("peaches", "ACTIVE", "http://peaches.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "peaches",
+                "ACTIVE",
+                "http://peaches.graph/ui",
+                "http://peaches.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
 
         await act(async () => {
@@ -135,9 +192,19 @@ describe("Delete Button", () => {
         });
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("peaches MUPhttp://peaches.graph");
+        expect(component.find("tbody").text()).toBe("peaches MUPhttp://peaches.graph/uihttp://peaches.graph/rest");
 
-        mockGetGraphsToReturn([new Graph("peaches", "DELETED", "peaches URL", "UP", "mapStore", GraphType.GAAS_GRAPH)]);
+        mockGetGraphsToReturn([
+            new Graph(
+                "peaches",
+                "DELETED",
+                "http://peaches.graph/ui",
+                "http://peaches.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
+        ]);
         component.find("tbody").find("button#view-graphs-delete-button-0").simulate("click");
         await component.update();
         await component.update();
@@ -147,8 +214,8 @@ describe("Delete Button", () => {
     it("should send a delete request for correct graphId from many graphs when the delete button has been clicked", async () => {
         DeleteGraphRepo.prototype.delete = jest.fn();
         mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "apples URL", "UP", "mapStore", GraphType.GAAS_GRAPH),
-            new Graph("pears", "INACTIVE", "pears URL", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph("apples", "ACTIVE", "apples URL", "apples URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph("pears", "INACTIVE", "pears URL", "pears URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
         ]);
 
         await act(async () => {
@@ -156,11 +223,13 @@ describe("Delete Button", () => {
         });
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("apples MUPapples URLpears MUPpears URL");
+        expect(component.find("tbody").text()).toBe(
+            "apples MUPapples URLapples URL restpears MUPpears URLpears URL rest"
+        );
 
         mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "apples URL", "UP", "mapStore", GraphType.GAAS_GRAPH),
-            new Graph("pears", "DELETED", "pears URL", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph("apples", "ACTIVE", "apples URL", "apples URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph("pears", "DELETED", "pears URL", "pears URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
         ]);
         component.find("tbody").find("button#view-graphs-delete-button-1").simulate("click");
         await component.update();
@@ -171,8 +240,8 @@ describe("Delete Button", () => {
     it("should change the current status of the graph when the delete button is clicked", async () => {
         DeleteGraphRepo.prototype.delete = jest.fn();
         mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "apples URL", "UP", "mapStore", GraphType.GAAS_GRAPH),
-            new Graph("pears", "INACTIVE", "pears URL", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph("apples", "ACTIVE", "apples URL", "apples URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph("pears", "INACTIVE", "pears URL", "pears URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
         ]);
 
         await act(async () => {
@@ -180,25 +249,45 @@ describe("Delete Button", () => {
         });
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("apples MUPapples URLpears MUPpears URL");
+        expect(component.find("tbody").text()).toBe(
+            "apples MUPapples URLapples URL restpears MUPpears URLpears URL rest"
+        );
 
         mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
-            new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "apples",
+                "ACTIVE",
+                "http://apples.graph/ui",
+                "http://apples.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
+            new Graph(
+                "pears",
+                "DELETION IN PROGRESS",
+                "http://pears.graph/ui",
+                "http://pears.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
         component.find("tbody").find("button#view-graphs-delete-button-1").simulate("click");
         await component.update();
         await component.update();
         await component.update();
 
-        expect(component.find("tbody").text()).toBe("apples MUPhttp://apples.graphpears MUPhttp://pears.graph");
+        expect(component.find("tbody").text()).toBe(
+            "apples MUPhttp://apples.graph/uihttp://apples.graph/restpears MUPhttp://pears.graph/uihttp://pears.graph/rest"
+        );
     });
     it("should notify error and not refresh graphs when delete request returns server error", async () => {
         mockDeleteGraphRepoToThrowError(() => {
             throw new RestApiError("Server Error", "Timeout exception");
         });
         mockGetGraphsToReturn([
-            new Graph("bananas", "INACTIVE", "bananas URL", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph("bananas", "INACTIVE", "bananas URL", "bananas URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
         ]);
         mockGetStoreTypesRepoToReturn({
             storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
@@ -209,7 +298,7 @@ describe("Delete Button", () => {
         });
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("bananas MUPbananas URL");
+        expect(component.find("tbody").text()).toBe("bananas MUPbananas URLbananas URL rest");
 
         component.find("tbody").find("button#view-graphs-delete-button-0").simulate("click");
         await component.update();
@@ -232,8 +321,24 @@ describe("Integration with GetAllGraphIds repo", () => {
             federatedStoreTypes: ["federated"],
         });
         await mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "federated", GraphType.GAAS_GRAPH),
-            new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "apples",
+                "ACTIVE",
+                "http://apples.graph/ui",
+                "http://apples.graph/rest",
+                "UP",
+                "federated",
+                GraphType.GAAS_GRAPH
+            ),
+            new Graph(
+                "pears",
+                "DELETION IN PROGRESS",
+                "http://pears.graph/ui",
+                "http://pears.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
         await act(async () => {
             component = mount(<ViewGraph />);
@@ -255,8 +360,24 @@ describe("Integration with GetAllGraphIds repo", () => {
             federatedStoreTypes: ["federated"],
         });
         await mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "federated", GraphType.GAAS_GRAPH),
-            new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "apples",
+                "ACTIVE",
+                "http://apples.graph/ui",
+                "http://apples.graph/rest",
+                "UP",
+                "federated",
+                GraphType.GAAS_GRAPH
+            ),
+            new Graph(
+                "pears",
+                "DELETION IN PROGRESS",
+                "http://pears.graph/ui",
+                "http://pears.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
         await act(async () => {
             component = mount(<ViewGraph />);
@@ -281,7 +402,15 @@ describe("Integration with GetAllGraphIds repo", () => {
             federatedStoreTypes: ["federated"],
         });
         mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "federated", GraphType.GAAS_GRAPH),
+            new Graph(
+                "apples",
+                "ACTIVE",
+                "http://apples.graph/ui",
+                "http://apples.graph/rest",
+                "UP",
+                "federated",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
         component = mount(<ViewGraph />);
 
@@ -300,8 +429,24 @@ describe("Integration with GetAllGraphIds repo", () => {
             federatedStoreTypes: ["federated"],
         });
         await mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
-            new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "apples",
+                "ACTIVE",
+                "http://apples.graph/ui",
+                "http://apples.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
+            new Graph(
+                "pears",
+                "DELETION IN PROGRESS",
+                "http://pears.graph/ui",
+                "http://pears.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
         await act(async () => {
             component = mount(<ViewGraph />);
@@ -321,8 +466,24 @@ describe("Integration with GetStoreTypes Repo", () => {
             throw new RestApiError("Server Error", "Timeout exception");
         });
         await mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
-            new Graph("pears", "DELETION IN PROGRESS", "http://pears.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "apples",
+                "ACTIVE",
+                "http://apples.graph/ui",
+                "http://apples.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
+            new Graph(
+                "pears",
+                "DELETION IN PROGRESS",
+                "http://pears.graph/ui",
+                "http://pears.graph/rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
 
         await act(async () => {
