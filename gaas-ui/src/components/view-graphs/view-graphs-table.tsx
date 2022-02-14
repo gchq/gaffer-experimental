@@ -187,7 +187,7 @@ function MainGraphTableRow(props: IGraphRow) {
                     <StatusChip status={graph.getStatus()} />
                 </TableCell>
                 <TableCell aria-label={"graph-url-ui"}>
-                    <a
+                    <a // nosemgrep
                         id={graph.getId()}
                         href={sanitizer(graph.getUrl())} // nosemgrep
                         target="_blank"
@@ -197,7 +197,7 @@ function MainGraphTableRow(props: IGraphRow) {
                     </a>
                 </TableCell>
                 <TableCell aria-label={"graph-url-rest"}>
-                    <a
+                    <a // nosemgrep
                         id={graph.getId()}
                         href={sanitizer(graph.getRestUrl())} // nosemgrep
                         target="_blank"
