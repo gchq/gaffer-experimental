@@ -90,7 +90,15 @@ describe("CreateGraph UI component", () => {
         });
         it("Should display the graphs returned by GetAllGraphsRepo in the graphs table, when federated store type is selected", async () => {
             mockGetAllGraphsRepoToReturn([
-                new Graph("apples", "ACTIVE", "http://apples.graph", "UP", "mapStore", GraphType.GAAS_GRAPH),
+                new Graph(
+                    "apples",
+                    "ACTIVE",
+                    "http://apples.graph/ui",
+                    "http://apples.graph/rest",
+                    "UP",
+                    "mapStore",
+                    GraphType.GAAS_GRAPH
+                ),
             ]);
             mockGetStoreTypesRepoToReturn({
                 storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],

@@ -66,7 +66,8 @@ export function ViewGraphsTable(props: IProps) {
                                 <TableCell>Graph ID</TableCell>
                                 <TableCell>Store Type</TableCell>
                                 <TableCell>Status</TableCell>
-                                <TableCell>URL</TableCell>
+                                <TableCell>UI URL</TableCell>
+                                <TableCell>REST URL</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -178,8 +179,13 @@ function MainGraphTableRow(props: IGraphRow) {
                     <StatusChip status={graph.getStatus()} />
                 </TableCell>
                 <TableCell aria-label={"graph-url"}>
-                    <a id={graph.getId()} href="placeholder" target="_blank" rel="noopener noreferrer">
+                    <a id={graph.getId()} href={graph.getUrl()} target="_blank" rel="noopener noreferrer">
                         {graph.getUrl()}
+                    </a>
+                </TableCell>
+                <TableCell aria-label={"graph-url"}>
+                    <a id={graph.getId()} href={graph.getRestUrl()} target="_blank" rel="noopener noreferrer">
+                        {graph.getRestUrl()}
                     </a>
                 </TableCell>
                 <TableCell aria-label={"delete-graph"}>
