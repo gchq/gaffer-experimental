@@ -17,17 +17,16 @@
 package uk.gov.gchq.gaffer.gaas.integrationtests;
 
 import com.google.gson.Gson;
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+
 import java.util.LinkedHashMap;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -35,12 +34,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
-public class GraphControllerIT extends AbstractTest {
-    @Autowired
-    private ApiClient apiClient;
+class GraphControllerIT extends AbstractTest {
+    private final String graphName = "testcontrolleritgraph";
+
 
     @Test
-    public void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
+    void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
         final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
         final MvcResult result = mvc.perform(post("/auth")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -50,8 +49,8 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testAddGraph_WithSchema_Returns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumulo");
+    void testAddGraph_WithSchema_Returns201OnSuccess() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
         final Gson gson = new Gson();
         final String inputJson = gson.toJson(gaaSCreateRequestBody);
 
@@ -64,19 +63,8 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphReturns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumulo");
-        final String inputJson = mapToJson(gaaSCreateRequestBody);
-        final MvcResult mvcResult = mvc.perform(post("/graphs")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token)
-                .content(inputJson)).andReturn();
-        assertEquals(201, mvcResult.getResponse().getStatus());
-    }
-
-    @Test
-    public void testAddGraphNotNullShouldReturn400() throws Exception {
-        final String jsonRequest = "{\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\"}";
+    void testAddGraphNotNullShouldReturn400() throws Exception {
+        final String jsonRequest = "{\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -86,8 +74,8 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumulo\"}";
+    void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
+        final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -96,13 +84,13 @@ public class GraphControllerIT extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(graphRequest)).andReturn();
-        assertEquals("{\"title\":\"Conflict\",\"detail\":\"Kubernetes Cluster Error: (AlreadyExists) gaffers.gchq.gov.uk \\\"testgraphid\\\" already exists\"}", createGraphResponse.getResponse().getContentAsString());
+        assertEquals("{\"title\":\"Conflict\",\"detail\":\"Kubernetes Cluster Error: (AlreadyExists) secrets \\\"testcontrolleritgraph\\\" already exists\"}", createGraphResponse.getResponse().getContentAsString());
         assertEquals(409, createGraphResponse.getResponse().getStatus());
     }
 
     @Test
-    public void getGraphEndpointReturnsGraph() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumulo\"}";
+    void getGraphEndpointReturnsGraph() throws Exception {
+        final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult addGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -117,8 +105,8 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWithSpacesShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumulo\"}";
+    void testGraphIdWithSpacesShouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -129,8 +117,8 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumulo\"}";
+    void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -140,8 +128,8 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testGraphIdWitCapitalLettersShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumulo\"}";
+    void testGraphIdWitCapitalLettersShouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -151,8 +139,8 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testDescriptionEmptyShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"configName\":\"accumulo\"}";
+    void testDescriptionEmptyShouldReturn400() throws Exception {
+        final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"\",\"configName\":\"mapStore\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -162,15 +150,15 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testDeleteShouldReturn200AndRemoveCRD() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumulo");
+    void testDeleteShouldReturn200AndRemoveDeployment() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         final MvcResult createGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .content(inputJson)).andReturn();
         assertEquals(201, createGraphResponse.getResponse().getStatus());
-        final MvcResult getGraphsResponse = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
+        final MvcResult getGraphsResponse = mvc.perform(delete("/graphs/" + graphName)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
                 .andReturn();
@@ -178,7 +166,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testDeleteShouldReturn404WhenGraphNotExisting() throws Exception {
+    void testDeleteShouldReturn404WhenGraphNotExisting() throws Exception {
         final MvcResult deleteGraphResponse = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
@@ -187,7 +175,7 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void namespacesEndpointShouldReturn200AndArrayWithNamespacesWhenNamespacesPresent() throws Exception {
+    void namespacesEndpointShouldReturn200AndArrayWithNamespacesWhenNamespacesPresent() throws Exception {
         final MvcResult namespacesResponse = mvc.perform(get("/namespaces")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token))
@@ -197,8 +185,8 @@ public class GraphControllerIT extends AbstractTest {
     }
 
     @Test
-    public void testAddGraphFederatedStoreWithHook_WithSchema_Returns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, null, "federated");
+    void testAddGraphFederatedStoreWithHook_WithSchema_Returns201OnSuccess() throws Exception {
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, null, "federated");
         final Gson gson = new Gson();
         final String inputJson = gson.toJson(gaaSCreateRequestBody);
 
@@ -212,14 +200,13 @@ public class GraphControllerIT extends AbstractTest {
 
 
     @AfterEach
-    void tearDown() {
-        final CustomObjectsApi apiInstance = new CustomObjectsApi(apiClient);
-        final String group = "gchq.gov.uk"; // String | the custom resource's group
-        final String version = "v1"; // String | the custom resource's version
-        final String plural = "gaffers"; // String | the custom resource's plural name. For TPRs this would be lowercase plural kind.
-        final String name = TEST_GRAPH_ID; // String | the custom object's name
+    void tearDown() throws InterruptedException {
         try {
-            apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
+             mvc.perform(delete("/graphs/" + graphName)
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .header("Authorization", token))
+                    .andReturn();
+            //apiInstance.deleteNamespacedCustomObject(group, version, namespace, plural, name, null, null, null, null, null);
         } catch (Exception e) {
             // Do nothing
         }

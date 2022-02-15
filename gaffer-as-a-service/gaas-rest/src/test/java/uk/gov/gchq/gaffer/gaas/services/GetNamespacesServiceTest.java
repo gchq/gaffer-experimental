@@ -22,23 +22,25 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+
 import java.util.Arrays;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @UnitTest
-public class GetNamespacesServiceTest {
+class GetNamespacesServiceTest {
 
     @Autowired
     private GetNamespacesService getNamespacesService;
 
     @MockBean
-    CRDClient crdClient;
+    GafferClient gafferClient;
 
     @MockBean
     private MeterRegistry meterRegistry;
@@ -47,11 +49,11 @@ public class GetNamespacesServiceTest {
     private Counter mockCounter;
 
     @Test
-    public void shouldReturnNamespacesAsAListOfString_whenCrdClientIsSuccessful() throws GaaSRestApiException {
+    void shouldReturnNamespacesAsAListOfString_whenCrdClientIsSuccessful() throws GaaSRestApiException {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
 
         final List<String> list = Arrays.asList("my-production-env-1", "my-test-env-3");
-        when(crdClient.getAllNameSpaces()).thenReturn(list);
+        when(gafferClient.getAllNameSpaces()).thenReturn(list);
 
         final List<String> actual = getNamespacesService.getNamespaces();
 

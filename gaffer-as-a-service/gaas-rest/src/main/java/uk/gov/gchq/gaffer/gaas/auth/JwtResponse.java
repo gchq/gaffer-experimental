@@ -17,19 +17,20 @@
 package uk.gov.gchq.gaffer.gaas.auth;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import java.io.Serializable;
 
 @ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "jwt")
 public class JwtResponse implements Serializable {
 
     private static final long serialVersionUID = -8091879091924046844L;
-    private final String jwttoken;
+    private final String jwtToken;
 
-    public JwtResponse(final String jwttoken) {
-        this.jwttoken = jwttoken;
+    public JwtResponse(final String jwtToken) {
+        this.jwtToken = jwtToken;
     }
 
     public String getToken() {
-        return this.jwttoken;
+        return this.jwtToken;
     }
 }

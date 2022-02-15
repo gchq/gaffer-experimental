@@ -20,6 +20,7 @@ import io.kubernetes.client.openapi.ApiException;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.gchq.gaffer.gaas.util.ApiExceptionTestFactory.makeApiException_custom;
@@ -28,10 +29,10 @@ import static uk.gov.gchq.gaffer.gaas.util.ApiExceptionTestFactory.makeApiExcept
 import static uk.gov.gchq.gaffer.gaas.util.ApiExceptionTestFactory.makeApiException_timeout;
 
 @UnitTest
-public class GaaSRestExceptionFactoryTest {
+class GaaSRestExceptionFactoryTest {
 
     @Test
-    public void convertApiExceptionWhenResponseBodyIsNotJson() {
+    void convertApiExceptionWhenResponseBodyIsNotJson() {
         final ApiException apiException = makeApiException_custom("ServerError", 500, "Not JSON");
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
@@ -42,7 +43,7 @@ public class GaaSRestExceptionFactoryTest {
     }
 
     @Test
-    public void convertApiExceptionWhenApiNotLoggedInToCluster() {
+    void convertApiExceptionWhenApiNotLoggedInToCluster() {
         final ApiException apiException = makeApiException_loggedOutOfCluster();
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
@@ -53,7 +54,7 @@ public class GaaSRestExceptionFactoryTest {
     }
 
     @Test
-    public void convertAlreadyExistsApiExceptionToGaasApiException() {
+    void convertAlreadyExistsApiExceptionToGaaSApiException() {
         final ApiException apiException = makeApiException_duplicateGraph();
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
@@ -64,13 +65,13 @@ public class GaaSRestExceptionFactoryTest {
     }
 
     @Test
-    public void convertApiExceptionToGaasApiException() {
+    void convertApiExceptionToGaaSApiException() {
         final ApiException apiException = makeApiException_timeout();
 
         final GaaSRestApiException actual = GaaSRestExceptionFactory.from(apiException);
 
         assertEquals("Kubernetes Cluster Error: java.net.SocketTimeoutException: connect timed out", actual.getMessage());
-        assertEquals(0, actual.getStatusCode());
+        assertEquals(500, actual.getStatusCode());
         assertTrue(actual.getCause() instanceof ApiException);
     }
 }

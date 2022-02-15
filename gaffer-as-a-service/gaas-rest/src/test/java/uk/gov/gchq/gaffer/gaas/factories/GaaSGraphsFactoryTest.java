@@ -25,21 +25,23 @@ import uk.gov.gchq.gaffer.common.model.v1.GafferStatus;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.common.util.CommonUtil;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 
-public class GaaSGraphsFactoryTest {
+class GaaSGraphsFactoryTest {
 
     @Test
-    public void gafferHasValidUpStatus_returnsGaaSGraphWithUpStatus() {
+    void gafferHasValidUpStatus_returnsGaaSGraphWithUpStatus() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferStatus gafferStatus = new GafferStatus().restApiStatus(RestApiStatus.UP);
         final GafferList gafferList = makeGafferList(graphSpec, gafferStatus);
@@ -52,7 +54,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferHasEmptyStatus_returnsGaaSGraphWithDownStatus() {
+    void gafferHasEmptyStatus_returnsGaaSGraphWithDownStatus() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferStatus gafferStatus = new GafferStatus();
         final GafferList gafferList = makeGafferList(graphSpec, gafferStatus);
@@ -65,7 +67,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferWithConfigNameLabel_returnsConfigName() {
+    void gafferWithConfigNameLabel_returnsConfigName() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferStatus gafferStatus = new GafferStatus();
         final V1ObjectMeta metadata = new V1ObjectMeta();
@@ -81,7 +83,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferWithEmptyLabelsMap_returnsGaaSGraphWithEmptyConfigName() {
+    void gafferWithEmptyLabelsMap_returnsGaaSGraphWithEmptyConfigName() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferStatus gafferStatus = new GafferStatus();
         final V1ObjectMeta metadata = new V1ObjectMeta();
@@ -96,7 +98,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferWithEmptyMetaData_returnsGaaSGraphWithEmptyConfigName() {
+    void gafferWithEmptyMetaData_returnsGaaSGraphWithEmptyConfigName() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferStatus gafferStatus = new GafferStatus();
         final V1ObjectMeta metadata = new V1ObjectMeta();
@@ -110,7 +112,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferWithNullMetadata_returnsGaaSGraphWithEmptyConfigName() {
+    void gafferWithNullMetadata_returnsGaaSGraphWithEmptyConfigName() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferStatus gafferStatus = new GafferStatus();
         final GafferList gafferList = makeGafferList(graphSpec, gafferStatus, null);
@@ -123,7 +125,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferSpecHasAllValues_andNullStatus_returnsOneGaaSGraphWithDownStatus() {
+    void gafferSpecHasAllValues_andNullStatus_returnsOneGaaSGraphWithDownStatus() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferList gafferList = makeGafferList(graphSpec);
 
@@ -137,7 +139,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferWithGraphIdOnly_fillWithDefaultValues_andDownStatus() {
+    void gafferWithGraphIdOnly_fillWithDefaultValues_andDownStatus() {
         final GafferSpec graphSpec = new GafferSpec();
         graphSpec.putNestedObject("hello-gaffer", GRAPH_ID_KEY);
         final GafferList gafferList = makeGafferList(graphSpec);
@@ -152,7 +154,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferSpecHasAllValues_andEmptyProblems_returnsOneGaaSGraphWithEmptyList() {
+    void gafferSpecHasAllValues_andEmptyProblems_returnsOneGaaSGraphWithEmptyList() {
         final GafferSpec graphSpec = getFullValuesGafferSpec();
         final GafferList gafferList = makeGafferList(graphSpec);
 
@@ -166,7 +168,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferHasProblems_returnsGaaSGraphWithProblems() {
+    void gafferHasProblems_returnsGaaSGraphWithProblems() {
         final List<String> problems = new ArrayList<>();
         problems.add("There is a problem with this graph");
         final GafferSpec graphSpec = getFullValuesGafferSpec();
@@ -181,7 +183,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferWithNullGraphId_treatAsGraphNonExistentAndExcludeFromList() {
+    void gafferWithNullGraphId_treatAsGraphNonExistentAndExcludeFromList() {
         final GafferList gafferList = makeGafferList(new GafferSpec());
 
         final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
@@ -190,7 +192,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void gafferWithNullGafferSpec_treatAsGraphNonExistentAndExcludeFromList() {
+    void gafferWithNullGafferSpec_treatAsGraphNonExistentAndExcludeFromList() {
         final GafferList gafferList = makeGafferList(null);
 
         final List<GaaSGraph> actual = GaaSGraphsFactory.from(gafferList);
@@ -199,7 +201,7 @@ public class GaaSGraphsFactoryTest {
     }
 
     @Test
-    public void emptyGafferList_returnsZeroGaaSGraphs() {
+    void emptyGafferList_returnsZeroGaaSGraphs() {
         final Map<String, Object> gafferListMap = new LinkedHashMap<>();
         final List<Gaffer> gaffers = new ArrayList<>();
         gafferListMap.put("items", gaffers);

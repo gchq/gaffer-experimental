@@ -18,6 +18,7 @@ package uk.gov.gchq.gaffer.gaas.model;
 
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
+
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 
@@ -28,10 +29,11 @@ public class GraphUrl {
     public static GraphUrl from(final Gaffer gaffer) {
         final GafferSpec spec = gaffer.getSpec();
         return new GraphUrl(spec.getNestedObject(INGRESS_HOST_KEY).toString(), spec.getNestedObject(INGRESS_API_PATH_KEY).toString());
+
     }
 
-    private String root;
-    private String host;
+    private final String root;
+    private final String host;
 
     public GraphUrl(final String host, final String root) {
         this.host = host;

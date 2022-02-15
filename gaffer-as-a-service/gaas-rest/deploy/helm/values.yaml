@@ -15,7 +15,7 @@
 replicaCount: 1
 image:
   #Set the repository value below to your own
-  repository: dockerhub/repo
+  repository: dockerhub/image
   pullPolicy: Always
   tag: latest
   containerPort: 8080
@@ -25,9 +25,18 @@ service:
   port: 8080
   targetPort: 8080
 
-# Set serviceAccount.create to true if User deploying has assign
+# Set serviceAccount.create to true if User deploying has assigned
 # ClusterRoleBinding privileges to enable cluster namespaces endpoint
 serviceAccount:
   create: true
+
+controller:
+  applicationProperties:
+    worker.image: somerepo/gaffer-worker
+    worker.imagePullPolicy: Always
+worker:
+  serviceAccount:
+    create: true
+    name: gaffer-workers
 
 namespace: kai-dev

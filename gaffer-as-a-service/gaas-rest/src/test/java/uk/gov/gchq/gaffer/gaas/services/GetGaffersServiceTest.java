@@ -24,7 +24,7 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.common.model.v1.RestApiStatus;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
@@ -48,7 +48,7 @@ class GetGaffersServiceTest {
     @Autowired
     private GetGaffersService getGafferService;
     @MockBean
-    private CRDClient crdClient;
+    private GafferClient gafferClient;
     @MockBean
     private Counter mockCounter;
     @MockBean
@@ -70,7 +70,7 @@ class GetGaffersServiceTest {
                 .problems(TEST_GRAPH_PROBLEMS);
         final List<GaaSGraph> graphList = new ArrayList<>();
         graphList.add(graph);
-        when(crdClient.listAllCRDs()).thenReturn(graphList);
+        when(gafferClient.listAllGaffers()).thenReturn(graphList);
 
         final List<GaaSGraph> actual = getGafferService.getAllGraphs();
 
@@ -86,7 +86,7 @@ class GetGaffersServiceTest {
     void testGetGraphs_whenGraphRequestIsEmpty() throws GaaSRestApiException {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final List<GaaSGraph> graphList = new ArrayList<>();
-        when(crdClient.listAllCRDs()).thenReturn(graphList);
+        when(gafferClient.listAllGaffers()).thenReturn(graphList);
 
         final List<GaaSGraph> actual = getGafferService.getAllGraphs();
 

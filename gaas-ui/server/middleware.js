@@ -38,6 +38,16 @@ app.post("/auth/signout", (req, res) => {
     res.status(204).end();
 });
 
+app.get("/whoami", (req, res, next) => {
+    try {
+        jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
+            res.status(200).send("testEmail@something.com");
+        });
+    } catch (e) {
+        res.status(404).send(e.message).end();
+    }
+});
+
 // Create Graph
 app.post("/graphs", (req, res) => {
     try {
@@ -175,10 +185,6 @@ app.get("/storetypes", (req, res) => {
                     },
                     {
                         name: "accumulo",
-                        parameters: ["schema"],
-                    },
-                    {
-                        name: "proxy",
                         parameters: ["schema"],
                     },
                     {

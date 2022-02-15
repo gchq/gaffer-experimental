@@ -16,6 +16,10 @@ export interface IGraphStatusResponse {
     status: string;
 }
 
+export interface IWhoAmIResponse {
+    "x-email": string;
+}
+
 export interface IGetAllGraphIdsResponse extends Array<string> {}
 
 export interface IStoreTypesResponse {

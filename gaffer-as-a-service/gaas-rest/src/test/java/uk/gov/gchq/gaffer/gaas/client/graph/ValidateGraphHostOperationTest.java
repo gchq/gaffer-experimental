@@ -29,17 +29,19 @@ import uk.gov.gchq.gaffer.gaas.exception.GraphOperationException;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import uk.gov.gchq.gaffer.rest.SystemStatus;
+
 import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @UnitTest
-public class ValidateGraphHostOperationTest {
+class ValidateGraphHostOperationTest {
 
     public static MockWebServer mockBackEnd;
-    private String url = mockBackEnd.getHostName() + ":" + mockBackEnd.getPort();
+    private final String url = mockBackEnd.getHostName() + ":" + mockBackEnd.getPort();
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -53,7 +55,7 @@ public class ValidateGraphHostOperationTest {
     }
 
     @Test
-    public void shouldThrow404Exception_WhenGraphReturns404() {
+    void shouldThrow404Exception_WhenGraphReturns404() {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(404));
         final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", url, "/notfound");
 
@@ -64,18 +66,18 @@ public class ValidateGraphHostOperationTest {
     }
 
     @Test
-    public void shouldThrow500Exception_WhenGraphReturns500() {
+    void shouldThrow500Exception_WhenGraphReturns500() {
         mockBackEnd.enqueue(new MockResponse().setResponseCode(500));
-        final ProxySubGraph proxySubGraph = new ProxySubGraph("brokengraph", url, "/internalerror");
+        final ProxySubGraph proxySubGraph = new ProxySubGraph("brokenGraph", url, "/internalError");
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
-        assertEquals("Get Status request for 'brokengraph' returned: 500 Internal Server Error at http://localhost:" + mockBackEnd.getPort() + "/internalerror/graph/status", actual.getMessage());
+        assertEquals("Get Status request for 'brokenGraph' returned: 500 Internal Server Error at http://localhost:" + mockBackEnd.getPort() + "/internalError/graph/status", actual.getMessage());
         assertTrue(actual.getCause() instanceof WebClientResponseException);
     }
 
     @Test
-    public void shouldThrowConnectionRefusedException_WhenAttemptToConnectToInvalidHost() {
+    void shouldThrowConnectionRefusedException_WhenAttemptToConnectToInvalidHost() {
         final ProxySubGraph proxySubGraph = new ProxySubGraph("testGraph", "localhost:404", "/rest");
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
@@ -86,20 +88,20 @@ public class ValidateGraphHostOperationTest {
     }
 
     @Test
-    public void shouldThrowGraphNotUpException_WhenGraphReturnsOutOfServiceStatus() {
+    void shouldThrowGraphNotUpException_WhenGraphReturnsOutOfServiceStatus() {
         mockBackEnd.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .addHeader("Content-type", "application/json")
                 .setBody(new Gson().toJson(SystemStatus.OUT_OF_SERVICE)));
-        final ProxySubGraph proxySubGraph = new ProxySubGraph("noservicegraph", url, "/rest");
+        final ProxySubGraph proxySubGraph = new ProxySubGraph("noServiceGraph", url, "/rest");
 
         final GraphOperationException actual = assertThrows(GraphOperationException.class, () -> new ValidateGraphHostOperation(proxySubGraph).execute());
 
-        assertEquals("'noservicegraph' status is OUT_OF_SERVICE. The system is out of service.", actual.getMessage());
+        assertEquals("'noServiceGraph' status is OUT_OF_SERVICE. The system is out of service.", actual.getMessage());
     }
 
     @Test
-    public void whenUnexpectedResponseBody_() {
+    void whenUnexpectedResponseBody_() {
         mockBackEnd.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .addHeader("Content-type", "application/json")
@@ -112,7 +114,7 @@ public class ValidateGraphHostOperationTest {
     }
 
     @Test
-    public void shouldThrowGraphNotUpException_WhenGraphReturnsDownStatus() throws InterruptedException {
+    void shouldThrowGraphNotUpException_WhenGraphReturnsDownStatus() throws InterruptedException {
         mockBackEnd.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .addHeader("Content-type", "application/json")
@@ -127,7 +129,7 @@ public class ValidateGraphHostOperationTest {
     }
 
     @Test
-    public void whenResponseIsSuccessfulAndGraphIsUp_ShouldNotThrowException() throws InterruptedException {
+    void whenResponseIsSuccessfulAndGraphIsUp_ShouldNotThrowException() throws InterruptedException {
         mockBackEnd.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .addHeader("Content-type", "application/json")

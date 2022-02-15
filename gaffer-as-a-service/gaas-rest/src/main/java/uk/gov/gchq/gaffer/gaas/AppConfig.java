@@ -24,6 +24,11 @@ import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
+import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
+import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
+
 import java.io.IOException;
 
 @Configuration
@@ -42,6 +47,16 @@ public class AppConfig {
     @Bean
     public CoreV1Api coreV1Api() throws IOException {
         return new CoreV1Api(apiClient());
+    }
+
+    @Bean
+    public IKubernetesObjectFactory kubernetesObjectFactory(final Environment environment) {
+        return new KubernetesObjectFactory(environment);
+    }
+
+    @Bean
+    public DeploymentHandler deploymentHandler(final Environment environment, final IKubernetesObjectFactory kubernetesObjectFactory, final ApiClient apiClient) {
+        return new DeploymentHandler(environment, kubernetesObjectFactory);
     }
 
     @Bean

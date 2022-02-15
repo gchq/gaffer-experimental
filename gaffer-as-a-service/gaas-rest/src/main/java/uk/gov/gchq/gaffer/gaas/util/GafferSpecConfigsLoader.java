@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,7 +91,6 @@ public class GafferSpecConfigsLoader {
             String filename = resource.getFilename().split("\\.", 2)[0];
             storeTypes.add(filename);
         }
-        String result = storeTypes.toString().replaceAll("\\[|\\]", "");
-        return result;
+        return storeTypes.toString().replaceAll("\\[|\\]", "");
     }
 }

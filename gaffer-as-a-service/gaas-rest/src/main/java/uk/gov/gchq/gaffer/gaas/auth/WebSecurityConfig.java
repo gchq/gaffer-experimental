@@ -40,6 +40,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${cognito.enabled: false}")
     boolean cognitoEnabled;
 
+    @Value("${jwt.enabled: false}")
+    boolean jwtEnabled;
+
+    @Value("${openshift.enabled: false}")
+    boolean openshiftEnabled;
+
     @Autowired(required = false)
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
@@ -48,6 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired(required = false)
     private JwtRequestFilter jwtRequestFilter;
+
 
     @Autowired(required = false)
     public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -85,10 +92,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                             jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))
                                     )
                     );
-        } else {
+        }
+        if (jwtEnabled) {
             http.csrf().disable() // nosemgrep: java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
                     //csrf is disabled as the application uses JWT and stateless and cookieless authentication when using this configuration
-                    // dont authenticate this particular request
+                    // don't authenticate this particular request
                     .authorizeRequests()
                     .antMatchers("/auth", "/v2/api-docs", "/swagger-ui.html", "/swagger-ui/", "/swagger-ui/**", "/swagger-resources",
                             "/swagger-resources/**", "/webjars/**", "/actuator/**")
@@ -107,6 +115,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
             // Add a filter to validate the tokens with every request
             http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        }
+        if (openshiftEnabled) {
+            http.csrf().disable().authorizeRequests().antMatchers("/**").permitAll(); // nosemgrep: java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
         }
         http.cors();
 

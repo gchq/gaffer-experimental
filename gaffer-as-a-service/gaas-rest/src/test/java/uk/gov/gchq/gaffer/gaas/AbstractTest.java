@@ -17,6 +17,7 @@
 package uk.gov.gchq.gaffer.gaas;
 
 import com.google.gson.Gson;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
-import uk.gov.gchq.gaffer.gaas.client.CRDClient;
+import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -38,7 +39,10 @@ public abstract class AbstractTest {
     WebApplicationContext webApplicationContext;
 
     @Autowired
-    private CRDClient crdClient;
+    private GafferClient gafferClient;
+
+    @Autowired
+    private CoreV1Api coreV1Api;
 
     protected MvcResult token;
 

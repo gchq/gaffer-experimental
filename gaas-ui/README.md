@@ -87,6 +87,14 @@ Make sure you are in the UI directory when running the commands.
 * `docker logs -f [container ID]` shows a log of the actions happening to the UI container.
 
 Once the process has finished, visit (http://localhost:8080), where you will be able to see the UI.
+## Podman and Docker Hub
+* `podman login docker.io` Logs you in to docker hub using Podman, enter your docker hub username and password.
+* `podman machine init` Initialises the Podman VM.
+* `podman machine start` Starts the Podman VM.
+* `podman build -t docker.io/YOUR-DOCKER-HUB-USERNAME/ui:latest .` builds a production version of Kai as a container.
+* `podman push docker.io/YOUR-DOCKER-HUB-USERNAME/ui:latest` pushes the container to docker hub in the `YOUR-DOCKER-HUB-USERNAME/ui` repository.
+ 
+For more documentation visit : https://podman.io/
 
 ## Deploying To Kubernetes
 
