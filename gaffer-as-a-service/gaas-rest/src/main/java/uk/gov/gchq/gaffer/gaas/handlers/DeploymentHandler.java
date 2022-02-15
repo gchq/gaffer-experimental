@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Crown Copyright
+ * Copyright 2020-2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,13 +90,13 @@ public class DeploymentHandler {
                 coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
                 LOGGER.info("Install Pod deployment successful");
             } catch (final ApiException e) {
-                LOGGER.error("Failed to create worker pod");
+                LOGGER.info("Failed to create worker pod");
                 throw e;
             }
 
 
         } catch (final ApiException e) {
-            LOGGER.error("Failed to create Gaffer");
+            LOGGER.info("Failed to create Gaffer");
             throw e;
         }
 
@@ -152,12 +152,12 @@ public class DeploymentHandler {
             if (secretsToDelete.isEmpty() & configMapList.isEmpty() & deploymentList.isEmpty()) {
                 //If all 3 are empty it means the gaffer which the user is trying to delete does not exist therefore
                 //we return false
-                LOGGER.info(String.format("No deployments of %s to delete", gaffer));
+                LOGGER.debug(String.format("No deployments of %s to delete", gaffer));
                 return false;
             }
 
         } catch (KubernetesClientException e) {
-            LOGGER.error(String.format("Failed to delete deployments of %s", gaffer));
+            LOGGER.debug(String.format("Failed to delete deployments of %s", gaffer));
             throw new ApiException(e.getCode(), e.getMessage());
         }
         cleanUpGafferDeploymentAfterTearDown(gaffer, workerNamespace);
@@ -176,7 +176,7 @@ public class DeploymentHandler {
             }
             return listAllGraphs(kubernetesClient, apiDeployments);
         } catch (Exception e) {
-            LOGGER.error("Failed to list all Gaffers.");
+            LOGGER.debug("Failed to list all Gaffers.");
             throw new ApiException(e.getLocalizedMessage());
         }
     }
@@ -202,16 +202,16 @@ public class DeploymentHandler {
         final String hdfsLabelSelector = "app.kubernetes.io/name=hdfs," + gafferLabelSelector;
         final String zookeeperLabelSelector = "app=zookeeper,release=" + gafferName;
 
-        LOGGER.info("Removing any workers working on this gaffer deployment");
+        LOGGER.debug("Removing any workers working on this gaffer deployment");
         deleteCollectionNamespacePod(gafferNamespace, workerLabelSelector);
 
-        LOGGER.info("Removing HDFS PVCs");
+        LOGGER.debug("Removing HDFS PVCs");
         deleteCollectionNamespacePersistentVolumeClaimWithHDFsLabelSelector(gafferNamespace, hdfsLabelSelector);
 
-        LOGGER.info("Removing Zookeeper PVCs");
+        LOGGER.debug("Removing Zookeeper PVCs");
         deleteCollectionNamespacePersistentVolumeClaimWithZookeeperLabels(gafferNamespace, zookeeperLabelSelector);
 
-        LOGGER.info("Removing any stranded pods");
+        LOGGER.debug("Removing any stranded pods");
         deleteCollectionNamespaceStandardPod(gafferNamespace, gafferLabelSelector);
 
     }
@@ -222,7 +222,7 @@ public class DeploymentHandler {
                 null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, err) -> {
                     if (err == null) {
                         try {
-                            LOGGER.info("All worker pods have been removed. Removing any attached secrets");
+                            LOGGER.debug("All worker pods have been removed. Removing any attached secrets");
                             coreV1Api.deleteCollectionNamespacedSecret(workerNamespace, null, null,
                                     null, null, 0, workerLabelSelector, null,
                                     null, null, null, null, null, null);
@@ -281,11 +281,10 @@ public class DeploymentHandler {
                 } else {
                     gaaSGraph.status(RestApiStatus.DOWN);
                 }
-                gaaSGraph.url("https://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
-                gaaSGraph.restUrl("https://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/rest");
+                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
                 graphs.add(gaaSGraph);
             } catch (Exception e) {
-                LOGGER.error(gaffer + " could not be retrieved ");
+                LOGGER.info(gaffer + " could not be retrieved ");
             }
         }
         return graphs;
