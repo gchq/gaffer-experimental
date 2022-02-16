@@ -11,7 +11,7 @@ export interface ICreateGraphRequestBody extends ICreateGraphInterface {
     configName: string;
 }
 export interface ICreateFederatedGraphRequestBody extends ICreateGraphInterface {
-    proxyStores: Array<{ graphId: string; url: string }>;
+    proxySubGraphs: Array<{ graphId: string; host: string; root: string }>;
     configName: string;
 }
 export interface ICreateProxyGraphRequestBody extends ICreateGraphInterface {

@@ -11,7 +11,7 @@ describe("Create Graph Repo", () => {
     describe("On Success", () => {
         it("should request an FEDERATED_STORE  graph when FEDERATED_STORE is parameter", async () => {
             const request: ICreateFederatedGraphRequestBody = {
-                proxyStores: [{ graphId: "test-graph", url: "test.graph.url" }],
+                proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                 graphId: "fed-store",
                 description: "a description",
                 configName: "federated",
@@ -20,7 +20,7 @@ describe("Create Graph Repo", () => {
 
             await expect(
                 repo.create("fed-store", "a description", "federated", {
-                    proxyStores: [{ graphId: "test-graph", url: "test.graph.url" }],
+                    proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                 })
             ).resolves.toEqual(undefined);
         });
@@ -37,7 +37,7 @@ describe("Create Graph Repo", () => {
         describe("On Error", () => {
             it("should throw RestApiError 400 message when API no response body", async () => {
                 const request: ICreateFederatedGraphRequestBody = {
-                    proxyStores: [{ graphId: "test-graph", url: "test.graph.url" }],
+                    proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                     graphId: "bad-request-graph",
                     description: "a description",
                     configName: "federated",
@@ -46,14 +46,14 @@ describe("Create Graph Repo", () => {
 
                 await expect(
                     repo.create("bad-request-graph", "a description", "federated", {
-                        proxyStores: [{ graphId: "test-graph", url: "test.graph.url" }],
+                        proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                     })
                 ).rejects.toEqual(new RestApiError("Error Code 400", "Bad Request"));
             });
 
             it("should throw RestApiError with title and detail from error response body", async () => {
                 const request: ICreateFederatedGraphRequestBody = {
-                    proxyStores: [{ graphId: "test-graph", url: "test.graph.url" }],
+                    proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                     graphId: "forbidden-graph",
                     description: "a description",
                     configName: "federated",
@@ -62,7 +62,7 @@ describe("Create Graph Repo", () => {
 
                 await expect(
                     repo.create("forbidden-graph", "a description", "federated", {
-                        proxyStores: [{ graphId: "test-graph", url: "test.graph.url" }],
+                        proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                     })
                 ).rejects.toEqual(new RestApiError("Forbidden", "Kubernetes access denied"));
             });
