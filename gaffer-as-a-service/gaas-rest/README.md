@@ -146,3 +146,8 @@ For Delete operation
 search {DeleteGraphService_total} or {deleteGraph_time_seconds} and execute and click Graph tab.
 to return the 5minute rate that {DeleteGraphService_total} of
 rate(DeleteGraphService_total[5m])
+
+#### Miscellaneous Notes
+- If you want to install a specific chart version this can be done by adding a "--version" flag to the helm install
+which occurs in KubernetesObjectFactory.java. Following the --version flag you must specify the version you want to use for example
+--version 0.17.1 Currently, the helm install deploys the latest version by default.
