@@ -22,11 +22,9 @@ metadata:
 rules: 
 - apiGroups:
   - networking.k8s.io
-  - route.openshift.io
   resources:
   - networkpolicies
   - ingresses
-  - routes
   verbs:
   - create
   - get

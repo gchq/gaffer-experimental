@@ -174,7 +174,7 @@ public final class GafferFactory {
             if (exsistingAuths instanceof List) {
                 List<String> authsResult = (ArrayList) exsistingAuths;
                 for (final String auth : authsResult) {
-                    if (!Objects.equals(auth, "") && !Objects.equals(auth, "null") && auth != null) {
+                    if (!auth.equals("") && !auth.equals("null") && auth != null) {
                         result.add(auth);
                     }
                 }
