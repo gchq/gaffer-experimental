@@ -282,6 +282,8 @@ public class DeploymentHandler {
                     gaaSGraph.status(RestApiStatus.DOWN);
                 }
                 gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
+                gaaSGraph.restUrl("https://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/rest");
+
                 graphs.add(gaaSGraph);
             } catch (Exception e) {
                 LOGGER.info(gaffer + " could not be retrieved ");
