@@ -146,7 +146,7 @@ public class GraphController {
 
     @GetMapping(path = "/whoami", produces = "application/json")
     ResponseEntity<String> whoami(@RequestHeader("x-email") final String email) {
-        helmValuesOverridesHandler.addOverride("creator", email.substring(0, email.indexOf('@')));
+        helmValuesOverridesHandler.addOverride("labels.creator", email.substring(0, email.indexOf('@')));
         return new ResponseEntity<String>(email, HttpStatus.OK);
     }
 

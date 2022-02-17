@@ -187,16 +187,13 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     }
 
     private ArrayList<String> installHelmList(final Gaffer gaffer, final HelmCommand helmCommand) {
-        ArrayList<String> list = new ArrayList<>();
-        list.add(helmCommand.getCommand());
-        list.add(gaffer.getMetadata().getName());
-        list.add(GAFFER);
-        list.add(REPO_ARG);
-        list.add(helmRepo);
-        list.add(VALUES_ARG);
-        list.add(VALUES_YAML_LOCATION);
-        list.add(NAMESPACE_ARG);
-        list.add(gaffer.getMetadata().getNamespace());
+        ArrayList<String> list = Lists.newArrayList(
+                helmCommand.getCommand(),
+                gaffer.getMetadata().getName(),
+                GAFFER,
+                REPO_ARG, helmRepo,
+                VALUES_ARG, VALUES_YAML_LOCATION,
+                NAMESPACE_ARG, gaffer.getMetadata().getNamespace());
         if (openshiftEnabled) {
             return helmValuesOverridesHandler.helmOverridesStringBuilder(list);
         }
