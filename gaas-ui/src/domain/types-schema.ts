@@ -51,10 +51,6 @@ export class TypesSchema {
             notes.addError("Types Schema is undefined");
             return;
         }
-        if (typeof this.types !== "object") {
-            notes.addError(`Types is a ${typeof this.types} and not an object of types objects`);
-            return;
-        }
         Object.entries(this.types).forEach(([typeName, value]) => {
             const type: IType = value as IType;
             if (type.description !== undefined && typeof type.description !== "string") {

@@ -127,13 +127,14 @@ export default class CreateGraph extends React.Component<{}, IState> {
 
         let config: ICreateGraphConfig;
         if (this.currentStoreTypeIsFederated()) {
-            const subGraphs: Array<{ graphId: string; url: string }> = graphs
+            const subGraphs: Array<{ graphId: string; host: string; root: string }> = graphs
                 .filter((graph) => selectedGraphs.includes(graph.getId()))
                 .map((subGraph: Graph) => ({
                     graphId: subGraph.getId(),
-                    url: subGraph.getUrl(),
+                    host: subGraph.getGraphHost(),
+                    root: "/rest",
                 }));
-            config = { proxyStores: subGraphs };
+            config = { proxySubGraphs: subGraphs };
         } else {
             const elements = new ElementsSchema(this.state.elements);
             const types = new TypesSchema(this.state.types);

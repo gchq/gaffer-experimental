@@ -93,8 +93,8 @@ describe("CreateGraph UI component", () => {
                 new Graph(
                     "apples",
                     "ACTIVE",
-                    "http://apples.graph/ui",
-                    "http://apples.graph/rest",
+                    "http://resoucename-namespace.host-name/ui",
+                    "http://resoucename-namespace.host-name/rest",
                     "UP",
                     "mapStore",
                     GraphType.GAAS_GRAPH
@@ -156,7 +156,7 @@ describe("CreateGraph UI component", () => {
             await wrapper.update();
 
             const urlInput = wrapper.find("input#proxy-url-input");
-            expect(urlInput.props().name).toBe("Proxy Graph Base URL");
+            expect(urlInput.props().name).toBe("Proxy Graph Rest URL");
             const addButton = wrapper.find("button#add-new-proxy-button");
             expect(addButton.text()).toBe("Add Proxy Graph");
             const graphTable = wrapper.find("table");
@@ -175,7 +175,7 @@ describe("CreateGraph UI component", () => {
             mockGetGraphDescription("Description for this Proxy Graph");
             mockGetGraphId("graph-id");
 
-            await inputProxyURL("http://test.graph.url");
+            await inputProxyURL("http://http://resoucename-namespace.host-name/rest");
             await clickAddProxy();
 
             const graphTable = wrapper.find("table");
@@ -188,23 +188,23 @@ describe("CreateGraph UI component", () => {
             await wrapper.update();
             mockGetGraphStatus("DOWN");
             mockGetGraphStatusRepoToThrowError();
-            await inputProxyURL("http://test.graph.url");
+            await inputProxyURL("http://resoucename-namespace.host-name/rest");
 
             await clickAddProxy();
 
             const graphTable = wrapper.find("table");
-            expect(graphTable.text()).not.toContain("http://test.graph.url");
+            expect(graphTable.text()).not.toContain("http://resoucename-namespace.host-name/rest");
         });
         it("Should select a graph in table", async () => {
             selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
-            await inputProxyURL("https://www.testURL.com/");
+            await inputProxyURL("http://resoucename1-namespace.host-name/rest");
             await clickAddProxy();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
-            await inputProxyURL("https://www.testURL2.com/");
+            await inputProxyURL("http://resoucename2-namespace.host-name/rest");
             await clickAddProxy();
 
             clickTableBodyCheckBox(0, false);
@@ -216,10 +216,10 @@ describe("CreateGraph UI component", () => {
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
-            await inputProxyURL("https://www.testURL.com/");
+            await inputProxyURL("http://resoucename-namespace.host-name/rest");
             await clickAddProxy();
             mockGetGraphStatus("UP");
-            await inputProxyURL("https://www.testURL2.com/");
+            await inputProxyURL("http://resoucename2-namespace.host-name/rest");
             await clickAddProxy();
             await wrapper.update();
 
@@ -244,12 +244,12 @@ describe("CreateGraph UI component", () => {
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
 
-            await inputProxyURL("https://www.testURL.com/");
+            await inputProxyURL("http://resoucename-namespace.host-name/rest");
             await clickAddProxy();
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
-            await inputProxyURL("https://www.testURL2.com/");
+            await inputProxyURL("http://resoucename2-namespace.host-name/rest");
             await clickAddProxy();
             await wrapper.update();
             clickTableHeaderCheckBox(true);
@@ -274,12 +274,12 @@ describe("CreateGraph UI component", () => {
             await mockGetGraphId("graph id");
             await mockGetGraphDescription("description");
 
-            await inputProxyURL("https://www.testURL.com/");
+            await inputProxyURL("http://resoucename-namespace.host-name/rest");
             await clickAddProxy();
             await wrapper.update();
             await clickSubmit();
             const expectedConfig: ICreateGraphConfig = {
-                proxyStores: [{ graphId: "graph id", url: "https://www.testURL.com/" }],
+                proxySubGraphs: [{ graphId: "graph id", host: "host-name", root: "/rest" }],
             };
             expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
             expect(mock).toHaveBeenLastCalledWith("OK Graph", "test", "federated", expectedConfig);
@@ -298,13 +298,13 @@ describe("CreateGraph UI component", () => {
             await mockGetGraphIdRepoToThrowError();
             await mockGetGraphDescriptionRepoToThrowError();
 
-            await inputProxyURL("https://www.testURL.com/");
+            await inputProxyURL("http://resoucename-namespace.host-name/rest");
             await clickAddProxy();
             await wrapper.update();
             await clickSubmit();
 
             const expectedConfig: ICreateGraphConfig = {
-                proxyStores: [{ graphId: "n/a", url: "https://www.testURL.com/" }],
+                proxySubGraphs: [{ graphId: "n/a", host: "host-name", root: "/rest" }],
             };
             expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
             expect(mock).toHaveBeenLastCalledWith("OK Graph", "test", "federated", expectedConfig);

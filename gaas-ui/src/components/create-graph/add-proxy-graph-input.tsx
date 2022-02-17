@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from "react";
-import { Button, Grid, TextField } from "@material-ui/core";
+import { Button, Grid, TextField, Tooltip } from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import { Graph } from "../../domain/graph";
 import { GraphType } from "../../domain/graph-type";
@@ -28,8 +28,8 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                 const graph: Graph = new Graph(
                     await getGraphId(),
                     await getDescription(),
-                    proxyURLValue,
                     "",
+                    proxyURLValue,
                     status,
                     "proxyStore",
                     GraphType.PROXY_GRAPH
@@ -79,28 +79,34 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
             {!hide && (
                 <div id={"graphs-table"}>
                     <Grid item xs={12} id={"proxy-url-grid"}>
-                        <TextField
-                            id="proxy-url"
-                            label="Proxy Graph Base URL"
-                            aria-label="proxy-url-textfield"
-                            inputProps={{
-                                name: "Proxy Graph Base URL",
-                                id: "proxy-url-input",
-                                "aria-label": "proxy-url-input",
-                            }}
-                            variant="outlined"
-                            value={proxyURLValue}
-                            fullWidth
-                            name="proxy-url"
-                            error={errorHelperText.length > 0}
-                            autoComplete="proxy-url"
-                            onChange={(event) => {
-                                setSuccessHelperText("");
-                                setErrorHelperText("");
-                                onChangeProxyURL(event.target.value);
-                            }}
-                            helperText={errorHelperText + successHelperText}
-                        />
+                        <Tooltip
+                            title={
+                                "Enter the Rest URL of your graph. E.g. http://resourcename-namespace.host-name/rest"
+                            }
+                        >
+                            <TextField
+                                id="proxy-url"
+                                label="Proxy Graph Rest URL"
+                                aria-label="proxy-url-textfield"
+                                inputProps={{
+                                    name: "Proxy Graph Rest URL",
+                                    id: "proxy-url-input",
+                                    "aria-label": "proxy-url-input",
+                                }}
+                                variant="outlined"
+                                value={proxyURLValue}
+                                fullWidth
+                                name="proxy-url"
+                                error={errorHelperText.length > 0}
+                                autoComplete="proxy-url"
+                                onChange={(event) => {
+                                    setSuccessHelperText("");
+                                    setErrorHelperText("");
+                                    onChangeProxyURL(event.target.value);
+                                }}
+                                helperText={errorHelperText + successHelperText}
+                            />
+                        </Tooltip>
                     </Grid>
                     <Grid
                         id="proxy-button-grid"

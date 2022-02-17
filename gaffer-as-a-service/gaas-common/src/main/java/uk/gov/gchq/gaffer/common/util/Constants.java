@@ -58,5 +58,6 @@ public final class Constants {
     public static final String K8S_COMPONENT_LABEL = "app.kubernetes.io/component";
     public static final String GAFFER_API_K8S_COMPONENT_LABEL_VALUE = "api";
     public static final String K8S_INSTANCE_LABEL = "app.kubernetes.io/instance";
+    public static final String CHART_VERSION = "chart.version";
 
 }
