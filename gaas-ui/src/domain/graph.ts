@@ -55,6 +55,7 @@ export class Graph {
         return this.restUrl;
     }
     public getGraphHost(): string {
-        return this.url.split(".")[1].split("/")[0];
+        const secondHalfOfUrl = this.url.slice(this.url.indexOf(".") + 1);
+        return secondHalfOfUrl.split("/")[0];
     }
 }
