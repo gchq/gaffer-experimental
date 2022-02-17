@@ -156,7 +156,7 @@ describe("CreateGraph UI component", () => {
             await wrapper.update();
 
             const urlInput = wrapper.find("input#proxy-url-input");
-            expect(urlInput.props().name).toBe("Proxy Graph Base URL");
+            expect(urlInput.props().name).toBe("Proxy Graph Rest URL");
             const addButton = wrapper.find("button#add-new-proxy-button");
             expect(addButton.text()).toBe("Add Proxy Graph");
             const graphTable = wrapper.find("table");
