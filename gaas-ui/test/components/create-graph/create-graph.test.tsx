@@ -279,7 +279,7 @@ describe("CreateGraph UI component", () => {
             await wrapper.update();
             await clickSubmit();
             const expectedConfig: ICreateGraphConfig = {
-                proxySubGraphs: [{ graphId: "graph id", host: "host-name", root: "/rest" }],
+                proxySubGraphs: [{ graphId: "graph id", host: "resoucename-namespace.host-name", root: "/rest" }],
             };
             expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
             expect(mock).toHaveBeenLastCalledWith("OK Graph", "test", "federated", expectedConfig);
@@ -304,7 +304,7 @@ describe("CreateGraph UI component", () => {
             await clickSubmit();
 
             const expectedConfig: ICreateGraphConfig = {
-                proxySubGraphs: [{ graphId: "n/a", host: "host-name", root: "/rest" }],
+                proxySubGraphs: [{ graphId: "n/a", host: "resoucename-namespace.host-name", root: "/rest" }],
             };
             expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
             expect(mock).toHaveBeenLastCalledWith("OK Graph", "test", "federated", expectedConfig);

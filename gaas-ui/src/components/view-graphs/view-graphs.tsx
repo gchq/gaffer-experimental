@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Grid, Toolbar, Typography, Box, CardContent, Paper } from "@material-ui/core";
+import { Box, CardContent, Container, Grid, Paper, Toolbar, Typography } from "@material-ui/core";
 import { Graph } from "../../domain/graph";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { DeleteGraphRepo } from "../../rest/repositories/delete-graph-repo";
@@ -8,6 +8,7 @@ import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { Copyright } from "../copyright/copyright";
 import Gauge from "./gauge";
 import { ViewGraphsTable } from "./view-graphs-table";
+import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 
 interface IState {
     graphs: Graph[];
@@ -38,7 +39,11 @@ export default class ViewGraph extends React.Component<{}, IState> {
             this.setState({ federatedStores: allStoreTypes.federatedStoreTypes });
             this.setState({ otherStores: allStoreTypes.storeTypes });
         } catch (e) {
-            this.setState({ errorMessage: `Failed to get federated store types. ${e as Error}` });
+            this.setState({
+                errorMessage: `Failed to get federated store types. ${(e as GaaSRestApiErrorResponse).title}: ${
+                    (e as GaaSRestApiErrorResponse).detail
+                }`,
+            });
         }
     }
 
@@ -47,7 +52,11 @@ export default class ViewGraph extends React.Component<{}, IState> {
             const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
             this.setState({ graphs, errorMessage: "" });
         } catch (e) {
-            this.setState({ errorMessage: `Failed to get all graphs. ${e as Error}` });
+            this.setState({
+                errorMessage: `Failed to get all graphs. ${(e as GaaSRestApiErrorResponse).title}: ${
+                    (e as GaaSRestApiErrorResponse).detail
+                }`,
+            });
         }
     }
 
@@ -56,7 +65,11 @@ export default class ViewGraph extends React.Component<{}, IState> {
             await new DeleteGraphRepo().delete(graphName);
             await this.getGraphs();
         } catch (e) {
-            this.setState({ errorMessage: `Failed to delete graph "${graphName}". ${e as Error}` });
+            this.setState({
+                errorMessage: `Failed to delete graph "${graphName}". ${(e as GaaSRestApiErrorResponse).title}: ${
+                    (e as GaaSRestApiErrorResponse).detail
+                }`,
+            });
         }
     }
 

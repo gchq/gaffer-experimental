@@ -1,6 +1,7 @@
 import { Config } from "../config";
 import { IAuthClient } from "./authclient";
 import { IApiResponse, RestClient } from "./rest-client";
+import { GaaSRestApiErrorResponse } from "../http-message-interfaces/error-response-interface";
 
 interface IAuthRequest {
     username: string;
@@ -23,7 +24,7 @@ export class AuthApiClient implements IAuthClient {
             RestClient.setJwtToken(token.data);
             onSuccess();
         } catch (e) {
-            onError((e as Error).message);
+            onError(e as GaaSRestApiErrorResponse);
         }
     }
 
@@ -48,7 +49,7 @@ export class AuthApiClient implements IAuthClient {
             RestClient.setJwtToken(token.data);
             onSuccess();
         } catch (e) {
-            onError((e as Error).message);
+            onError(e as GaaSRestApiErrorResponse);
         }
     }
 
@@ -62,7 +63,7 @@ export class AuthApiClient implements IAuthClient {
                 .execute();
             onSuccess();
         } catch (e) {
-            onError((e as Error).message);
+            onError(e as GaaSRestApiErrorResponse);
         }
     }
 }
