@@ -131,7 +131,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                 .filter((graph) => selectedGraphs.includes(graph.getId()))
                 .map((subGraph: Graph) => ({
                     graphId: subGraph.getId(),
-                    host: subGraph.getUrl(),
+                    host: subGraph.getGraphHost(),
                     root: "/rest",
                 }));
             config = { proxySubGraphs: subGraphs };

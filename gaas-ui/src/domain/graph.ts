@@ -54,4 +54,7 @@ export class Graph {
     public getRestUrl(): string {
         return this.restUrl;
     }
+    public getGraphHost(): string {
+        return this.url.split(".")[1].split("/")[0];
+    }
 }
