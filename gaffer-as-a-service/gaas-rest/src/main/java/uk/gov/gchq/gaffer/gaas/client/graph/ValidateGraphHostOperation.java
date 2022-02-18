@@ -25,7 +25,7 @@ import uk.gov.gchq.gaffer.rest.SystemStatus;
 
 public class ValidateGraphHostOperation implements Command {
 
-    private static final String HTTP_PROTOCOL = "http://";
+    private static final String HTTP_PROTOCOL = "https://";
     private static final String GRAPH_STATUS_URI = "/graph/status";
 
     private final ProxySubGraph proxySubGraph;
