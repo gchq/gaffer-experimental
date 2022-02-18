@@ -22,7 +22,7 @@ import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../domain/graph";
 import { ElementsSchema, IElementsSchema } from "../../domain/elements-schema";
-import { ITypesSchema, TypesSchema } from "../../domain/types-schema";
+import { TypesSchema } from "../../domain/types-schema";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 import ClearIcon from "@material-ui/icons/Clear";
 import { DropzoneArea } from "material-ui-dropzone";
@@ -140,7 +140,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
             elements.validate();
             types.validate();
             config = {
-                schema: { elements: elements.getElements(), types: types.getTypes() },
+                schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
             };
         }
 
@@ -233,8 +233,8 @@ export default class CreateGraph extends React.Component<{}, IState> {
         return elementsSchema;
     }
 
-    private createTypesSchema(): ITypesSchema {
-        let typesSchema: ITypesSchema = { types: {} };
+    private createTypesSchema(): object {
+        let typesSchema: object = {};
         try {
             if (this.state.types.length !== 0) {
                 typesSchema = JSON.parse(this.state.types);
@@ -340,7 +340,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                         onClick={() => {
                                                             this.setState({
                                                                 elements: '{"entities":{}, "edges":{}}',
-                                                                types: '{"types":{}}',
+                                                                types: "{}",
                                                             });
                                                         }}
                                                     >

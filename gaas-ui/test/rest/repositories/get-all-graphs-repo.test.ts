@@ -19,6 +19,7 @@ describe("Get All Graphs Repo", () => {
                     graphId: "roadTraffic",
                     description: "DEPLOYED",
                     url: "roadTraffic URL",
+                    restUrl: "roadTraffic URL rest",
                     configName: "mapStore",
                     status: "UP",
                 },
@@ -26,6 +27,7 @@ describe("Get All Graphs Repo", () => {
                     graphId: "basicGraph",
                     description: "DELETION_QUEUED",
                     url: "basicGraph URL",
+                    restUrl: "basicGraph URL rest",
                     configName: "mapStore",
                     status: "UP",
                 },
@@ -36,8 +38,24 @@ describe("Get All Graphs Repo", () => {
         const actual: Graph[] = await repo.getAll();
 
         const expected = [
-            new Graph("roadTraffic", "DEPLOYED", "roadTraffic URL", "UP", "mapStore", GraphType.GAAS_GRAPH),
-            new Graph("basicGraph", "DELETION_QUEUED", "basicGraph URL", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "roadTraffic",
+                "DEPLOYED",
+                "roadTraffic URL",
+                "roadTraffic URL rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
+            new Graph(
+                "basicGraph",
+                "DELETION_QUEUED",
+                "basicGraph URL",
+                "basicGraph URL rest",
+                "UP",
+                "mapStore",
+                GraphType.GAAS_GRAPH
+            ),
         ];
         expect(actual).toEqual(expected);
     });
@@ -49,6 +67,7 @@ describe("Get All Graphs Repo", () => {
                     graphId: "streetTraffic",
                     description: "DELETION_QUEUED",
                     url: "streetTraffic URL",
+                    restUrl: "streetTraffic URL rest",
                     configName: "accumuloStore",
                     status: "UP",
                 },
@@ -63,6 +82,7 @@ describe("Get All Graphs Repo", () => {
                 "streetTraffic",
                 "DELETION_QUEUED",
                 "streetTraffic URL",
+                "streetTraffic URL rest",
                 "UP",
                 "accumuloStore",
                 GraphType.GAAS_GRAPH

@@ -15,6 +15,7 @@ describe("Get Graph By Id Repo", () => {
             graphId: "graph-1",
             description: "DEPLOYED",
             url: "graph-1 URL",
+            restUrl: "graph-1 URL rest",
             configName: "mapStore",
             status: "UP",
         };
@@ -22,7 +23,15 @@ describe("Get Graph By Id Repo", () => {
 
         const actual: Graph = await repo.get("graph-1");
 
-        const expected: Graph = new Graph("graph-1", "DEPLOYED", "graph-1 URL", "UP", "mapStore", GraphType.GAAS_GRAPH);
+        const expected: Graph = new Graph(
+            "graph-1",
+            "DEPLOYED",
+            "graph-1 URL",
+            "graph-1 URL rest",
+            "UP",
+            "mapStore",
+            GraphType.GAAS_GRAPH
+        );
         expect(actual).toEqual(expected);
     });
 

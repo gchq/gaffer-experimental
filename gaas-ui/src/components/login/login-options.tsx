@@ -13,7 +13,7 @@ export default function LoginOptions(props: IProps) {
         if (regex.test(url)) {
             return "";
         }
-        return sanitizeUrl(cognitoLoginURL);
+        return sanitizeUrl(url);
     };
     return (
         <main id="login-options">

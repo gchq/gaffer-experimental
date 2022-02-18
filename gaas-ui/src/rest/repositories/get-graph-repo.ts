@@ -16,6 +16,7 @@ export class GetGraphRepo {
             response.data.graphId,
             response.data.description,
             response.data.url,
+            response.data.restUrl,
             response.data.status,
             response.data.configName,
             GraphType.GAAS_GRAPH

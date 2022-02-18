@@ -1,13 +1,12 @@
-import { IElementsSchema } from "../../domain/elements-schema";
-import { ITypesSchema } from "../../domain/types-schema";
 export interface ICreateGraphInterface {
     graphId: string;
     description: string;
 }
 export interface ICreateGraphRequestBody extends ICreateGraphInterface {
     schema: {
-        elements: IElementsSchema;
-        types: ITypesSchema;
+        entities: object;
+        edges: object;
+        types: object;
     };
     configName: string;
 }
