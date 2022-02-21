@@ -96,6 +96,8 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     public V1Secret createValuesSecret(final Gaffer gaffer, final boolean initialDeployment) {
         GafferSpec spec = gaffer.getSpec();
         GafferSpec helmValues = spec != null ? spec : new GafferSpec();
+        helmValues.putNestedObject("edge", "ingress", "annotations", "route.openshift.io/termination");
+        helmValues.putNestedObject("max-age=31536000;includeSubDomains;preload", "ingress", "annotations", "haproxy.router.openshift.io/hsts_header");
         return createSecretFromValues(helmValues, gaffer);
     }
 
