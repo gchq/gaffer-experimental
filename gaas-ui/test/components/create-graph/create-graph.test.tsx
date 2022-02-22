@@ -175,7 +175,7 @@ describe("CreateGraph UI component", () => {
             mockGetGraphDescription("Description for this Proxy Graph");
             mockGetGraphId("graph-id");
 
-            await inputProxyURL("http://http://resoucename-namespace.host-name/rest");
+            await inputProxyURL("http://resoucename-namespace.host-name/rest");
             await clickAddProxy();
 
             const graphTable = wrapper.find("table");
