@@ -36,6 +36,7 @@ import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import java.util.ArrayList;
 import java.util.List;
+import static uk.gov.gchq.gaffer.common.util.Constants.CHART_VERSION;
 import static uk.gov.gchq.gaffer.common.util.Constants.GAAS_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAME_LABEL;
@@ -63,6 +64,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private static final String VALUES_YAML = "values.yaml";
     private static final String VALUES_YAML_LOCATION = "/values/values.yaml";
     private static final String REPO_ARG = "--repo";
+    private static final String VERSION_ARG = "--version";
     private static final String VALUES_ARG = "--values";
     private static final String NAMESPACE_ARG = "--namespace";
     private static final String REUSE_VALUES = "--reuse-values";
@@ -77,6 +79,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private final String restartPolicy;
     private final String helmRepo;
     private final String workerPullPolicy;
+    private final String chartVersion;
 
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
@@ -90,6 +93,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
         restartPolicy = env.getProperty(WORKER_RESTART_POLICY);
         helmRepo = env.getProperty(WORKER_HELM_REPO);
         workerPullPolicy = env.getProperty(WORKER_IMAGE_PULL_POLICY);
+        chartVersion = env.getProperty(CHART_VERSION);
     }
 
     @Override

@@ -29,6 +29,7 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                     await getGraphId(),
                     await getDescription(),
                     proxyURLValue,
+                    "",
                     status,
                     "proxyStore",
                     GraphType.PROXY_GRAPH

@@ -1,13 +1,23 @@
 import { Notifications } from "./notifications";
+import { EntitiesSchema } from "./elementsSchema/entities-schema";
+import { EdgesSchema } from "./elementsSchema/edges-schema";
 
 export class ElementsSchema {
     private elements: any;
+    static entities: object;
+    static edges: object;
 
     constructor(elements: string) {
         this.elements = elements;
     }
     public getElements(): IElementsSchema {
         return this.elements;
+    }
+    public getEntities(): object {
+        return ElementsSchema.entities;
+    }
+    public getEdges(): object {
+        return ElementsSchema.edges;
     }
 
     public validate(): Notifications {
@@ -36,80 +46,25 @@ export class ElementsSchema {
 
     private validateElements(notes: Notifications): void {
         if (this.elements.edges !== undefined) {
-            this.validateEdges(notes);
+            const edgesSchema = new EdgesSchema(JSON.stringify(this.elements.edges));
+            const edgesSchemaNotifications = edgesSchema.validate();
+            notes.concat(edgesSchemaNotifications);
+            if (edgesSchemaNotifications.isEmpty()) {
+                ElementsSchema.edges = edgesSchema.getEdges();
+            }
         }
         if (this.elements.entities !== undefined) {
-            this.validateEntities(notes);
+            const entitiesSchema = new EntitiesSchema(JSON.stringify(this.elements.entities));
+            const entitiesSchemaNotifications = entitiesSchema.validate();
+            notes.concat(entitiesSchemaNotifications);
+            if (entitiesSchemaNotifications.isEmpty()) {
+                ElementsSchema.entities = entitiesSchema.getEntities();
+            }
         }
         if (this.elements.entities === undefined && this.elements.edges === undefined) {
             notes.addError("Elements Schema must contain entities or edges");
         }
     }
-
-    private validateEntities(notes: Notifications): void {
-        if (this.elements.entities === undefined) {
-            notes.addError("Elements Schema does not contain property entities");
-            return;
-        }
-        if (typeof this.elements.entities !== "object") {
-            notes.addError(`Entities is type ${typeof this.elements.entities} and not an object of Entity objects`);
-            return;
-        }
-        Object.entries(this.elements.entities).forEach(([entityName, value]) => {
-            const entity: IEntity = value as IEntity;
-
-            const missingProps: Array<string> = [];
-            if (entity.description === undefined) {
-                missingProps.push('"description"');
-            }
-            if (entity.vertex === undefined) {
-                missingProps.push('"vertex"');
-            }
-            if (entity.properties === undefined) {
-                missingProps.push('"properties"');
-            }
-            if (entity.groupBy === undefined) {
-                missingProps.push('"groupBy"');
-            }
-            if (missingProps.length > 0) {
-                notes.addError(`${entityName} entity is missing [${missingProps.join(", ")}]`);
-            }
-        });
-    }
-
-    private validateEdges(notes: Notifications): void {
-        if (this.elements.edges === undefined) {
-            notes.addError("Elements Schema does not contain property edges");
-            return;
-        }
-        if (typeof this.elements.edges !== "object") {
-            notes.addError(`Edges is type ${typeof this.elements.edges} and not an object of Edges objects`);
-            return;
-        }
-
-        Object.entries(this.elements.edges).forEach(([edgeName, value]) => {
-            if (edgeName !== "groupBy") {
-                const edge: IEdge = value as IEdge;
-                const missingProps: Array<string> = [];
-                if (edge.description === undefined) {
-                    missingProps.push('"description"');
-                }
-                if (edge.source === undefined) {
-                    missingProps.push('"source"');
-                }
-                if (edge.destination === undefined) {
-                    missingProps.push('"destination"');
-                }
-                if (edge.directed === undefined) {
-                    missingProps.push('"directed"');
-                }
-                if (missingProps.length > 0) {
-                    notes.addError(`${edgeName} edge is missing [${missingProps.join(", ")}]`);
-                }
-            }
-        });
-    }
-
     private validateInvalidProperties(notes: Notifications): void {
         const invalidProperties = Object.keys(this.elements).filter(
             (key) => key !== "entities" && key !== "edges" && key !== "visibilityProperty"

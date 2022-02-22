@@ -34,7 +34,7 @@
     </modules>
 
     <properties>
-        <gaffer.version>1.17.1</gaffer.version>
+        <gaffer.version>1.21.1</gaffer.version>
         <kubernetes.version>14.0.0</kubernetes.version>
         <springboot.version>2.5.8</springboot.version>
         <fasterxml.jackson.version>2.9.8</fasterxml.jackson.version>

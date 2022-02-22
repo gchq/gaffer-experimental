@@ -2,21 +2,21 @@ import React, { useEffect } from "react";
 import { Graph } from "../../domain/graph";
 import { GetAllGraphIdsRepo } from "../../rest/repositories/gaffer/get-all-graph-ids-repo";
 import {
+    Avatar,
+    Box,
     Button,
+    Chip,
+    Collapse,
     Grid,
+    IconButton,
+    makeStyles,
+    Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Box,
-    Collapse,
-    Avatar,
-    Chip,
-    makeStyles,
-    Paper,
-    IconButton,
     Tooltip,
     Zoom,
 } from "@material-ui/core";
@@ -26,6 +26,7 @@ import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
+import { sanitizeUrl } from "@braintree/sanitize-url";
 
 interface IProps {
     graphs: Graph[];
@@ -66,7 +67,8 @@ export function ViewGraphsTable(props: IProps) {
                                 <TableCell>Graph ID</TableCell>
                                 <TableCell>Store Type</TableCell>
                                 <TableCell>Status</TableCell>
-                                <TableCell>URL</TableCell>
+                                <TableCell>UI URL</TableCell>
+                                <TableCell>REST URL</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -146,6 +148,13 @@ function MainGraphTableRow(props: IGraphRow) {
             tableCellLinkElement.setAttribute("href", graph.getUrl());
         }
     }
+    const sanitizer = (url: string): string => {
+        const regex = new RegExp("[^-A-Za-z0-9+&@#/%?=~_|!:,.;()]");
+        if (regex.test(url)) {
+            return "";
+        }
+        return sanitizeUrl(url);
+    };
 
     return (
         <React.Fragment>
@@ -177,9 +186,24 @@ function MainGraphTableRow(props: IGraphRow) {
                 <TableCell aria-label={"graph-status"}>
                     <StatusChip status={graph.getStatus()} />
                 </TableCell>
-                <TableCell aria-label={"graph-url"}>
-                    <a id={graph.getId()} href="placeholder" target="_blank" rel="noopener noreferrer">
+                <TableCell aria-label={"graph-url-ui"}>
+                    <a // nosemgrep
+                        id={graph.getId()}
+                        href={sanitizer(graph.getUrl())} // nosemgrep
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         {graph.getUrl()}
+                    </a>
+                </TableCell>
+                <TableCell aria-label={"graph-url-rest"}>
+                    <a // nosemgrep
+                        id={graph.getId()}
+                        href={sanitizer(graph.getRestUrl())} // nosemgrep
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {graph.getRestUrl()}
                     </a>
                 </TableCell>
                 <TableCell aria-label={"delete-graph"}>

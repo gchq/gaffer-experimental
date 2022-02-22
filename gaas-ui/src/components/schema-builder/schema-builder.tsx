@@ -7,12 +7,11 @@ import ReactJson from "react-json-view";
 import ClearIcon from "@material-ui/icons/Clear";
 import { useImmerReducer } from "use-immer";
 import { IElementsSchema } from "../../domain/elements-schema";
-import { ITypesSchema } from "../../domain/types-schema";
 
 interface IProps {
-    onCreateSchema(schema: { types: ITypesSchema; elements: IElementsSchema }): void;
+    onCreateSchema(schema: { types: object; elements: IElementsSchema }): void;
 
-    typesSchema: ITypesSchema;
+    typesSchema: object;
     elementsSchema: IElementsSchema;
 }
 
@@ -31,7 +30,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
         openTypes: false,
         openEdges: false,
         openEntities: false,
-        types: typesSchema.types,
+        types: typesSchema,
         elements: {
             edges: castElementsToIElements(elementsSchema).edges,
             entities: castElementsToIElements(elementsSchema).entities,
@@ -44,7 +43,7 @@ export default function SchemaBuilder(props: IProps): ReactElement {
 
     function createSchemaSubmit() {
         onCreateSchema({
-            types: { types: state.types },
+            types: state.types,
             elements: { edges: state.elements.edges, entities: state.elements.entities },
         });
         dispatch({ type: "reset" });

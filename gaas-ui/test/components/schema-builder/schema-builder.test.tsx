@@ -2,7 +2,6 @@ import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import SchemaBuilder from "../../../src/components/schema-builder/schema-builder";
 import { act } from "react-dom/test-utils";
-import { ITypesSchema } from "../../../src/domain/types-schema";
 import { IElementsSchema } from "../../../src/domain/elements-schema";
 
 let wrapper: ReactWrapper;
@@ -28,11 +27,9 @@ beforeEach(() => {
             }}
             onCreateSchema={onCreateSchemaMockCallBack}
             typesSchema={{
-                types: {
-                    aType: {
-                        description: "test description",
-                        class: "test.class",
-                    },
+                aType: {
+                    description: "test description",
+                    class: "test.class",
                 },
             }}
         />
@@ -137,9 +134,7 @@ describe("schema-builder UI wrapper", () => {
                         entities: {},
                     }}
                     onCreateSchema={onCreateSchemaMockCallBack}
-                    typesSchema={{
-                        types: {},
-                    }}
+                    typesSchema={{}}
                 />
             );
 
@@ -157,13 +152,11 @@ describe("schema-builder UI wrapper", () => {
     });
     describe("onCreateSchema Prop", () => {
         it("should callback with a Types Schema and elements schema when the create schema button is clicked", () => {
-            const expectedResult: { types: ITypesSchema; elements: IElementsSchema } = {
+            const expectedResult: { types: object; elements: IElementsSchema } = {
                 types: {
-                    types: {
-                        aType: {
-                            description: "test description",
-                            class: "test.class",
-                        },
+                    aType: {
+                        description: "test description",
+                        class: "test.class",
                     },
                 },
                 elements: {
