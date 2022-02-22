@@ -122,7 +122,6 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
         helmValues.putNestedObject("100m", "ui", "resources", "requests", "cpu");
         helmValues.putNestedObject("400Mi", "ui", "resources", "limits", "memory");
         helmValues.putNestedObject("100m", "ui", "resources", "limits", "cpu");
-
         return helmValues;
     }
 

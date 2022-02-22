@@ -16,20 +16,25 @@
 
 package uk.gov.gchq.gaffer.gaas.factories;
 
+import com.google.gson.JsonObject;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
+import springfox.documentation.spring.web.json.Json;
 import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_HELM_REPO;
@@ -70,7 +75,7 @@ class KubernetesObjectFactoryTest {
 
         // Then
         List<String> args = helmPod.getSpec().getContainers().get(0).getArgs();
-        Integer helmRepoArgIndex = args.indexOf("--repo") +  1;
+        Integer helmRepoArgIndex = args.indexOf("--repo") + 1;
         assertEquals("file:///gaffer", args.get(helmRepoArgIndex));
     }
 
@@ -185,6 +190,42 @@ class KubernetesObjectFactoryTest {
 
         V1Secret valuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, false);
         assertNotNull(valuesSecret);
+    }
+
+    @Test
+    public void shouldCreateValuesSecretWithOpenShiftValues() {
+
+        // Given
+        KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
+        kubernetesObjectFactory.openshiftEnabled = true;
+        // When
+        GafferSpec spec = new GafferSpec();
+
+        Gaffer gaffer = new Gaffer().spec(spec).metaData(new V1ObjectMeta().name("bob").namespace("gaffer-namespace"));
+
+        V1Secret valuesSecret = kubernetesObjectFactory.createValuesSecret(gaffer, false);
+
+        assertEquals("{values.yaml=ingress:\n" +
+                "  annotations:\n" +
+                "    route.openshift.io/termination: edge\n" +
+                "    haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload\n" +
+                "api:\n" +
+                "  resources:\n" +
+                "    requests:\n" +
+                "      memory: 400Mi\n" +
+                "      cpu: 400m\n" +
+                "    limits:\n" +
+                "      memory: 400Mi\n" +
+                "      cpu: 400m\n" +
+                "ui:\n" +
+                "  resources:\n" +
+                "    requests:\n" +
+                "      memory: 400Mi\n" +
+                "      cpu: 100m\n" +
+                "    limits:\n" +
+                "      memory: 400Mi\n" +
+                "      cpu: 100m\n" +
+                "}", valuesSecret.getStringData().toString());
     }
 
 }
