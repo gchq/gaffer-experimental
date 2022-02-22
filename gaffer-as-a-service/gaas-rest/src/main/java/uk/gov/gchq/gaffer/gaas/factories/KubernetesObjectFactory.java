@@ -96,8 +96,9 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     public V1Secret createValuesSecret(final Gaffer gaffer, final boolean initialDeployment) {
         GafferSpec spec = gaffer.getSpec();
         GafferSpec helmValues = spec != null ? spec : new GafferSpec();
-        helmValues.putNestedObject("edge", "ingress", "annotations", "route.openshift.io/termination");
-        helmValues.putNestedObject("max-age=31536000;includeSubDomains;preload", "ingress", "annotations", "haproxy.router.openshift.io/hsts_header");
+        if (openshiftEnabled) {
+            helmValues = addOpenShiftHelmValues(helmValues);
+        }
         return createSecretFromValues(helmValues, gaffer);
     }
 
@@ -108,6 +109,21 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                 .and()
                 .addToStringData(VALUES_YAML, Yaml.dump(helmValues))
                 .build();
+    }
+
+    private GafferSpec addOpenShiftHelmValues(GafferSpec helmValues) {
+        helmValues.putNestedObject("edge", "ingress", "annotations", "route.openshift.io/termination");
+        helmValues.putNestedObject("max-age=31536000;includeSubDomains;preload", "ingress", "annotations", "haproxy.router.openshift.io/hsts_header");
+        helmValues.putNestedObject("400Mi", "api", "resources", "requests", "memory");
+        helmValues.putNestedObject("400m", "api", "resources", "requests", "cpu");
+        helmValues.putNestedObject("400Mi", "api", "resources", "limits", "memory");
+        helmValues.putNestedObject("400m", "api", "resources", "limits", "cpu");
+        helmValues.putNestedObject("400Mi", "ui", "resources", "requests", "memory");
+        helmValues.putNestedObject("100m", "ui", "resources", "requests", "cpu");
+        helmValues.putNestedObject("400Mi", "ui", "resources", "limits", "memory");
+        helmValues.putNestedObject("100m", "ui", "resources", "limits", "cpu");
+
+        return helmValues;
     }
 
     @Override
