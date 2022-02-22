@@ -1,6 +1,6 @@
-import { mount, ReactWrapper } from 'enzyme';
-import React from 'react';
-import SchemaInput from '../../../src/components/create-graph/schema-inputs';
+import { mount, ReactWrapper } from "enzyme";
+import React from "react";
+import SchemaInput from "../../../src/components/create-graph/schema-inputs";
 
 const elementsMockCallBack = jest.fn();
 let component: ReactWrapper;
@@ -78,14 +78,13 @@ describe("Elements Schema Error Handling", () => {
                 hide={hide}
                 elementsValue={"Not json"}
                 onChangeElementsSchema={elementsMockCallBack}
-                typesSchemaValue={JSON.stringify({ invalid: {} })}
+                typesSchemaValue={"meep"}
                 onChangeTypesSchema={elementsMockCallBack}
             />
         );
 
-        expect(component.find("p#schema-types-helper-text").text()).toBe(
-            'Types Schema does not contain property types, ["invalid"] are invalid Types schema root properties'
-        );
+        expect(component.find("p#schema-types-helper-text").text()).toBe("Types Schema is not valid JSON");
+        expect(component.find("p#schema-elements-helper-text").text()).toBe("Elements Schema is not valid JSON");
     });
 });
 
