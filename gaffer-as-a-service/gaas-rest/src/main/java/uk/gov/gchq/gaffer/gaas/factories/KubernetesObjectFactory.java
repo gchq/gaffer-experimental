@@ -111,7 +111,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                 .build();
     }
 
-    private GafferSpec addOpenShiftHelmValues(GafferSpec helmValues) {
+    private GafferSpec addOpenShiftHelmValues(final GafferSpec helmValues) {
         helmValues.putNestedObject("edge", "ingress", "annotations", "route.openshift.io/termination");
         helmValues.putNestedObject("max-age=31536000;includeSubDomains;preload", "ingress", "annotations", "haproxy.router.openshift.io/hsts_header");
         helmValues.putNestedObject("400Mi", "api", "resources", "requests", "memory");
