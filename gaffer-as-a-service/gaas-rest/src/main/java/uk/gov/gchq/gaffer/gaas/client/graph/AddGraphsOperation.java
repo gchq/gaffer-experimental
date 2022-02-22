@@ -16,10 +16,6 @@
 
 package uk.gov.gchq.gaffer.gaas.client.graph;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -35,7 +31,6 @@ import uk.gov.gchq.gaffer.proxystore.ProxyStore;
 import uk.gov.gchq.gaffer.store.schema.Schema;
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
@@ -47,13 +42,9 @@ public class AddGraphsOperation implements Command {
     private final List<ProxySubGraph> graphs;
     private final WebClient webClient;
 
-
-  private KubernetesClient client = new DefaultKubernetesClient();
-
     public AddGraphsOperation(final GraphUrl url, final List<ProxySubGraph> graphs) {
         this.graphs = graphs;
         this.webClient = WebClient.create(url.buildUrl());
-
     }
 
     @Override
@@ -83,27 +74,17 @@ public class AddGraphsOperation implements Command {
 
         final List<AddGraph> addGraphOperations = graphs.stream().map(subGraph -> {
 
-            Map<String, String> data = client.configMaps().inNamespace("kai-dev").withName(subGraph.getGraphId() + "-gaffer-schema").get().getData();
-            final String dataJson = data.get("schema.json");
-            ObjectMapper objectMapper = new ObjectMapper();
-            String json = "";
-            try {
-                json = objectMapper.writeValueAsString(dataJson);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-
             final ProxyProperties storeProperties = new ProxyProperties();
             storeProperties.setStoreClass(ProxyStore.class);
             storeProperties.setGafferHost(subGraph.getHost());
             // TODO: Port number needs to match where the subgraph is hosted, needs to mitigate risk of breaking
             storeProperties.setGafferPort(GAFFER_PORT);
             storeProperties.setGafferContextRoot(subGraph.getRoot());
-            Schema  schema = Schema.fromJson(dataJson.getBytes());
+
             return new AddGraph.Builder()
                     .graphId(subGraph.getGraphId())
                     .storeProperties(storeProperties)
-                    .schema(schema)
+                    .schema(new Schema())
                     .build();
         }).collect(Collectors.toList());
 
