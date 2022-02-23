@@ -48,6 +48,8 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 @CrossOrigin
@@ -146,8 +148,27 @@ public class GraphController {
 
     @GetMapping(path = "/whoami", produces = "application/json")
     ResponseEntity<String> whoami(@RequestHeader("x-email") final String email) {
-        helmValuesOverridesHandler.addOverride("labels.creator", email.substring(0, email.indexOf('@')));
-        return new ResponseEntity<String>(email, HttpStatus.OK);
+        if (addCreatorLabel(email)) {
+            return new ResponseEntity<String>(email, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Validation error: Email must consist of alphanumeric characters or '-', '_' and '.' ", HttpStatus.BAD_REQUEST);
     }
 
+    private boolean addCreatorLabel(final String email) {
+        String strippedEmail = email;
+        if (email.contains("@")) {
+            strippedEmail = email.substring(0, email.indexOf('@'));
+        }
+        if (isCreatorLabelValid(strippedEmail)) {
+            helmValuesOverridesHandler.addOverride("labels.creator", strippedEmail);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isCreatorLabelValid(final String email) {
+        Pattern pattern = Pattern.compile("(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])");
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 }
