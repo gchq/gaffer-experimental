@@ -28,6 +28,7 @@ import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
+import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 
 import java.io.IOException;
 
@@ -62,5 +63,10 @@ public class AppConfig {
     @Bean
     public TimedAspect timedAspect(final MeterRegistry registry) {
         return new TimedAspect(registry);
+    }
+
+    @Bean
+    public HelmValuesOverridesHandler helmValuesOverrides() {
+        return new HelmValuesOverridesHandler();
     }
 }

@@ -61,7 +61,7 @@ class GafferSpecConfigsLoaderTest {
         final GaaSRestApiException
                 exception = assertThrows(GaaSRestApiException.class, () -> loader.getConfig("/testconfigs", "doesnotexist_config"));
 
-        final GaaSRestApiException expected = new GaaSRestApiException("GaaS Graph Config Not Found", "Available config names are: accumulo, federated, mapStore, proxy, proxyNoContextRoot", 404);
+        final GaaSRestApiException expected = new GaaSRestApiException("GaaS Graph Config Not Found", "Available config names are: accumulo, federated, mapStore", 404);
         assertEquals(expected, exception);
     }
 

@@ -32,6 +32,7 @@ public final class Constants {
 
     public static final String CONFIG_NAME_K8S_METADATA_LABEL = "configName";
     public static final String CONFIG_YAML_CLASSPATH = "/config";
+    public static final String HELM_SET_FLAG = "--set";
 
     private Constants() {
         // prevents calls from subclass
