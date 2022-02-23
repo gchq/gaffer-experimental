@@ -36,6 +36,7 @@ import { GetStoreTypesRepo, IStoreTypes } from "../../rest/repositories/get-stor
 import { CreateFederatedGraphRepo } from "../../rest/repositories/create-federated-graph-repo";
 import { Copyright } from "../copyright/copyright";
 import SchemaBuilderDialog from "./schema-builder-dialog";
+import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 
 interface IState {
     graphId: string;
@@ -101,7 +102,9 @@ export default class CreateGraph extends React.Component<{}, IState> {
         } catch (e: any) {
             this.setState({
                 outcome: AlertType.FAILED,
-                outcomeMessage: `Failed to get all graphs. ${e as Error}`,
+                outcomeMessage: `Failed to get all graphs. ${(e as GaaSRestApiErrorResponse).title}: ${
+                    (e as GaaSRestApiErrorResponse).detail
+                }`,
             });
         }
     }
@@ -116,7 +119,9 @@ export default class CreateGraph extends React.Component<{}, IState> {
         } catch (e: any) {
             this.setState({
                 outcome: AlertType.FAILED,
-                outcomeMessage: `Storetypes unavailable: ${e as Error}`,
+                outcomeMessage: `Storetypes unavailable: ${(e as GaaSRestApiErrorResponse).title}: ${
+                    (e as GaaSRestApiErrorResponse).detail
+                }`,
             });
         }
     }
@@ -127,13 +132,14 @@ export default class CreateGraph extends React.Component<{}, IState> {
 
         let config: ICreateGraphConfig;
         if (this.currentStoreTypeIsFederated()) {
-            const subGraphs: Array<{ graphId: string; url: string }> = graphs
+            const subGraphs: Array<{ graphId: string; host: string; root: string }> = graphs
                 .filter((graph) => selectedGraphs.includes(graph.getId()))
                 .map((subGraph: Graph) => ({
                     graphId: subGraph.getId(),
-                    url: subGraph.getUrl(),
+                    host: subGraph.getGraphHost(),
+                    root: "/rest",
                 }));
-            config = { proxyStores: subGraphs };
+            config = { proxySubGraphs: subGraphs };
         } else {
             const elements = new ElementsSchema(this.state.elements);
             const types = new TypesSchema(this.state.types);
@@ -158,7 +164,9 @@ export default class CreateGraph extends React.Component<{}, IState> {
         } catch (e: any) {
             this.setState({
                 outcome: AlertType.FAILED,
-                outcomeMessage: `Failed to Add '${graphId}' Graph. ${(e as Error).message}`,
+                outcomeMessage: `Failed to Add '${graphId}' Graph. ${(e as GaaSRestApiErrorResponse).title}: ${
+                    (e as GaaSRestApiErrorResponse).detail
+                }`,
             });
         }
     }

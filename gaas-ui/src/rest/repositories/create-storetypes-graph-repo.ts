@@ -34,5 +34,5 @@ export interface ICreateGraphConfig {
     };
     proxyContextRoot?: string;
     proxyHost?: string;
-    proxyStores?: Array<{ graphId: string; url: string }>;
+    proxySubGraphs?: Array<{ graphId: string; host: string; root: string }>;
 }
