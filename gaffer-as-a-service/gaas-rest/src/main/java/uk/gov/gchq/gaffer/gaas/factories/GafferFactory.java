@@ -31,6 +31,7 @@ import uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler;
 import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclaration;
 import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclarations;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,6 +92,8 @@ public final class GafferFactory {
         config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
         config.putNestedObject(overrides.getConfigName(), CONFIG_NAME_KEY);
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
+          //config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(HOOKS_KEY))), HOOKS_KEY);
+
             final OperationDeclarations declarations = new OperationDeclarations.Builder()
                     .declaration(new OperationDeclaration.Builder()
                             .handler(new GetProxyUrlHandler())
@@ -98,7 +101,6 @@ public final class GafferFactory {
                             .build())
                     .build();
 
-           // declarations.getOperations().add((OperationDeclaration)config.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY));
             config.putNestedObject(declarations, GAFFER_OPERATION_DECLARATION_KEY);
         } else {
             ObjectMapper objectMapper = new ObjectMapper();
