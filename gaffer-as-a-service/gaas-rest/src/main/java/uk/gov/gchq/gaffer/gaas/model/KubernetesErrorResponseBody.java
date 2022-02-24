@@ -15,7 +15,7 @@
  */
 package uk.gov.gchq.gaffer.gaas.model;
 
-public class CrdErrorResponseBody {
+public class KubernetesErrorResponseBody {
 
     private String message;
     private String reason;
