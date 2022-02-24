@@ -102,6 +102,7 @@ public final class GafferFactory {
                     .build();
 
             config.putNestedObject(declarations, GAFFER_OPERATION_DECLARATION_KEY);
+            config.putNestedObject("{}", SCHEMA_FILE_KEY);
         } else {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
