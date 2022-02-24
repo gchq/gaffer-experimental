@@ -31,14 +31,11 @@ import uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler;
 import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclaration;
 import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclarations;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_K8S_METADATA_LABEL;
@@ -47,7 +44,6 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_OPERATION_DECLARATION_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.HOOKS_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
@@ -92,14 +88,19 @@ public final class GafferFactory {
         config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
         config.putNestedObject(overrides.getConfigName(), CONFIG_NAME_KEY);
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
-          //config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(HOOKS_KEY))), HOOKS_KEY);
-
+            //config.putNestedObject(Collections.singletonList(getOperationAuthoriserHook(config.getNestedObject(HOOKS_KEY))), HOOKS_KEY);
             final OperationDeclarations declarations = new OperationDeclarations.Builder()
                     .declaration(new OperationDeclaration.Builder()
                             .handler(new GetProxyUrlHandler())
                             .operation(GetProxyUrl.class)
                             .build())
                     .build();
+
+            final OperationDeclarations operationDeclarations = createOperationDeclarations(config);
+            if(operationDeclarations != null) {
+                List<OperationDeclaration> operations = operationDeclarations.getOperations();
+                operations.forEach((operation) -> declarations.getOperations().add(operation));
+            }
 
             config.putNestedObject(declarations, GAFFER_OPERATION_DECLARATION_KEY);
         } else {
@@ -112,13 +113,24 @@ public final class GafferFactory {
             }
         }
 
-
         // Mandatory Ingress values
         config.putNestedObject(overrides.getGraphId().toLowerCase() + "-" + NAMESPACE + "." + INGRESS_SUFFIX, INGRESS_HOST_KEY);
         config.putNestedObject("/rest", INGRESS_API_PATH_KEY);
         config.putNestedObject("/ui", INGRESS_UI_PATH_KEY);
         return config;
     }
+
+
+    private static OperationDeclarations  createOperationDeclarations(final GafferSpec federatedSpec) {
+        OperationDeclarations actualOpertionDeclarations = null;
+
+        if (federatedSpec != null && federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
+            actualOpertionDeclarations = (OperationDeclarations)federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY);
+        }
+
+        return actualOpertionDeclarations;
+    }
+
 
     private static Map<String, Object> getOperationAuthoriserHook(final Object existingAuths) {
 

@@ -29,17 +29,19 @@ import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import uk.gov.gchq.gaffer.graph.hook.OperationAuthoriser;
 import uk.gov.gchq.gaffer.operation.Operation;
 import uk.gov.gchq.gaffer.operation.impl.get.GetAllElements;
+import uk.gov.gchq.gaffer.proxystore.operation.GetProxyProperties;
 import uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl;
+import uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyPropertiesHandler;
 import uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler;
+import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclaration;
+import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclarations;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
 import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
@@ -91,25 +93,23 @@ class GafferFactoryTest {
 
         final Gaffer requestBody = GafferFactory.from(federatedConfig, gaaSCreateRequestBody);
 
-        final Gaffer expectedGaffer = getGaffer(null, gaaSCreateRequestBody);
+        final Gaffer expectedGaffer = getGaffer(federatedConfig, gaaSCreateRequestBody);
 
-
-        final Gaffer expected = getGaffer(null, gaaSCreateRequestBody);
-        compareGaffer(expected, requestBody);
+        compareGaffer(expectedGaffer, requestBody);
     }
 
     @Test
     void federatedStoreRequest_shouldReturnFederatedRequestBodyWithAllOperations() {
         final GafferSpec federatedConfig = getGafferSpec();
 
-        final Map<String, Object> contents = new HashMap<>();
-        final Map<String, String> contentsOfHandler = new HashMap<>();
+        final OperationDeclarations declarations = new OperationDeclarations.Builder()
+                .declaration(new OperationDeclaration.Builder()
+                        .handler(new GetProxyPropertiesHandler())
+                        .operation(GetProxyProperties.class)
+                        .build())
+                .build();
 
-        contentsOfHandler.put("class", "uk.gov.gchq.gaffer.proxystore.operation.handler.TestOperationHandler");
-        contents.put("operation", "uk.gov.gchq.gaffer.proxystore.operation.TestOperation");
-        contents.put("handler", contentsOfHandler);
-
-        federatedConfig.putNestedObject(contents, "graph", "operationDeclarations");
+        federatedConfig.putNestedObject(declarations, "graph", "operationDeclarations");
 
         GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedOpDeclaration");
 
@@ -161,7 +161,7 @@ class GafferFactoryTest {
 
         final Gaffer requestBody = GafferFactory.from(federatedConfig, gaaSCreateRequestBody);
 
-        final Gaffer expected = getGaffer(null, gaaSCreateRequestBody);
+        final Gaffer expected = getGaffer(federatedConfig, gaaSCreateRequestBody);
         compareGaffer(expected, requestBody);
     }
 
@@ -392,12 +392,13 @@ class GafferFactoryTest {
     }
 
     private void compareGaffer(final Gaffer expected, final Gaffer requestBody) {
+       // final OperationDeclarations expectedOperationDeclarations = (OperationDeclarations)expected.getSpec().getNestedObject(GAFFER_OPERATION_DECLARATION_KEY);
+       // final OperationDeclarations  actualOperationDeclarations = (OperationDeclarations)requestBody.getSpec().getNestedObject(GAFFER_OPERATION_DECLARATION_KEY);
+        assertEquals(expected.getSpec().getNestedObject(GAFFER_OPERATION_DECLARATION_KEY).toString(), requestBody.getSpec().getNestedObject(GAFFER_OPERATION_DECLARATION_KEY).toString());
         assertEquals(expected.getSpec().getNestedObject(GRAPH_ID_KEY), requestBody.getSpec().getNestedObject(GRAPH_ID_KEY));
         assertEquals(expected.getSpec().getNestedObject(DESCRIPTION_KEY), requestBody.getSpec().getNestedObject(DESCRIPTION_KEY));
         assertEquals(expected.getSpec().getNestedObject(CONFIG_NAME_KEY), requestBody.getSpec().getNestedObject(CONFIG_NAME_KEY));
-        assertEquals(expected.getMetadata().getName(), requestBody.getMetadata().getName());
-        assertEquals(expected.getSpec().getNestedObject(GAFFER_OPERATION_DECLARATION_KEY), requestBody.getSpec().getNestedObject(GAFFER_OPERATION_DECLARATION_KEY));
-        assertEquals(expected.getSpec().getNestedObject(GAFFER_STORE_CLASS_KEY), requestBody.getSpec().getNestedObject(GAFFER_STORE_CLASS_KEY));
+        assertEquals(expected.getMetadata().getName(), requestBody.getMetadata().getName());assertEquals(expected.getSpec().getNestedObject(GAFFER_STORE_CLASS_KEY), requestBody.getSpec().getNestedObject(GAFFER_STORE_CLASS_KEY));
         assertEquals(expected.getSpec().getNestedObject(GAFFER_STORE_CLASS_KEY), requestBody.getSpec().getNestedObject(GAFFER_STORE_CLASS_KEY));
         assertEquals(expected.getSpec().getNestedObject("graph", "storeProperties", "gaffer.store.properties.class"), requestBody.getSpec().getNestedObject("graph", "storeProperties", "gaffer.store.properties.class"));
         assertEquals(expected.getSpec().getNestedObject("graph", "storeProperties", "gaffer.serialiser.json.modules"), requestBody.getSpec().getNestedObject("graph", "storeProperties", "gaffer.serialiser.json.modules"));
@@ -439,25 +440,22 @@ class GafferFactoryTest {
         return federatedConfig;
     }
 
-    private Set<Object> getOperationDeclarations(final GafferSpec federatedSpec) {
-        final List<Object> operations = new ArrayList<>();
+    private OperationDeclarations  getOperationDeclarations(final GafferSpec federatedSpec) {
+        OperationDeclarations declarations = new OperationDeclarations();
+
         if (federatedSpec != null && federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
-            operations.add(federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY));
+            declarations = (OperationDeclarations)federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY);
+        } else {
+             declarations = new OperationDeclarations.Builder()
+                     .declaration(new OperationDeclaration.Builder()
+                             .handler(new GetProxyUrlHandler())
+                             .operation(GetProxyUrl.class)
+                             .build())
+                     .build();
         }
 
-        final Map<String, Object> proxyUrlDeclaration = new HashMap<>();
 
-        proxyUrlDeclaration.put("operation", GetProxyUrl.class);
-        proxyUrlDeclaration.put("handler", new GetProxyUrlHandler());
-
-        final Set<Object> objects = new HashSet<>();
-        objects.add(proxyUrlDeclaration);
-
-        if (operations != null && !operations.isEmpty()) {
-            objects.addAll(operations);
-        }
-
-        return objects;
+        return declarations;
     }
 
     private V1ObjectMeta getMetadata(final GaaSCreateRequestBody gaaSCreateRequestBody) {
