@@ -102,9 +102,9 @@ public final class GafferFactory {
     }
 
 
-    private static OperationDeclarations  createOperationDeclarations(final GafferSpec federatedSpec) {
+    private static OperationDeclarations createOperationDeclarations(final GafferSpec federatedSpec) {
         OperationDeclarations existingOperationDeclarations = null;
-        
+
         final OperationDeclarations declarations = new OperationDeclarations.Builder()
                 .declaration(new OperationDeclaration.Builder()
                         .handler(new GetProxyUrlHandler())
