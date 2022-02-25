@@ -1,4 +1,0 @@
-graph:
-  storeProperties:
-    gaffer.store.class: uk.gov.gchq.gaffer.proxystore.ProxyStore
-    gaffer.host: http://my.graph.co.uk

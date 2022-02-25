@@ -18,6 +18,7 @@ import { GetAllNamespacesRepo } from "../../rest/repositories/get-all-namespaces
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import { Copyright } from "../copyright/copyright";
+import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 
 interface IState {
     namespaces: Array<string>;
@@ -44,7 +45,11 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
             const namespaces: Array<string> = await new GetAllNamespacesRepo().getAll();
             this.setState({ namespaces: namespaces, errorMessage: "" });
         } catch (e) {
-            this.setState({ errorMessage: `Failed to get all namespaces. ${e as Error}` });
+            this.setState({
+                errorMessage: `Failed to get all namespaces. ${(e as GaaSRestApiErrorResponse).title}: ${
+                    (e as GaaSRestApiErrorResponse).detail
+                }`,
+            });
         }
     }
 

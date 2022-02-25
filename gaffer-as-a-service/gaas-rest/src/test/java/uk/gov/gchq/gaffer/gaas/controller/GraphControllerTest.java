@@ -489,6 +489,19 @@ class GraphControllerTest extends AbstractTest {
         assertEquals(400, result.getResponse().getStatus());
     }
 
+    @Test
+    void whoamiShouldReturnUser400WhenHeaderEmailContainsSymbols() throws Exception {
+
+        final MvcResult result = mvc.perform(get("/whoami")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("x-email", "test!@@gmail.com")
+        )
+                .andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+    }
+
     //createGraph_whenGraphIdIsNull_shouldReturn400
 
     private LinkedHashMap<String, Object> getSchema() {

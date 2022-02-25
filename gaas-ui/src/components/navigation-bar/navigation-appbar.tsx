@@ -23,6 +23,7 @@ import LoginModal from "../login/login-modal";
 import { NavLink } from "react-router-dom";
 import { Config } from "../../rest/config";
 import { GetWhoAmIRepo } from "../../rest/repositories/get-whoami-repo";
+import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 
 const drawerWidth = 240;
 
@@ -108,6 +109,7 @@ const NavigationAppbar: React.FC = (props: any) => {
                 return <CategoryIcon />;
             case "User Guide":
                 return <LocalLibraryIcon />;
+
             default:
                 return null;
         }
@@ -117,7 +119,11 @@ const NavigationAppbar: React.FC = (props: any) => {
             const email = await new GetWhoAmIRepo().getWhoAmI();
             setUserEmail(email);
         } catch (e) {
-            setErrorMessage(`Failed to get user email: ${e as Error}`);
+            setErrorMessage(
+                `Failed to get user email: ${(e as GaaSRestApiErrorResponse).title}: ${
+                    (e as GaaSRestApiErrorResponse).detail
+                }`
+            );
         }
     };
 
