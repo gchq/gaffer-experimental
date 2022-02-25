@@ -104,17 +104,17 @@ public final class GafferFactory {
 
     private static OperationDeclarations  createOperationDeclarations(final GafferSpec federatedSpec) {
         OperationDeclarations existingOperationDeclarations = null;
-
-        if (federatedSpec != null && federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
-            existingOperationDeclarations = (OperationDeclarations) federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY);
-        }
-
+        
         final OperationDeclarations declarations = new OperationDeclarations.Builder()
                 .declaration(new OperationDeclaration.Builder()
                         .handler(new GetProxyUrlHandler())
                         .operation(GetProxyUrl.class)
                         .build())
                 .build();
+
+        if (federatedSpec != null && federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
+            existingOperationDeclarations = (OperationDeclarations) federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY);
+        }
 
         if (existingOperationDeclarations != null) {
             List<OperationDeclaration> operations = existingOperationDeclarations.getOperations();
