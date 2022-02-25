@@ -82,20 +82,7 @@ public final class GafferFactory {
         config.putNestedObject(overrides.getDescription(), DESCRIPTION_KEY);
         config.putNestedObject(overrides.getConfigName(), CONFIG_NAME_KEY);
         if (FederatedStore.class.getName().equals(config.getNestedObject(GAFFER_STORE_CLASS_KEY))) {
-            final OperationDeclarations declarations = new OperationDeclarations.Builder()
-                    .declaration(new OperationDeclaration.Builder()
-                            .handler(new GetProxyUrlHandler())
-                            .operation(GetProxyUrl.class)
-                            .build())
-                    .build();
-
-            final OperationDeclarations operationDeclarations = createOperationDeclarations(config);
-            if (operationDeclarations != null) {
-                List<OperationDeclaration> operations = operationDeclarations.getOperations();
-                operations.forEach((operation) -> declarations.getOperations().add(operation));
-            }
-
-            config.putNestedObject(declarations, GAFFER_OPERATION_DECLARATION_KEY);
+            config.putNestedObject(createOperationDeclarations(config), GAFFER_OPERATION_DECLARATION_KEY);
             config.putNestedObject("{}", SCHEMA_FILE_KEY);
         } else {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -116,13 +103,25 @@ public final class GafferFactory {
 
 
     private static OperationDeclarations  createOperationDeclarations(final GafferSpec federatedSpec) {
-        OperationDeclarations actualOpertionDeclarations = null;
+        OperationDeclarations existingOperationDeclarations = null;
 
         if (federatedSpec != null && federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY) != null) {
-            actualOpertionDeclarations = (OperationDeclarations) federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY);
+            existingOperationDeclarations = (OperationDeclarations) federatedSpec.getNestedObject(GAFFER_OPERATION_DECLARATION_KEY);
         }
 
-        return actualOpertionDeclarations;
+        final OperationDeclarations declarations = new OperationDeclarations.Builder()
+                .declaration(new OperationDeclaration.Builder()
+                        .handler(new GetProxyUrlHandler())
+                        .operation(GetProxyUrl.class)
+                        .build())
+                .build();
+
+        if (existingOperationDeclarations != null) {
+            List<OperationDeclaration> operations = existingOperationDeclarations.getOperations();
+            operations.forEach((operation) -> declarations.getOperations().add(operation));
+        }
+
+        return declarations;
     }
 
     private GafferFactory() {
