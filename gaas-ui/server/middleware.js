@@ -73,7 +73,7 @@ app.get("/graphs", (req, res) => {
                         graphId: "federated",
                         description: "Road traffic graph. This graphs uses a federated store of proxy stores",
                         url: "http://federated-namespace.host-name/ui",
-                        restUrl: "http://federated-namespace.host-name/rest",
+                        restUrl: "http://localhost:4000/rest",
                         configName: "federated",
                         status: "UP",
                     },

@@ -134,7 +134,7 @@ function MainGraphTableRow(props: IGraphRow) {
 
     async function getAllGraphIds() {
         try {
-            const allGraphIds: string[] = await new GetAllGraphIdsRepo().get(graph.getUrl());
+            const allGraphIds: string[] = await new GetAllGraphIdsRepo().get(graph.getRestUrl());
             setAllGraphIdsText(
                 allGraphIds.length !== 0 ? "Federated Graphs: " + allGraphIds.join(", ") : "No Federated Graphs"
             );
