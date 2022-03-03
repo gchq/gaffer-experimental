@@ -29,7 +29,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>gaas-common</module>
         <module>gaas-rest</module>
     </modules>
 
