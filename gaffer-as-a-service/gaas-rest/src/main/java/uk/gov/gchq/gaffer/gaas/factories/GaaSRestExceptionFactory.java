@@ -22,7 +22,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import io.kubernetes.client.openapi.ApiException;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.CrdErrorResponseBody;
+import uk.gov.gchq.gaffer.gaas.model.KubernetesErrorResponseBody;
 
 public final class GaaSRestExceptionFactory {
 
@@ -40,7 +40,7 @@ public final class GaaSRestExceptionFactory {
         if (e.getResponseBody() != null && isValidJson(e.getResponseBody())) {
             final Gson gson = new Gson();
             final JsonObject asJsonObject = new JsonParser().parse(e.getResponseBody()).getAsJsonObject();
-            final CrdErrorResponseBody response = gson.fromJson(asJsonObject, CrdErrorResponseBody.class);
+            final KubernetesErrorResponseBody response = gson.fromJson(asJsonObject, KubernetesErrorResponseBody.class);
             return new GaaSRestApiException(MESSAGE_PREFIX + "(" + response.getReason() + ") " + response.getMessage(), e.getCode(), e);
 
         } else {

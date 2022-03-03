@@ -58,6 +58,11 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+### `npm-check-updates`
+Used to check package updates in the UI.
+Run the command `ncu` in the terminal after installing it via `npm install -g npm-check-updates`.
+(https://www.npmjs.com/package/npm-check-updates)
+
 ## Semgrep
 Semgrep is a static code analysis tool.
 To use Semgrep locally, install it following the instructions in the official [documentation](https://semgrep.dev/docs/getting-started/).

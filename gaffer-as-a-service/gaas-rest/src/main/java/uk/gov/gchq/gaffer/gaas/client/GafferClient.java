@@ -20,7 +20,6 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
-import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +40,6 @@ import static uk.gov.gchq.gaffer.gaas.factories.GaaSRestExceptionFactory.from;
 public class GafferClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GafferClient.class);
-    private static final String PRETTY = null;
-    private static final String DRY_RUN = null;
-    private static final String FIELD_MANAGER = null;
-
-    @Autowired
-    private CustomObjectsApi customObjectsApi;
 
     @Autowired
     private CoreV1Api coreV1Api;
@@ -83,7 +76,7 @@ public class GafferClient {
         try {
             return deploymentHandler.onGafferDelete(crdName, kubernetesClient);
         } catch (ApiException e) {
-            LOGGER.debug("Failed to delete CRD. Kubernetes CustomObjectsApi returned Status Code: " + e.getCode(), e);
+            LOGGER.debug("Failed to delete CRD. Kubernetes client returned Status Code: " + e.getCode(), e);
             throw from(e);
         }
     }
