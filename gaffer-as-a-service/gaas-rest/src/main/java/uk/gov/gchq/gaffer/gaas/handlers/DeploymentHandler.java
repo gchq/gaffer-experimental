@@ -38,8 +38,8 @@ import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.callback.SimpleApiCallback;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
-import uk.gov.gchq.gaffer.gaas.model.Gaffer;
-import uk.gov.gchq.gaffer.gaas.model.RestApiStatus;
+import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
 
 import java.util.ArrayList;
 import java.util.Collection;

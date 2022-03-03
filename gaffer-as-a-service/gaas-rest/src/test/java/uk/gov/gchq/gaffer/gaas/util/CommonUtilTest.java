@@ -17,7 +17,7 @@
 package uk.gov.gchq.gaffer.gaas.util;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.gchq.gaffer.gaas.model.Gaffer;
+import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 
 
 import java.util.HashMap;

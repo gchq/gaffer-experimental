@@ -32,8 +32,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
-import uk.gov.gchq.gaffer.gaas.model.Gaffer;
-import uk.gov.gchq.gaffer.gaas.model.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
 
 import java.util.ArrayList;
 import java.util.List;

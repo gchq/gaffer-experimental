@@ -23,7 +23,7 @@ import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
 
 import java.io.IOException;
 import java.util.ArrayList;

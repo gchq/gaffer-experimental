@@ -15,7 +15,7 @@
  */
 
 
-package uk.gov.gchq.gaffer.gaas.model;
+package uk.gov.gchq.gaffer.gaas.model.v1;
 
 import org.junit.jupiter.api.Test;
 

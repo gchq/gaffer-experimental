@@ -17,8 +17,8 @@ package uk.gov.gchq.gaffer.gaas.util;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
-import uk.gov.gchq.gaffer.gaas.model.Gaffer;
-import uk.gov.gchq.gaffer.gaas.model.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
+import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
 
 import java.util.HashMap;
 

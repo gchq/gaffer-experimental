@@ -14,43 +14,39 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.model;
+package uk.gov.gchq.gaffer.gaas.model.v1;
 
 import com.google.gson.annotations.SerializedName;
+import io.kubernetes.client.common.KubernetesListObject;
 import io.kubernetes.client.common.KubernetesObject;
-import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import io.kubernetes.client.openapi.models.V1ListMeta;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import uk.gov.gchq.gaffer.gaas.util.Constants;
 
+import java.util.List;
 
-/**
- * Value object for Gaffer
- */
-public class Gaffer implements KubernetesObject {
+public class GafferList implements KubernetesListObject {
+
+    @SerializedName(Constants.SERIALISED_NAME_METADATA)
+    private V1ListMeta metadata;
+
+    @SerializedName(Constants.SERIALISED_NAME_ITEMS)
+    private List<Gaffer> items;
 
     @SerializedName(Constants.SERIALISED_NAME_API_VERSION)
     private String apiVersion;
 
-
     @SerializedName(Constants.SERIALISED_NAME_KIND)
     private String kind;
 
-    @SerializedName(Constants.SERIALISED_NAME_METADATA)
-    private V1ObjectMeta metadata;
-
-
-    @SerializedName(Constants.SERIALISED_NAME_SPEC)
-    private GafferSpec spec;
-
-
-    @SerializedName(Constants.SERIALISED_NAME_STATUS)
-    private GafferStatus status;
-
-
-    public V1ObjectMeta getMetadata() {
+    public V1ListMeta getMetadata() {
         return metadata;
+    }
+
+    public List<? extends KubernetesObject> getItems() {
+        return items;
     }
 
     public String getApiVersion() {
@@ -59,39 +55,6 @@ public class Gaffer implements KubernetesObject {
 
     public String getKind() {
         return kind;
-    }
-
-    public GafferSpec getSpec() {
-        return spec;
-    }
-
-    public GafferStatus getStatus() {
-        return status;
-    }
-
-    public Gaffer status(final GafferStatus status) {
-        this.status = status;
-        return this;
-    }
-
-    public Gaffer metaData(final V1ObjectMeta metadata) {
-        this.metadata = metadata;
-        return this;
-    }
-
-    public Gaffer apiVersion(final String apiVersion) {
-        this.apiVersion = apiVersion;
-        return this;
-    }
-
-    public Gaffer kind(final String kind) {
-        this.kind = kind;
-        return this;
-    }
-
-    public Gaffer spec(final GafferSpec spec) {
-        this.spec = spec;
-        return this;
     }
 
     @Override
@@ -104,36 +67,33 @@ public class Gaffer implements KubernetesObject {
             return false;
         }
 
-        final Gaffer gaffer = (Gaffer) o;
+        final GafferList that = (GafferList) o;
 
         return new EqualsBuilder()
-                .append(apiVersion, gaffer.apiVersion)
-                .append(kind, gaffer.kind)
-                .append(metadata, gaffer.metadata)
-                .append(spec, gaffer.spec)
-                .append(status, gaffer.status)
+                .append(metadata, that.metadata)
+                .append(items, that.items)
+                .append(apiVersion, that.apiVersion)
+                .append(kind, that.kind)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
+                .append(metadata)
+                .append(items)
                 .append(apiVersion)
                 .append(kind)
-                .append(metadata)
-                .append(spec)
-                .append(status)
                 .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
+                .append("metadata", metadata)
+                .append("items", items)
                 .append("apiVersion", apiVersion)
                 .append("kind", kind)
-                .append("metadata", metadata)
-                .append("spec", spec)
-                .append("status", status)
                 .toString();
     }
 }

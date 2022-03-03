@@ -19,7 +19,7 @@ package uk.gov.gchq.gaffer.gaas.factories;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
-import uk.gov.gchq.gaffer.gaas.model.Gaffer;
+import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 
 
 public interface IKubernetesObjectFactory {
