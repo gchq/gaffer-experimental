@@ -16,6 +16,7 @@ import {
 import { useImmerReducer } from "use-immer";
 import AddProperty from "./add-property";
 import ClearIcon from "@material-ui/icons/Clear";
+import sanitizeInputs from "../sanitize-inputs";
 
 interface IProps {
     onAddEntity(entity: object): void;
@@ -47,9 +48,9 @@ export default function AddEntity(props: IProps): ReactElement {
 
     function addEntitySubmit() {
         const entityToAdd: any = {};
-        entityToAdd[state.entityName.value] = {
-            description: state.entityDescription.value,
-            vertex: state.entityVertex.value,
+        entityToAdd[sanitizeInputs(state.entityName.value)] = {
+            description: sanitizeInputs(state.entityDescription.value),
+            vertex: sanitizeInputs(state.entityVertex.value),
             properties: state.properties,
         };
         onAddEntity(entityToAdd);

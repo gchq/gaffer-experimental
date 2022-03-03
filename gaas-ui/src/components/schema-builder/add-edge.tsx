@@ -17,6 +17,7 @@ import { useImmerReducer } from "use-immer";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddProperty from "./add-property";
 import AddGroupby from "./add-groupby";
+import sanitizeInputs from "../sanitize-inputs";
 
 interface IProps {
     onAddEdge(edge: object): void;
@@ -61,11 +62,11 @@ export default function AddEdge(props: IProps): ReactElement {
 
     function addEdgeSubmit() {
         const edgeToAdd: any = {};
-        edgeToAdd[state.edgeName.value] = {
-            description: state.edgeDescription.value,
-            source: state.edgeSource.value,
-            destination: state.edgeDestination.value,
-            directed: state.edgeDirected.value,
+        edgeToAdd[sanitizeInputs(state.edgeName.value)] = {
+            description: sanitizeInputs(state.edgeDescription.value),
+            source: sanitizeInputs(state.edgeSource.value),
+            destination: sanitizeInputs(state.edgeDestination.value),
+            directed: sanitizeInputs(state.edgeDirected.value),
         };
         if (Object.keys(state.properties).length !== 0) {
             edgeToAdd[state.edgeName.value].properties = state.properties;
