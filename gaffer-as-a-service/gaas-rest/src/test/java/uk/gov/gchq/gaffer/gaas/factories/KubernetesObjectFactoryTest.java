@@ -32,7 +32,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.*;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_HELM_REPO;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_IMAGE;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_IMAGE_PULL_POLICY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_RESTART_POLICY;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
 class KubernetesObjectFactoryTest {
 

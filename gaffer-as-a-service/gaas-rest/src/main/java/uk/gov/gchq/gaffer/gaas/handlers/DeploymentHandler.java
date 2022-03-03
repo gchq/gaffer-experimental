@@ -45,7 +45,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static uk.gov.gchq.gaffer.gaas.util.Constants.*;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAME_LABEL;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 
