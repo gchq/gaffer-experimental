@@ -37,6 +37,7 @@ import { CreateFederatedGraphRepo } from "../../rest/repositories/create-federat
 import { Copyright } from "../copyright/copyright";
 import SchemaBuilderDialog from "./schema-builder-dialog";
 import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import sanitizeInputs from "../sanitize-inputs";
 
 interface IState {
     graphId: string;
@@ -152,9 +153,19 @@ export default class CreateGraph extends React.Component<{}, IState> {
 
         try {
             if (!this.currentStoreTypeIsFederated()) {
-                await new CreateStoreTypesGraphRepo().create(graphId, description, storeType, config);
+                await new CreateStoreTypesGraphRepo().create(
+                    sanitizeInputs(graphId),
+                    sanitizeInputs(description),
+                    storeType,
+                    config
+                );
             } else {
-                await new CreateFederatedGraphRepo().create(graphId, description, storeType, config);
+                await new CreateFederatedGraphRepo().create(
+                    sanitizeInputs(graphId),
+                    sanitizeInputs(description),
+                    storeType,
+                    config
+                );
             }
             this.setState({
                 outcome: AlertType.SUCCESS,
