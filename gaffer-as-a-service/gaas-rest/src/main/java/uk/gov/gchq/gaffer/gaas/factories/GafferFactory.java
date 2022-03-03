@@ -20,29 +20,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
+import uk.gov.gchq.gaffer.gaas.model.Gaffer;
+import uk.gov.gchq.gaffer.gaas.model.GafferSpec;
 import uk.gov.gchq.gaffer.proxystore.operation.GetProxyUrl;
 import uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler;
 import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclaration;
 import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclarations;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static uk.gov.gchq.gaffer.common.util.Constants.GROUP;
-import static uk.gov.gchq.gaffer.common.util.Constants.VERSION;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_K8S_METADATA_LABEL;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.CONFIG_NAME_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.DESCRIPTION_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_OPERATION_DECLARATION_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_STORE_CLASS_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.GRAPH_ID_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_UI_PATH_KEY;
-import static uk.gov.gchq.gaffer.gaas.util.Constants.SCHEMA_FILE_KEY;
+
+import static uk.gov.gchq.gaffer.gaas.util.Constants.*;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.INGRESS_SUFFIX;
 import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 

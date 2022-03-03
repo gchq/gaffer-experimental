@@ -22,20 +22,17 @@ import io.kubernetes.client.openapi.models.V1Secret;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
-import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
+import uk.gov.gchq.gaffer.gaas.model.Gaffer;
+import uk.gov.gchq.gaffer.gaas.model.GafferSpec;
+
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_HELM_REPO;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_IMAGE;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_IMAGE_PULL_POLICY;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_NAMESPACE;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_RESTART_POLICY;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
+import static uk.gov.gchq.gaffer.gaas.util.Constants.*;
 
 class KubernetesObjectFactoryTest {
 

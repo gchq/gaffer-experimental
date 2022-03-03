@@ -17,39 +17,20 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import com.google.common.collect.Lists;
-import io.kubernetes.client.openapi.models.V1Container;
-import io.kubernetes.client.openapi.models.V1Pod;
-import io.kubernetes.client.openapi.models.V1PodBuilder;
-import io.kubernetes.client.openapi.models.V1PodSpec;
-import io.kubernetes.client.openapi.models.V1Secret;
-import io.kubernetes.client.openapi.models.V1SecretBuilder;
-import io.kubernetes.client.openapi.models.V1SecretVolumeSource;
-import io.kubernetes.client.openapi.models.V1Volume;
-import io.kubernetes.client.openapi.models.V1VolumeMount;
+import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Yaml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import uk.gov.gchq.gaffer.common.model.v1.Gaffer;
-import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
+import uk.gov.gchq.gaffer.gaas.model.Gaffer;
+import uk.gov.gchq.gaffer.gaas.model.GafferSpec;
+
 import java.util.ArrayList;
 import java.util.List;
-import static uk.gov.gchq.gaffer.common.util.Constants.CHART_VERSION;
-import static uk.gov.gchq.gaffer.common.util.Constants.GAAS_LABEL_VALUE;
-import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAMESPACE_LABEL;
-import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_NAME_LABEL;
-import static uk.gov.gchq.gaffer.common.util.Constants.GAFFER_WORKER_CONTAINER_NAME;
-import static uk.gov.gchq.gaffer.common.util.Constants.GOAL_LABEL;
-import static uk.gov.gchq.gaffer.common.util.Constants.K8S_COMPONENT_LABEL;
-import static uk.gov.gchq.gaffer.common.util.Constants.K8S_INSTANCE_LABEL;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_HELM_REPO;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_IMAGE;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_IMAGE_PULL_POLICY;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_LABEL_VALUE;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_RESTART_POLICY;
-import static uk.gov.gchq.gaffer.common.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
+
+import static uk.gov.gchq.gaffer.gaas.util.Constants.*;
 
 
 /**

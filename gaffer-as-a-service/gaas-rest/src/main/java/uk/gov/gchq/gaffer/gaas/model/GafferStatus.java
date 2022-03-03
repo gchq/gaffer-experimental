@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.common.model.v1;
+package uk.gov.gchq.gaffer.gaas.model;
 
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import uk.gov.gchq.gaffer.common.util.Constants;
+import uk.gov.gchq.gaffer.gaas.util.Constants;
 
 import java.util.List;
 
