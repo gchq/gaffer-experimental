@@ -6,7 +6,7 @@ import { InputLabel } from "@material-ui/core";
 interface IProps {
     graphIdValue: string;
     descriptionValue: string;
-    onChangeGraphId(graphId: string): void;
+    onChangeGraphId(graphId: string, graphIdIsValid: boolean): void;
     onChangeDescription(graphId: string): void;
 }
 
@@ -36,11 +36,12 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
                     autoFocus
                     name="graph-id"
                     onChange={(event) => {
-                        onChangeGraphId(event.target.value);
                         const regex = new RegExp("^[a-z0-9]*$");
                         if (regex.test(event.target.value)) {
+                            onChangeGraphId(event.target.value, true);
                             setErrorHelperText("");
                         } else {
+                            onChangeGraphId(event.target.value, false);
                             setErrorHelperText("Graph ID can only contain numbers and lowercase letters");
                         }
                     }}

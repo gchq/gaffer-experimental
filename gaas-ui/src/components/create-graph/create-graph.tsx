@@ -41,6 +41,7 @@ import sanitizeInputs from "../sanitize-inputs";
 
 interface IState {
     graphId: string;
+    graphIdIsValid: boolean;
     description: string;
     schemaJson: string;
     elements: string;
@@ -70,6 +71,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
         super(props);
         this.state = {
             graphId: "",
+            graphIdIsValid: false,
             description: "",
             schemaJson: "",
             elements: "",
@@ -227,11 +229,12 @@ export default class CreateGraph extends React.Component<{}, IState> {
     }
 
     private disableSubmitButton(): boolean {
-        const { elements, types, graphId, description, selectedGraphs } = this.state;
+        const { elements, types, graphId, description, selectedGraphs, graphIdIsValid } = this.state;
         return (
             (!this.currentStoreTypeIsFederated() && (!elements || !types)) ||
             !graphId ||
             !description ||
+            !graphIdIsValid ||
             (this.currentStoreTypeIsFederated() && selectedGraphs.length === 0) ||
             (!this.currentStoreTypeIsFederated() && !new ElementsSchema(elements).validate().isEmpty()) ||
             (!this.currentStoreTypeIsFederated() && !new TypesSchema(types).validate().isEmpty())
@@ -306,7 +309,9 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                 <Grid container spacing={2}>
                                     <GraphIdDescriptionInput
                                         graphIdValue={this.state.graphId}
-                                        onChangeGraphId={(graphId) => this.setState({ graphId })}
+                                        onChangeGraphId={(graphId, graphIdIsValid) =>
+                                            this.setState({ graphId, graphIdIsValid })
+                                        }
                                         descriptionValue={this.state.description}
                                         onChangeDescription={(description) => this.setState({ description })}
                                     />
