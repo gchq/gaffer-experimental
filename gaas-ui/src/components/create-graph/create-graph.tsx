@@ -42,6 +42,7 @@ import sanitizeInputs from "../sanitize-inputs";
 interface IState {
     graphId: string;
     graphIdIsValid: boolean;
+    graphDescriptionIsValid: boolean;
     description: string;
     schemaJson: string;
     elements: string;
@@ -72,6 +73,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
         this.state = {
             graphId: "",
             graphIdIsValid: false,
+            graphDescriptionIsValid: false,
             description: "",
             schemaJson: "",
             elements: "",
@@ -229,12 +231,14 @@ export default class CreateGraph extends React.Component<{}, IState> {
     }
 
     private disableSubmitButton(): boolean {
-        const { elements, types, graphId, description, selectedGraphs, graphIdIsValid } = this.state;
+        const { elements, types, graphId, description, selectedGraphs, graphIdIsValid, graphDescriptionIsValid } =
+            this.state;
         return (
             (!this.currentStoreTypeIsFederated() && (!elements || !types)) ||
             !graphId ||
             !description ||
             !graphIdIsValid ||
+            !graphDescriptionIsValid ||
             (this.currentStoreTypeIsFederated() && selectedGraphs.length === 0) ||
             (!this.currentStoreTypeIsFederated() && !new ElementsSchema(elements).validate().isEmpty()) ||
             (!this.currentStoreTypeIsFederated() && !new TypesSchema(types).validate().isEmpty())
@@ -313,7 +317,9 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                             this.setState({ graphId, graphIdIsValid })
                                         }
                                         descriptionValue={this.state.description}
-                                        onChangeDescription={(description) => this.setState({ description })}
+                                        onChangeDescription={(description, graphDescriptionIsValid) =>
+                                            this.setState({ description, graphDescriptionIsValid })
+                                        }
                                     />
                                     <Grid
                                         item

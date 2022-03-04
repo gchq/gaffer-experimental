@@ -7,12 +7,13 @@ interface IProps {
     graphIdValue: string;
     descriptionValue: string;
     onChangeGraphId(graphId: string, graphIdIsValid: boolean): void;
-    onChangeDescription(graphId: string): void;
+    onChangeDescription(graphId: string, graphDescriptionIsValid: boolean): void;
 }
 
 export default function GraphIdDescriptionInput(props: IProps): ReactElement {
     const { graphIdValue, descriptionValue, onChangeGraphId, onChangeDescription } = props;
-    const [errorHelperText, setErrorHelperText] = useState("");
+    const [graphIdErrorHelperText, setGraphIdErrorHelperText] = useState("");
+    const [descriptionErrorHelperText, setDescriptionErrorHelperText] = useState("");
 
     return (
         <>
@@ -30,22 +31,22 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
                     aria-label="graph-id-input"
                     variant="outlined"
                     value={graphIdValue}
-                    error={errorHelperText.length > 0}
+                    error={graphIdErrorHelperText.length > 0}
                     required
                     fullWidth
                     autoFocus
+                    helperText={graphIdErrorHelperText}
                     name="graph-id"
                     onChange={(event) => {
                         const regex = new RegExp("^[a-z0-9]*$");
                         if (regex.test(event.target.value)) {
                             onChangeGraphId(event.target.value, true);
-                            setErrorHelperText("");
+                            setGraphIdErrorHelperText("");
                         } else {
                             onChangeGraphId(event.target.value, false);
-                            setErrorHelperText("Graph ID can only contain numbers and lowercase letters");
+                            setGraphIdErrorHelperText("Graph ID can only contain numbers and lowercase letters");
                         }
                     }}
-                    helperText={errorHelperText}
                 />
             </Grid>
             <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
@@ -62,6 +63,7 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
                         "aria-label": "graph-description-input",
                     }}
                     value={descriptionValue}
+                    error={descriptionErrorHelperText.length > 0}
                     required
                     multiline
                     autoFocus
@@ -69,7 +71,17 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
                     fullWidth
                     name="graph-description"
                     variant="outlined"
-                    onChange={(event) => onChangeDescription(event.target.value)}
+                    helperText={descriptionErrorHelperText}
+                    onChange={(event) => {
+                        const regex = new RegExp("^[a-z0-9]*$");
+                        if (regex.test(event.target.value)) {
+                            onChangeDescription(event.target.value, true);
+                            setDescriptionErrorHelperText("");
+                        } else {
+                            onChangeDescription(event.target.value, false);
+                            setDescriptionErrorHelperText("Graph Description can only contain numbers and letters");
+                        }
+                    }}
                 />
             </Grid>
         </>
