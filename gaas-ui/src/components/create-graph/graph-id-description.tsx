@@ -73,7 +73,7 @@ export default function GraphIdDescriptionInput(props: IProps): ReactElement {
                     variant="outlined"
                     helperText={descriptionErrorHelperText}
                     onChange={(event) => {
-                        const regex = new RegExp("^[a-z0-9]*$");
+                        const regex = new RegExp("^[a-zA-Z0-9 ]*$");
                         if (regex.test(event.target.value)) {
                             onChangeDescription(event.target.value, true);
                             setDescriptionErrorHelperText("");

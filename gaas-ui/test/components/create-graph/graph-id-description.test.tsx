@@ -39,11 +39,11 @@ describe("Graph ID & Description", () => {
             "Graph ID can only contain numbers and lowercase letters"
         );
     });
-    it("should call back with graph id when character inputted", () => {
+    it("should call back with graph id and boolean when character inputted", () => {
         component.find("textarea#graph-description-input").simulate("change", {
             target: { value: "Some description" },
         });
 
-        expect(descriptionMockCallBack).toHaveBeenLastCalledWith("Some description");
+        expect(descriptionMockCallBack).toHaveBeenLastCalledWith("Some description", true);
     });
 });
