@@ -23,12 +23,12 @@ describe("Graph ID & Description", () => {
     it("should populate input value with graphIdValue prop", () => {
         expect(component.find("textarea#graph-description-input").props().value).toBe("Inputted description here");
     });
-    it("should call back with graph id when character inputted", () => {
+    it("should call back with graph id and boolean when character inputted", () => {
         component.find("input#graph-id-input").simulate("change", {
             target: { value: "id" },
         });
 
-        expect(graphIdMockCallBack).toHaveBeenLastCalledWith("id");
+        expect(graphIdMockCallBack).toHaveBeenLastCalledWith("id", true);
     });
     it("should display error message when invalid graph id entered", () => {
         component.find("input#graph-id-input").simulate("change", {

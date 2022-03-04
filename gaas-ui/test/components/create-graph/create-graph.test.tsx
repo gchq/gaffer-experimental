@@ -263,7 +263,7 @@ describe("CreateGraph UI component", () => {
         it("Should call CreateGraphRepo with Federated Store Graph request params and display success message", async () => {
             const mock = jest.fn();
             mockCreateFederatedGraphRepoWithFunction(mock);
-            await inputGraphId("OK Graph");
+            await inputGraphId("okgraph");
             await inputDescription("test");
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
@@ -271,7 +271,7 @@ describe("CreateGraph UI component", () => {
             await wrapper.update();
 
             await mockGetGraphStatus("UP");
-            await mockGetGraphId("graph id");
+            await mockGetGraphId("graphid");
             await mockGetGraphDescription("description");
 
             await inputProxyURL("http://resoucename-namespace.host-name/rest");
@@ -279,15 +279,15 @@ describe("CreateGraph UI component", () => {
             await wrapper.update();
             await clickSubmit();
             const expectedConfig: ICreateGraphConfig = {
-                proxySubGraphs: [{ graphId: "graph id", host: "resoucename-namespace.host-name", root: "/rest" }],
+                proxySubGraphs: [{ graphId: "graphid", host: "resoucename-namespace.host-name", root: "/rest" }],
             };
-            expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
-            expect(mock).toHaveBeenLastCalledWith("OK Graph", "test", "federated", expectedConfig);
+            expect(wrapper.find("div#notification-alert").text()).toBe("okgraph was successfully added");
+            expect(mock).toHaveBeenLastCalledWith("okgraph", "test", "federated", expectedConfig);
         });
         it("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async () => {
             const mock = jest.fn();
             mockCreateFederatedGraphRepoWithFunction(mock);
-            await inputGraphId("OK Graph");
+            await inputGraphId("okgraph");
             await inputDescription("test");
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
@@ -306,8 +306,8 @@ describe("CreateGraph UI component", () => {
             const expectedConfig: ICreateGraphConfig = {
                 proxySubGraphs: [{ graphId: "n/a", host: "resoucename-namespace.host-name", root: "/rest" }],
             };
-            expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
-            expect(mock).toHaveBeenLastCalledWith("OK Graph", "test", "federated", expectedConfig);
+            expect(wrapper.find("div#notification-alert").text()).toBe("okgraph was successfully added");
+            expect(mock).toHaveBeenLastCalledWith("okgraph", "test", "federated", expectedConfig);
         });
     });
     describe("When Map Store Is Selected", () => {
@@ -336,7 +336,7 @@ describe("CreateGraph UI component", () => {
             const mock = jest.fn();
             mockCreateStoreTypesGraphRepoWithFunction(mock);
 
-            inputGraphId("accumulo-graph");
+            inputGraphId("accumulograph");
             inputDescription("None");
             selectStoreType(wrapper, "accumulo");
             await wrapper.update();
@@ -348,8 +348,8 @@ describe("CreateGraph UI component", () => {
             const expectedConfig: ICreateGraphConfig = {
                 schema: { entities: entities, edges: edges, types: typesAsObject },
             };
-            expect(mock).toHaveBeenLastCalledWith("accumulo-graph", "None", "accumulo", expectedConfig);
-            expect(wrapper.find("div#notification-alert").text()).toBe("accumulo-graph was successfully added");
+            expect(mock).toHaveBeenLastCalledWith("accumulograph", "None", "accumulo", expectedConfig);
+            expect(wrapper.find("div#notification-alert").text()).toBe("accumulograph was successfully added");
         });
     });
     describe("Dropzone behaviour", () => {
@@ -468,14 +468,14 @@ describe("CreateGraph UI component", () => {
     describe("On Submit Request", () => {
         it("should display success message in the NotificationAlert", async () => {
             mockCreateStoreTypesGraphRepoWithFunction(() => {});
-            inputGraphId("OK Graph");
+            inputGraphId("okgraph");
             inputDescription("test");
             inputElements(elementsString);
             inputTypes(typesAsString);
 
             await clickSubmit();
 
-            expect(wrapper.find("div#notification-alert").text()).toBe("OK Graph was successfully added");
+            expect(wrapper.find("div#notification-alert").text()).toBe("okgraph was successfully added");
         });
     });
 });
