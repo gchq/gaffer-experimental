@@ -125,7 +125,7 @@ export default function AddType(props: IProps): ReactElement {
                 }
                 return;
             case "handleUpdateSerialiserTextarea":
-                if (isJSONString(action.value)) {
+                if (isJSONString(action.value) || action.value === "") {
                     draft.serialiser.textarea = action.value;
                     draft.serialiser.hasError = false;
                     return;
@@ -135,7 +135,7 @@ export default function AddType(props: IProps): ReactElement {
                 return;
 
             case "handleUpdateAggregateFunctionTextarea":
-                if (isJSONString(action.value)) {
+                if (isJSONString(action.value) || action.value === "") {
                     draft.aggregateFunction.textarea = action.value;
                     draft.aggregateFunction.hasError = false;
                     return;
@@ -145,7 +145,7 @@ export default function AddType(props: IProps): ReactElement {
                 return;
 
             case "handleUpdateValidateFunctionsTextarea":
-                if (isJSONString(action.value)) {
+                if (isJSONString(action.value) || action.value === "") {
                     draft.validateFunctions.textarea = action.value;
                     draft.validateFunctions.hasError = false;
                     return;
