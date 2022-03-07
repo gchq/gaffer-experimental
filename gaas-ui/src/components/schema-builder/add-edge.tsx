@@ -17,7 +17,7 @@ import { useImmerReducer } from "use-immer";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddProperty from "./add-property";
 import AddGroupby from "./add-groupby";
-import sanitizeInputs from "../../util/sanitize-inputs";
+import sanitizeInputs, { isJSONString } from "../../util/sanitize-inputs";
 
 interface IProps {
     onAddEdge(edge: object): void;
@@ -53,6 +53,7 @@ interface IState {
         properties: {};
         textarea: string;
         open: boolean;
+        hasErrors: boolean;
     };
     groupBy: {
         groupBy: [];
@@ -110,6 +111,7 @@ export default function AddEdge(props: IProps): ReactElement {
             properties: {},
             textarea: "",
             open: false,
+            hasErrors: false,
         },
         groupBy: {
             groupBy: [],
@@ -164,6 +166,12 @@ export default function AddEdge(props: IProps): ReactElement {
                 draft.properties.properties[Object.keys(action.value)[0]] = Object.values(action.value)[0];
                 return;
             case "handleUpdatePropertiesTextarea":
+                if (isJSONString(action.value) || action.value === "") {
+                    draft.properties.textarea = action.value;
+                    draft.properties.hasErrors = false;
+                    return;
+                }
+                draft.properties.hasErrors = true;
                 draft.properties.textarea = action.value;
                 return;
             case "handleClickCloseGroupby":
@@ -367,6 +375,8 @@ export default function AddEdge(props: IProps): ReactElement {
                     value={state.properties.textarea}
                     name={"edge-properties"}
                     label={"Properties"}
+                    error={state.properties.hasErrors}
+                    helperText={state.properties.hasErrors ? "Invalid JSON" : ""}
                     multiline
                     rows={5}
                     variant="outlined"

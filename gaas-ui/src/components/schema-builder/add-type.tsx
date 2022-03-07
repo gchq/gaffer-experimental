@@ -31,19 +31,19 @@ interface IState {
         aggregateFunction: {};
         open: boolean;
         textarea: string;
-        hasError: boolean;
+        hasErrors: boolean;
     };
     serialiser: {
         serialiser: {};
         open: boolean;
         textarea: string;
-        hasError: boolean;
+        hasErrors: boolean;
     };
     validateFunctions: {
         validateFunctions: [];
         open: boolean;
         textarea: string;
-        hasError: boolean;
+        hasErrors: boolean;
     };
 }
 
@@ -72,19 +72,19 @@ export default function AddType(props: IProps): ReactElement {
             aggregateFunction: {},
             open: false,
             textarea: "",
-            hasError: false,
+            hasErrors: false,
         },
         serialiser: {
             serialiser: {},
             open: false,
             textarea: "",
-            hasError: false,
+            hasErrors: false,
         },
         validateFunctions: {
             validateFunctions: [],
             open: false,
             textarea: "",
-            hasError: false,
+            hasErrors: false,
         },
     };
 
@@ -127,30 +127,30 @@ export default function AddType(props: IProps): ReactElement {
             case "handleUpdateSerialiserTextarea":
                 if (isJSONString(action.value) || action.value === "") {
                     draft.serialiser.textarea = action.value;
-                    draft.serialiser.hasError = false;
+                    draft.serialiser.hasErrors = false;
                     return;
                 }
                 draft.serialiser.textarea = action.value;
-                draft.serialiser.hasError = true;
+                draft.serialiser.hasErrors = true;
                 return;
 
             case "handleUpdateAggregateFunctionTextarea":
                 if (isJSONString(action.value) || action.value === "") {
                     draft.aggregateFunction.textarea = action.value;
-                    draft.aggregateFunction.hasError = false;
+                    draft.aggregateFunction.hasErrors = false;
                     return;
                 }
                 draft.aggregateFunction.textarea = action.value;
-                draft.aggregateFunction.hasError = true;
+                draft.aggregateFunction.hasErrors = true;
                 return;
 
             case "handleUpdateValidateFunctionsTextarea":
                 if (isJSONString(action.value) || action.value === "") {
                     draft.validateFunctions.textarea = action.value;
-                    draft.validateFunctions.hasError = false;
+                    draft.validateFunctions.hasErrors = false;
                     return;
                 }
-                draft.validateFunctions.hasError = true;
+                draft.validateFunctions.hasErrors = true;
                 draft.validateFunctions.textarea = action.value;
                 return;
             case "handleClickCloseAggregateFunction":
@@ -338,8 +338,8 @@ export default function AddType(props: IProps): ReactElement {
                         }}
                         fullWidth
                         value={state.aggregateFunction.textarea}
-                        error={state.aggregateFunction.hasError}
-                        helperText={state.aggregateFunction.hasError ? "Invalid JSON" : ""}
+                        error={state.aggregateFunction.hasErrors}
+                        helperText={state.aggregateFunction.hasErrors ? "Invalid JSON" : ""}
                         name={"type-aggregate-function"}
                         label={"Aggregate Function"}
                         multiline
@@ -400,8 +400,8 @@ export default function AddType(props: IProps): ReactElement {
                         fullWidth
                         value={state.serialiser.textarea}
                         name={"type-serialiser-textfield"}
-                        error={state.serialiser.hasError}
-                        helperText={state.serialiser.hasError ? "Invalid JSON" : ""}
+                        error={state.serialiser.hasErrors}
+                        helperText={state.serialiser.hasErrors ? "Invalid JSON" : ""}
                         label={"Serialiser"}
                         multiline
                         rows={5}
@@ -465,8 +465,8 @@ export default function AddType(props: IProps): ReactElement {
                         }}
                         fullWidth
                         value={state.validateFunctions.textarea}
-                        error={state.validateFunctions.hasError}
-                        helperText={state.validateFunctions.hasError ? "Invalid JSON" : ""}
+                        error={state.validateFunctions.hasErrors}
+                        helperText={state.validateFunctions.hasErrors ? "Invalid JSON" : ""}
                         name={"type-validate-functions-textfield"}
                         label={"Validate Functions"}
                         multiline
