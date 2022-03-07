@@ -17,7 +17,7 @@ import { useImmerReducer } from "use-immer";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddProperty from "./add-property";
 import AddGroupby from "./add-groupby";
-import sanitizeInputs from "../sanitize-inputs";
+import sanitizeInputs from "../../util/sanitize-inputs";
 
 interface IProps {
     onAddEdge(edge: object): void;

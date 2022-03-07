@@ -5,7 +5,7 @@ import AddAggregateFunction from "./add-aggregate-function";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddSerialiser from "./add-serialiser";
 import AddValidateFunctions from "./add-validate-functions";
-import sanitizeInputs, { isJSONString } from "../sanitize-inputs";
+import sanitizeInputs, { isJSONString } from "../../util/sanitize-inputs";
 
 interface IProps {
     onAddType(type: object): void;

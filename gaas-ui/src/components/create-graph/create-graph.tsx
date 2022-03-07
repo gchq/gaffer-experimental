@@ -37,7 +37,7 @@ import { CreateFederatedGraphRepo } from "../../rest/repositories/create-federat
 import { Copyright } from "../copyright/copyright";
 import SchemaBuilderDialog from "./schema-builder-dialog";
 import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
-import sanitizeInputs from "../sanitize-inputs";
+import sanitizeInputs from "../../util/sanitize-inputs";
 
 interface IState {
     graphId: string;

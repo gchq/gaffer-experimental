@@ -16,7 +16,7 @@ import {
 import { useImmerReducer } from "use-immer";
 import AddProperty from "./add-property";
 import ClearIcon from "@material-ui/icons/Clear";
-import sanitizeInputs from "../sanitize-inputs";
+import sanitizeInputs from "../../util/sanitize-inputs";
 
 interface IProps {
     onAddEntity(entity: object): void;

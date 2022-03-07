@@ -7,7 +7,7 @@ import { FormType } from "./login-modal";
 import { IAuthClient } from "../../rest/clients/authclient";
 import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
 import { Copyright } from "../copyright/copyright";
-import sanitizeInputs from "../sanitize-inputs";
+import sanitizeInputs from "../../util/sanitize-inputs";
 
 interface IProps {
     onChangeForm(fromType: FormType): void;
