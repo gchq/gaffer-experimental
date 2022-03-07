@@ -33,11 +33,14 @@ interface IState {
         textarea: string;
         hasError: boolean;
     };
-    serialiser: {};
-    openSerialiser: boolean;
+    serialiser: {
+        serialiser: {};
+        open: boolean;
+        textarea: string;
+        hasError: boolean;
+    };
     validateFunctions: [];
     openValidateFunctions: boolean;
-    serialiserTextarea: string;
 
     validateFunctionsTextarea: string;
 }
@@ -69,11 +72,14 @@ export default function AddType(props: IProps): ReactElement {
             textarea: "",
             hasError: false,
         },
-        serialiser: {},
-        openSerialiser: false,
+        serialiser: {
+            serialiser: {},
+            open: false,
+            textarea: "",
+            hasError: false,
+        },
         validateFunctions: [],
         openValidateFunctions: false,
-        serialiserTextarea: "",
 
         validateFunctionsTextarea: "",
     };
@@ -115,18 +121,25 @@ export default function AddType(props: IProps): ReactElement {
                 }
                 return;
             case "handleUpdateSerialiserTextarea":
-                draft.serialiserTextarea = action.value;
+                if (isJSONString(action.value)) {
+                    draft.serialiser.textarea = action.value;
+                    draft.serialiser.hasError = false;
+                    return;
+                }
+                draft.serialiser.textarea = action.value;
+                draft.serialiser.hasError = true;
                 return;
+
             case "handleUpdateAggregateFunctionTextarea":
                 if (isJSONString(action.value)) {
                     draft.aggregateFunction.textarea = action.value;
                     draft.aggregateFunction.hasError = false;
                     return;
-                } else {
-                    draft.aggregateFunction.textarea = action.value;
-                    draft.aggregateFunction.hasError = true;
-                    return;
                 }
+                draft.aggregateFunction.textarea = action.value;
+                draft.aggregateFunction.hasError = true;
+                return;
+
             case "handleUpdateValidateFunctionsTextarea":
                 draft.validateFunctionsTextarea = action.value;
                 return;
@@ -137,10 +150,10 @@ export default function AddType(props: IProps): ReactElement {
                 draft.aggregateFunction.aggregateFunction = action.value;
                 return;
             case "handleClickCloseSerialiser":
-                draft.openSerialiser = action.value;
+                draft.serialiser.open = action.value;
                 return;
             case "handleUpdateSerialiser":
-                draft.serialiser = action.value;
+                draft.serialiser.serialiser = action.value;
                 return;
             case "handleClickCloseValidateFunctions":
                 draft.openValidateFunctions = action.value;
@@ -173,8 +186,8 @@ export default function AddType(props: IProps): ReactElement {
         if (Object.keys(state.aggregateFunction.aggregateFunction).length !== 0) {
             typeToAdd[state.typeName.value].aggregateFunction = state.aggregateFunction.aggregateFunction;
         }
-        if (Object.keys(state.serialiser).length !== 0) {
-            typeToAdd[state.typeName.value].serialiser = state.serialiser;
+        if (Object.keys(state.serialiser.serialiser).length !== 0) {
+            typeToAdd[state.typeName.value].serialiser = state.serialiser.serialiser;
         }
         if (state.validateFunctions.length !== 0) {
             typeToAdd[state.typeName.value].validateFunctions = state.validateFunctions;
@@ -338,7 +351,7 @@ export default function AddType(props: IProps): ReactElement {
                     <Dialog
                         fullWidth
                         maxWidth="xs"
-                        open={state.openSerialiser}
+                        open={state.serialiser.open}
                         onClose={closeSerialiser}
                         id={"add-serialiser-dialog"}
                         aria-labelledby="add-serialiser-dialog"
@@ -374,8 +387,10 @@ export default function AddType(props: IProps): ReactElement {
                             "aria-label": "type-serialiser-input",
                         }}
                         fullWidth
-                        value={state.serialiserTextarea}
+                        value={state.serialiser.textarea}
                         name={"type-serialiser-textfield"}
+                        error={state.serialiser.hasError}
+                        helperText={state.serialiser.hasError ? "Invalid JSON" : ""}
                         label={"Serialiser"}
                         multiline
                         rows={5}
