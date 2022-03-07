@@ -10,3 +10,12 @@ export default function sanitizeInputs(string) {
     const reg = /[&<>"'/]/gi;
     return string.replace(reg, (match) => map[match]);
 }
+
+export function isJSONString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
