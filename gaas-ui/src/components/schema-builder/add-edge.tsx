@@ -59,6 +59,7 @@ interface IState {
         groupBy: [];
         open: boolean;
         textarea: string;
+        hasErrors: boolean;
     };
 }
 
@@ -117,6 +118,7 @@ export default function AddEdge(props: IProps): ReactElement {
             groupBy: [],
             open: false,
             textarea: "",
+            hasErrors: false,
         },
     };
 
@@ -184,6 +186,13 @@ export default function AddEdge(props: IProps): ReactElement {
                 }
                 return;
             case "handleUpdateGroupByTextarea":
+                const regex = new RegExp("[&@#/%?=~_|!:;()<>/|]");
+                if (!regex.test(action.value) || action.value === "") {
+                    draft.groupBy.hasErrors = false;
+                    draft.groupBy.textarea = action.value;
+                    return;
+                }
+                draft.groupBy.hasErrors = true;
                 draft.groupBy.textarea = action.value;
                 return;
         }
@@ -435,6 +444,8 @@ export default function AddEdge(props: IProps): ReactElement {
                     }}
                     fullWidth
                     value={state.groupBy.textarea}
+                    error={state.groupBy.hasErrors}
+                    helperText={state.groupBy.hasErrors ? "Invalid input" : ""}
                     name={"edge-groupby"}
                     label={"Group By"}
                     multiline
