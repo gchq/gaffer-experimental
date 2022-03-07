@@ -16,7 +16,7 @@ import {
 import { useImmerReducer } from "use-immer";
 import AddProperty from "./add-property";
 import ClearIcon from "@material-ui/icons/Clear";
-import sanitizeInputs from "../../util/sanitize-inputs";
+import sanitizeInputs, { isJSONString } from "../../util/sanitize-inputs";
 
 interface IProps {
     onAddEntity(entity: object): void;
@@ -42,6 +42,7 @@ interface IState {
         properties: {};
         open: boolean;
         textarea: string;
+        hasErrors: boolean;
     };
 }
 
@@ -80,6 +81,7 @@ export default function AddEntity(props: IProps): ReactElement {
             properties: {},
             open: false,
             textarea: "",
+            hasErrors: false,
         },
     };
 
@@ -119,6 +121,12 @@ export default function AddEntity(props: IProps): ReactElement {
                 draft.properties.properties[Object.keys(action.value)[0]] = Object.values(action.value)[0];
                 return;
             case "handleUpdatePropertiesTextarea":
+                if (isJSONString(action.value) || action.value === "") {
+                    draft.properties.textarea = action.value;
+                    draft.properties.hasErrors = false;
+                    return;
+                }
+                draft.properties.hasErrors = true;
                 draft.properties.textarea = action.value;
                 return;
         }
@@ -264,6 +272,8 @@ export default function AddEntity(props: IProps): ReactElement {
                     fullWidth
                     value={state.properties.textarea}
                     name="entity-properties"
+                    error={state.properties.hasErrors}
+                    helperText={state.properties.hasErrors ? "Invalid JSON" : ""}
                     label={"Properties"}
                     multiline
                     rows={5}
