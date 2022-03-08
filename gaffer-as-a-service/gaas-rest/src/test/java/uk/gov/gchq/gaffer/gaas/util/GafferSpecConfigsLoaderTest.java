@@ -19,8 +19,8 @@ package uk.gov.gchq.gaffer.gaas.util;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.gchq.gaffer.common.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
 
 import java.util.HashMap;
 import java.util.Map;
