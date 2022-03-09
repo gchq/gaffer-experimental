@@ -1,4 +1,4 @@
-export default function sanitizeInputs(string) {
+export default function escapingInputs(string) {
     const map = {
         "&": "&amp;",
         "<": "&lt;",

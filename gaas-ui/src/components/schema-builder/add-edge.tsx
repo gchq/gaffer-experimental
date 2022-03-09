@@ -17,7 +17,7 @@ import { useImmerReducer } from "use-immer";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddProperty from "./add-property";
 import AddGroupby from "./add-groupby";
-import sanitizeInputs, { isJSONString } from "../../util/sanitize-inputs";
+import escapingInputs, { isJSONString } from "../../util/sanitize-inputs";
 
 interface IProps {
     onAddEdge(edge: object): void;
@@ -68,11 +68,11 @@ export default function AddEdge(props: IProps): ReactElement {
 
     function addEdgeSubmit() {
         const edgeToAdd: any = {};
-        edgeToAdd[sanitizeInputs(state.edgeName.value)] = {
-            description: sanitizeInputs(state.edgeDescription.value),
-            source: sanitizeInputs(state.edgeSource.value),
-            destination: sanitizeInputs(state.edgeDestination.value),
-            directed: sanitizeInputs(state.edgeDirected.value),
+        edgeToAdd[escapingInputs(state.edgeName.value)] = {
+            description: escapingInputs(state.edgeDescription.value),
+            source: escapingInputs(state.edgeSource.value),
+            destination: escapingInputs(state.edgeDestination.value),
+            directed: escapingInputs(state.edgeDirected.value),
         };
         if (Object.keys(state.properties.properties).length !== 0) {
             edgeToAdd[state.edgeName.value].properties = state.properties.properties;
