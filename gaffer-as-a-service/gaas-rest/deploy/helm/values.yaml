@@ -18,12 +18,12 @@ image:
   repository: dockerhub/image
   pullPolicy: Always
   tag: latest
-  containerPort: 8080
+  containerPort: 8081
 imagePullSecrets: []
 service:
   type: ClusterIP
-  port: 8080
-  targetPort: 8080
+  port: 8081
+  targetPort: 8081
 
 # Set serviceAccount.create to true if User deploying has assigned
 # ClusterRoleBinding privileges to enable cluster namespaces endpoint

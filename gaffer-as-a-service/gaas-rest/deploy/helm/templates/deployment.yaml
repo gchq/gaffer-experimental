@@ -42,3 +42,9 @@ spec:
               limits:
                 memory: "1Gi"
                 cpu: "1000m"
+          - image: dockerhub/imag
+            imagePullPolicy: Always
+            name: gaas-sc2
+            ports:
+               - containerPort: 8081
+                 protocol: TCP
