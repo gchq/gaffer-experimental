@@ -18,15 +18,16 @@ package uk.gov.gchq.gaffer.sidecar;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
-
-@EnableZuulProxy
+@EnableEurekaClient
 @SpringBootApplication
+@EnableFeignClients
 public class SidecarApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SidecarApplication.class, args);
-	}
+    public static void main(final String[] args) {
+        SpringApplication.run(SidecarApplication.class, args);
+    }
 
 }

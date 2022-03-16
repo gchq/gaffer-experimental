@@ -44,6 +44,7 @@
         <apache.commons.text.version>1.9</apache.commons.text.version>
         <compiler.plugin.version>2.3.2</compiler.plugin.version>
         <surefire.version>3.0.0-M5</surefire.version>
+        <spring-cloud.version>2020.0.3</spring-cloud.version>
     </properties>
 
     <dependencyManagement>
