@@ -31,13 +31,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
-import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
@@ -70,25 +68,25 @@ public class GraphController {
     private GetNamespacesService getNamespacesService;
     @Autowired
     private GetGaaSGraphConfigsService getStoreTypesService;
-    @Autowired(required = false)
-    private AuthService authService;
+//    @Autowired(required = false)
+//    private AuthService authService;
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
 
     @Value("${cognito.enabled: false}")
     boolean cognitoEnabled;
-
-    @Value("${openshift.enabled: false}")
-    boolean openshiftEnabled;
-
-    @PostMapping("/auth")
-    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-        if (!cognitoEnabled) {
-            final String token = authService.getToken(authenticationRequest);
-            return ResponseEntity.ok(token);
-        }
-        return null;
-    }
+//
+//    @Value("${openshift.enabled: false}")
+//    boolean openshiftEnabled;
+//
+//    @PostMapping("/auth")
+//    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
+//        if (!cognitoEnabled) {
+//            final String token = authService.getToken(authenticationRequest);
+//            return ResponseEntity.ok(token);
+//        }
+//        return null;
+//    }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
@@ -135,15 +133,15 @@ public class GraphController {
     }
 
     public ResponseEntity getResponseEntity(final ResponseEntity responseEntity, final HttpHeaders headers) {
-        if (openshiftEnabled) {
+        //if (openshiftEnabled) {
             if (checkForXEmail(headers)) {
                 return responseEntity;
             } else {
                 return new ResponseEntity(HttpStatus.FORBIDDEN);
             }
-        } else {
-            return responseEntity;
-        }
+//        } else {
+//            return responseEntity;
+//        }
     }
 
     @GetMapping(path = "/whoami", produces = "application/json")

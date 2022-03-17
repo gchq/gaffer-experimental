@@ -22,27 +22,23 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
-import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
-import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -60,8 +56,8 @@ class GraphControllerTest extends AbstractTest {
 
     @MockBean
     private GetGaffersService getGafferService;
-    @MockBean
-    private AuthService authService;
+//    @MockBean
+//    private AuthService authService;
     @MockBean
     private CreateGraphService createGraphService;
     @MockBean
@@ -111,18 +107,18 @@ class GraphControllerTest extends AbstractTest {
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 
-    @Test
-    void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
-        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
-        when(authService.getToken(any(JwtRequest.class))).thenReturn("token received");
-
-        final MvcResult result = mvc.perform(post("/auth")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(authRequest)).andReturn();
-
-        assertEquals(200, result.getResponse().getStatus());
-        assertEquals("token received", result.getResponse().getContentAsString());
-    }
+//    @Test
+//    void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
+//        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
+//        when(authService.getToken(any(JwtRequest.class))).thenReturn("token received");
+//
+//        final MvcResult result = mvc.perform(post("/auth")
+//                .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                .content(authRequest)).andReturn();
+//
+//        assertEquals(200, result.getResponse().getStatus());
+//        assertEquals("token received", result.getResponse().getContentAsString());
+//    }
 
     @Test
     void createGraph_whenSuccessful_shouldReturn201() throws Exception {
@@ -265,20 +261,20 @@ class GraphControllerTest extends AbstractTest {
         assertEquals("{\"title\":\"This graph\",\"detail\":\"already exists\"}", result.getResponse().getContentAsString());
     }
 
-    @Test
-    void authEndpoint_shouldReturn401Status_whenValidUsernameAndPassword() throws Exception {
-        final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
-        doThrow(new GaaSRestApiException("Invalid Credentials", "Username is incorrect", 401))
-                .when(authService).getToken(any(JwtRequest.class));
-
-        final MvcResult result = mvc.perform(post("/auth")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(authRequest)).andReturn();
-
-        verify(authService, times(2)).getToken(any(JwtRequest.class));
-        assertEquals(401, result.getResponse().getStatus());
-        assertEquals("{\"title\":\"Invalid Credentials\",\"detail\":\"Username is incorrect\"}", result.getResponse().getContentAsString());
-    }
+//    @Test
+//    void authEndpoint_shouldReturn401Status_whenValidUsernameAndPassword() throws Exception {
+//        final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
+//        doThrow(new GaaSRestApiException("Invalid Credentials", "Username is incorrect", 401))
+//                .when(authService).getToken(any(JwtRequest.class));
+//
+//        final MvcResult result = mvc.perform(post("/auth")
+//                .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                .content(authRequest)).andReturn();
+//
+//        verify(authService, times(2)).getToken(any(JwtRequest.class));
+//        assertEquals(401, result.getResponse().getStatus());
+//        assertEquals("{\"title\":\"Invalid Credentials\",\"detail\":\"Username is incorrect\"}", result.getResponse().getContentAsString());
+//    }
 
     @Test
     void namespaces_shouldReturnErrorMessageWhenNamespaceServiceException() throws Exception {

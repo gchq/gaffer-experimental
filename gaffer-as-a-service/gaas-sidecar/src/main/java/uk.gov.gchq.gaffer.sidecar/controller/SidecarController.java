@@ -38,26 +38,26 @@ public class SidecarController {
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
 
-    @Value("${cognito.enabled: false}")
-    boolean cognitoEnabled;
+//    @Value("${cognito.enabled: false}")
+//    boolean cognitoEnabled;
 
-    @Value("${openshift.enabled: false}")
-    boolean openshiftEnabled;
+//    @Value("${openshift.enabled: false}")
+//    boolean openshiftEnabled;
 
     private Boolean checkForXEmail(final HttpHeaders headers) {
         return (headers.get("x-email") != null);
     }
 
     public ResponseEntity getResponseEntity(final ResponseEntity responseEntity, final HttpHeaders headers) {
-        if (openshiftEnabled) {
+        //if (openshiftEnabled) {
             if (checkForXEmail(headers)) {
                 return responseEntity;
             } else {
                 return new ResponseEntity(HttpStatus.FORBIDDEN);
             }
-        } else {
-            return responseEntity;
-        }
+//        } else {
+//            return responseEntity;
+//        }
     }
 
     @GetMapping(path = "/whoami", produces = "application/json")

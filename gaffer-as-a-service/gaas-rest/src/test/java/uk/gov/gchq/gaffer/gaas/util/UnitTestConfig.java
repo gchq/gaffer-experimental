@@ -24,13 +24,9 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.authentication.AuthenticationManager;
-import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
-import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
-import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
@@ -70,10 +66,10 @@ public class UnitTestConfig {
         return new CustomObjectsApi(apiClient());
     }
 
-    @Bean
-    public AuthService authService() {
-        return new AuthService();
-    }
+//    @Bean
+//    public AuthService authService() {
+//        return new AuthService();
+//    }
 
     @Bean
     public CreateGraphService createGraphService() {
@@ -99,26 +95,26 @@ public class UnitTestConfig {
     public GetGaaSGraphConfigsService getStoreTypesService() {
         return new GetGaaSGraphConfigsService();
     }
-
-    @Bean
-    public JwtTokenUtil jwtTokenUtil() {
-        return new JwtTokenUtil();
-    }
-
-    @Bean
-    public JwtUserDetailsService jwtUserDetailsService() {
-        return new JwtUserDetailsService();
-    }
+//
+//    @Bean
+//    public JwtTokenUtil jwtTokenUtil() {
+//        return new JwtTokenUtil();
+//    }
+//
+//    @Bean
+//    public JwtUserDetailsService jwtUserDetailsService() {
+//        return new JwtUserDetailsService();
+   // }
 
     @Bean
     public Properties properties() {
         return new Properties();
     }
-
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        return mock(AuthenticationManager.class);
-    }
+//
+//    @Bean
+//    public AuthenticationManager authenticationManager() {
+//        return mock(AuthenticationManager.class);
+//    }
 
     @Bean
     public GraphCommandExecutor graphCommandExecutor() {

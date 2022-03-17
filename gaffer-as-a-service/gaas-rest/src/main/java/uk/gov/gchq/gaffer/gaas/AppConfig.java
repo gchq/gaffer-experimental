@@ -41,11 +41,6 @@ public class AppConfig {
     }
 
     @Bean
-    public CustomObjectsApi customObjectsApi() throws IOException {
-        return new CustomObjectsApi(apiClient());
-    }
-
-    @Bean
     public CoreV1Api coreV1Api() throws IOException {
         return new CoreV1Api(apiClient());
     }
