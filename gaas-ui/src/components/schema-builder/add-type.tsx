@@ -5,7 +5,8 @@ import AddAggregateFunction from "./add-aggregate-function";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddSerialiser from "./add-serialiser";
 import AddValidateFunctions from "./add-validate-functions";
-import escapingInputs, { isJSONString } from "../../util/sanitize-inputs";
+import { isJSONString } from "../../util/util";
+import DOMPurify from "dompurify";
 
 interface IProps {
     onAddType(type: object): void;
@@ -190,9 +191,9 @@ export default function AddType(props: IProps): ReactElement {
 
     function addTypeSubmit() {
         const typeToAdd: any = {};
-        typeToAdd[escapingInputs(state.typeName.value)] = {
-            description: escapingInputs(state.typeDescription.value),
-            class: escapingInputs(state.typeClass.value),
+        typeToAdd[DOMPurify.sanitize(state.typeName.value)] = {
+            description: DOMPurify.sanitize(state.typeDescription.value),
+            class: DOMPurify.sanitize(state.typeClass.value),
         };
         if (Object.keys(state.aggregateFunction.aggregateFunction).length !== 0) {
             typeToAdd[state.typeName.value].aggregateFunction = state.aggregateFunction.aggregateFunction;

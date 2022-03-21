@@ -16,7 +16,8 @@ import {
 import { useImmerReducer } from "use-immer";
 import AddProperty from "./add-property";
 import ClearIcon from "@material-ui/icons/Clear";
-import escapingInputs, { isJSONString } from "../../util/sanitize-inputs";
+import { isJSONString } from "../../util/util";
+import DOMPurify from "dompurify";
 
 interface IProps {
     onAddEntity(entity: object): void;
@@ -51,9 +52,9 @@ export default function AddEntity(props: IProps): ReactElement {
 
     function addEntitySubmit() {
         const entityToAdd: any = {};
-        entityToAdd[escapingInputs(state.entityName.value)] = {
-            description: escapingInputs(state.entityDescription.value),
-            vertex: escapingInputs(state.entityVertex.value),
+        entityToAdd[DOMPurify.sanitize(state.entityName.value)] = {
+            description: DOMPurify.sanitize(state.entityDescription.value),
+            vertex: DOMPurify.sanitize(state.entityVertex.value),
             properties: state.properties.properties,
         };
         onAddEntity(entityToAdd);
