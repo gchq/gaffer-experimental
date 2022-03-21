@@ -38,6 +38,7 @@ import { Copyright } from "../copyright/copyright";
 import SchemaBuilderDialog from "./schema-builder-dialog";
 import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 import DOMPurify from "dompurify";
+import { encode } from "html-entities";
 interface IState {
     graphId: string;
     graphIdIsValid: boolean;
@@ -157,15 +158,15 @@ export default class CreateGraph extends React.Component<{}, IState> {
         try {
             if (!this.currentStoreTypeIsFederated()) {
                 await new CreateStoreTypesGraphRepo().create(
-                    DOMPurify.sanitize(graphId),
-                    DOMPurify.sanitize(description),
+                    encode(DOMPurify.sanitize(graphId)),
+                    encode(DOMPurify.sanitize(description)),
                     storeType,
                     config
                 );
             } else {
                 await new CreateFederatedGraphRepo().create(
-                    DOMPurify.sanitize(graphId),
-                    DOMPurify.sanitize(description),
+                    encode(DOMPurify.sanitize(graphId)),
+                    encode(DOMPurify.sanitize(description)),
                     storeType,
                     config
                 );

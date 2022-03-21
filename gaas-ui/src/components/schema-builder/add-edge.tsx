@@ -19,6 +19,7 @@ import AddProperty from "./add-property";
 import AddGroupby from "./add-groupby";
 import { isJSONString } from "../../util/util";
 import DOMPurify from "dompurify";
+import { encode } from "html-entities";
 
 interface IProps {
     onAddEdge(edge: object): void;
@@ -69,11 +70,11 @@ export default function AddEdge(props: IProps): ReactElement {
 
     function addEdgeSubmit() {
         const edgeToAdd: any = {};
-        edgeToAdd[DOMPurify.sanitize(state.edgeName.value)] = {
-            description: DOMPurify.sanitize(state.edgeDescription.value),
-            source: DOMPurify.sanitize(state.edgeSource.value),
-            destination: DOMPurify.sanitize(state.edgeDestination.value),
-            directed: DOMPurify.sanitize(state.edgeDirected.value),
+        edgeToAdd[encode(DOMPurify.sanitize(state.edgeName.value))] = {
+            description: encode(DOMPurify.sanitize(state.edgeDescription.value)),
+            source: encode(DOMPurify.sanitize(state.edgeSource.value)),
+            destination: encode(DOMPurify.sanitize(state.edgeDestination.value)),
+            directed: encode(DOMPurify.sanitize(state.edgeDirected.value)),
         };
         if (Object.keys(state.properties.properties).length !== 0) {
             edgeToAdd[state.edgeName.value].properties = state.properties.properties;

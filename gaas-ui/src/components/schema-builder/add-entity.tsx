@@ -18,6 +18,7 @@ import AddProperty from "./add-property";
 import ClearIcon from "@material-ui/icons/Clear";
 import { isJSONString } from "../../util/util";
 import DOMPurify from "dompurify";
+import { encode } from "html-entities";
 
 interface IProps {
     onAddEntity(entity: object): void;
@@ -52,9 +53,9 @@ export default function AddEntity(props: IProps): ReactElement {
 
     function addEntitySubmit() {
         const entityToAdd: any = {};
-        entityToAdd[DOMPurify.sanitize(state.entityName.value)] = {
-            description: DOMPurify.sanitize(state.entityDescription.value),
-            vertex: DOMPurify.sanitize(state.entityVertex.value),
+        entityToAdd[encode(DOMPurify.sanitize(state.entityName.value))] = {
+            description: encode(DOMPurify.sanitize(state.entityDescription.value)),
+            vertex: encode(DOMPurify.sanitize(state.entityVertex.value)),
             properties: state.properties.properties,
         };
         onAddEntity(entityToAdd);
