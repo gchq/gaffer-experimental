@@ -7,7 +7,7 @@
 		<artifactId>gaffer-as-a-service</artifactId>
 		<version>${revision}</version>
 	</parent>
-	<artifactId>gaas-opneshift-sidecar</artifactId>
+	<artifactId>gaas-openshift-sidecar</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>gaas-sidecar</name>
 	<description>Demo project for Spring Boot</description>
