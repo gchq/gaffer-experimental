@@ -76,9 +76,9 @@ public class GraphController {
     @Value("${cognito.enabled: false}")
     boolean cognitoEnabled;
 //
-//    @Value("${openshift.enabled: false}")
-//    boolean openshiftEnabled;
-//
+    @Value("${openshift.enabled: false}")
+    boolean openshiftEnabled;
+
 //    @PostMapping("/auth")
 //    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
 //        if (!cognitoEnabled) {
@@ -133,15 +133,15 @@ public class GraphController {
     }
 
     public ResponseEntity getResponseEntity(final ResponseEntity responseEntity, final HttpHeaders headers) {
-        //if (openshiftEnabled) {
+        if (openshiftEnabled) {
             if (checkForXEmail(headers)) {
                 return responseEntity;
             } else {
                 return new ResponseEntity(HttpStatus.FORBIDDEN);
             }
-//        } else {
-//            return responseEntity;
-//        }
+        } else {
+            return responseEntity;
+        }
     }
 
     @GetMapping(path = "/whoami", produces = "application/json")
