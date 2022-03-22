@@ -1,8 +1,11 @@
-export function isJSONString(str) {
+export function isJSONObject(str) {
     try {
-        JSON.parse(str);
+        const jsonObject = JSON.parse(str);
+        if(jsonObject && typeof jsonObject === "object") {
+            return true
+        }
     } catch (e) {
         return false;
     }
-    return true;
+    return false;
 }

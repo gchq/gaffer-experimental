@@ -16,7 +16,7 @@ import {
 import { useImmerReducer } from "use-immer";
 import AddProperty from "./add-property";
 import ClearIcon from "@material-ui/icons/Clear";
-import { isJSONString } from "../../util/util";
+import { isJSONObject } from "../../util/util";
 import DOMPurify from "dompurify";
 import { encode } from "html-entities";
 
@@ -123,7 +123,7 @@ export default function AddEntity(props: IProps): ReactElement {
                 draft.properties.properties[Object.keys(action.value)[0]] = Object.values(action.value)[0];
                 return;
             case "handleUpdatePropertiesTextarea":
-                if (isJSONString(action.value) || action.value === "") {
+                if (isJSONObject(action.value) || action.value === "") {
                     draft.properties.textarea = action.value;
                     draft.properties.hasErrors = false;
                     return;

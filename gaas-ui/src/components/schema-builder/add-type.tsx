@@ -5,7 +5,7 @@ import AddAggregateFunction from "./add-aggregate-function";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddSerialiser from "./add-serialiser";
 import AddValidateFunctions from "./add-validate-functions";
-import { isJSONString } from "../../util/util";
+import { isJSONObject } from "../../util/util";
 import DOMPurify from "dompurify";
 import { encode } from "html-entities";
 
@@ -127,7 +127,7 @@ export default function AddType(props: IProps): ReactElement {
                 }
                 return;
             case "handleUpdateSerialiserTextarea":
-                if (isJSONString(action.value) || action.value === "") {
+                if (isJSONObject(action.value) || action.value === "") {
                     draft.serialiser.textarea = action.value;
                     draft.serialiser.hasErrors = false;
                     return;
@@ -137,7 +137,7 @@ export default function AddType(props: IProps): ReactElement {
                 return;
 
             case "handleUpdateAggregateFunctionTextarea":
-                if (isJSONString(action.value) || action.value === "") {
+                if (isJSONObject(action.value) || action.value === "") {
                     draft.aggregateFunction.textarea = action.value;
                     draft.aggregateFunction.hasErrors = false;
                     return;
@@ -147,7 +147,7 @@ export default function AddType(props: IProps): ReactElement {
                 return;
 
             case "handleUpdateValidateFunctionsTextarea":
-                if (isJSONString(action.value) || action.value === "") {
+                if (isJSONObject(action.value) || action.value === "") {
                     draft.validateFunctions.textarea = action.value;
                     draft.validateFunctions.hasErrors = false;
                     return;
