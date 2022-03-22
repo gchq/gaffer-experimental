@@ -95,14 +95,14 @@ public class GraphController {
         } else {
             createGraphService.createGraph(requestBody);
         }
-        return getResponseEntity(new ResponseEntity(HttpStatus.CREATED), headers);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("graphs", getGaffersService.getAllGraphs());
-        return getResponseEntity(new ResponseEntity(responseBody, HttpStatus.OK), headers);
+        return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
@@ -110,14 +110,14 @@ public class GraphController {
         final Map<String, Object> body = new HashMap<>();
         body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
 
-        return getResponseEntity(new ResponseEntity(body, HttpStatus.OK), headers);
+        return new ResponseEntity(body, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
 
         if (deleteGraphService.deleteGraph(graphId)) {
-            return getResponseEntity(new ResponseEntity(HttpStatus.NO_CONTENT), headers);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -125,23 +125,11 @@ public class GraphController {
     @GetMapping(path = "/namespaces", produces = "application/json")
     public ResponseEntity<?> getNamespaces(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final List<String> namespaces = getNamespacesService.getNamespaces();
-        return getResponseEntity(new ResponseEntity(namespaces, HttpStatus.OK), headers);
+        return new ResponseEntity(namespaces, HttpStatus.OK);
     }
 
     private Boolean checkForXEmail(final HttpHeaders headers) {
         return (headers.get("x-email") != null);
-    }
-
-    public ResponseEntity getResponseEntity(final ResponseEntity responseEntity, final HttpHeaders headers) {
-        if (openshiftEnabled) {
-            if (checkForXEmail(headers)) {
-                return responseEntity;
-            } else {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
-        } else {
-            return responseEntity;
-        }
     }
 
     @GetMapping(path = "/whoami", produces = "application/json")
