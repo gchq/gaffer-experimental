@@ -16,14 +16,16 @@
 
 package uk.gov.gchq.gaffer.sidecar;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import uk.gov.gchq.gaffer.sidecar.handlers.HelmValuesOverridesHandler;
 
 @Configuration
+//@EnableWebFlux
 public class AppConfig {
-    @Bean
-    public HelmValuesOverridesHandler helmValuesOverrides() {
-        return new HelmValuesOverridesHandler();
-    }
+//    @Bean
+//    public FilterRegistrationBean<CustomFilter> filterRegistrationBean(){
+//        FilterRegistrationBean<CustomFilter> registrationBean = new FilterRegistrationBean<>();
+//        registrationBean.setFilter(new CustomFilter());
+//        registrationBean.addUrlPatterns("/*");
+//        return registrationBean;
+//    }
 }
