@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//package uk.gov.gchq.gaffer.sidecar;
-//
-//import org.springframework.context.annotation.ComponentScan;
-//import org.springframework.context.annotation.Configuration;
-//
-//@Configuration
-//@ComponentScan("uk.gov.gchq.gaffer.sidecar.handlers")
-//@ComponentScan("uk.gov.gchq.gaffer.sidecar.controller")
-//public class SpringContext {
-//}
+package uk.gov.gchq.gaffer.sidecar;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan("uk.gov.gchq.gaffer.sidecar.handlers")
+@ComponentScan("uk.gov.gchq.gaffer.sidecar.controller")
+public class SpringContext {
+}
