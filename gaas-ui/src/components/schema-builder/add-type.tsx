@@ -5,6 +5,9 @@ import AddAggregateFunction from "./add-aggregate-function";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddSerialiser from "./add-serialiser";
 import AddValidateFunctions from "./add-validate-functions";
+import { isJSONObject } from "../../util/util";
+import DOMPurify from "dompurify";
+import { encode } from "html-entities";
 
 interface IProps {
     onAddType(type: object): void;
@@ -26,15 +29,24 @@ interface IState {
         hasErrors: boolean;
         message: string;
     };
-    aggregateFunction: {};
-    openAggregateFunction: boolean;
-    serialiser: {};
-    openSerialiser: boolean;
-    validateFunctions: [];
-    openValidateFunctions: boolean;
-    serialiserTextarea: string;
-    aggregateFunctionTextarea: string;
-    validateFunctionsTextarea: string;
+    aggregateFunction: {
+        aggregateFunction: {};
+        open: boolean;
+        textarea: string;
+        hasErrors: boolean;
+    };
+    serialiser: {
+        serialiser: {};
+        open: boolean;
+        textarea: string;
+        hasErrors: boolean;
+    };
+    validateFunctions: {
+        validateFunctions: [];
+        open: boolean;
+        textarea: string;
+        hasErrors: boolean;
+    };
 }
 
 export default function AddType(props: IProps): ReactElement {
@@ -58,15 +70,24 @@ export default function AddType(props: IProps): ReactElement {
             hasErrors: false,
             message: "",
         },
-        aggregateFunction: {},
-        openAggregateFunction: false,
-        serialiser: {},
-        openSerialiser: false,
-        validateFunctions: [],
-        openValidateFunctions: false,
-        serialiserTextarea: "",
-        aggregateFunctionTextarea: "",
-        validateFunctionsTextarea: "",
+        aggregateFunction: {
+            aggregateFunction: {},
+            open: false,
+            textarea: "",
+            hasErrors: false,
+        },
+        serialiser: {
+            serialiser: {},
+            open: false,
+            textarea: "",
+            hasErrors: false,
+        },
+        validateFunctions: {
+            validateFunctions: [],
+            open: false,
+            textarea: "",
+            hasErrors: false,
+        },
     };
 
     function addTypeReducer(draft: any, action: any) {
@@ -106,31 +127,52 @@ export default function AddType(props: IProps): ReactElement {
                 }
                 return;
             case "handleUpdateSerialiserTextarea":
-                draft.serialiserTextarea = action.value;
+                if (isJSONObject(action.value) || action.value === "") {
+                    draft.serialiser.textarea = action.value;
+                    draft.serialiser.hasErrors = false;
+                    return;
+                }
+                draft.serialiser.textarea = action.value;
+                draft.serialiser.hasErrors = true;
                 return;
+
             case "handleUpdateAggregateFunctionTextarea":
-                draft.aggregateFunctionTextarea = action.value;
+                if (isJSONObject(action.value) || action.value === "") {
+                    draft.aggregateFunction.textarea = action.value;
+                    draft.aggregateFunction.hasErrors = false;
+                    return;
+                }
+                draft.aggregateFunction.textarea = action.value;
+                draft.aggregateFunction.hasErrors = true;
                 return;
+
             case "handleUpdateValidateFunctionsTextarea":
-                draft.validateFunctionsTextarea = action.value;
+                if (isJSONObject(action.value) || action.value === "") {
+                    draft.validateFunctions.textarea = action.value;
+                    draft.validateFunctions.hasErrors = false;
+                    return;
+                }
+                draft.validateFunctions.hasErrors = true;
+                draft.validateFunctions.textarea = action.value;
                 return;
             case "handleClickCloseAggregateFunction":
-                draft.openAggregateFunction = action.value;
+                draft.aggregateFunction.open = action.value;
                 return;
             case "handleUpdateAggregateFunction":
-                draft.aggregateFunction = action.value;
+                draft.aggregateFunction.aggregateFunction = action.value;
                 return;
             case "handleClickCloseSerialiser":
-                draft.openSerialiser = action.value;
+                draft.serialiser.open = action.value;
                 return;
             case "handleUpdateSerialiser":
-                draft.serialiser = action.value;
+                draft.serialiser.serialiser = action.value;
                 return;
             case "handleClickCloseValidateFunctions":
-                draft.openValidateFunctions = action.value;
+                draft.validateFunctions.open = action.value;
                 return;
             case "handleUpdateValidateFunctions":
-                draft.validateFunctions[draft.validateFunctions.length] = action.value;
+                draft.validateFunctions.validateFunctions[draft.validateFunctions.validateFunctions.length] =
+                    action.value;
                 return;
         }
     }
@@ -150,18 +192,18 @@ export default function AddType(props: IProps): ReactElement {
 
     function addTypeSubmit() {
         const typeToAdd: any = {};
-        typeToAdd[state.typeName.value] = {
-            description: state.typeDescription.value,
-            class: state.typeClass.value,
+        typeToAdd[encode(DOMPurify.sanitize(state.typeName.value))] = {
+            description: encode(DOMPurify.sanitize(state.typeDescription.value)),
+            class: encode(DOMPurify.sanitize(state.typeClass.value)),
         };
-        if (Object.keys(state.aggregateFunction).length !== 0) {
-            typeToAdd[state.typeName.value].aggregateFunction = state.aggregateFunction;
+        if (Object.keys(state.aggregateFunction.aggregateFunction).length !== 0) {
+            typeToAdd[state.typeName.value].aggregateFunction = state.aggregateFunction.aggregateFunction;
         }
-        if (Object.keys(state.serialiser).length !== 0) {
-            typeToAdd[state.typeName.value].serialiser = state.serialiser;
+        if (Object.keys(state.serialiser.serialiser).length !== 0) {
+            typeToAdd[state.typeName.value].serialiser = state.serialiser.serialiser;
         }
-        if (state.validateFunctions.length !== 0) {
-            typeToAdd[state.typeName.value].validateFunctions = state.validateFunctions;
+        if (state.validateFunctions.validateFunctions.length !== 0) {
+            typeToAdd[state.typeName.value].validateFunctions = state.validateFunctions.validateFunctions;
         }
         onAddType(typeToAdd);
         dispatch({ type: "reset" });
@@ -259,7 +301,7 @@ export default function AddType(props: IProps): ReactElement {
                     <Dialog
                         fullWidth
                         maxWidth="xs"
-                        open={state.openAggregateFunction}
+                        open={state.aggregateFunction.open}
                         onClose={closeAggregateFunction}
                         id={"add-aggregate-function-dialog"}
                         aria-labelledby="add-aggregate-function-dialog"
@@ -297,7 +339,9 @@ export default function AddType(props: IProps): ReactElement {
                             "aria-label": "type-aggregate-function-input",
                         }}
                         fullWidth
-                        value={state.aggregateFunctionTextarea}
+                        value={state.aggregateFunction.textarea}
+                        error={state.aggregateFunction.hasErrors}
+                        helperText={state.aggregateFunction.hasErrors ? "Invalid JSON" : ""}
                         name={"type-aggregate-function"}
                         label={"Aggregate Function"}
                         multiline
@@ -320,7 +364,7 @@ export default function AddType(props: IProps): ReactElement {
                     <Dialog
                         fullWidth
                         maxWidth="xs"
-                        open={state.openSerialiser}
+                        open={state.serialiser.open}
                         onClose={closeSerialiser}
                         id={"add-serialiser-dialog"}
                         aria-labelledby="add-serialiser-dialog"
@@ -356,8 +400,10 @@ export default function AddType(props: IProps): ReactElement {
                             "aria-label": "type-serialiser-input",
                         }}
                         fullWidth
-                        value={state.serialiserTextarea}
+                        value={state.serialiser.textarea}
                         name={"type-serialiser-textfield"}
+                        error={state.serialiser.hasErrors}
+                        helperText={state.serialiser.hasErrors ? "Invalid JSON" : ""}
                         label={"Serialiser"}
                         multiline
                         rows={5}
@@ -379,7 +425,7 @@ export default function AddType(props: IProps): ReactElement {
                     <Dialog
                         fullWidth
                         maxWidth="xs"
-                        open={state.openValidateFunctions}
+                        open={state.validateFunctions.open}
                         onClose={closeValidateFunctions}
                         id={"add-validate-functions-dialog"}
                         aria-labelledby="add-validate-functions-dialog"
@@ -400,7 +446,7 @@ export default function AddType(props: IProps): ReactElement {
                                 onAddValidateFunctions={(validateFunctions) => {
                                     dispatch({
                                         type: "handleUpdateValidateFunctionsTextarea",
-                                        value: state.validateFunctionsTextarea + JSON.stringify(validateFunctions),
+                                        value: state.validateFunctions.textarea + JSON.stringify(validateFunctions),
                                     });
                                     dispatch({
                                         type: "handleUpdateValidateFunctions",
@@ -420,7 +466,9 @@ export default function AddType(props: IProps): ReactElement {
                             "aria-label": "type-validate-functions-input",
                         }}
                         fullWidth
-                        value={state.validateFunctionsTextarea}
+                        value={state.validateFunctions.textarea}
+                        error={state.validateFunctions.hasErrors}
+                        helperText={state.validateFunctions.hasErrors ? "Invalid JSON" : ""}
                         name={"type-validate-functions-textfield"}
                         label={"Validate Functions"}
                         multiline
