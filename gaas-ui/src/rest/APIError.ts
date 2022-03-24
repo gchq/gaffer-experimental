@@ -1,4 +1,4 @@
-export class RestApiError {
+export class APIError {
     private detail;
     private title;
     constructor(title: string, detail: string) {

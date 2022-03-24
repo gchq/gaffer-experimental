@@ -2,7 +2,7 @@ import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import ClusterNamespaces from "../../../src/components/cluster-namespaces/cluster-namespaces";
 import { GetAllNamespacesRepo } from "../../../src/rest/repositories/get-all-namespaces-repo";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import { APIError } from "../../../src/rest/APIError";
 
 jest.mock("../../../src/rest/repositories/get-all-namespaces-repo");
 afterEach(() => jest.resetAllMocks());
@@ -30,7 +30,7 @@ describe("When ViewGraphs mounts", () => {
     });
     it("should display Error Message in AlertNotification when GetGraphs request fails", () => {
         mockGetNamespacesThrowsErrors(() => {
-            throw new RestApiError("Client Error", "404 Not Found");
+            throw new APIError("Client Error", "404 Not Found");
         });
 
         const component = mount(<ClusterNamespaces />);
@@ -66,7 +66,7 @@ describe("Refresh Button", () => {
     });
     it("should reset an existing error message when refresh button is clicked", async () => {
         mockGetNamespacesThrowsErrors(() => {
-            throw new RestApiError("Server Error", "Timeout exception");
+            throw new APIError("Server Error", "Timeout exception");
         });
 
         const component = mount(<ClusterNamespaces />);

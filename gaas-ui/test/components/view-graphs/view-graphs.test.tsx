@@ -4,7 +4,7 @@ import ViewGraph from "../../../src/components/view-graphs/view-graphs";
 import { GetAllGraphsRepo } from "../../../src/rest/repositories/get-all-graphs-repo";
 import { Graph } from "../../../src/domain/graph";
 import { DeleteGraphRepo } from "../../../src/rest/repositories/delete-graph-repo";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import { APIError } from "../../../src/rest/APIError";
 import { GraphType } from "../../../src/domain/graph-type";
 import { GetStoreTypesRepo, IStoreTypes } from "../../../src/rest/repositories/get-store-types-repo";
 import { GetAllGraphIdsRepo } from "../../../src/rest/repositories/gaffer/get-all-graph-ids-repo";
@@ -49,7 +49,7 @@ describe("When ViewGraphs mounts", () => {
     });
     it("should display Error Message in AlertNotification when GetGraphs request fails", () => {
         mockGetAllGraphsThrowsError(() => {
-            throw new RestApiError("Client Error", "404 Not Found");
+            throw new APIError("Client Error", "404 Not Found");
         });
 
         const component = mount(<ViewGraph />);
@@ -143,7 +143,7 @@ describe("Refresh Button", () => {
     });
     it("should reset an existing error message when refresh button is clicked", async () => {
         mockGetAllGraphsThrowsError(() => {
-            throw new RestApiError("Server Error", "Timeout exception");
+            throw new APIError("Server Error", "Timeout exception");
         });
 
         const component = mount(<ViewGraph />);
@@ -284,7 +284,7 @@ describe("Delete Button", () => {
     });
     it("should notify error and not refresh graphs when delete request returns server error", async () => {
         mockDeleteGraphRepoToThrowError(() => {
-            throw new RestApiError("Server Error", "Timeout exception");
+            throw new APIError("Server Error", "Timeout exception");
         });
         mockGetGraphsToReturn([
             new Graph("bananas", "INACTIVE", "bananas URL", "bananas URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
@@ -394,7 +394,7 @@ describe("Integration with GetAllGraphIds repo", () => {
     it("should display an error if GetAllGraphIds throws an error when called", async () => {
         await act(async () => {
             mockGetAllGraphIdsRepoThrowsError(() => {
-                throw new RestApiError("Server Error", "Timeout exception");
+                throw new APIError("Server Error", "Timeout exception");
             });
         });
         mockGetStoreTypesRepoToReturn({
@@ -463,7 +463,7 @@ describe("Integration with GetStoreTypes Repo", () => {
     afterEach(() => component.unmount());
     it("should display a notification when GetStoreTypes throws an error", async () => {
         await mockGetStoreTypesRepoToThrow(() => {
-            throw new RestApiError("Server Error", "Timeout exception");
+            throw new APIError("Server Error", "Timeout exception");
         });
         await mockGetGraphsToReturn([
             new Graph(

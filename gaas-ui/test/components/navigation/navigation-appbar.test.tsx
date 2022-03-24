@@ -6,12 +6,12 @@ import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { Config } from "../../../src/rest/config";
 import { act } from "@testing-library/react";
 import {OpenshiftClient} from "../../../src/rest/clients/openshift-client";
-import {RestApiError} from "../../../src/rest/RestApiError";
+import {APIError} from "../../../src/rest/APIError";
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
-jest.mock("../../../src/rest/clients/openshift-client.ts");
+jest.mock("../../../src/rest/clients/openshift-client.test.ts");
 
 let component: ReactWrapper;
 const mock = new MockAdapter(axios);
@@ -91,7 +91,7 @@ describe("Navigation Appbar Component", () => {
         });
         it("Should display an error when getting the email has failed", async () => {
             mockOpenshiftClientToThrow(() => {
-                throw new RestApiError("Server Error", "Timeout exception");
+                throw new APIError("Server Error", "Timeout exception");
             });
             await act(async () => {
                 component = mount(
