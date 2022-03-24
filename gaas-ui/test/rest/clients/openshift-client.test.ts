@@ -7,15 +7,10 @@ const mock = new MockAdapter(axios);
 describe("RestClient whoami responses", () => {
     afterAll(() => mock.resetHandlers());
     it("should return a 200 status and response when GET is successful", async () => {
-        mock.onGet("/whoami").reply(200, { "x-email": "test@test.com" });
+        mock.onGet("/whoami").reply(200, "test@test.com" );
         const actual = await new OpenshiftClient().getWhoAmI();
 
-        expect(actual).toEqual({
-            status: 200,
-            data: {
-                "x-email": "test@test.com",
-            },
-        });
+        expect(actual).toEqual("test@test.com");
     });
     it("should throw 404 Error Message when api returns 404", async () => {
         mock.onGet("/whoami").reply(404, {

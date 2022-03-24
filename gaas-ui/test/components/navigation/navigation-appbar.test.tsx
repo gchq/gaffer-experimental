@@ -11,7 +11,7 @@ import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
-jest.mock("../../../src/rest/clients/openshift-client.test.ts");
+jest.mock("../../../src/rest/clients/openshift-client");
 
 let component: ReactWrapper;
 const mock = new MockAdapter(axios);
