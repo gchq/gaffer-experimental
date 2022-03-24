@@ -23,7 +23,7 @@ import LoginModal from "../login/login-modal";
 import { NavLink } from "react-router-dom";
 import { Config } from "../../rest/config";
 import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
-import {OpenshiftClient} from "../../rest/clients/openshift-client";
+import { OpenshiftClient } from "../../rest/clients/openshift-client";
 
 const drawerWidth = 240;
 

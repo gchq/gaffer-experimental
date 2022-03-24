@@ -1,6 +1,6 @@
-import {IApiResponse, RestClient} from "./rest-client";
-import {Config} from "../config";
-import axios, {AxiosError} from "axios";
+import { IApiResponse, RestClient } from "./rest-client";
+import { Config } from "../config";
+import axios, { AxiosError } from "axios";
 
 export class OpenshiftClient {
     public async getWhoAmI(): Promise<string> {
@@ -16,13 +16,9 @@ export class OpenshiftClient {
             const email = response.data;
             RestClient.setEmail(email);
             return email;
-
-
-            }
-            catch (e){
+        } catch (e) {
             const error = e as AxiosError<any>;
             throw RestClient.fromError(error);
         }
-
     }
 }
