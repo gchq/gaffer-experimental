@@ -16,7 +16,6 @@
 //
 package uk.gov.gchq.gaffer.sidecar.services;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,18 +32,17 @@ import uk.gov.gchq.gaffer.sidecar.exception.GaaSRestApiException;
 public class AuthService {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private JwtUserDetailsService userDetailsService;
 
+
     public String getToken(final JwtRequest authenticationRequest) throws GaaSRestApiException {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-        } catch (AuthenticationException e) {
-            throw new GaaSRestApiException(e.getClass().getSimpleName(), e.getMessage(), 401);
-        }
+//        try {
+//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+//        } catch (AuthenticationException e) {
+//            throw new GaaSRestApiException(e.getClass().getSimpleName(), e.getMessage(), 401);
+//        }
 
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
@@ -52,11 +50,11 @@ public class AuthService {
     }
 
     public String getOwnerName(final JwtRequest authenticationRequest) throws GaaSRestApiException {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-        } catch (AuthenticationException e) {
-            throw new GaaSRestApiException(e.getClass().getSimpleName(), e.getMessage(), 401);
-        }
+//        try {
+//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+//        } catch (AuthenticationException e) {
+//            throw new GaaSRestApiException(e.getClass().getSimpleName(), e.getMessage(), 401);
+//        }
 
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());

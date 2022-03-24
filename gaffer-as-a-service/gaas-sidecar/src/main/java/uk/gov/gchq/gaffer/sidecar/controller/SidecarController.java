@@ -74,10 +74,7 @@ public class SidecarController {
 
     @GetMapping(path = "/whoami", produces = "application/json")
     ResponseEntity<String> whoami(@RequestHeader("x-email") final String email) {
-        if (addCreatorLabel(email)) {
-            return new ResponseEntity<String>(email, HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Validation error: Email must consist of alphanumeric characters or '-', '_' and '.' ", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok("Hello");
     }
 
     private boolean addCreatorLabel(final String email) {
