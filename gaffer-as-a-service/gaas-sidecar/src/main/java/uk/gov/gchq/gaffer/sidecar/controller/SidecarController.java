@@ -24,9 +24,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.gchq.gaffer.sidecar.auth.JwtRequest;
 import uk.gov.gchq.gaffer.sidecar.handlers.HelmValuesOverridesHandler;
+import uk.gov.gchq.gaffer.sidecar.services.AuthService;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,12 +42,19 @@ public class SidecarController {
 
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
+    @Autowired
+    private AuthService authService;
 
 //    @Value("${cognito.enabled: false}")
 //    boolean cognitoEnabled;
 
-//    @Value("${openshift.enabled: false}")
+    //    @Value("${openshift.enabled: false}")
 //    boolean openshiftEnabled;
+    @PostMapping("/auth")
+    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
+        final String token = authService.getToken(authenticationRequest);
+        return ResponseEntity.ok(token);
+    }
 
     private Boolean checkForXEmail(final HttpHeaders headers) {
         return (headers.get("x-email") != null);
@@ -50,11 +62,11 @@ public class SidecarController {
 
     public ResponseEntity getResponseEntity(final ResponseEntity responseEntity, final HttpHeaders headers) {
         //if (openshiftEnabled) {
-            if (checkForXEmail(headers)) {
-                return responseEntity;
-            } else {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
+        if (checkForXEmail(headers)) {
+            return responseEntity;
+        } else {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
 //        } else {
 //            return responseEntity;
 //        }

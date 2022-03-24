@@ -30,7 +30,6 @@ import uk.gov.gchq.gaffer.sidecar.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.sidecar.exception.GaaSRestApiException;
 
 @Service
-@ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "jwt")
 public class AuthService {
 
     @Autowired

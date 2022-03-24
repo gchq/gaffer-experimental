@@ -18,7 +18,6 @@ package uk.gov.gchq.gaffer.sidecar.auth;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import java.io.Serializable;
 
-@ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "jwt")
 public class JwtRequest implements Serializable {
 
     private static final long serialVersionUID = 5926468583005150707L;
