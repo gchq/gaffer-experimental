@@ -22,8 +22,8 @@ import CategoryIcon from "@material-ui/icons/Category";
 import LoginModal from "../login/login-modal";
 import { NavLink } from "react-router-dom";
 import { Config } from "../../rest/config";
-import { GetWhoAmIRepo } from "../../rest/repositories/get-whoami-repo";
 import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import {OpenshiftClient} from "../../rest/clients/openshift-client";
 
 const drawerWidth = 240;
 
@@ -116,7 +116,7 @@ const NavigationAppbar: React.FC = (props: any) => {
     };
     const getUserEmail = async () => {
         try {
-            const email = await new GetWhoAmIRepo().getWhoAmI();
+            const email = await new OpenshiftClient().getWhoAmI();
             setUserEmail(email);
         } catch (e) {
             setErrorMessage(

@@ -110,11 +110,6 @@ export class RestClient<T> {
             restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
         },
-        whoAmI: () => {
-            restClient.url = "/whoami";
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
-            return restClient.executeSpec(restClient);
-        },
     });
 
     private executeSpec = (restClient: RestClient<any>) => ({
