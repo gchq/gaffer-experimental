@@ -43,7 +43,7 @@ public class SidecarController {
             final String token = authService.getToken(authenticationRequest);
             return ResponseEntity.ok(token);
         } catch (Exception e) {
-            return ResponseEntity.status(400).body("Invalid credentials");
+            return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
 
