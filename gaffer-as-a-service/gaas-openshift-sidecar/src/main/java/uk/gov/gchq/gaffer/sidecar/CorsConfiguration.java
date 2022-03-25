@@ -40,10 +40,10 @@ public class CorsConfiguration {
 
     @Bean
     public WebFilter corsFilter() {
-        return (ServerWebExchange ctx, WebFilterChain chain) -> {
-            ServerHttpRequest request = ctx.getRequest();
+        return (ServerWebExchange exchange, WebFilterChain chain) -> {
+            ServerHttpRequest request = exchange.getRequest();
             if (CorsUtils.isCorsRequest(request)) {
-                ServerHttpResponse response = ctx.getResponse();
+                ServerHttpResponse response = exchange.getResponse();
                 HttpHeaders headers = response.getHeaders();
                 headers.add("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
                 headers.add("Access-Control-Allow-Methods", ALLOWED_METHODS);
@@ -54,7 +54,7 @@ public class CorsConfiguration {
                     return Mono.empty();
                 }
             }
-            return chain.filter(ctx);
+            return chain.filter(exchange);
         };
     }
 
