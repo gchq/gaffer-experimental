@@ -39,8 +39,12 @@ public class SidecarController {
 
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-        final String token = authService.getToken(authenticationRequest);
-        return ResponseEntity.ok(token);
+        try {
+            final String token = authService.getToken(authenticationRequest);
+            return ResponseEntity.ok(token);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Invalid credentials");
+        }
     }
 
 }
