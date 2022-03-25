@@ -16,7 +16,6 @@
 //
 package uk.gov.gchq.gaffer.sidecar.auth;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
