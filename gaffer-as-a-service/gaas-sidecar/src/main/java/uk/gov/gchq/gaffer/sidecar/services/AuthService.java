@@ -44,6 +44,7 @@ public class AuthService {
 //            throw new GaaSRestApiException(e.getClass().getSimpleName(), e.getMessage(), 401);
 //        }
 
+
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
         return jwtTokenUtil.generateToken(userDetails);
