@@ -80,7 +80,6 @@ export class RestClient<T> {
         graphs: (pathVariable?: string) => {
             const _pathVariable = pathVariable ? `/${pathVariable}` : "";
             restClient.url = `/graphs${_pathVariable}`;
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
         },
         status: () => {
@@ -97,7 +96,6 @@ export class RestClient<T> {
         },
         namespaces: () => {
             restClient.url = "/namespaces";
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
         },
         authentication: (pathVariable?: string) => {
@@ -107,7 +105,7 @@ export class RestClient<T> {
         },
         storeTypes: () => {
             restClient.url = "/storetypes";
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            // restClient.headers = { "x-email": "test@test.com" };
             return restClient.executeSpec(restClient);
         },
     });
@@ -126,6 +124,7 @@ export class RestClient<T> {
                         withCredentials: true,
                     });
                 } else {
+                    restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
                     response = await axios({
                         baseURL: restClient.baseURL,
                         url: restClient.url,

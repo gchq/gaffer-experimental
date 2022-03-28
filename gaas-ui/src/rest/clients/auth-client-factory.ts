@@ -11,9 +11,6 @@ export class AuthClientFactory {
             case "AWS": {
                 return new CognitoIdentityClient();
             }
-            case "OPENSHIFT": {
-                return new AuthApiClient();
-            }
             default: {
                 return new AuthApiClient();
             }
