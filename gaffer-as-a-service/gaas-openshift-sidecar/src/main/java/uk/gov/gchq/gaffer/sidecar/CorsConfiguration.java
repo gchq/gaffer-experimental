@@ -47,7 +47,7 @@ public class CorsConfiguration {
                 HttpHeaders headers = response.getHeaders();
                 headers.add("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
                 headers.add("Access-Control-Allow-Methods", ALLOWED_METHODS);
-                headers.add("Access-Control-Allow-Headers",ALLOWED_HEADERS);
+                headers.add("Access-Control-Allow-Headers", ALLOWED_HEADERS);
                 if (request.getMethod() == HttpMethod.OPTIONS) {
                     response.setStatusCode(HttpStatus.OK);
                     return Mono.empty();

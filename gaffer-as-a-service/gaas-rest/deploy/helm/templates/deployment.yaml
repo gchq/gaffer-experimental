@@ -42,13 +42,13 @@ spec:
               limits:
                 memory: "1Gi"
                 cpu: "1000m"
-          - image: dockerhub/gs-sc-img
+          - image: rocky341/gs-os
             imagePullPolicy: Always
             name: gs-sc-mg
             ports:
                - containerPort: 8081
                  protocol: TCP
-          - image: dockerhub/gs-eureka-img
+          - image: go159lab/gs-eureka-img
             imagePullPolicy: Always
             name: eureka-image
             ports:
