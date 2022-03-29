@@ -16,12 +16,13 @@ We need Eureka to be able to use GaaS-Rest and the Authentication sidecar togeth
 To access the Eureka Dashboard when running locally visit `http://localhost:8761/dashboard`
 
 ### Running everything locally
-• Start of by deciding which sidecar you'd like to use, for local use, JWT is the best option.
-• Run the following, order doesnt matter as long as all 3 are eventually running:
-  • Gaas-Rest
-  • Eureka Server
-  • Your chosen side car
-• In GaaS-UI set the ENV variables in the `.env` file. For example, when running everything using JWT authentication, the env variables are set to the image shown below:
+
+* Start of by deciding which sidecar you'd like to use, for local use, JWT is the best option.
+* Run the following, order doesnt matter as long as all 3 are eventually running:
+  * Gaas-Rest
+  * Eureka Server
+  * Your chosen side car
+* In GaaS-UI set the ENV variables in the `.env` file. For example, when running everything using JWT authentication, the env variables are set to the image shown below:
 ![image](https://user-images.githubusercontent.com/60354187/160592401-e0127719-56cb-4353-b3e9-f100f75a850c.png)
-• Run the GaaS-UI
-• You should be able to login to the demo app by using the username: `javainuse` and password: `password`.
+* Run the GaaS-UI
+* You should be able to login to the demo app by using the username: `javainuse` and password: `password`.
