@@ -8,7 +8,8 @@ The report can be found at `./gaffer-as-a-service/target/dependency-check-report
 ## gaffer-as-a-service and Authentication using Sidecars
 The authentication for GaaS-UI and GaaS Rest now follows the sidecar design pattern. The diagram below illustartes this.
 To put it simply, the authentication functionality is seperated from GaaS-Rest and works as a microservice.
-<img width="903" alt="Screenshot 2022-03-29 at 10 55 58 am" src="https://user-images.githubusercontent.com/60354187/160585824-c4ebbd80-8b16-4ed2-abf8-5c6373c1a12c.png">
+<img width="906" alt="Screenshot 2022-03-29 at 11 40 34 am" src="https://user-images.githubusercontent.com/60354187/160594023-61b84bf9-0738-41a8-9d15-f62520230384.png">
+
 
 ### What is Eureka?
 [Eureka Server](https://cloud.spring.io/spring-cloud-netflix/multi/multi_spring-cloud-eureka-server.html) is a service discovery application that registers microservices, holding information about ports and IP addresses.
