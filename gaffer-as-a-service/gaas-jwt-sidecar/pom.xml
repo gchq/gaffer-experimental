@@ -7,10 +7,10 @@
         <artifactId>gaffer-as-a-service</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>gaas-sidecar</artifactId>
+    <artifactId>gaas-jwt-sidecar</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>gaas-sidecar</name>
-    <description>Demo project for Spring Boot</description>
+    <name>gaas-jwt-sidecar</name>
+    <description>GaaS JWT Sidecar</description>
 
     <properties>
         <java.version>1.8</java.version>
