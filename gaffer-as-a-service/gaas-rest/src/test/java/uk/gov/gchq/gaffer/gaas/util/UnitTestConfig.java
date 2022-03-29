@@ -126,10 +126,6 @@ public class UnitTestConfig {
         return new GafferSpecConfigsLoader();
     }
 
-    @Bean
-    KubernetesClient kubernetesClient() {
-        return mock(KubernetesClient.class);
-    }
 
     @Bean
     public DeploymentHandler deploymentHandler() {

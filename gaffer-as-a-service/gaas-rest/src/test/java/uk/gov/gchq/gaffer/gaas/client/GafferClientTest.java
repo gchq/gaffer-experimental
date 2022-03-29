@@ -17,12 +17,15 @@
 package uk.gov.gchq.gaffer.gaas.client;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Namespace;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -45,8 +48,13 @@ import static uk.gov.gchq.gaffer.gaas.util.ApiExceptionTestFactory.makeApiExcept
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_API_PATH_KEY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 
+
 @UnitTest
 class GafferClientTest {
+    @Rule
+    public KubernetesServer server = new KubernetesServer(true, true);
+
+    KubernetesClient kubernetesClient = server.getClient();
 
     @Autowired
     private GafferClient gafferClient;
@@ -57,8 +65,6 @@ class GafferClientTest {
     @MockBean
     private DeploymentHandler deploymentHandler;
 
-    @MockBean
-    KubernetesClient kubernetesClient;
 
 
     @Test
