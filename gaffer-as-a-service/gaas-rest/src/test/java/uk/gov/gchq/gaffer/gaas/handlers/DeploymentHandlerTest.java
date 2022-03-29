@@ -68,10 +68,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_SERVICE_ACCOUNT_NAME
 
 @UnitTest
 class DeploymentHandlerTest {
-    @Rule
-    public KubernetesServer server = new KubernetesServer(true, true);
-
-    KubernetesClient kubernetesClient = server.getClient();
+    KubernetesClient kubernetesClient;
 
     private Environment environment;
 

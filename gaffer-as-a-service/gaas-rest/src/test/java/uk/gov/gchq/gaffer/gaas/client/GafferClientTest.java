@@ -51,10 +51,8 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 
 @UnitTest
 class GafferClientTest {
-    @Rule
-    public KubernetesServer server = new KubernetesServer(true, true);
 
-    KubernetesClient kubernetesClient = server.getClient();
+    KubernetesClient kubernetesClient;
 
     @Autowired
     private GafferClient gafferClient;

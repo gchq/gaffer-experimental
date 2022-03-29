@@ -17,6 +17,7 @@
 package uk.gov.gchq.gaffer.gaas.util;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
@@ -36,6 +37,7 @@ import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
+@EnableKubernetesMockClient
 public class UnitTestConfig {
 
     @Bean
