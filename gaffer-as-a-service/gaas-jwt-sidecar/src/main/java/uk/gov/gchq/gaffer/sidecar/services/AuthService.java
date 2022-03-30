@@ -37,26 +37,13 @@ public class AuthService {
     private JwtUserDetailsService userDetailsService;
 
 
-    public String getToken(final JwtRequest authenticationRequest) throws GaaSRestApiException {
-//        try {
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-//        } catch (AuthenticationException e) {
-//            throw new GaaSRestApiException(e.getClass().getSimpleName(), e.getMessage(), 401);
-//        }
-
-
+    public String getToken(final JwtRequest authenticationRequest) {
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
         return jwtTokenUtil.generateToken(userDetails);
     }
 
-    public String getOwnerName(final JwtRequest authenticationRequest) throws GaaSRestApiException {
-//        try {
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-//        } catch (AuthenticationException e) {
-//            throw new GaaSRestApiException(e.getClass().getSimpleName(), e.getMessage(), 401);
-//        }
-
+    public String getOwnerName(final JwtRequest authenticationRequest)  {
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
         return userDetails.getUsername();

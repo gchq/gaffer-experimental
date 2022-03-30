@@ -19,6 +19,8 @@ package uk.gov.gchq.gaffer.sidecar.util;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import uk.gov.gchq.gaffer.sidecar.auth.JwtTokenUtil;
+import uk.gov.gchq.gaffer.sidecar.auth.JwtUserDetailsService;
+import uk.gov.gchq.gaffer.sidecar.services.AuthService;
 
 @TestConfiguration
 public class UnitTestConfig {
@@ -28,16 +30,14 @@ public class UnitTestConfig {
     public JwtTokenUtil jwtTokenUtil() {
         return new JwtTokenUtil();
     }
-//
-//    @Bean
-//    public JwtUserDetailsService jwtUserDetailsService() {
-//        return new JwtUserDetailsService();
-    // }
 
-//
-//    @Bean
-//    public AuthenticationManager authenticationManager() {
-//        return mock(AuthenticationManager.class);
-//    }
+    @Bean
+    public AuthService authService() {
+        return new AuthService();
+    }
 
+    @Bean
+    public JwtUserDetailsService jwtUserDetailsService() {
+        return new JwtUserDetailsService();
+    }
 }
