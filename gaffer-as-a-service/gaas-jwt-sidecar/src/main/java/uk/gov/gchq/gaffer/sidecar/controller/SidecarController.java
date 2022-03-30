@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.sidecar.auth.JwtRequest;
-import uk.gov.gchq.gaffer.sidecar.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.sidecar.services.AuthService;
 
 @Component
@@ -32,8 +31,6 @@ import uk.gov.gchq.gaffer.sidecar.services.AuthService;
 @RestController
 public class SidecarController {
 
-    @Autowired
-    private HelmValuesOverridesHandler helmValuesOverridesHandler;
     @Autowired
     private AuthService authService;
 
