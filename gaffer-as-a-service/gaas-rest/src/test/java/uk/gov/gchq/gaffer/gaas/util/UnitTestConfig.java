@@ -37,7 +37,6 @@ import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
-@EnableKubernetesMockClient
 public class UnitTestConfig {
 
     @Bean
@@ -137,5 +136,10 @@ public class UnitTestConfig {
     @Bean
     public DeleteGraphService deleteGraphService() {
         return mock(DeleteGraphService.class);
+    }
+
+    @Bean
+    public KubernetesClient kubernetesClient(){
+        return mock(KubernetesClient.class);
     }
 }

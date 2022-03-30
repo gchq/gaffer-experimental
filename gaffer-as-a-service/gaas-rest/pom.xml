@@ -14,7 +14,6 @@
     <description>Gaffer as a Service REST API</description>
 
     <properties>
-        <springfox.version>3.0.0</springfox.version>
         <gson.version>2.8.5</gson.version>
         <io.jsonwebtoken.version>0.9.1</io.jsonwebtoken.version>
         <buildType>buildTar</buildType>
@@ -22,7 +21,7 @@
         <userName>gchq</userName>
         <maven.build.timestamp.format>yyyy-MM-dd.HH-mm-ss</maven.build.timestamp.format>
         <imageName>${project.artifactId}-${project.version}-${maven.build.timestamp}</imageName>
-        <spring-cloud.version>2020.0.5</spring-cloud.version>
+        <spring-cloud.version>2021.0.1</spring-cloud.version>
     </properties>
 
     <dependencyManagement>
@@ -34,11 +33,6 @@
                 <version>${springboot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${springfox.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -135,16 +129,6 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
             <version>1.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${springfox.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${springfox.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

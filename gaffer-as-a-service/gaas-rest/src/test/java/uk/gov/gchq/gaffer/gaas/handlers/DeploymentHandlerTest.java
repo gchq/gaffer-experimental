@@ -67,7 +67,9 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
 @UnitTest
+@EnableKubernetesMockClient
 class DeploymentHandlerTest {
+
     KubernetesClient kubernetesClient;
 
     private Environment environment;

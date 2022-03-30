@@ -50,10 +50,10 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.INGRESS_HOST_KEY;
 
 
 @UnitTest
+@EnableKubernetesMockClient
 class GafferClientTest {
 
     KubernetesClient kubernetesClient;
-
     @Autowired
     private GafferClient gafferClient;
 
