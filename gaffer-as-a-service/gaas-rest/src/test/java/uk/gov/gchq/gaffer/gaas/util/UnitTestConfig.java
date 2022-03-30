@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.util;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
@@ -34,6 +33,7 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
@@ -105,7 +105,7 @@ public class UnitTestConfig {
 //    @Bean
 //    public JwtUserDetailsService jwtUserDetailsService() {
 //        return new JwtUserDetailsService();
-   // }
+    // }
 
     @Bean
     public Properties properties() {
@@ -139,7 +139,7 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public KubernetesClient kubernetesClient(){
+    public KubernetesClient kubernetesClient() {
         return mock(KubernetesClient.class);
     }
 }
