@@ -75,18 +75,7 @@ public class GraphController {
 
     @Value("${cognito.enabled: false}")
     boolean cognitoEnabled;
-//
-    @Value("${openshift.enabled: false}")
-    boolean openshiftEnabled;
 
-//    @PostMapping("/auth")
-//    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-//        if (!cognitoEnabled) {
-//            final String token = authService.getToken(authenticationRequest);
-//            return ResponseEntity.ok(token);
-//        }
-//        return null;
-//    }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
@@ -128,9 +117,7 @@ public class GraphController {
         return new ResponseEntity(namespaces, HttpStatus.OK);
     }
 
-    private Boolean checkForXEmail(final HttpHeaders headers) {
-        return (headers.get("x-email") != null);
-    }
+
 
     @GetMapping(path = "/whoami", produces = "application/json")
     ResponseEntity<String> whoami(@RequestHeader("x-email") final String email) {
