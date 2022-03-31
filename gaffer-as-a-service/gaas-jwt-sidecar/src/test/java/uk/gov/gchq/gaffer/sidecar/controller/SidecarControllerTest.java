@@ -24,4 +24,15 @@ public class SidecarControllerTest {
                 .exchange()
                 .expectStatus().is2xxSuccessful();
     }
+
+    @Test
+    void authEndpointReturns401WhenInvalidCredentials(){
+        final String authRequest = "{\"username\":\"invalid\",\"password\":\"something\"}";
+        webClient.post()
+                .uri("/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(authRequest))
+                .exchange()
+                .expectStatus().isUnauthorized();
+    }
 }
