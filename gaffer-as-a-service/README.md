@@ -8,7 +8,8 @@ The report can be found at `./gaffer-as-a-service/target/dependency-check-report
 ## gaffer-as-a-service and Authentication using Sidecars
 The authentication for GaaS-UI and GaaS Rest now follows the sidecar design pattern. The diagram below illustartes this.
 To put it simply, the authentication functionality is seperated from GaaS-Rest and works as a microservice.
-<img width="906" alt="Screenshot 2022-03-29 at 11 40 34 am" src="https://user-images.githubusercontent.com/60354187/160594023-61b84bf9-0738-41a8-9d15-f62520230384.png">
+<img width="1022" alt="Screenshot 2022-04-01 at 3 28 55 pm" src="https://user-images.githubusercontent.com/60354187/161284073-fbcb845b-351b-4686-93f1-7c0aa1cb8bd6.png">
+
 
 
 ### What is Eureka?
