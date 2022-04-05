@@ -23,16 +23,23 @@ module.exports = function (app) {
     );
 
     app.use(
-        "/auth",
+        "/storetypes",
         createProxyMiddleware({
             target: "http://localhost:4000",
             changeOrigin: true,
         })
     );
     app.use(
-        "/storetypes",
+        "/auth",
         createProxyMiddleware({
-            target: "http://localhost:4000",
+            target: "http://localhost:4001",
+            changeOrigin: true,
+        })
+    );
+    app.use(
+        "/what-auth",
+        createProxyMiddleware({
+            target: "http://localhost:4001",
             changeOrigin: true,
         })
     );

@@ -26,8 +26,8 @@ app.get("/what-auth", (req, res) => {
     res.status(200).send({
         requiredFields: ["username", "password"],
         requiredHeaders: ["Authorization"],
-    })
-})
+    });
+});
 // Sign in
 app.post("/auth", (req, res) => {
     const username = String(req.body.username).toLowerCase();

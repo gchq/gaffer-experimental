@@ -5,7 +5,7 @@
   "scripts": {
     "start": "JWT_SECRET=my-dev-secret concurrently --names \"KAI_UI,MOCK_API\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run client\" \"npm run server\" ",
     "client": "react-scripts start",
-    "server": "node server/middleware.js",
+    "server": "node server/middleware.js server/auth-sidecar-example.js",
     "build": "react-scripts build",
     "test": "jest \"--coverage\"",
     "watch": "jest --watchAll",
