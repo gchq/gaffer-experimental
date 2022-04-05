@@ -23,10 +23,16 @@ let token;
 
 app.use(cors());
 app.get("/what-auth", (req, res) => {
-    res.status(200).send({
-        requiredFields: ["username", "password"],
-        requiredHeaders: ["Authorization"],
-    });
+    try {
+        jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
+            res.status(200).send({
+                requiredFields: ["username", "password"],
+                requiredHeaders: ["Authorization"],
+            });
+        });
+    } catch (e) {
+        res.status(404).send(e.message).end();
+    }
 });
 // Sign in
 app.post("/auth", (req, res) => {

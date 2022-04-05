@@ -32,14 +32,7 @@ module.exports = function (app) {
     app.use(
         "/auth",
         createProxyMiddleware({
-            target: "http://localhost:4001",
-            changeOrigin: true,
-        })
-    );
-    app.use(
-        "/what-auth",
-        createProxyMiddleware({
-            target: "http://localhost:4001",
+            target: "http://localhost:4000",
             changeOrigin: true,
         })
     );

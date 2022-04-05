@@ -1,6 +1,5 @@
 import request from "supertest";
 import server from "../../server/middleware";
-import authSidecarExample from "../../server/auth-sidecar-example";
 
 let token: string;
 
@@ -9,15 +8,70 @@ afterEach(() => {
 });
 
 beforeEach(() => (process.env = Object.assign(process.env, { JWT_SECRET: "my-dev-secret" })));
-afterAll(() => {
-        process.env = Object.assign(process.env, {JWT_SECRET: ""});
-        authSidecarExample.close();
-    }
-);
+afterAll(() => (process.env = Object.assign(process.env, { JWT_SECRET: "" })));
+describe("Auth", () => {
+    it("Should respond to the POST method with a 200 status code when the username and password is correct", async () => {
+        await request(server)
+            .post("/auth")
+            .send({
+                username: "user@yahoo.com",
+                password: "abc123",
+            })
+            .expect(200)
+            .expect((res) => res.body !== undefined);
+    });
+    it("Should respond with a 403 code when the POST method is called with the incorrect username and password", async () => {
+        await request(server)
+            .post("/auth")
+            .send({
+                username: "invalidUser",
+                password: "invalidPassword",
+            })
+            .expect(403);
+    });
+    it("Should respond with a 204 code when the POST method is called with the sign out path", async () => {
+        await request(server).post("/auth").send({
+            username: "user@yahoo.com",
+            password: "abc123",
+        });
+        await request(server).post("/auth/signout").expect(204);
+    });
+});
+describe("whoami", () => {
+    beforeAll(async () => {
+        await request(server)
+            .post("/auth")
+            .send({
+                username: "user@yahoo.com",
+                password: "abc123",
+            })
+            .then((response) => {
+                token = response.body;
+            });
+    });
+    it("Should respond to a GET request with 200 code and email when user is logged in", async () => {
+        await request(server)
+            .post("/auth")
+            .send({
+                username: "user@yahoo.com",
+                password: "abc123",
+            })
+            .then((response) => {
+                token = response.body;
+            });
+        await request(server)
+            .get("/whoami")
+            .set("Authorization", token)
+            .then((response) => {
+                expect(response.statusCode).toEqual(200);
+                expect(response.text).toEqual("testEmail@something.com");
+            });
+    });
+});
 
 describe("Graph API", () => {
     beforeAll(async () => {
-        await request(authSidecarExample)
+        await request(server)
             .post("/auth")
             .send({
                 username: "user@yahoo.com",
