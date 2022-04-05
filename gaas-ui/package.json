@@ -7,7 +7,7 @@
     "client": "react-scripts start",
     "server": "node server/middleware.js",
     "auth-sidecar": "node server/auth-sidecar-example.js",
-    "start-with-sidecar": "JWT_SECRET=my-dev-secret concurrently \"npm run start\" \"npm run auth-sidecar\"",
+    "start-with-sidecar": "JWT_SECRET=my-dev-secret concurrently \"npm run client\" \"npm run auth-sidecar\"",
     "build": "react-scripts build",
     "test": "jest \"--coverage\"",
     "watch": "jest --watchAll",
