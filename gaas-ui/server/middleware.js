@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const users = require("./users");
 var cors = require("cors");
+const {token} = require("./auth-sidecar-example");
 
 // app
 const app = express();
@@ -17,37 +18,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Token
-let token;
-
 app.use(cors());
-// Sign in
-app.post("/auth", (req, res) => {
-    const username = String(req.body.username).toLowerCase();
-    if (users.has(username) && users.get(username) === req.body.password) {
-        token = jwt.sign({ data: username }, process.env.JWT_SECRET, { expiresIn: "1 week" });
-        res.status(200).send(token);
-    } else {
-        res.status(403).end();
-    }
-});
-
-// Sign out
-app.post("/auth/signout", (req, res) => {
-    token = "";
-    res.status(204).end();
-});
-
-app.get("/whoami", (req, res, next) => {
-    try {
-        jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
-            res.status(200).send("testEmail@something.com");
-        });
-    } catch (e) {
-        res.status(404).send(e.message).end();
-    }
-});
-
 // Create Graph
 app.post("/graphs", (req, res) => {
     try {
