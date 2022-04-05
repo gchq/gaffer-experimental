@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Primary;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
+import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
@@ -141,5 +142,10 @@ public class UnitTestConfig {
     @Bean
     public KubernetesClient kubernetesClient() {
         return mock(KubernetesClient.class);
+    }
+
+    @Bean
+    public HelmValuesOverridesHandler helmValuesOverridesHandler() {
+        return new HelmValuesOverridesHandler();
     }
 }
