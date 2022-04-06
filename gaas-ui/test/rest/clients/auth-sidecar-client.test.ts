@@ -2,27 +2,21 @@ import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { AuthSidecarClient } from "../../../src/rest/clients/auth-sidecar-client";
 
-const mock = jest.mock("axios");
+const mock = new MockAdapter(axios);
 const authSidecarClient = new AuthSidecarClient();
 
 describe("Auth Sidecar Client", () => {
     describe("/what-auth", () => {
         it("should return 200 status and a valid response when GET is successful", async () => {
-            // mock.onGet("/what-auth").reply(200, {
-            //     requiredFields: ["username", "password"],
-            //     requiredHeaders: ["Authorization"],
-            // });
-            // @ts-ignore
-            axios.get.mockResolvedValue({
-                data: { requiredFields: ["username", "password"], requiredHeaders: ["Authorization"] },
+            mock.onGet("/what-auth").reply(200, {
+                requiredFields: ["username", "password"],
+                requiredHeaders: ["Authorization"],
             });
+
             const actualResponse = await authSidecarClient.getWhatAuth();
             expect(actualResponse).toEqual({
-                status: 200,
-                data: {
-                    requiredFields: ["username", "password"],
-                    requiredHeaders: ["Authorization"],
-                },
+                requiredFields: ["username", "password"],
+                requiredHeaders: ["Authorization"],
             });
         });
         it("should throw 404 and an Error Message when GET is unsuccessful", async () => {

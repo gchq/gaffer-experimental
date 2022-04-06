@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { Config } from "../config";
 import { RestClient } from "./rest-client";
 
@@ -8,14 +8,15 @@ export class AuthSidecarClient {
         this.whatAuthObject = {};
     }
     public async getWhatAuth() {
-        await axios
-            .get(Config.REACT_APP_AUTH_ENDPOINT + "/what-auth")
-            .then((response) => {
-                this.whatAuthObject = response.data;
-                console.log(response.data);
-            })
-            .catch((error) => {
-                throw RestClient.fromError(error);
+        try {
+            const response: AxiosResponse<any> = await axios({
+                baseURL: Config.REACT_APP_AUTH_ENDPOINT,
+                url: "/what-auth",
+                method: "GET",
             });
+            return response.data;
+        } catch (error) {
+            throw RestClient.fromError(error as AxiosError<any>);
+        }
     }
 }
