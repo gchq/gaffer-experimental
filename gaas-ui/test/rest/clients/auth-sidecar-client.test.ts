@@ -53,15 +53,12 @@ describe("Auth Sidecar Client", () => {
         });
     });
     describe("/whoami", () => {
-        it("should return 200 status and a valid response when GET is successful", () => {
+        it("should return 200 status and a valid response when GET is successful", async () => {
             mock.onGet("/whoami").reply(200, { "x-email": "test@test.com" });
-            const actualResponse = authSidecarClient;
+            const actualResponse = await authSidecarClient.getWhoAmI();
 
             expect(actualResponse).toEqual({
-                status: 200,
-                data: {
-                    "x-email": "test@test.com",
-                },
+                "x-email": "test@test.com",
             });
         });
         it("should throw 404 and an error message when GET is unsuccessful", async () => {
