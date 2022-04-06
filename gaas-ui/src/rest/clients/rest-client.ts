@@ -155,7 +155,7 @@ export class RestClient<T> {
         };
     }
 
-    private static fromError(e: AxiosError<any>): RestApiError {
+    public static fromError(e: AxiosError<any>): RestApiError {
         if (e.response && RestClient.isInstanceOfGafferApiErrorResponseBody(e.response.data)) {
             return new RestApiError(e.response.data.status, e.response.data.simpleMessage);
         }
