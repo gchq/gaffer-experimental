@@ -32,9 +32,12 @@ describe("Auth Sidecar Client", () => {
         });
     });
     describe("/auth", () => {
-        it("Should return 200 status and a valid response when POST request is successful", () => {
+        it("Should return 200 status and a valid response when POST request is successful", async () => {
             mock.onPost("/auth").reply(200, "thisIsAValidToken");
-            const actualResponse = authSidecarClient.postAuth({ username: "testUsername", password: "testPassword" });
+            const actualResponse = await authSidecarClient.postAuth({
+                username: "testUsername",
+                password: "testPassword",
+            });
             expect(actualResponse).toEqual("thisIsAValidToken");
         });
         it("Should return 403 status and an error message when GET request is unsuccessful", async () => {
