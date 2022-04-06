@@ -4,8 +4,10 @@ import { RestClient } from "./rest-client";
 
 export class AuthSidecarClient {
     private whatAuthObject: object;
+    private token: string;
     public constructor() {
         this.whatAuthObject = {};
+        this.token = "";
     }
     public async getWhatAuth() {
         try {
@@ -14,6 +16,21 @@ export class AuthSidecarClient {
                 url: "/what-auth",
                 method: "GET",
             });
+            this.whatAuthObject = response.data;
+            return response.data;
+        } catch (error) {
+            throw RestClient.fromError(error as AxiosError<any>);
+        }
+    }
+    public async postAuth(data: object) {
+        try {
+            const response: AxiosResponse<any> = await axios({
+                baseURL: Config.REACT_APP_AUTH_ENDPOINT,
+                url: "/auth",
+                method: "POST",
+                data: data,
+            });
+            this.token = response.data;
             return response.data;
         } catch (error) {
             throw RestClient.fromError(error as AxiosError<any>);
