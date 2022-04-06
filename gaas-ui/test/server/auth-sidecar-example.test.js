@@ -4,21 +4,23 @@ let token;
 
 afterEach(() => {
     authSidecarExample.close();
-})
+});
 beforeEach(() => (process.env = Object.assign(process.env, { JWT_SECRET: "my-dev-secret" })));
 afterAll(() => (process.env = Object.assign(process.env, { JWT_SECRET: "" })));
 describe("Auth Sidecar Example", () => {
     describe("/what-auth", () => {
-        it("should respond to the get method with a 200 status code and the correct response object", async() => {
-            await request(authSidecarExample).get('/what-auth').then((response) => {
-                expect(response.statusCode).toEqual(200);
-                expect(response.body).toEqual({
-                    requiredFields: ["username", "password"],
-                    requiredHeaders: ["Authorization"],
-                })
-            })
-        })
-    })
+        it("should respond to the get method with a 200 status code and the correct response object", async () => {
+            await request(authSidecarExample)
+                .get("/what-auth")
+                .then((response) => {
+                    expect(response.statusCode).toEqual(200);
+                    expect(response.body).toEqual({
+                        requiredFields: ["username", "password"],
+                        requiredHeaders: ["Authorization"],
+                    });
+                });
+        });
+    });
     describe("/auth", () => {
         it("Should respond to the POST method with a 200 status code when the username and password is correct", async () => {
             await request(authSidecarExample)
@@ -78,6 +80,4 @@ describe("Auth Sidecar Example", () => {
                 });
         });
     });
-
-})
-
+});
