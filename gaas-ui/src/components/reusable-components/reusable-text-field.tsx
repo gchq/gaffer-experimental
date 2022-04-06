@@ -15,6 +15,7 @@ export default function ReusableTextField(props: IProps) {
     return (
         <TextField
             name={name}
+            label={name}
             onChange={onInput}
             value={textFieldInput}
             variant="outlined"
