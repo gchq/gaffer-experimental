@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Config } from "../config";
 import { RestClient } from "./rest-client";
+import { RestApiError } from "../RestApiError";
 
 export interface IWhatAuthInfo {
     requiredFields: Array<string>;
@@ -32,10 +33,19 @@ export class AuthSidecarClient {
                 url: "/what-auth",
                 method: "GET",
             });
+            this.validateWhatAuthObject(response.data);
             AuthSidecarClient.whatAuthObject = response.data;
             return AuthSidecarClient.whatAuthObject;
         } catch (error) {
             throw RestClient.fromError(error as AxiosError<any>);
+        }
+    }
+    private validateWhatAuthObject(data: object) {
+        const requiredAttributes: string = ["attributes", "requiredFields", "requiredHeaders"].sort().toString();
+        const objectKeys: string = Object.keys(data).sort().toString();
+        if (objectKeys === requiredAttributes) {
+        } else {
+            throw new Error("Invalid Response");
         }
     }
     public async getWhoAmI() {

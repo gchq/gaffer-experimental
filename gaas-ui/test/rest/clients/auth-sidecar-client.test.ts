@@ -31,6 +31,20 @@ describe("Auth Sidecar Client", () => {
                 expect(e).toEqual({ detail: "Not Found", title: "/what-auth endpoint not found" });
             }
         });
+        it("should throw an error if the response is invalid from a successful GET", async () => {
+            const data: object = {
+                requiredFields: true,
+                requiredHeaders: ["testHeader"],
+                testAttribute: true,
+            };
+            mock.onGet("/what-auth").reply(200, data);
+            try {
+                const actual = await authSidecarClient.getWhatAuth();
+                expect(actual).toEqual("");
+            } catch (e) {
+                expect(e).toEqual("");
+            }
+        });
     });
     describe("/auth", () => {
         it("Should return 200 status and a valid response when POST request is successful", async () => {
