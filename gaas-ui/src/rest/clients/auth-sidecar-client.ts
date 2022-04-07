@@ -9,13 +9,21 @@ export interface IWhatAuthInfo {
 }
 
 export class AuthSidecarClient {
-    private whatAuthObject: object;
+    private static whatAuthObject: IWhatAuthInfo;
     private token: string;
     private whoami: object;
     public constructor() {
-        this.whatAuthObject = {};
         this.token = "";
         this.whoami = {};
+    }
+    public static getRequiredHeaders(): object {
+        return this.whatAuthObject.requiredHeaders;
+    }
+    public static getRequiredFields(): Array<string> {
+        return this.whatAuthObject.requiredFields;
+    }
+    public static getAttributes(): object {
+        return this.whatAuthObject.attributes;
     }
     public async getWhatAuth() {
         try {
@@ -24,8 +32,8 @@ export class AuthSidecarClient {
                 url: "/what-auth",
                 method: "GET",
             });
-            this.whatAuthObject = response.data;
-            return response.data;
+            AuthSidecarClient.whatAuthObject = response.data;
+            return AuthSidecarClient.whatAuthObject;
         } catch (error) {
             throw RestClient.fromError(error as AxiosError<any>);
         }

@@ -74,4 +74,40 @@ describe("Auth Sidecar Client", () => {
             }
         });
     });
+    describe("Auth Sidecar Client attributes", () => {
+        beforeAll(async () => {
+            const expectedData: IWhatAuthInfo = {
+                attributes: {
+                    withCredentials: true,
+                },
+                requiredFields: ["username", "password"],
+                requiredHeaders: { Authorization: "Bearer  " },
+            };
+            mock.onGet("/what-auth").reply(200, expectedData);
+            await authSidecarClient.getWhatAuth();
+        });
+        describe("requiredFields", () => {
+            it("should get the correct requiredFields set on GET /what-auth", () => {
+                const expected = ["username", "password"];
+
+                expect(AuthSidecarClient.getRequiredFields()).toEqual(expected);
+            });
+        });
+        describe("requiredHeaders", () => {
+            it("should get the correct requiredHeaders set on GET /what-auth", () => {
+                const expected = { Authorization: "Bearer  " };
+
+                expect(AuthSidecarClient.getRequiredHeaders()).toEqual(expected);
+            });
+        });
+        describe("attributes", () => {
+            it("should get the correct attributes set on GET /what-auth", () => {
+                const expected = {
+                    withCredentials: true,
+                };
+
+                expect(AuthSidecarClient.getAttributes()).toEqual(expected);
+            });
+        });
+    });
 });
