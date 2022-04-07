@@ -7,9 +7,11 @@ import { Config } from "../../../src/rest/config";
 import { GetWhoAmIRepo } from "../../../src/rest/repositories/get-whoami-repo";
 import { act } from "@testing-library/react";
 import { RestApiError } from "../../../src/rest/RestApiError";
+import { AuthSidecarClient, IWhatAuthInfo } from "../../../src/rest/clients/auth-sidecar-client";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
 jest.mock("../../../src/rest/repositories/get-whoami-repo");
+jest.mock("../../../src/rest/clients/auth-sidecar-client");
 
 let component: ReactWrapper;
 
@@ -30,6 +32,22 @@ afterAll(() => {
 });
 
 describe("Navigation Appbar Component", () => {
+    describe("getWhatAuth", () => {
+        it("should call getWhatAuth on load and create login page", async () => {
+            await mockGetWhatAuthToReturn({
+                attributes: {
+                    withCredentials: true,
+                },
+                requiredFields: ["username", "password"],
+                requiredHeaders: { Authorization: "Bearer  " },
+            });
+            await component.update();
+            await component.update();
+            await component.update();
+
+            expect(component.find("div#login-modal"));
+        });
+    });
     it("should display appbar", () => {
         const appbar = component.find("h6");
 
@@ -164,5 +182,15 @@ async function mockGetWhoAmIRepoToThrow(f: () => void) {
     // @ts-ignore
     GetWhoAmIRepo.mockImplementationOnce(() => ({
         getWhoAmI: f,
+    }));
+}
+
+async function mockGetWhatAuthToReturn(data: IWhatAuthInfo) {
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhatAuth: () =>
+            new Promise((resolve, reject) => {
+                resolve(data);
+            }),
     }));
 }
