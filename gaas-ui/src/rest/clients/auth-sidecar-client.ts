@@ -27,17 +27,22 @@ export class AuthSidecarClient {
         return this.whatAuthObject.attributes;
     }
     public async getWhatAuth() {
+        var response: AxiosResponse<any>;
         try {
-            const response: AxiosResponse<any> = await axios({
+            response = await axios({
                 baseURL: Config.REACT_APP_AUTH_ENDPOINT,
                 url: "/what-auth",
                 method: "GET",
             });
+        } catch (error) {
+            throw RestClient.fromError(error as AxiosError<any>);
+        }
+        try {
             this.validateWhatAuthObject(response.data);
             AuthSidecarClient.whatAuthObject = response.data;
             return AuthSidecarClient.whatAuthObject;
         } catch (error) {
-            throw RestClient.fromError(error as AxiosError<any>);
+            throw error;
         }
     }
     private validateWhatAuthObject(data: object) {
@@ -45,7 +50,7 @@ export class AuthSidecarClient {
         const objectKeys: string = Object.keys(data).sort().toString();
         if (objectKeys === requiredAttributes) {
         } else {
-            throw new Error("Invalid Response");
+            throw new Error("Invalid Response").message;
         }
     }
     public async getWhoAmI() {

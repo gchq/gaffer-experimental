@@ -39,10 +39,9 @@ describe("Auth Sidecar Client", () => {
             };
             mock.onGet("/what-auth").reply(200, data);
             try {
-                const actual = await authSidecarClient.getWhatAuth();
-                expect(actual).toEqual("");
+                await authSidecarClient.getWhatAuth();
             } catch (e) {
-                expect(e).toEqual("");
+                expect(e).toEqual("Invalid Response");
             }
         });
     });
