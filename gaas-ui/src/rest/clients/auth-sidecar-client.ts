@@ -49,6 +49,15 @@ export class AuthSidecarClient {
         const requiredAttributes: string = ["attributes", "requiredFields", "requiredHeaders"].sort().toString();
         const objectKeys: string = Object.keys(data).sort().toString();
         if (objectKeys === requiredAttributes) {
+            for (const [key, value] of Object.entries(data)) {
+                if (
+                    (key === "attributes" && typeof value !== "object") ||
+                    (key === "requiredFields" && !Array.isArray(value)) ||
+                    (key === "requiredHeaders" && typeof value !== "object")
+                ) {
+                    throw new Error("Invalid Response").message;
+                }
+            }
         } else {
             throw new Error("Invalid Response").message;
         }

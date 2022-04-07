@@ -105,12 +105,38 @@ describe("Auth Sidecar Client", () => {
 
                 expect(AuthSidecarClient.getRequiredFields()).toEqual(expected);
             });
+            it("Should throw error when requiredFields response is not an array from GET /what-auth", async () => {
+                const expectedData = {
+                    attributes: { withCredentials: true },
+                    requiredFields: 44,
+                    requiredHeaders: { Authorization: "Bearer  " },
+                };
+                mock.onGet("/what-auth").reply(200, expectedData);
+                try {
+                    await authSidecarClient.getWhatAuth();
+                } catch (e) {
+                    expect(e).toEqual("Invalid Response");
+                }
+            });
         });
         describe("requiredHeaders", () => {
             it("should get the correct requiredHeaders set on GET /what-auth", () => {
                 const expected = { Authorization: "Bearer  " };
 
                 expect(AuthSidecarClient.getRequiredHeaders()).toEqual(expected);
+            });
+            it("Should throw error when requiredHeaders response is not an object from GET /what-auth", async () => {
+                const expectedData = {
+                    attributes: { withCredentials: true },
+                    requiredFields: ["username", "password"],
+                    requiredHeaders: true,
+                };
+                mock.onGet("/what-auth").reply(200, expectedData);
+                try {
+                    await authSidecarClient.getWhatAuth();
+                } catch (e) {
+                    expect(e).toEqual("Invalid Response");
+                }
             });
         });
         describe("attributes", () => {
@@ -120,6 +146,19 @@ describe("Auth Sidecar Client", () => {
                 };
 
                 expect(AuthSidecarClient.getAttributes()).toEqual(expected);
+            });
+            it("Should throw error when attributes response is not an object from GET /what-auth", async () => {
+                const expectedData = {
+                    attributes: 12,
+                    requiredFields: ["username", "password"],
+                    requiredHeaders: { Authorization: "Bearer  " },
+                };
+                mock.onGet("/what-auth").reply(200, expectedData);
+                try {
+                    await authSidecarClient.getWhatAuth();
+                } catch (e) {
+                    expect(e).toEqual("Invalid Response");
+                }
             });
         });
     });
