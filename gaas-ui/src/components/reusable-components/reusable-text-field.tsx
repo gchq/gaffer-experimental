@@ -1,5 +1,7 @@
 import React from "react";
 import { TextField } from "@material-ui/core";
+import { encode } from "html-entities";
+import DOMPurify from "dompurify";
 
 interface IProps {
     name: string;
@@ -9,8 +11,8 @@ export default function ReusableTextField(props: IProps) {
     const { name, onChange } = props;
     const [textFieldInput, setTextFieldInput] = React.useState("");
     const onInput = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-        setTextFieldInput(event.target.value);
-        onChange(event.target.value);
+        setTextFieldInput(encode(DOMPurify.sanitize(event.target.value)));
+        onChange(encode(DOMPurify.sanitize(event.target.value)));
     };
     return (
         <TextField

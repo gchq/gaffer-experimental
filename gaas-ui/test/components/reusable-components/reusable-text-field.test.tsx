@@ -16,6 +16,12 @@ describe("Reusable TextField", () => {
         expect(onChangeCallback).toBeCalledTimes(1);
         expect(onChangeCallback).toBeCalledWith("test input");
     });
+    it("should sanitize inputs", () => {
+        inputInTextfield('<img src="http://url.to.file.which/not.exist" onerror=alert(document.cookie);>');
+        expect(component.find("input").props().value).toEqual(
+            "&lt;img src=&quot;http://url.to.file.which/not.exist&quot;&gt;"
+        );
+    });
 });
 function inputInTextfield(input: string) {
     component.find("input").simulate("change", {
