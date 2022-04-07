@@ -2,6 +2,12 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { Config } from "../config";
 import { RestClient } from "./rest-client";
 
+export interface IWhatAuthInfo {
+    requiredFields: Array<string>;
+    requiredHeaders: object;
+    attributes: object;
+}
+
 export class AuthSidecarClient {
     private whatAuthObject: object;
     private token: string;

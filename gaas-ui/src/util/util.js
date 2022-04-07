@@ -1,8 +1,8 @@
 export function isJSONObject(str) {
     try {
         const jsonObject = JSON.parse(str);
-        if(jsonObject && typeof jsonObject === "object") {
-            return true
+        if (jsonObject && typeof jsonObject === "object") {
+            return true;
         }
     } catch (e) {
         return false;
