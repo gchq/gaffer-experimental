@@ -5,7 +5,7 @@ import { MemoryRouter } from "react-router-dom";
 import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { Config } from "../../../src/rest/config";
 import { GetWhoAmIRepo } from "../../../src/rest/repositories/get-whoami-repo";
-import { act } from "@testing-library/react";
+import { act } from "react-dom/test-utils";
 import { RestApiError } from "../../../src/rest/RestApiError";
 import { AuthSidecarClient, IWhatAuthInfo } from "../../../src/rest/clients/auth-sidecar-client";
 
@@ -39,9 +39,6 @@ describe("Navigation Appbar Component", () => {
                 requiredFields: ["username", "password"],
                 requiredHeaders: { Authorization: "Bearer  " },
             });
-            await component.update();
-            await component.update();
-            await component.update();
 
             expect(component.contains("div#login-modal")).toBe(true);
         });

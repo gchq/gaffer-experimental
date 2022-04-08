@@ -26,7 +26,7 @@ export class AuthSidecarClient {
     public static getAttributes(): object {
         return this.whatAuthObject.attributes;
     }
-    public async getWhatAuth() {
+    public async getWhatAuth(): Promise<IWhatAuthInfo> {
         var response: AxiosResponse<any>;
         try {
             response = await axios({
