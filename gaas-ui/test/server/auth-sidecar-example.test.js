@@ -15,8 +15,11 @@ describe("Auth Sidecar Example", () => {
                 .then((response) => {
                     expect(response.statusCode).toEqual(200);
                     expect(response.body).toEqual({
+                        attributes: {
+                            withCredentials: true,
+                        },
                         requiredFields: ["username", "password"],
-                        requiredHeaders: ["Authorization"],
+                        requiredHeaders: { Authorization: "Bearer  " },
                     });
                 });
         });

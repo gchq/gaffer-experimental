@@ -26,8 +26,11 @@ app.get("/what-auth", (req, res) => {
     try {
         jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
             res.status(200).send({
+                attributes: {
+                    withCredentials: true,
+                },
                 requiredFields: ["username", "password"],
-                requiredHeaders: ["Authorization"],
+                requiredHeaders: { Authorization: "Bearer  " },
             });
         });
     } catch (e) {
