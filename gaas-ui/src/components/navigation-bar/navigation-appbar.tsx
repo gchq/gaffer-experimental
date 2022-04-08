@@ -24,6 +24,7 @@ import { NavLink } from "react-router-dom";
 import { Config } from "../../rest/config";
 import { GetWhoAmIRepo } from "../../rest/repositories/get-whoami-repo";
 import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import { AuthSidecarClient, IWhatAuthInfo } from "../../rest/clients/auth-sidecar-client";
 
 const drawerWidth = 240;
 
@@ -98,6 +99,7 @@ const NavigationAppbar: React.FC = (props: any) => {
     // @ts-ignore
     const classes = useStyles();
     const [userEmail, setUserEmail] = useState("");
+    const [requiredFields, setRequiredFields] = useState<Array<string>>([]);
     const [errorMessage, setErrorMessage] = useState("");
     const getSideNavIcon = (sidebarName: string) => {
         switch (sidebarName) {
@@ -126,12 +128,21 @@ const NavigationAppbar: React.FC = (props: any) => {
             );
         }
     };
+    const getWhatAuth = async () => {
+        try {
+            const whatAuthInfo: IWhatAuthInfo = await new AuthSidecarClient().getWhatAuth();
+            setRequiredFields(whatAuthInfo.requiredFields);
+        } catch (e) {
+            setErrorMessage(`Failed to setup Login`);
+        }
+    };
 
     const buildUsername = () => (userEmail.includes("@") ? userEmail.slice(0, userEmail.indexOf("@")) : userEmail);
     useEffect(() => {
         if (Config.REACT_APP_API_PLATFORM === "OPENSHIFT") {
             getUserEmail();
         }
+        getWhatAuth();
     }, []);
     const displayUserEmail = () => {
         if (userEmail) {
