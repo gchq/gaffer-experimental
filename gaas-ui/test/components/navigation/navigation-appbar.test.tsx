@@ -33,11 +33,9 @@ afterAll(() => {
 
 describe("Navigation Appbar Component", () => {
     describe("getWhatAuth", () => {
-        it("should call getWhatAuth on load and create login page", async () => {
+        it("should call getWhatAuth on load and create login page based on response", async () => {
             await mockGetWhatAuthToReturn({
-                attributes: {
-                    withCredentials: true,
-                },
+                attributes: {},
                 requiredFields: ["username", "password"],
                 requiredHeaders: { Authorization: "Bearer  " },
             });
@@ -45,7 +43,21 @@ describe("Navigation Appbar Component", () => {
             await component.update();
             await component.update();
 
-            expect(component.find("div#login-modal"));
+            expect(component.contains("div#login-modal")).toBe(true);
+        });
+        it("should call getWhatAuth on load and not create login page based on response", async () => {
+            await mockGetWhatAuthToReturn({
+                attributes: {
+                    withCredentials: true,
+                },
+                requiredFields: [],
+                requiredHeaders: {},
+            });
+            await component.update();
+            await component.update();
+            await component.update();
+
+            expect(component.contains("div#login-modal")).toBe(false);
         });
     });
     it("should display appbar", () => {
