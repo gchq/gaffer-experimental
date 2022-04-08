@@ -39,6 +39,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.util.TestAppender;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 import java.util.HashMap;
 import java.util.List;
