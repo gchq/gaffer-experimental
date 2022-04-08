@@ -15,12 +15,14 @@ jest.mock("../../../src/rest/clients/auth-sidecar-client");
 
 let component: ReactWrapper;
 
-beforeEach(() => {
-    component = mount(
-        <MemoryRouter>
-            <NavigationAppbar />
-        </MemoryRouter>
-    );
+beforeEach(async () => {
+    await act(async () => {
+        component = mount(
+            <MemoryRouter>
+                <NavigationAppbar />
+            </MemoryRouter>
+        );
+    });
 });
 afterEach(() => {
     component.unmount();
@@ -39,6 +41,16 @@ describe("Navigation Appbar Component", () => {
                 requiredFields: ["username", "password"],
                 requiredHeaders: { Authorization: "Bearer  " },
             });
+
+            await act(async () => {
+                component = mount(
+                    <MemoryRouter>
+                        <NavigationAppbar />
+                    </MemoryRouter>
+                );
+            });
+            await component.update();
+            await component.update();
 
             expect(component.contains("div#login-modal")).toBe(true);
         });
