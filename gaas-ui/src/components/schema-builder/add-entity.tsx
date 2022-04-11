@@ -16,6 +16,9 @@ import {
 import { useImmerReducer } from "use-immer";
 import AddProperty from "./add-property";
 import ClearIcon from "@material-ui/icons/Clear";
+import { isJSONObject } from "../../util/util";
+import DOMPurify from "dompurify";
+import { encode } from "html-entities";
 
 interface IProps {
     onAddEntity(entity: object): void;
@@ -37,9 +40,12 @@ interface IState {
     entityVertex: {
         value: string;
     };
-    openProperties: boolean;
-    properties: {};
-    propertiesTextarea: string;
+    properties: {
+        properties: {};
+        open: boolean;
+        textarea: string;
+        hasErrors: boolean;
+    };
 }
 
 export default function AddEntity(props: IProps): ReactElement {
@@ -47,10 +53,10 @@ export default function AddEntity(props: IProps): ReactElement {
 
     function addEntitySubmit() {
         const entityToAdd: any = {};
-        entityToAdd[state.entityName.value] = {
-            description: state.entityDescription.value,
-            vertex: state.entityVertex.value,
-            properties: state.properties,
+        entityToAdd[encode(DOMPurify.sanitize(state.entityName.value))] = {
+            description: encode(DOMPurify.sanitize(state.entityDescription.value)),
+            vertex: encode(DOMPurify.sanitize(state.entityVertex.value)),
+            properties: state.properties.properties,
         };
         onAddEntity(entityToAdd);
         dispatch({ type: "reset" });
@@ -72,9 +78,13 @@ export default function AddEntity(props: IProps): ReactElement {
         entityVertex: {
             value: "",
         },
-        openProperties: false,
-        properties: {},
-        propertiesTextarea: "",
+
+        properties: {
+            properties: {},
+            open: false,
+            textarea: "",
+            hasErrors: false,
+        },
     };
 
     function addEntityReducer(draft: any, action: any) {
@@ -107,13 +117,19 @@ export default function AddEntity(props: IProps): ReactElement {
                 draft.entityVertex.value = action.value;
                 return;
             case "handleClickCloseProperties":
-                draft.openProperties = action.value;
+                draft.properties.open = action.value;
                 return;
             case "handleUpdateProperties":
-                draft.properties[Object.keys(action.value)[0]] = Object.values(action.value)[0];
+                draft.properties.properties[Object.keys(action.value)[0]] = Object.values(action.value)[0];
                 return;
             case "handleUpdatePropertiesTextarea":
-                draft.propertiesTextarea = action.value;
+                if (isJSONObject(action.value) || action.value === "") {
+                    draft.properties.textarea = action.value;
+                    draft.properties.hasErrors = false;
+                    return;
+                }
+                draft.properties.hasErrors = true;
+                draft.properties.textarea = action.value;
                 return;
         }
     }
@@ -220,7 +236,7 @@ export default function AddEntity(props: IProps): ReactElement {
                 <Dialog
                     fullWidth
                     maxWidth="xs"
-                    open={state.openProperties}
+                    open={state.properties.open}
                     onClose={closeProperty}
                     id={"add-properties-dialog"}
                     aria-labelledby="add-properties-dialog"
@@ -240,7 +256,7 @@ export default function AddEntity(props: IProps): ReactElement {
                                 dispatch({ type: "handleUpdateProperties", value: properties });
                                 dispatch({
                                     type: "handleUpdatePropertiesTextarea",
-                                    value: state.propertiesTextarea + JSON.stringify(properties),
+                                    value: state.properties.textarea + JSON.stringify(properties),
                                 });
                             }}
                         />
@@ -256,8 +272,10 @@ export default function AddEntity(props: IProps): ReactElement {
                         "aria-label": "entity-properties-input",
                     }}
                     fullWidth
-                    value={state.propertiesTextarea}
+                    value={state.properties.textarea}
                     name="entity-properties"
+                    error={state.properties.hasErrors}
+                    helperText={state.properties.hasErrors ? "Invalid JSON" : ""}
                     label={"Properties"}
                     multiline
                     rows={5}

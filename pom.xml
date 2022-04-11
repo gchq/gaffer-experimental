@@ -21,7 +21,7 @@
     <parent>
         <groupId>uk.gov.gchq.gaffer</groupId>
         <artifactId>gaffer2</artifactId>
-        <version>1.16.0</version>
+        <version>1.22.0</version>
     </parent>
 
     <artifactId>gaffer-experimental</artifactId>
@@ -36,8 +36,8 @@
     </modules>
 
     <properties>
-        <revision>1.21.1</revision>
-        <gaffer.version>1.21.1</gaffer.version>
+        <revision>1.22.0</revision>
+        <gaffer.version>1.22.0</gaffer.version>
         <scm.url>
             https://github.com/gchq/gaffer-experimental
         </scm.url>

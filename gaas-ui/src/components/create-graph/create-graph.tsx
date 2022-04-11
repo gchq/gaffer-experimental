@@ -37,9 +37,12 @@ import { CreateFederatedGraphRepo } from "../../rest/repositories/create-federat
 import { Copyright } from "../copyright/copyright";
 import SchemaBuilderDialog from "./schema-builder-dialog";
 import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
-
+import DOMPurify from "dompurify";
+import { encode } from "html-entities";
 interface IState {
     graphId: string;
+    graphIdIsValid: boolean;
+    graphDescriptionIsValid: boolean;
     description: string;
     schemaJson: string;
     elements: string;
@@ -69,6 +72,8 @@ export default class CreateGraph extends React.Component<{}, IState> {
         super(props);
         this.state = {
             graphId: "",
+            graphIdIsValid: false,
+            graphDescriptionIsValid: false,
             description: "",
             schemaJson: "",
             elements: "",
@@ -152,9 +157,19 @@ export default class CreateGraph extends React.Component<{}, IState> {
 
         try {
             if (!this.currentStoreTypeIsFederated()) {
-                await new CreateStoreTypesGraphRepo().create(graphId, description, storeType, config);
+                await new CreateStoreTypesGraphRepo().create(
+                    encode(DOMPurify.sanitize(graphId)),
+                    encode(DOMPurify.sanitize(description)),
+                    storeType,
+                    config
+                );
             } else {
-                await new CreateFederatedGraphRepo().create(graphId, description, storeType, config);
+                await new CreateFederatedGraphRepo().create(
+                    encode(DOMPurify.sanitize(graphId)),
+                    encode(DOMPurify.sanitize(description)),
+                    storeType,
+                    config
+                );
             }
             this.setState({
                 outcome: AlertType.SUCCESS,
@@ -216,11 +231,14 @@ export default class CreateGraph extends React.Component<{}, IState> {
     }
 
     private disableSubmitButton(): boolean {
-        const { elements, types, graphId, description, selectedGraphs } = this.state;
+        const { elements, types, graphId, description, selectedGraphs, graphIdIsValid, graphDescriptionIsValid } =
+            this.state;
         return (
             (!this.currentStoreTypeIsFederated() && (!elements || !types)) ||
             !graphId ||
             !description ||
+            !graphIdIsValid ||
+            !graphDescriptionIsValid ||
             (this.currentStoreTypeIsFederated() && selectedGraphs.length === 0) ||
             (!this.currentStoreTypeIsFederated() && !new ElementsSchema(elements).validate().isEmpty()) ||
             (!this.currentStoreTypeIsFederated() && !new TypesSchema(types).validate().isEmpty())
@@ -295,9 +313,13 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                 <Grid container spacing={2}>
                                     <GraphIdDescriptionInput
                                         graphIdValue={this.state.graphId}
-                                        onChangeGraphId={(graphId) => this.setState({ graphId })}
+                                        onChangeGraphId={(graphId, graphIdIsValid) =>
+                                            this.setState({ graphId, graphIdIsValid })
+                                        }
                                         descriptionValue={this.state.description}
-                                        onChangeDescription={(description) => this.setState({ description })}
+                                        onChangeDescription={(description, graphDescriptionIsValid) =>
+                                            this.setState({ description, graphDescriptionIsValid })
+                                        }
                                     />
                                     <Grid
                                         item

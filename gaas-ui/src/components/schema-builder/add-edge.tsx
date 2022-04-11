@@ -17,6 +17,9 @@ import { useImmerReducer } from "use-immer";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddProperty from "./add-property";
 import AddGroupby from "./add-groupby";
+import { isJSONObject } from "../../util/util";
+import DOMPurify from "dompurify";
+import { encode } from "html-entities";
 
 interface IProps {
     onAddEdge(edge: object): void;
@@ -48,12 +51,18 @@ interface IState {
     edgeDirected: {
         value: string;
     };
-    properties: {};
-    propertiesTextarea: string;
-    openProperties: boolean;
-    groupBy: [];
-    openGroupby: boolean;
-    groupByTextarea: string;
+    properties: {
+        properties: {};
+        textarea: string;
+        open: boolean;
+        hasErrors: boolean;
+    };
+    groupBy: {
+        groupBy: [];
+        open: boolean;
+        textarea: string;
+        hasErrors: boolean;
+    };
 }
 
 export default function AddEdge(props: IProps): ReactElement {
@@ -61,17 +70,17 @@ export default function AddEdge(props: IProps): ReactElement {
 
     function addEdgeSubmit() {
         const edgeToAdd: any = {};
-        edgeToAdd[state.edgeName.value] = {
-            description: state.edgeDescription.value,
-            source: state.edgeSource.value,
-            destination: state.edgeDestination.value,
-            directed: state.edgeDirected.value,
+        edgeToAdd[encode(DOMPurify.sanitize(state.edgeName.value))] = {
+            description: encode(DOMPurify.sanitize(state.edgeDescription.value)),
+            source: encode(DOMPurify.sanitize(state.edgeSource.value)),
+            destination: encode(DOMPurify.sanitize(state.edgeDestination.value)),
+            directed: encode(DOMPurify.sanitize(state.edgeDirected.value)),
         };
-        if (Object.keys(state.properties).length !== 0) {
-            edgeToAdd[state.edgeName.value].properties = state.properties;
+        if (Object.keys(state.properties.properties).length !== 0) {
+            edgeToAdd[state.edgeName.value].properties = state.properties.properties;
         }
-        if (state.groupBy.length !== 0) {
-            edgeToAdd[state.edgeName.value].groupBy = state.groupBy;
+        if (state.groupBy.groupBy.length !== 0) {
+            edgeToAdd[state.edgeName.value].groupBy = state.groupBy.groupBy;
         }
         onAddEdge(edgeToAdd);
         dispatch({ type: "reset" });
@@ -101,12 +110,18 @@ export default function AddEdge(props: IProps): ReactElement {
         edgeDirected: {
             value: "",
         },
-        properties: {},
-        openProperties: false,
-        propertiesTextarea: "",
-        groupBy: [],
-        openGroupby: false,
-        groupByTextarea: "",
+        properties: {
+            properties: {},
+            textarea: "",
+            open: false,
+            hasErrors: false,
+        },
+        groupBy: {
+            groupBy: [],
+            open: false,
+            textarea: "",
+            hasErrors: false,
+        },
     };
 
     function addEdgeReducer(draft: any, action: any) {
@@ -149,25 +164,38 @@ export default function AddEdge(props: IProps): ReactElement {
                 draft.edgeDirected.value = action.value;
                 return;
             case "handleClickCloseProperties":
-                draft.openProperties = action.value;
+                draft.properties.open = action.value;
                 return;
             case "handleUpdateProperties":
-                draft.properties[Object.keys(action.value)[0]] = Object.values(action.value)[0];
+                draft.properties.properties[Object.keys(action.value)[0]] = Object.values(action.value)[0];
                 return;
             case "handleUpdatePropertiesTextarea":
-                draft.propertiesTextarea = action.value;
+                if (isJSONObject(action.value) || action.value === "") {
+                    draft.properties.textarea = action.value;
+                    draft.properties.hasErrors = false;
+                    return;
+                }
+                draft.properties.hasErrors = true;
+                draft.properties.textarea = action.value;
                 return;
             case "handleClickCloseGroupby":
-                draft.openGroupby = action.value;
+                draft.groupBy.open = action.value;
                 return;
             case "handleUpdateGroupBy":
-                if (!draft.groupBy.includes(action.value)) {
-                    draft.groupBy[draft.groupBy.length] = action.value;
+                if (!draft.groupBy.groupBy.includes(action.value)) {
+                    draft.groupBy.groupBy[draft.groupBy.groupBy.length] = action.value;
                     return;
                 }
                 return;
             case "handleUpdateGroupByTextarea":
-                draft.groupByTextarea = action.value;
+                const regex = new RegExp("[&@#/%?=~_|!:;()<>/|]");
+                if (!regex.test(action.value) || action.value === "") {
+                    draft.groupBy.hasErrors = false;
+                    draft.groupBy.textarea = action.value;
+                    return;
+                }
+                draft.groupBy.hasErrors = true;
+                draft.groupBy.textarea = action.value;
                 return;
         }
     }
@@ -319,7 +347,7 @@ export default function AddEdge(props: IProps): ReactElement {
                 <Dialog
                     fullWidth
                     maxWidth="xs"
-                    open={state.openProperties}
+                    open={state.properties.open}
                     onClose={closeProperties}
                     id={"add-properties-dialog"}
                     aria-labelledby="add-properties-dialog"
@@ -339,7 +367,7 @@ export default function AddEdge(props: IProps): ReactElement {
                                 dispatch({ type: "handleUpdateProperties", value: properties });
                                 dispatch({
                                     type: "handleUpdatePropertiesTextarea",
-                                    value: state.propertiesTextarea + JSON.stringify(properties),
+                                    value: state.properties.textarea + JSON.stringify(properties),
                                 });
                             }}
                         />
@@ -355,9 +383,11 @@ export default function AddEdge(props: IProps): ReactElement {
                         "aria-label": "edge-properties-input",
                     }}
                     fullWidth
-                    value={state.propertiesTextarea}
+                    value={state.properties.textarea}
                     name={"edge-properties"}
                     label={"Properties"}
+                    error={state.properties.hasErrors}
+                    helperText={state.properties.hasErrors ? "Invalid JSON" : ""}
                     multiline
                     rows={5}
                     variant="outlined"
@@ -379,7 +409,7 @@ export default function AddEdge(props: IProps): ReactElement {
                 <Dialog
                     fullWidth
                     maxWidth="xs"
-                    open={state.openGroupby}
+                    open={state.groupBy.open}
                     onClose={closeGroupBy}
                     id={"add-groupby-dialog"}
                     aria-labelledby="add-groupby-dialog"
@@ -398,7 +428,7 @@ export default function AddEdge(props: IProps): ReactElement {
                             onAddGroupby={(groupBy) => {
                                 dispatch({
                                     type: "handleUpdateGroupByTextarea",
-                                    value: state.groupByTextarea + JSON.stringify(groupBy) + ",",
+                                    value: state.groupBy.textarea + JSON.stringify(groupBy) + ",",
                                 });
                                 dispatch({ type: "handleUpdateGroupBy", value: groupBy });
                             }}
@@ -415,7 +445,9 @@ export default function AddEdge(props: IProps): ReactElement {
                         "aria-label": "edge-groupby-input",
                     }}
                     fullWidth
-                    value={state.groupByTextarea}
+                    value={state.groupBy.textarea}
+                    error={state.groupBy.hasErrors}
+                    helperText={state.groupBy.hasErrors ? "Invalid input" : ""}
                     name={"edge-groupby"}
                     label={"Group By"}
                     multiline

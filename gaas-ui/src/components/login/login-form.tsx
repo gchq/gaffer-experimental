@@ -7,6 +7,8 @@ import { FormType } from "./login-modal";
 import { IAuthClient } from "../../rest/clients/authclient";
 import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
 import { Copyright } from "../copyright/copyright";
+import DOMPurify from "dompurify";
+import { encode } from "html-entities";
 
 interface IProps {
     onChangeForm(fromType: FormType): void;
@@ -49,7 +51,12 @@ export default class LoginForm extends React.Component<IProps, IState> {
                 outcomeMessage: `Login failed: ${errorMessage}`,
             });
         };
-        this.authClient.login(username, password, onSuccess, onError);
+        this.authClient.login(
+            encode(DOMPurify.sanitize(username)),
+            encode(DOMPurify.sanitize(password)),
+            onSuccess,
+            onError
+        );
     }
 
     public render() {
