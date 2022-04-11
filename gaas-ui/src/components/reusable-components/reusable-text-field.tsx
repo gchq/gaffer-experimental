@@ -16,6 +16,7 @@ export default function ReusableTextField(props: IProps) {
     };
     return (
         <TextField
+            id={name}
             name={name}
             label={name}
             onChange={onInput}
