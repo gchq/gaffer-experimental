@@ -13,6 +13,7 @@ import { RestClient } from "../../rest/clients/rest-client";
 import jwt_decode from "jwt-decode";
 import { Config } from "../../rest/config";
 import { CognitoIdentityClient } from "../../rest/clients/cognito-identity-client";
+import DynamicLoginForm from "./dynamic-login-form";
 
 function styles(theme: any) {
     return createStyles({
@@ -52,6 +53,7 @@ interface IState {
     formType: FormType;
     openSignOutModal: boolean;
     signOutMessage: string;
+    requiredFields: Array<string>;
 }
 
 class LoginModal extends React.Component<IProps, IState> {
@@ -62,6 +64,7 @@ class LoginModal extends React.Component<IProps, IState> {
             formType: FormType.EXISTING_USER_LOGIN,
             openSignOutModal: false,
             signOutMessage: "",
+            requiredFields: [],
         };
     }
 
@@ -89,7 +92,7 @@ class LoginModal extends React.Component<IProps, IState> {
 
     public render() {
         const { classes } = this.props;
-        const { formType, status, openSignOutModal } = this.state;
+        const { formType, status, openSignOutModal, requiredFields } = this.state;
 
         return (
             <div id="login-modal">
@@ -117,13 +120,10 @@ class LoginModal extends React.Component<IProps, IState> {
                 <Dialog id="login-modal-dialog" fullScreen open={status === UserStatus.SIGNED_OUT}>
                     <DialogContent style={{ padding: 30 }}>
                         <Logo />
-                        {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM !== "AWS" && (
-                            <LoginForm
-                                onChangeForm={(formType: FormType) => this.setState({ formType })}
-                                onSuccess={(username: string) => {
-                                    this.setState({ status: UserStatus.SIGNED_IN });
-                                    this.props.onLogin(username);
-                                }}
+                        {formType === FormType.EXISTING_USER_LOGIN && (
+                            <DynamicLoginForm
+                                requiredFields={requiredFields}
+                                onClickSignIn={(requiredValues: Map<String, String>) => {}}
                             />
                         )}
                         {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM === "AWS" && (

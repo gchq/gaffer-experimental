@@ -34,42 +34,44 @@ export default function DynamicLoginForm(props: IProps) {
     const { requiredFields, onClickSignIn } = props;
     const textfieldValues = new Map<string, string>();
     return (
-        <Container maxWidth="xs" aria-label="login-form" id="login-form">
-            <CssBaseline />
-            <div
-                style={{
-                    marginTop: "20px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                }}
-            >
-                <Typography component="h1" variant="h5">
-                    Sign in
-                </Typography>
-                {requiredFields.map((field: string) => (
-                    <ReusableTextField
-                        name={field}
-                        onChange={(textFieldInput: string) => {
-                            textfieldValues.set(field, textFieldInput);
-                        }}
-                    />
-                ))}
-                <Button
-                    fullWidth
-                    id="submit-sign-in-button"
-                    aria-label="submit-sign-in-button"
-                    variant="contained"
-                    color="primary"
-                    style={{ marginTop: "20px" }}
-                    // disabled={this.disableSignInButton()}
-                    onClick={() => {
-                        onClickSignIn(textfieldValues);
+        <main aria-label="login-form" id="login-form">
+            <Container maxWidth="xs" aria-label="login-form" id="login-form">
+                <CssBaseline />
+                <div
+                    style={{
+                        marginTop: "20px",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
                     }}
                 >
-                    Sign In
-                </Button>
-            </div>
-        </Container>
+                    <Typography component="h1" variant="h5">
+                        Sign in
+                    </Typography>
+                    {requiredFields.map((field: string) => (
+                        <ReusableTextField
+                            name={field}
+                            onChange={(textFieldInput: string) => {
+                                textfieldValues.set(field, textFieldInput);
+                            }}
+                        />
+                    ))}
+                    <Button
+                        fullWidth
+                        id="submit-sign-in-button"
+                        aria-label="submit-sign-in-button"
+                        variant="contained"
+                        color="primary"
+                        style={{ marginTop: "20px" }}
+                        // disabled={this.disableSignInButton()}
+                        onClick={() => {
+                            onClickSignIn(textfieldValues);
+                        }}
+                    >
+                        Sign In
+                    </Button>
+                </div>
+            </Container>
+        </main>
     );
 }
