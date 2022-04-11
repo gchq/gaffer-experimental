@@ -83,7 +83,7 @@ metadata:
   name: {{ include "helm.fullname" . }}-worker
 subjects:
   - kind: ServiceAccount
-    name: {{ .Values.worker.serviceAccount.name }}
+    name: {{ .Values.rest.worker.serviceAccount.name }}
     namespace: {{ .Values.namespace }}
 roleRef:
   kind: Role

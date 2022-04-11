@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: {{ include "helm.fullname" . }}-service-account
+apiVersion: v2
+name: gaas
+description: Deploys the GaaS Rest which creates custom resource definitions
+type: application
+version: 0.0.1
+appVersion: 1.0-SNAPSHOT

@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "helm.fullname" . }}
+  name: {{ include "helm.fullname" . }}-ui
   labels:
     {{- include "helm.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.ui.replicaCount }}
   selector:
     matchLabels:
       {{- include "helm.selectorLabels" . | nindent 6 }}
@@ -14,19 +14,19 @@ spec:
       labels:
         {{- include "helm.selectorLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/ui/configmap.yaml") . | sha256sum }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.ui.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image:  {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image:  {{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}
+          imagePullPolicy: {{ .Values.ui.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.image.containerPort }}
+              containerPort: {{ .Values.ui.image.containerPort }}
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -37,13 +37,13 @@ spec:
               path: /
               port: http
           volumeMounts:
-            - mountPath: /usr/share/nginx/html/{{ .Values.envConfigFile }}
+            - mountPath: /usr/share/nginx/html/{{ .Values.ui.envConfigFile }}
               name: env-js-config
-              subPath: {{ .Values.envConfigFile }}
+              subPath: {{ .Values.ui.envConfigFile }}
       volumes:
         - name: env-js-config
           configMap:
-            name: {{ include "helm.fullname" . }}
+            name: {{ include "helm.fullname" . }}-ui
             items:
             - key: "web.properties"
-              path: {{ .Values.envConfigFile }}
+              path: {{ .Values.ui.envConfigFile }}

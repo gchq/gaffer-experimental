@@ -12,9 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: v2
-name: gaas-rest
-description: Deploys the GaaS Rest which creates custom resource definitions
-type: application
-version: 0.0.1
-appVersion: 1.0-SNAPSHOT
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "helm.fullname" . }}
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+  labels:
+  {{- include "helm.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.rest.service.type }}
+  ports:
+    - port: {{ .Values.rest.service.port }}
+      targetPort: {{ .Values.rest.service.targetPort }}
+      protocol: TCP
+      name: {{ .Values.rest.service.targetPort }}-tcp
+  selector:
+  {{- include "helm.selectorLabels" . | nindent 4 }}

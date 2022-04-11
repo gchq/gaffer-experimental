@@ -11,9 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+{{- if .Values.rest.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "helm.fullname" . }}
+  name: {{ include "helm.fullname" . }}-rest
 data:
-  GAFFER_NAMESPACE: {{ .Values.namespace}}
+  GAFFER_NAMESPACE: {{ .Values.rest.namespace}}
+{{- end }}

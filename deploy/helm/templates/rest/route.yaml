@@ -11,13 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-{{ if .Values.worker.serviceAccount.create }}
-apiVersion: v1
-kind: ServiceAccount
+apiVersion: route.openshift.io/v1
+kind: Route
 metadata:
-  name: {{ .Values.worker.serviceAccount.name }}
+  name: {{ include "helm.fullname" . }}-rest
   labels:
-    app.kubernetes.io/component: worker
-{{ end }}
-
-  
+  {{- include "helm.labels" . | nindent 4 }}
+spec:
+  to:
+    kind: Service
+    name: {{ include "helm.fullname" . }}-rest
+    weight: 100
+  port:
+    targetPort: {{ .Values.rest.service.targetPort }}-tcp
+  wildcardPolicy: None
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
