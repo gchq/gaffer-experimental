@@ -4,7 +4,7 @@ import ReusableTextField from "../reusable-components/reusable-text-field";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 interface IProps {
-    requiredFields: string[];
+    requiredFields: Array<string>;
     onClickSignIn(textFieldValues: Map<string, string>): void;
 }
 

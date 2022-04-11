@@ -3,9 +3,11 @@ import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import LoginModal from "../../../src/components/login/login-modal";
 import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
+import { AuthSidecarClient } from "../../../src/rest/clients/auth-sidecar-client";
 import { Config } from "../../../src/rest/config";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
+jest.mock("../../../src/rest/clients/auth-sidecar-client");
 
 let component: ReactWrapper;
 const jestMock = jest.fn();
@@ -23,7 +25,7 @@ afterEach(() => {
 
 describe("Login form", () => {
     beforeEach(() => {
-        component = mount(<LoginModal onLogin={usernameCallback} />);
+        component = mount(<LoginModal onLogin={usernameCallback} requiredFields={["username", "password"]} />);
         Config.REACT_APP_API_PLATFORM = "OTHER";
     });
     describe("Login Form UI", () => {
@@ -39,27 +41,17 @@ describe("Login form", () => {
     });
     describe("onLogin call back", () => {
         it("should call back with Username when a User logs in", () => {
-            mockAuthApiClientLogin();
+            const expectedMap = new Map<String, String>();
+            expectedMap.set("username", "testUsername");
+            expectedMap.set("password", "testPassword");
+            mockPostAuth(expectedMap);
 
             inputUsername("testUsername");
             inputPassword("testPassword");
 
             clickSubmitSignIn();
 
-            expect(usernameCallback).toHaveBeenCalledWith("testUsername");
-        });
-    });
-    describe("Switch Login Form", () => {
-        it("should render Reset Temp Password Login when switch form onclick is clicked", () => {
-            clickNewUserSignIn();
-
-            expect(component.find("main#old-password-login-form")).toHaveLength(1);
-            expect(component.find("main#login-form")).toHaveLength(0);
-
-            component.find("a#login-form-link").simulate("click");
-
-            expect(component.find("main#old-password-login-form")).toHaveLength(0);
-            expect(component.find("main#login-form")).toHaveLength(1);
+            expect(mockPostAuth).toHaveBeenCalledWith(expectedMap);
         });
     });
     describe("Sign Out Outcomes", () => {
@@ -84,7 +76,7 @@ describe("URL Sanitising in href tags", () => {
         Config.REACT_APP_AUTH_ENDPOINT = "javascript:alert('XSS');";
         Config.REACT_APP_COGNITO_SCOPE = "TestScope";
         Config.REACT_APP_COGNITO_REDIRECT_URI = "http://localhost:3000/viewgraphs";
-        component = mount(<LoginModal onLogin={usernameCallback} />);
+        component = mount(<LoginModal onLogin={usernameCallback} requiredFields={["username", "password"]} />);
     });
     it("should sanitize the URL in the href tag", () => {
         expect(component.find("main#login-options").length).toBe(1);
@@ -99,7 +91,7 @@ describe("Cognito", () => {
         Config.REACT_APP_AUTH_ENDPOINT = "https://localhost:4000";
         Config.REACT_APP_COGNITO_SCOPE = "TestScope";
         Config.REACT_APP_COGNITO_REDIRECT_URI = "http://localhost:3000/viewgraphs";
-        component = mount(<LoginModal onLogin={usernameCallback} />);
+        component = mount(<LoginModal onLogin={usernameCallback} requiredFields={["username", "password"]} />);
     });
     it("Should render the Login Options component", () => {
         expect(component.find("main#login-options").length).toBe(1);
@@ -122,7 +114,7 @@ describe("Cognito", () => {
         it("should call back with Username when a User logs in with Cognito", async () => {
             window.location.hash =
                 "#id_token=eyJraWQiOiI4bFdGbzRrXC9aNUZmcis1WlNST05IejVaZlVuRFwvZ3gzXC9RKytzVzFINlFvPSIsImFsZyI6IlJTMjU2In0.eyJhdF9oYXNoIjoiaGtuYklxcGg0cnQxMmFJV2tOZWtmUSIsInN1YiI6ImNjNWZkZWU1LWFmZDgtNGM5MC1iY2M5LTZiZTk0M2RmOGI5MSIsImF1ZCI6IjM1aG11ZDB1ZGxxZmtjNGcwbnRhdXI2dDh2IiwiZXZlbnRfaWQiOiJiY2VmOTUwZC1kNzY1LTQ0NGYtYjdlNi03MTU1MTc3NmFlZjAiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTYzNjYzMTM4NCwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMi5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTJfV2ZnYXpDdFBRIiwiY29nbml0bzp1c2VybmFtZSI6InRlc3QtdXNlciIsImV4cCI6MTYzNjYzNDk4NCwiaWF0IjoxNjM2NjMxMzg0LCJqdGkiOiJkZjg5NWMzYi03Y2JhLTRiMjUtOTg3OS00NTlkYmVmYzliZTkiLCJlbWFpbCI6Im5peGlmOTAzMjlAY3lhZHAuY29tIn0.Bqoa8Bi_2_T1cv8Sus4IwOmvC5O_2zBcHkETBOK88qwJN8UJgEd7PM81tPv31F1j1dm5EgnmFxi66gPztICNUUlKC1fXZaqY39nMXGMmPaE8_yofUgGcFAzhWRpuwEqOKqVWCVtLCHc10UVvF0P2TYda_oie0HWh5lksyizZ87ga9Ja83Cp7ipZxrWpKInUsCoWrQvda7-k8q70GOvljQCnk9xupqSTMXetS9kwOjvImyA-BoFGntoe0P9EqSFLabZ34slD8qm3-lC6kPEd48iu4gGB4sYjGRq2_WljUzgO_84eR6nhQr-7vT1563MycvjrorWvZX7w47J3H4At5PQ";
-            component = mount(<LoginModal onLogin={usernameCallback} />);
+            component = mount(<LoginModal onLogin={usernameCallback} requiredFields={["username", "password"]} />);
             expect(usernameCallback).toHaveBeenCalledWith("test-user");
         });
     });
@@ -141,14 +133,15 @@ function clickNewUserSignIn() {
 }
 
 function inputUsername(username: string): void {
-    expect(component.find("input#username").length).toBe(1);
+    console.log(component.find("main#login-form").html());
+    expect(component.find("main#login-form").find("input#username").length).toBe(1);
     component.find("input#username").simulate("change", {
         target: { value: username },
     });
 }
 
 function inputPassword(password: string): void {
-    expect(component.find("input#password").length).toBe(1);
+    expect(component.find("main#login-form").find("input#password").length).toBe(1);
     component.find("input#password").simulate("change", {
         target: { value: password },
     });
@@ -161,6 +154,13 @@ function mockAuthApiClientLogin() {
             onSuccess();
         }
     );
+}
+
+async function mockPostAuth(data: Map<String, String>) {
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        postAuth: jest.fn(),
+    }));
 }
 
 function mockAuthApiClientFailedLogOut(errorMessage: string) {

@@ -62,6 +62,9 @@ export class AuthSidecarClient {
             throw new Error("Invalid Response").message;
         }
     }
+    private convertMapToJson(map: Map<String, String>): object {
+        return Object.fromEntries(map);
+    }
     public async getWhoAmI() {
         try {
             const response: AxiosResponse<any> = await axios({
@@ -75,13 +78,13 @@ export class AuthSidecarClient {
             throw RestClient.fromError(error as AxiosError<any>);
         }
     }
-    public async postAuth(data: object) {
+    public async postAuth(data: Map<String, String>) {
         try {
             const response: AxiosResponse<any> = await axios({
                 baseURL: Config.REACT_APP_AUTH_ENDPOINT,
                 url: "/auth",
                 method: "POST",
-                data: data,
+                data: this.convertMapToJson(data),
             });
             this.token = response.data;
             return response.data;

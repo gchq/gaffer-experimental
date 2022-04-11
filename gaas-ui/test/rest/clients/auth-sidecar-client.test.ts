@@ -48,19 +48,21 @@ describe("Auth Sidecar Client", () => {
     describe("/auth", () => {
         it("Should return 200 status and a valid response when POST request is successful", async () => {
             mock.onPost("/auth").reply(200, "thisIsAValidToken");
-            const actualResponse = await authSidecarClient.postAuth({
-                username: "testUsername",
-                password: "testPassword",
-            });
+            const postMap = new Map<string, string>();
+            postMap.set("username", "validuser");
+            postMap.set("password", "password");
+            const actualResponse = await authSidecarClient.postAuth(postMap);
             expect(actualResponse).toEqual("thisIsAValidToken");
         });
         it("Should return 403 status and an error message when GET request is unsuccessful", async () => {
+            const postMap = new Map<string, string>();
+            postMap.set("username", "invalid");
             mock.onGet("/auth").reply(403, {
                 title: "Forbidden",
                 detail: "Invalid Auth credentials",
             });
             try {
-                await authSidecarClient;
+                await authSidecarClient.postAuth(postMap);
             } catch (e) {
                 expect(e).toEqual({ detail: "Forbidden", title: "Invalid Auth credentials" });
             }

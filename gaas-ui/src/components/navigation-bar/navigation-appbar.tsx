@@ -131,7 +131,7 @@ const NavigationAppbar: React.FC = (props: any) => {
     const getWhatAuth = async () => {
         try {
             const whatAuthInfo = await new AuthSidecarClient().getWhatAuth();
-            setRequiredFields(whatAuthInfo.requiredFields);
+            setRequiredFields((requiredFields) => requiredFields.concat(whatAuthInfo.requiredFields));
         } catch (e) {
             setErrorMessage(`Failed to setup Login`);
         }
@@ -176,7 +176,9 @@ const NavigationAppbar: React.FC = (props: any) => {
                     <Typography variant="h6" className={classes.title}>
                         Kai: Graph As A Service
                     </Typography>
-                    {requiredFields.length > 0 && <LoginModal onLogin={(username) => setUserEmail(username)} />}
+                    {requiredFields.length > 0 && (
+                        <LoginModal onLogin={(username) => setUserEmail(username)} requiredFields={requiredFields} />
+                    )}
                 </Toolbar>
             </AppBar>
 

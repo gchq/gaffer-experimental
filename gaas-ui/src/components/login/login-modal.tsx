@@ -36,6 +36,7 @@ function styles(theme: any) {
 
 interface IProps extends WithStyles<typeof styles> {
     onLogin(username: string): void;
+    requiredFields: Array<String>;
 }
 
 export enum FormType {
@@ -93,7 +94,6 @@ class LoginModal extends React.Component<IProps, IState> {
     public render() {
         const { classes } = this.props;
         const { formType, status, openSignOutModal, requiredFields } = this.state;
-
         return (
             <div id="login-modal">
                 <Button
@@ -120,24 +120,10 @@ class LoginModal extends React.Component<IProps, IState> {
                 <Dialog id="login-modal-dialog" fullScreen open={status === UserStatus.SIGNED_OUT}>
                     <DialogContent style={{ padding: 30 }}>
                         <Logo />
-                        {formType === FormType.EXISTING_USER_LOGIN && (
-                            <DynamicLoginForm
-                                requiredFields={requiredFields}
-                                onClickSignIn={(requiredValues: Map<String, String>) => {}}
-                            />
-                        )}
-                        {formType === FormType.EXISTING_USER_LOGIN && Config.REACT_APP_API_PLATFORM === "AWS" && (
-                            <LoginOptions cognitoLoginURL={CognitoIdentityClient.buildCognitoLoginURL()} />
-                        )}
-                        {formType === FormType.TEMP_PASSWORD_LOGIN && (
-                            <TempPasswordLoginForm
-                                onChangeForm={(formType: FormType) => this.setState({ formType })}
-                                onSuccess={(username: string) => {
-                                    this.setState({ status: UserStatus.SIGNED_IN });
-                                    this.props.onLogin(username);
-                                }}
-                            />
-                        )}
+                        <DynamicLoginForm
+                            requiredFields={requiredFields}
+                            onClickSignIn={(requiredValues: Map<String, String>) => {}}
+                        />
                     </DialogContent>
                 </Dialog>
                 <Dialog id="signout-outcome-modal" open={openSignOutModal}>
