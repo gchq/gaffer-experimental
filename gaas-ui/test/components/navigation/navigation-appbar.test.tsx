@@ -16,6 +16,11 @@ jest.mock("../../../src/rest/clients/auth-sidecar-client");
 let component: ReactWrapper;
 
 beforeEach(async () => {
+    await mockGetWhatAuthToReturn({
+        attributes: {},
+        requiredFields: ["username", "password"],
+        requiredHeaders: { Authorization: "Bearer  " },
+    });
     await act(async () => {
         component = mount(
             <MemoryRouter>
@@ -41,18 +46,15 @@ describe("Navigation Appbar Component", () => {
                 requiredFields: ["username", "password"],
                 requiredHeaders: { Authorization: "Bearer  " },
             });
-
-            await act(async () => {
-                component = mount(
-                    <MemoryRouter>
-                        <NavigationAppbar />
-                    </MemoryRouter>
-                );
-            });
+            component = mount(
+                <MemoryRouter>
+                    <NavigationAppbar />
+                </MemoryRouter>
+            );
             await component.update();
             await component.update();
 
-            expect(component.contains("div#login-modal")).toBe(true);
+            expect(component.html().includes("login-modal")).toBe(true);
         });
         it("should call getWhatAuth on load and not create login page based on response", async () => {
             await mockGetWhatAuthToReturn({
@@ -62,11 +64,15 @@ describe("Navigation Appbar Component", () => {
                 requiredFields: [],
                 requiredHeaders: {},
             });
-            await component.update();
+            component = mount(
+                <MemoryRouter>
+                    <NavigationAppbar />
+                </MemoryRouter>
+            );
             await component.update();
             await component.update();
 
-            expect(component.contains("div#login-modal")).toBe(false);
+            expect(component.html().includes("login-modal")).toBe(false);
         });
     });
     it("should display appbar", () => {

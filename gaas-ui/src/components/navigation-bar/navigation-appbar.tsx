@@ -24,7 +24,7 @@ import { NavLink } from "react-router-dom";
 import { Config } from "../../rest/config";
 import { GetWhoAmIRepo } from "../../rest/repositories/get-whoami-repo";
 import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
-import { AuthSidecarClient, IWhatAuthInfo } from "../../rest/clients/auth-sidecar-client";
+import { AuthSidecarClient } from "../../rest/clients/auth-sidecar-client";
 
 const drawerWidth = 240;
 
