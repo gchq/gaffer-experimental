@@ -10,7 +10,7 @@ beforeEach(
         ))
 );
 afterEach(() => component.unmount());
-describe("Dynamic Login Modal", () => {
+describe("Dynamic Login Form", () => {
     it("Should display the correct textfield based on the requiredField prop", () => {
         expect(component.find("input#username").length).toBe(1);
         expect(component.find("input#password").length).toBe(1);
