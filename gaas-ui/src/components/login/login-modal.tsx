@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { Button, Dialog, DialogContent } from "@material-ui/core";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { createStyles } from "@material-ui/core/styles";
-import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
-import { IAuthClient } from "../../rest/clients/authclient";
 import { Logo } from "../logo";
 import DynamicLoginForm from "./dynamic-login-form";
 import { AuthSidecarClient } from "../../rest/clients/auth-sidecar-client";
+import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 
 function styles(theme: any) {
     return createStyles({
@@ -38,12 +37,16 @@ export default function LoginModal(props: IProps) {
         const authSidecarClient: AuthSidecarClient = new AuthSidecarClient();
         try {
             authSidecarClient.postAuth(fields);
+            setLoginFormIsShown(false);
         } catch (error) {
-            //TODO: Add error handling
+            setOutcome(AlertType.FAILED);
+            setOutcomeMessage(`Login failed: ${error}`);
         }
     }
     const { showLoginForm, requiredFields } = props;
     const [loginFormIsShown, setLoginFormIsShown] = useState(showLoginForm);
+    const [outcome, setOutcome] = useState<AlertType | undefined>(undefined);
+    const [outcomeMessage, setOutcomeMessage] = useState("");
     return (
         <div id="login-modal">
             <Button
@@ -58,13 +61,9 @@ export default function LoginModal(props: IProps) {
             </Button>
             <Dialog id="login-modal-dialog" fullScreen open={loginFormIsShown}>
                 <DialogContent style={{ padding: 30 }}>
+                    {outcome && <NotificationAlert alertType={outcome} message={outcomeMessage} />}
                     <Logo />
-                    <DynamicLoginForm
-                        requiredFields={requiredFields}
-                        onClickSignIn={(requiredValues: Map<string, string>) => {
-                            postAuth(requiredValues);
-                        }}
-                    />
+                    <DynamicLoginForm requiredFields={requiredFields} onClickSignIn={postAuth} />
                 </DialogContent>
             </Dialog>
         </div>
