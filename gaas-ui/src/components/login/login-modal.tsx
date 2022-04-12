@@ -57,7 +57,6 @@ export default function LoginModal(props: IProps) {
 
     const { showLoginForm, requiredFields } = props;
     const [loginFormIsShown, setLoginFormIsShown] = useState(showLoginForm);
-    console.log(requiredFields);
     return (
         <div id="login-modal">
             <Button
