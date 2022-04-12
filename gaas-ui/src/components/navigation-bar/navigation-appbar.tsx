@@ -131,7 +131,9 @@ const NavigationAppbar: React.FC = (props: any) => {
     const getWhatAuth = async () => {
         try {
             const whatAuthInfo = await new AuthSidecarClient().getWhatAuth();
-            setRequiredFields((requiredFields) => requiredFields.concat(whatAuthInfo.requiredFields));
+            whatAuthInfo.requiredFields.forEach((field) => {
+                setRequiredFields((requiredFields) => [...requiredFields, field]);
+            });
         } catch (e) {
             setErrorMessage(`Failed to setup Login`);
         }
