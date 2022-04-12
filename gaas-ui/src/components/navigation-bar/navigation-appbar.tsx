@@ -101,6 +101,7 @@ const NavigationAppbar: React.FC = (props: any) => {
     const [userEmail, setUserEmail] = useState("");
     const [requiredFields, setRequiredFields] = useState<Array<string>>([]);
     const [errorMessage, setErrorMessage] = useState("");
+    const [showLoginForm, setShowLoginForm] = useState(true);
     const getSideNavIcon = (sidebarName: string) => {
         switch (sidebarName) {
             case "Create Graph":
@@ -180,9 +181,11 @@ const NavigationAppbar: React.FC = (props: any) => {
                     </Typography>
                     {requiredFields.length > 0 && (
                         <LoginModal
-                            onLogin={(username) => setUserEmail(username)}
+                            onLogin={() => {
+                                setShowLoginForm(false);
+                            }}
                             requiredFields={requiredFields}
-                            showLoginForm={true}
+                            showLoginForm={showLoginForm}
                         />
                     )}
                 </Toolbar>

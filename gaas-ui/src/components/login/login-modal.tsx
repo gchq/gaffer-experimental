@@ -27,7 +27,7 @@ function styles(theme: any) {
 }
 
 interface IProps {
-    onLogin(username: string): void;
+    onLogin(): void;
     requiredFields: Array<string>;
     showLoginForm: boolean;
 }
@@ -37,7 +37,9 @@ export default function LoginModal(props: IProps) {
         const authSidecarClient: AuthSidecarClient = new AuthSidecarClient();
         try {
             authSidecarClient.postAuth(fields);
-            setLoginFormIsShown(false);
+            if (AuthSidecarClient.getToken()) {
+                setLoginFormIsShown(false);
+            }
         } catch (error) {
             setOutcome(AlertType.FAILED);
             setOutcomeMessage(`Login failed: ${error}`);
