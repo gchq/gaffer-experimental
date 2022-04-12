@@ -19,13 +19,5 @@ package uk.gov.gchq.gaffer.gaas.sidecar;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-//@EnableWebFlux
 public class AppConfig {
-//    @Bean
-//    public FilterRegistrationBean<CustomFilter> filterRegistrationBean(){
-//        FilterRegistrationBean<CustomFilter> registrationBean = new FilterRegistrationBean<>();
-//        registrationBean.setFilter(new CustomFilter());
-//        registrationBean.addUrlPatterns("/*");
-//        return registrationBean;
-//    }
 }
