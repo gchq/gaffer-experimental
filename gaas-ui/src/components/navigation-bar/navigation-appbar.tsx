@@ -179,7 +179,11 @@ const NavigationAppbar: React.FC = (props: any) => {
                         Kai: Graph As A Service
                     </Typography>
                     {requiredFields.length > 0 && (
-                        <LoginModal onLogin={(username) => setUserEmail(username)} requiredFields={requiredFields} />
+                        <LoginModal
+                            onLogin={(username) => setUserEmail(username)}
+                            requiredFields={requiredFields}
+                            showLoginForm={true}
+                        />
                     )}
                 </Toolbar>
             </AppBar>

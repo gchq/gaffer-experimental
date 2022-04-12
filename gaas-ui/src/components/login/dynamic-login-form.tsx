@@ -27,9 +27,6 @@ function styles(theme: any) {
     });
 }
 
-interface IState {
-    requiredFields: string[];
-}
 export default function DynamicLoginForm(props: IProps) {
     const { requiredFields, onClickSignIn } = props;
     const textfieldValues = new Map<string, string>();
