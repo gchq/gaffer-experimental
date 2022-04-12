@@ -51,8 +51,8 @@ describe("Auth Sidecar Client", () => {
             const postMap = new Map<string, string>();
             postMap.set("username", "validuser");
             postMap.set("password", "password");
-            const actualResponse = await authSidecarClient.postAuth(postMap);
-            expect(actualResponse).toEqual("thisIsAValidToken");
+            await authSidecarClient.postAuth(postMap);
+            expect(AuthSidecarClient.getToken()).toEqual("thisIsAValidToken");
         });
         it("Should return 403 status and an error message when GET request is unsuccessful", async () => {
             const postMap = new Map<string, string>();
