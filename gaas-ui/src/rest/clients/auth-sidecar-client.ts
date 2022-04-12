@@ -88,7 +88,7 @@ export class AuthSidecarClient {
                 method: "POST",
                 data: this.convertMapToJson(data),
             });
-            this.token = response.data;
+            AuthSidecarClient.token = response.data;
         } catch (error) {
             throw RestClient.fromError(error as AxiosError<any>);
         }

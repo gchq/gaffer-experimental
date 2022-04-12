@@ -3,12 +3,10 @@ import { Button, CssBaseline, Grid, TextField, Link } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
-import { FormType } from "./login-modal";
 import { IAuthClient } from "../../rest/clients/authclient";
 import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
 
 interface IProps {
-    onChangeForm(fromType: FormType): void;
     onSuccess(username: string): void;
 }
 
@@ -163,12 +161,7 @@ export default class OldPasswordLoginForm extends React.Component<IProps, IState
                                 </Button>
                             </form>
                             <Typography style={{ marginTop: "20px" }}>
-                                <Link
-                                    id="login-form-link"
-                                    onClick={() => this.props.onChangeForm(FormType.EXISTING_USER_LOGIN)}
-                                >
-                                    Back to sign in
-                                </Link>
+                                <Link id="login-form-link">Back to sign in</Link>
                             </Typography>
                         </Grid>
                     </div>
