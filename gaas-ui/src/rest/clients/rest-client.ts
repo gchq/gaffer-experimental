@@ -105,7 +105,6 @@ export class RestClient<T> {
         },
         storeTypes: () => {
             restClient.url = "/storetypes";
-            // restClient.headers = { "x-email": "test@test.com" };
             return restClient.executeSpec(restClient);
         },
     });
