@@ -68,11 +68,6 @@ public class UnitTestConfig {
         return new CustomObjectsApi(apiClient());
     }
 
-//    @Bean
-//    public AuthService authService() {
-//        return new AuthService();
-//    }
-
     @Bean
     public CreateGraphService createGraphService() {
         return new CreateGraphService();
@@ -97,26 +92,11 @@ public class UnitTestConfig {
     public GetGaaSGraphConfigsService getStoreTypesService() {
         return new GetGaaSGraphConfigsService();
     }
-//
-//    @Bean
-//    public JwtTokenUtil jwtTokenUtil() {
-//        return new JwtTokenUtil();
-//    }
-//
-//    @Bean
-//    public JwtUserDetailsService jwtUserDetailsService() {
-//        return new JwtUserDetailsService();
-    // }
 
     @Bean
     public Properties properties() {
         return new Properties();
     }
-//
-//    @Bean
-//    public AuthenticationManager authenticationManager() {
-//        return mock(AuthenticationManager.class);
-//    }
 
     @Bean
     public GraphCommandExecutor graphCommandExecutor() {

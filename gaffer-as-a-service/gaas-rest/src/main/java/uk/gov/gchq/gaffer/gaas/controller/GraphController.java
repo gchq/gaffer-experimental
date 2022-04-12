@@ -18,7 +18,6 @@ package uk.gov.gchq.gaffer.gaas.controller;
 
 import io.kubernetes.client.openapi.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +41,7 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -68,13 +68,8 @@ public class GraphController {
     private GetNamespacesService getNamespacesService;
     @Autowired
     private GetGaaSGraphConfigsService getStoreTypesService;
-//    @Autowired(required = false)
-//    private AuthService authService;
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
-
-    @Value("${cognito.enabled: false}")
-    boolean cognitoEnabled;
 
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")

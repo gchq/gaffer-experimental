@@ -56,8 +56,6 @@ class GraphControllerTest extends AbstractTest {
 
     @MockBean
     private GetGaffersService getGafferService;
-//    @MockBean
-//    private AuthService authService;
     @MockBean
     private CreateGraphService createGraphService;
     @MockBean
@@ -107,18 +105,6 @@ class GraphControllerTest extends AbstractTest {
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 
-//    @Test
-//    void authEndpointShouldReturn200StatusAndTokenWhenValidUsernameAndPassword() throws Exception {
-//        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
-//        when(authService.getToken(any(JwtRequest.class))).thenReturn("token received");
-//
-//        final MvcResult result = mvc.perform(post("/auth")
-//                .contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(authRequest)).andReturn();
-//
-//        assertEquals(200, result.getResponse().getStatus());
-//        assertEquals("token received", result.getResponse().getContentAsString());
-//    }
 
     @Test
     void createGraph_whenSuccessful_shouldReturn201() throws Exception {
@@ -261,20 +247,6 @@ class GraphControllerTest extends AbstractTest {
         assertEquals("{\"title\":\"This graph\",\"detail\":\"already exists\"}", result.getResponse().getContentAsString());
     }
 
-//    @Test
-//    void authEndpoint_shouldReturn401Status_whenValidUsernameAndPassword() throws Exception {
-//        final String authRequest = "{\"username\":\"invalidUser\",\"password\":\"abc123\"}";
-//        doThrow(new GaaSRestApiException("Invalid Credentials", "Username is incorrect", 401))
-//                .when(authService).getToken(any(JwtRequest.class));
-//
-//        final MvcResult result = mvc.perform(post("/auth")
-//                .contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(authRequest)).andReturn();
-//
-//        verify(authService, times(2)).getToken(any(JwtRequest.class));
-//        assertEquals(401, result.getResponse().getStatus());
-//        assertEquals("{\"title\":\"Invalid Credentials\",\"detail\":\"Username is incorrect\"}", result.getResponse().getContentAsString());
-//    }
 
     @Test
     void namespaces_shouldReturnErrorMessageWhenNamespaceServiceException() throws Exception {
@@ -498,7 +470,6 @@ class GraphControllerTest extends AbstractTest {
         assertEquals(400, result.getResponse().getStatus());
     }
 
-    //createGraph_whenGraphIdIsNull_shouldReturn400
 
     private LinkedHashMap<String, Object> getSchema() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
