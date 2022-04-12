@@ -34,7 +34,7 @@ class JwtTokenUtilTest {
 
 
     @Test
-    void changedSignatureToken() {
+    void whenSignatureTokenIsModifiedThrowSignatureException() {
         //given
         UserDetails userDetails = mock(UserDetails.class);
         given(userDetails.getUsername()).willReturn("nenad");
@@ -47,7 +47,7 @@ class JwtTokenUtilTest {
     }
 
     @Test
-    void validToken() {
+    void whenValidUserDetailsEnteredThenReturnTokenValidationSuccess() {
         //given
         UserDetails userDetails = mock(UserDetails.class);
         given(userDetails.getUsername()).willReturn("nenad");
@@ -61,7 +61,7 @@ class JwtTokenUtilTest {
     }
 
     @Test
-    void invalidToken() {
+    void whenInvalidUserDetailsEnteredThenReturnInvalidTokenError() {
         //given
         UserDetails authenticatedUser = mock(UserDetails.class);
         given(authenticatedUser.getUsername()).willReturn("nenad");

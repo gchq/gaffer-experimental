@@ -31,7 +31,7 @@ public class SidecarControllerTest {
     private WebTestClient webClient;
 
     @Test
-    void authEndpointReturns200WhenValidCredentials() {
+    void givenValidCredentialsWhenAccessingAuthEndpointThenReturn200() {
         final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
         webClient.post()
                 .uri("/auth")
@@ -42,7 +42,7 @@ public class SidecarControllerTest {
     }
 
     @Test
-    void authEndpointReturns401WhenInvalidCredentials() {
+    void givenInvalidCredentialsWhenAccessingAuthEndpointThenReturn401() {
         final String authRequest = "{\"username\":\"invalid\",\"password\":\"something\"}";
         webClient.post()
                 .uri("/auth")
