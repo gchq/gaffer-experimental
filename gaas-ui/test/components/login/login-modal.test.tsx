@@ -5,28 +5,23 @@ import LoginModal from "../../../src/components/login/login-modal";
 import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { AuthSidecarClient } from "../../../src/rest/clients/auth-sidecar-client";
 import { Config } from "../../../src/rest/config";
+import { RestApiError } from "../../../src/rest/RestApiError";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
 jest.mock("../../../src/rest/clients/auth-sidecar-client");
 
 let component: ReactWrapper;
 const jestMock = jest.fn();
-const usernameCallback = jest.fn();
+const onLoginCallback = jest.fn();
 afterEach(() => {
     component.unmount();
     jestMock.mockReset();
-    Config.REACT_APP_API_PLATFORM = "";
-    Config.REACT_APP_COGNITO_USERPOOL_ID = "";
-    Config.REACT_APP_COGNITO_CLIENT_ID = "";
-    Config.REACT_APP_AUTH_ENDPOINT = "";
-    Config.REACT_APP_COGNITO_SCOPE = "";
-    Config.REACT_APP_COGNITO_REDIRECT_URI = "";
 });
 
 describe("Login form", () => {
     beforeEach(() => {
         component = mount(
-            <LoginModal onLogin={usernameCallback} requiredFields={["username", "password"]} showLoginForm={true} />
+            <LoginModal onLogin={onLoginCallback} requiredFields={["username", "password"]} showLoginForm={true} />
         );
         Config.REACT_APP_API_PLATFORM = "OTHER";
     });
@@ -42,50 +37,45 @@ describe("Login form", () => {
         });
     });
     describe("onLogin call back", () => {
-        it("should call back with Username when a User logs in", () => {
-            const expectedMap = new Map<String, String>();
+        it("should call onLoginCallback when the user successfully logs in", async () => {
+            const expectedMap = new Map<string, string>();
             expectedMap.set("username", "testUsername");
             expectedMap.set("password", "testPassword");
-            mockPostAuth(expectedMap);
+            await mockPostAuth(expectedMap);
 
             inputUsername("testUsername");
             inputPassword("testPassword");
 
             clickSubmitSignIn();
 
-            expect(mockPostAuth).toHaveBeenCalledWith(expectedMap);
+            expect(component.text()).toEqual("");
         });
-    });
-    describe("Sign Out Outcomes", () => {
-        it("should show modal with error message when sign out fails", () => {
-            mockAuthApiClientLogin();
-            mockAuthApiClientFailedLogOut("Sign out was a failure");
+        it("should display an error when login fails", async () => {
+            await mockPostAuthToThrow(() => {
+                throw new RestApiError("Server Error", "Timeout exception");
+            });
 
             inputUsername("testUsername");
             inputPassword("testPassword");
-            clickSubmitSignIn();
 
-            clickSignOutButton();
+            await clickSubmitSignIn();
 
-            expect(component.find(Dialog).at(1).text()).toBe("Sign out was a failure");
+            expect(component.find("div#notification-alert").text()).toBe(
+                "Login failed: Server Error: Timeout exception"
+            );
         });
     });
 });
 
 function clickSubmitSignIn() {
-    component.find("button#submit-sign-in-button").simulate("click");
+    component.find("main#login-form").find("button#submit-sign-in-button").simulate("click");
 }
 
 function clickSignOutButton() {
     component.find("button#sign-out-button").simulate("click");
 }
 
-function clickNewUserSignIn() {
-    component.find("a#temp-password-form-link").simulate("click");
-}
-
 function inputUsername(username: string): void {
-    console.log(component.find("main#login-form").html());
     expect(component.find("main#login-form").find("input#username").length).toBe(1);
     component.find("input#username").simulate("change", {
         target: { value: username },
@@ -108,14 +98,23 @@ function mockAuthApiClientLogin() {
     );
 }
 
-async function mockPostAuth(data: Map<String, String>) {
+async function mockPostAuth(data: Map<string, string>) {
     // @ts-ignore
     AuthSidecarClient.mockImplementationOnce(() => ({
-        postAuth: jest.fn(),
+        postAuth: () =>
+            new Promise((resolve, reject) => {
+                resolve(data);
+            }),
+    }));
+}
+async function mockPostAuthToThrow(f: () => void) {
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        postAuth: f,
     }));
 }
 
-function mockAuthApiClientFailedLogOut(errorMessage: string) {
+function mockAuthApiCFlientFailedLogOut(errorMessage: string) {
     // @ts-ignore
     AuthApiClient.prototype.signOut.mockImplementationOnce(
         (onSuccess: () => void, onError: (errorMessage: string) => void) => {
