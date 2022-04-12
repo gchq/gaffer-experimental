@@ -40,3 +40,6 @@ worker:
     name: gaffer-workers
 
 namespace: kai-dev
+
+eureka.server.image: dockerhub/gs-eureka-img
+sidecar.image: dockerhub/gs-sc-img

@@ -42,13 +42,13 @@ spec:
               limits:
                 memory: "1Gi"
                 cpu: "1000m"
-          - image: dockerhub/gs-sc-img
+          - image: "{{ .Values.sidecar.image }}"
             imagePullPolicy: Always
             name: gs-sc-mg
             ports:
                - containerPort: 8081
                  protocol: TCP
-          - image: dockerhub/gs-eureka-img
+          - image: "{{ .Values.eureka.server.image }}"
             imagePullPolicy: Always
             name: eureka-image
             ports:
