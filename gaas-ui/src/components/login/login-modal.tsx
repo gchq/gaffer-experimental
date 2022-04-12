@@ -42,19 +42,6 @@ export default function LoginModal(props: IProps) {
               }, {})
             : {};
 
-    // public async componentDidMount() {
-    //     const idToken = this.getQueryStringParams(window.location.href.split("#").pop())["id_token"];
-    //     if (idToken) {
-    //         const decode = Object.entries(jwt_decode(idToken));
-    //         const username = decode.filter((entry) => entry[0] === "cognito:username")[0][1] as string;
-    //         RestClient.setJwtToken(idToken);
-    //         this.setState({ status: UserStatus.SIGNED_IN });
-    //         this.props.onLogin(username);
-    //     }
-    // }
-
-    const authClient: IAuthClient = new AuthClientFactory().create();
-
     const { showLoginForm, requiredFields } = props;
     const [loginFormIsShown, setLoginFormIsShown] = useState(showLoginForm);
     return (
