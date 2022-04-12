@@ -17,7 +17,7 @@ New Project: `$ oc new-project [PROJECT_NAME]`
 
 Existing Project: `$ oc project [PROJECT_NAME]`
 
-4. Use the helmchart in ./ui directory to deploy Kai to Openshift.
+4. Use the helmchart in ./deploy directory to deploy Kai to Openshift.
 
 `$ helm install [NAME] helm`
 
@@ -33,7 +33,7 @@ If you any changes to the values in the helm chart you can run the following com
 
 2. Run the `$ npm run server` script to start the express server
 
-3. Use the helmchart in ./ui directory to deploy Kai to Openshift with development variables enabled:
+3. Use the helmchart in ./deploy directory to deploy Kai to Openshift with development variables enabled:
 
 `$ helm install [NAME] helm --set envVariables.reactAPIPlatform="test" --set envVariables.kaiRestAPIHost="http://localhost:4000"`
 

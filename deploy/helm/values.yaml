@@ -24,7 +24,7 @@ rest:
   replicaCount: 1
   image:
   #Set the repository value below to your own
-    repository: go159lab/gs-rs-img
+    repository: DOCKER_USERNAME/GAAS-REST-IMAGE_NAME
     pullPolicy: Always
     tag: latest
     containerPort: 8080
@@ -41,7 +41,7 @@ rest:
 
   controller:
     applicationProperties:
-      worker.image: rocky/gaffer-worker
+      worker.image:  DOCKER_USERNAME/gaffer-worker
       worker.imagePullPolicy: Always
   worker:
     serviceAccount:
@@ -56,7 +56,7 @@ ui:
 
   image:
     #Ask about repository setting
-    repository: go159lab/gaas-ui-fi
+    repository: DOCKER_USERNAME/GAAS-UI-IMAGE_NAME
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: 'latest'
@@ -76,9 +76,9 @@ ui:
 
   envVariables:
     reactAPIPlatform: ""
-    kaiRestAPIHost: "https://test-gaas-rest-kai-dev.korat-cluster-7c309b11fc78649918d0c8b91bcb5925-0000.eu-gb.containers.appdomain.cloud"
+    kaiRestAPIHost: "https://[HELM_INSTALL_NAME]-gaas-rest-[NAMESPACE].[INGRESS]"
     cognitoUserpoolID: ""
     cognitoClientID: ""
-    reactAuthEndpoint: ""
+    reactAuthEndpoint: "https://[HELM_INSTALL_NAME]-gaas-rest-[NAMESPACE].[INGRESS]"
     reactCognitoScope: "&scope=aws.cognito.signin.user.admin+email+openid+phone+profile+gaas-rest-resource/graphs"
     reactCognitoRedirectURI: ""

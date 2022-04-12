@@ -15,7 +15,7 @@
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ include "helm.fullname" . }}-worker
+  name: {{ include "helm.fullname" . }}
   labels:
     app.kubernetes.io/component: worker
 
@@ -80,12 +80,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "helm.fullname" . }}-worker
+  name: {{ include "helm.fullname" . }}
 subjects:
   - kind: ServiceAccount
     name: {{ .Values.rest.worker.serviceAccount.name }}
-    namespace: {{ .Values.namespace }}
+    namespace: {{ .Values.rest.namespace }}
 roleRef:
   kind: Role
-  name: {{ include "helm.fullname" . }}-worker
+  name: {{ include "helm.fullname" . }}
   apiGroup: rbac.authorization.k8s.io
