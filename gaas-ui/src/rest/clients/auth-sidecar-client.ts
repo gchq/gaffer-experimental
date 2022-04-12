@@ -78,7 +78,7 @@ export class AuthSidecarClient {
             throw RestClient.fromError(error as AxiosError<any>);
         }
     }
-    public async postAuth(data: Map<String, String>) {
+    public async postAuth(data: Map<string, string>) {
         try {
             const response: AxiosResponse<any> = await axios({
                 baseURL: Config.REACT_APP_AUTH_ENDPOINT,
