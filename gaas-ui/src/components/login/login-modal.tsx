@@ -6,6 +6,7 @@ import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
 import { IAuthClient } from "../../rest/clients/authclient";
 import { Logo } from "../logo";
 import DynamicLoginForm from "./dynamic-login-form";
+import { AuthSidecarClient } from "../../rest/clients/auth-sidecar-client";
 
 function styles(theme: any) {
     return createStyles({
@@ -33,15 +34,14 @@ interface IProps {
 }
 
 export default function LoginModal(props: IProps) {
-    const getQueryStringParams = (query: any) =>
-        query
-            ? (/^[?#]/.test(query) ? query.slice(1) : query).split("&").reduce((params: any, param: any) => {
-                  const [key, value] = param.split("=");
-                  params[key] = value ? decodeURIComponent(value.replace(/\+/g, " ")) : "";
-                  return params;
-              }, {})
-            : {};
-
+    function postAuth(fields: Map<string, string>) {
+        const authSidecarClient: AuthSidecarClient = new AuthSidecarClient();
+        try {
+            authSidecarClient.postAuth(fields);
+        } catch (error) {
+            //TODO: Add error handling
+        }
+    }
     const { showLoginForm, requiredFields } = props;
     const [loginFormIsShown, setLoginFormIsShown] = useState(showLoginForm);
     return (
@@ -61,7 +61,9 @@ export default function LoginModal(props: IProps) {
                     <Logo />
                     <DynamicLoginForm
                         requiredFields={requiredFields}
-                        onClickSignIn={(requiredValues: Map<String, String>) => {}}
+                        onClickSignIn={(requiredValues: Map<string, string>) => {
+                            postAuth(requiredValues);
+                        }}
                     />
                 </DialogContent>
             </Dialog>
