@@ -25,13 +25,16 @@ To access the Eureka Dashboard when running locally visit `http://localhost:8761
   * Eureka Server
   * Your chosen side car
 * In GaaS-UI set the ENV variables in the `.env` file. For example, when running everything using JWT authentication, the env variables are set as below:
-* ```REACT_APP_API_PLATFORM="OTHER"
+ 
+```
+  REACT_APP_API_PLATFORM="OTHER"
   REACT_APP_KAI_REST_API_HOST="http://localhost:8081/gaas-rest-service/"
   REACT_APP_COGNITO_USERPOOLID=""
   REACT_APP_COGNITO_CLIENTID=""
   REACT_APP_AUTH_ENDPOINT="http://localhost:8081/gaas-sidecar-service/"
   REACT_APP_COGNITO_SCOPE = ""
   REACT_APP_COGNITO_REDIRECT_URI = ""
-  SKIP_PREFLIGHT_CHECK="true"```
+  SKIP_PREFLIGHT_CHECK="true"
+```
 * Run the GaaS-UI
 * You should be able to login to the demo app by using the username: `javainuse` and password: `password`.
