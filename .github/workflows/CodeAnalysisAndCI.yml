@@ -85,7 +85,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: UI-Dependancy-Report
-          path: ${{github.workspace}}/gaas-ui/dependency-check-reports
+          path: ${{github.workspace}}/gaffer-as-a-service/gaas-ui/dependency-check-reports
   run-semgrep:
     name: Semgrep Scan
     needs: [ run-gaas-code-analysis, run-ui-code-analysis ]
