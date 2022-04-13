@@ -1,5 +1,5 @@
 import { Button, Container, createStyles, CssBaseline, Dialog, Typography } from "@material-ui/core";
-import React from "react";
+import React, { useState } from "react";
 import ReusableTextField from "../reusable-components/reusable-text-field";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
@@ -30,6 +30,7 @@ function styles(theme: any) {
 export default function DynamicLoginForm(props: IProps) {
     const { requiredFields, onClickSignIn } = props;
     const textfieldValues = new Map<string, string>();
+    const [submitIsDisabled, setSubmitDisabled] = useState(true);
     return (
         <main aria-label="login-form" id="login-form">
             <Container maxWidth="xs" aria-label="login-form" id="login-form">
@@ -50,6 +51,11 @@ export default function DynamicLoginForm(props: IProps) {
                             name={field}
                             onChange={(textFieldInput: string) => {
                                 textfieldValues.set(field, textFieldInput);
+                                if (textFieldInput.length > 0) {
+                                    setSubmitDisabled(false);
+                                } else {
+                                    setSubmitDisabled(true);
+                                }
                             }}
                         />
                     ))}
@@ -60,7 +66,7 @@ export default function DynamicLoginForm(props: IProps) {
                         variant="contained"
                         color="primary"
                         style={{ marginTop: "20px" }}
-                        // disabled={this.disableSignInButton()}
+                        disabled={submitIsDisabled}
                         onClick={() => {
                             onClickSignIn(textfieldValues);
                         }}

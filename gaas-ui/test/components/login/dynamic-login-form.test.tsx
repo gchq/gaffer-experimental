@@ -15,6 +15,13 @@ describe("Dynamic Login Form", () => {
         expect(component.find("input#username").length).toBe(1);
         expect(component.find("input#password").length).toBe(1);
     });
+    it("should have a disabled submit button if one or all of the textfields are empty", () => {
+        expect(component.find("button#submit-sign-in-button").props().disabled).toBe(true);
+        component.find("input#username").simulate("change", {
+            target: { value: "aTestUsername" },
+        });
+        expect(component.find("button#submit-sign-in-button").props().disabled).toBe(true);
+    });
     it("should callback with the requiredFields and textFields as a map when submit is clicked", () => {
         const expectedMap = new Map<string, string>();
         expectedMap.set("username", "aTestUsername");
