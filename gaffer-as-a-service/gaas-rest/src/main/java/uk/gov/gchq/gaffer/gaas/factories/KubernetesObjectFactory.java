@@ -215,6 +215,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                 gaffer.getMetadata().getName(),
                 GAFFER,
                 REPO_ARG, helmRepo,
+                VERSION_ARG, chartVersion,
                 VALUES_ARG, VALUES_YAML_LOCATION,
                 NAMESPACE_ARG, gaffer.getMetadata().getNamespace());
         if (openshiftEnabled) {
