@@ -20,9 +20,7 @@ afterEach(() => {
 
 describe("Login form", () => {
     beforeEach(() => {
-        component = mount(
-            <LoginModal onLogin={onLoginCallback} requiredFields={["username", "password"]} showLoginForm={true} />
-        );
+        component = mount(<LoginModal onLogin={onLoginCallback} requiredFields={["username", "password"]} />);
         Config.REACT_APP_API_PLATFORM = "OTHER";
     });
     describe("Login Form UI", () => {

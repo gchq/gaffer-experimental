@@ -30,11 +30,6 @@ export class AuthSidecarClient {
     }
     public static resetAuthSidecarClient() {
         AuthSidecarClient.token = "";
-        AuthSidecarClient.whatAuthObject = {
-            attributes: {},
-            requiredFields: [],
-            requiredHeaders: {},
-        };
     }
     public async getWhatAuth(): Promise<IWhatAuthInfo> {
         var response: AxiosResponse<any>;
@@ -84,8 +79,9 @@ export class AuthSidecarClient {
             });
             this.whoami = response.data;
             return response.data;
-        } catch (error) {
-            throw RestClient.fromError(error as AxiosError<any>);
+        } catch (e) {
+            const error = e as AxiosError<any>;
+            throw new Error(error.message);
         }
     }
     public async postAuth(data: Map<string, string>) {
@@ -97,8 +93,9 @@ export class AuthSidecarClient {
                 data: this.convertMapToJson(data),
             });
             AuthSidecarClient.token = response.data;
-        } catch (error) {
-            throw RestClient.fromError(error as AxiosError<any>);
+        } catch (e) {
+            console.error(e);
+            throw e;
         }
     }
 }

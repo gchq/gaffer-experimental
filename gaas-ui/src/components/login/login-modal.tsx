@@ -10,7 +10,6 @@ import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 interface IProps {
     onLogin(isLoggedIn: boolean): void;
     requiredFields: Array<string>;
-    showLoginForm: boolean;
 }
 
 export default function LoginModal(props: IProps) {
@@ -18,18 +17,17 @@ export default function LoginModal(props: IProps) {
         const authSidecarClient: AuthSidecarClient = new AuthSidecarClient();
         try {
             authSidecarClient.postAuth(fields);
-            if (AuthSidecarClient.getToken()) {
-                setLoginFormIsShown(false);
-                onLogin(true);
-            }
+            setLoginFormIsShown(false);
+            onLogin(true);
         } catch (error) {
             setOutcome(AlertType.FAILED);
             setOutcomeMessage(`Login failed: ${error}`);
             onLogin(false);
+            setLoginFormIsShown(true);
         }
     }
-    const { showLoginForm, requiredFields, onLogin } = props;
-    const [loginFormIsShown, setLoginFormIsShown] = useState(showLoginForm);
+    const { requiredFields, onLogin } = props;
+    const [loginFormIsShown, setLoginFormIsShown] = useState(true);
     const [outcome, setOutcome] = useState<AlertType | undefined>(undefined);
     const [outcomeMessage, setOutcomeMessage] = useState("");
     return (

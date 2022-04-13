@@ -100,8 +100,8 @@ const NavigationAppbar: React.FC = (props: any) => {
     const classes = useStyles();
     const [userEmail, setUserEmail] = useState("");
     const [requiredFields, setRequiredFields] = useState<Array<string>>([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const [showLoginForm, setShowLoginForm] = useState(true);
     const getSideNavIcon = (sidebarName: string) => {
         switch (sidebarName) {
             case "Create Graph":
@@ -142,9 +142,6 @@ const NavigationAppbar: React.FC = (props: any) => {
 
     const buildUsername = () => (userEmail.includes("@") ? userEmail.slice(0, userEmail.indexOf("@")) : userEmail);
     useEffect(() => {
-        if (Config.REACT_APP_API_PLATFORM === "OPENSHIFT") {
-            getUserEmail();
-        }
         getWhatAuth();
     }, []);
     const displayUserEmail = () => {
@@ -179,13 +176,15 @@ const NavigationAppbar: React.FC = (props: any) => {
                     <Typography variant="h6" className={classes.title}>
                         Kai: Graph As A Service
                     </Typography>
-                    {requiredFields.length > 0 && (
+                    {(requiredFields.length > 0 || !isLoggedIn) && (
                         <LoginModal
-                            onLogin={() => {
-                                setShowLoginForm(false);
+                            onLogin={(isLoggedIn) => {
+                                if (!isLoggedIn) {
+                                    AuthSidecarClient.resetAuthSidecarClient();
+                                }
+                                setIsLoggedIn(isLoggedIn);
                             }}
                             requiredFields={requiredFields}
-                            showLoginForm={showLoginForm}
                         />
                     )}
                 </Toolbar>
