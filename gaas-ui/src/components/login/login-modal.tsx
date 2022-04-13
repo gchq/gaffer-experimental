@@ -7,27 +7,8 @@ import DynamicLoginForm from "./dynamic-login-form";
 import { AuthSidecarClient } from "../../rest/clients/auth-sidecar-client";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 
-function styles(theme: any) {
-    return createStyles({
-        root: {
-            margin: 0,
-            padding: theme.spacing(2),
-        },
-        closeButton: {
-            position: "absolute",
-            right: theme.spacing(1),
-            top: theme.spacing(1),
-            color: theme.palette.grey[500],
-        },
-        large: {
-            width: theme.spacing(7),
-            height: theme.spacing(7),
-        },
-    });
-}
-
 interface IProps {
-    onLogin(): void;
+    onLogin(isLoggedIn: boolean): void;
     requiredFields: Array<string>;
     showLoginForm: boolean;
 }
@@ -39,13 +20,15 @@ export default function LoginModal(props: IProps) {
             authSidecarClient.postAuth(fields);
             if (AuthSidecarClient.getToken()) {
                 setLoginFormIsShown(false);
+                onLogin(true);
             }
         } catch (error) {
             setOutcome(AlertType.FAILED);
             setOutcomeMessage(`Login failed: ${error}`);
+            onLogin(false);
         }
     }
-    const { showLoginForm, requiredFields } = props;
+    const { showLoginForm, requiredFields, onLogin } = props;
     const [loginFormIsShown, setLoginFormIsShown] = useState(showLoginForm);
     const [outcome, setOutcome] = useState<AlertType | undefined>(undefined);
     const [outcomeMessage, setOutcomeMessage] = useState("");

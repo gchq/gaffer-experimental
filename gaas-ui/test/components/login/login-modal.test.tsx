@@ -42,13 +42,13 @@ describe("Login form", () => {
             expectedMap.set("username", "testUsername");
             expectedMap.set("password", "testPassword");
             await mockPostAuth(expectedMap);
-
+            jest.spyOn(AuthSidecarClient, "getToken").mockImplementation(() => "aValidJsonToken");
             inputUsername("testUsername");
             inputPassword("testPassword");
 
             clickSubmitSignIn();
 
-            expect(component.text()).toEqual("");
+            expect(onLoginCallback).toHaveBeenCalled();
         });
         it("should display an error when login fails", async () => {
             await mockPostAuthToThrow(() => {
