@@ -18,7 +18,8 @@ export default function ReusableTextField(props: IProps) {
         <TextField
             id={name}
             name={name}
-            label={name}
+            label={name.charAt(0).toUpperCase() + name.slice(1)}
+            type={name === "password" ? "password" : "text"}
             onChange={onInput}
             value={textFieldInput}
             variant="outlined"
