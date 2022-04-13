@@ -58,7 +58,6 @@ public class CustomFilter implements GlobalFilter {
             }));
         }
         final String requestTokenHeader = request.getHeaders().getFirst("Authorization");
-
         String username = null;
         String jwtToken = null;
         // JWT Token is in the form "Bearer token". Remove Bearer word and get
