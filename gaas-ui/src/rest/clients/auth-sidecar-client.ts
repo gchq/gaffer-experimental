@@ -11,7 +11,7 @@ export interface IWhatAuthInfo {
 
 export class AuthSidecarClient {
     private static whatAuthObject: IWhatAuthInfo;
-    private static token: string;
+    private static token: string = "";
     private whoami: object;
     public constructor() {
         this.whoami = {};
@@ -27,6 +27,14 @@ export class AuthSidecarClient {
     }
     public static getToken(): string {
         return this.token;
+    }
+    public static resetAuthSidecarClient() {
+        AuthSidecarClient.token = "";
+        AuthSidecarClient.whatAuthObject = {
+            attributes: {},
+            requiredFields: [],
+            requiredHeaders: {},
+        };
     }
     public async getWhatAuth(): Promise<IWhatAuthInfo> {
         var response: AxiosResponse<any>;

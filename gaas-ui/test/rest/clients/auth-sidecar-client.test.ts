@@ -90,7 +90,7 @@ describe("Auth Sidecar Client", () => {
         });
     });
     describe("Auth Sidecar Client attributes", () => {
-        beforeAll(async () => {
+        beforeEach(async () => {
             const expectedData: IWhatAuthInfo = {
                 attributes: {
                     withCredentials: true,
@@ -100,6 +100,15 @@ describe("Auth Sidecar Client", () => {
             };
             mock.onGet("/what-auth").reply(200, expectedData);
             await authSidecarClient.getWhatAuth();
+        });
+        describe("Reset attribute", () => {
+            it("should reset the attributes", () => {
+                AuthSidecarClient.resetAuthSidecarClient();
+                expect(AuthSidecarClient.getToken()).toEqual("");
+                expect(AuthSidecarClient.getAttributes()).toEqual({});
+                expect(AuthSidecarClient.getRequiredFields()).toEqual([]);
+                expect(AuthSidecarClient.getRequiredHeaders()).toEqual({});
+            });
         });
         describe("requiredFields", () => {
             it("should get the correct requiredFields set on GET /what-auth", () => {
