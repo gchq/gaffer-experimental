@@ -51,7 +51,7 @@ jobs:
         - 17
     defaults:
       run:
-        working-directory: gaas-ui/
+        working-directory: gaffer-as-a-service/gaas-ui/
 
     steps:
       - uses: actions/checkout@v2
