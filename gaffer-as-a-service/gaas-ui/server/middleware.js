@@ -67,7 +67,6 @@ app.post("/graphs", (req, res) => {
 app.get("/graphs", (req, res) => {
     try {
         jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
-            // nosemgrep
             res.send({
                 graphs: [
                     {
