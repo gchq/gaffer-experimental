@@ -125,6 +125,8 @@ export default function AddEdge(props: IProps): ReactElement {
     };
 
     function addEdgeReducer(draft: any, action: any) {
+        const edgeNameRegexp = new RegExp("^[a-zA-Z]+$");
+        const edgeDescriptionRegexp = new RegExp("^[a-zA-Z0-9\\s]+$");
         switch (action.type) {
             case "reset":
                 return initialState;
@@ -134,7 +136,7 @@ export default function AddEdge(props: IProps): ReactElement {
                 draft.edgeName.value = action.value;
                 draft.edgeName.message = "";
 
-                if (!/^[a-zA-Z]+$/.test(draft.edgeName.value)) {
+                if (!edgeNameRegexp.test(draft.edgeName.value)) {
                     draft.edgeName.hasErrors = true;
                     draft.edgeName.message = "Edge name can only contain letters";
                 }
@@ -145,7 +147,7 @@ export default function AddEdge(props: IProps): ReactElement {
                 draft.edgeDescription.value = action.value;
                 draft.edgeDescription.message = "";
 
-                if (draft.edgeDescription.value && !/^[a-zA-Z0-9\s]+$/.test(draft.edgeDescription.value)) {
+                if (draft.edgeDescription.value && !edgeDescriptionRegexp.test(draft.edgeDescription.value)) {
                     draft.edgeDescription.hasErrors = true;
                     draft.edgeDescription.message =
                         "Edge description can only contain alpha numeric letters and spaces";

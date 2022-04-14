@@ -91,6 +91,9 @@ export default function AddType(props: IProps): ReactElement {
     };
 
     function addTypeReducer(draft: any, action: any) {
+        const typeName = new RegExp("^[a-zA-Z]+$");
+        const typeDescription = new RegExp("^[a-zA-Z0-9\\s]+$");
+
         switch (action.type) {
             case "reset":
                 return initialState;
@@ -100,7 +103,7 @@ export default function AddType(props: IProps): ReactElement {
                 draft.typeName.value = action.value;
                 draft.typeName.message = "";
 
-                if (!/^[a-zA-Z]+$/.test(draft.typeName.value)) {
+                if (!typeName.test(draft.typeName.value)) {
                     draft.typeName.hasErrors = true;
                     draft.typeName.message = "Type name can only contain letters";
                 }
@@ -110,7 +113,7 @@ export default function AddType(props: IProps): ReactElement {
                 draft.typeDescription.hasErrors = false;
                 draft.typeDescription.value = action.value;
                 draft.typeDescription.message = "";
-                if (draft.typeDescription.value && !/^[a-zA-Z0-9\s]+$/.test(draft.typeDescription.value)) {
+                if (draft.typeDescription.value && !typeDescription.test(draft.typeDescription.value)) {
                     draft.typeDescription.hasErrors = true;
                     draft.typeDescription.message =
                         "Type description can only contain alpha numeric letters and spaces";
