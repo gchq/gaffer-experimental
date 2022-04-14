@@ -29,17 +29,16 @@ function styles(theme: any) {
 
 export default function DynamicLoginForm(props: IProps) {
     const { requiredFields, onClickSignIn } = props;
-    const textfieldValues = new Map<string, string>();
+    const [textfieldInputValues, setTextfieldInputValues] = useState(new Map<string, string>());
     const [submitButtonDisabled, setSubmitButtonDisabled] = useState(true);
     const checkTextFields = (): boolean => {
-        console.log(textfieldValues);
-        const countOfTextFields = Array.from(textfieldValues.entries()).length;
-        const emptyTextFields = Array.from(textfieldValues.values()).filter(
-            (value: string) => value === "" || value === " "
-        ).length;
-        return countOfTextFields < requiredFields.length && emptyTextFields > 0;
+        for (const field of requiredFields) {
+            if (textfieldInputValues.get(field) === "" || !textfieldInputValues.has(field)) {
+                return true;
+            }
+        }
+        return false;
     };
-
     return (
         <main aria-label="login-form" id="login-form">
             <Container maxWidth="xs" aria-label="login-form" id="login-form">
@@ -59,12 +58,7 @@ export default function DynamicLoginForm(props: IProps) {
                         <ReusableTextField
                             name={field}
                             onChange={(textFieldInput: string) => {
-                                if (textFieldInput === "") {
-                                    textfieldValues.set(field, " ");
-                                } else {
-                                    textfieldValues.set(field, textFieldInput);
-                                }
-
+                                setTextfieldInputValues(textfieldInputValues.set(field, textFieldInput));
                                 setSubmitButtonDisabled(checkTextFields());
                             }}
                         />
@@ -78,7 +72,7 @@ export default function DynamicLoginForm(props: IProps) {
                         style={{ marginTop: "20px" }}
                         disabled={submitButtonDisabled}
                         onClick={() => {
-                            onClickSignIn(textfieldValues);
+                            onClickSignIn(textfieldInputValues);
                         }}
                     >
                         Sign In
