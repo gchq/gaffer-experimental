@@ -105,9 +105,6 @@ describe("Auth Sidecar Client", () => {
             it("should reset the attributes", () => {
                 AuthSidecarClient.resetAuthSidecarClient();
                 expect(AuthSidecarClient.getToken()).toEqual("");
-                expect(AuthSidecarClient.getAttributes()).toEqual({});
-                expect(AuthSidecarClient.getRequiredFields()).toEqual([]);
-                expect(AuthSidecarClient.getRequiredHeaders()).toEqual({});
             });
         });
         describe("requiredFields", () => {
