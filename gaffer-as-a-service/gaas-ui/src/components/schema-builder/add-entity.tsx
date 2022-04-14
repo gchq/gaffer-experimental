@@ -88,7 +88,6 @@ export default function AddEntity(props: IProps): ReactElement {
     };
 
     function addEntityReducer(draft: any, action: any) {
-
         const entityName = new RegExp("^[a-zA-Z]+$");
         const entityDescription = new RegExp("^[a-zA-Z0-9\\s]+$");
         switch (action.type) {

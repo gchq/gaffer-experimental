@@ -93,7 +93,6 @@ export default function AddType(props: IProps): ReactElement {
     function addTypeReducer(draft: any, action: any) {
         const typeName = new RegExp("^[a-zA-Z]+$");
         const typeDescription = new RegExp("^[a-zA-Z0-9\\s]+$");
-
         switch (action.type) {
             case "reset":
                 return initialState;
