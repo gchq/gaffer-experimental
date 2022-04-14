@@ -176,7 +176,7 @@ const NavigationAppbar: React.FC = (props: any) => {
                     <Typography variant="h6" className={classes.title}>
                         Kai: Graph As A Service
                     </Typography>
-                    {(requiredFields.length > 0 || !isLoggedIn) && (
+                    {requiredFields.length > 0 && (
                         <LoginModal
                             onLogin={(isLoggedIn) => {
                                 if (!isLoggedIn) {
