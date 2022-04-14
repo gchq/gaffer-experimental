@@ -119,7 +119,7 @@ const NavigationAppbar: React.FC = (props: any) => {
     };
     const getUserEmail = async () => {
         try {
-            const email = await new GetWhoAmIRepo().getWhoAmI();
+            const email = await new AuthSidecarClient().getWhoAmI();
             setUserEmail(email);
         } catch (e) {
             setErrorMessage(
@@ -181,6 +181,8 @@ const NavigationAppbar: React.FC = (props: any) => {
                             onLogin={(isLoggedIn) => {
                                 if (!isLoggedIn) {
                                     AuthSidecarClient.resetAuthSidecarClient();
+                                } else {
+                                    getUserEmail();
                                 }
                                 setIsLoggedIn(isLoggedIn);
                             }}

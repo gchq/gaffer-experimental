@@ -82,12 +82,6 @@ describe("Navigation Appbar Component", () => {
         expect(appbar.text()).toEqual("Kai: Graph As A Service");
     });
 
-    it("should display a Sign in button in the appbar", () => {
-        const signInButton = component.find("button#sign-out-button");
-
-        expect(signInButton.text()).toEqual("Sign out");
-    });
-
     it("should display menu in Navbar", () => {
         const cols = [{ name: "Create Graph" }, { name: "View Graphs" }, { name: "User Guide" }];
         const NavLi = component.find("li").at(1);
@@ -108,49 +102,21 @@ describe("Navigation Appbar Component", () => {
             expect(getAttribute).toBe(Target[index].href);
         }
     });
-    describe("When REACT_APP_API_PLATFORM is set to OPENSHIFT", () => {
-        beforeAll(() => {
-            Config.REACT_APP_API_PLATFORM = "OPENSHIFT";
-        });
-
-        it("Should not show the login modal and should display the username and email", async () => {
-            await mockGetWhoAmIRepoToReturn("test@test.com");
-            await act(async () => {
-                component = mount(
-                    <MemoryRouter>
-                        <NavigationAppbar />
-                    </MemoryRouter>
-                );
-            });
-            await component.update();
-            await component.update();
-
-            expect(component.find("input#username").length).toBe(0);
-            expect(component.find("input#password").length).toBe(0);
-            expect(component.find("div#signedin-user-details").text()).toBe("TESTtest@test.com");
-        });
-        it("Should display an error when getting the email has failed", async () => {
-            mockGetWhoAmIRepoToThrow(() => {
-                throw new RestApiError("Server Error", "Timeout exception");
-            });
-            await act(async () => {
-                component = mount(
-                    <MemoryRouter>
-                        <NavigationAppbar />
-                    </MemoryRouter>
-                );
-            });
-            expect(component.find("div#user-details-error-message").text()).toBe(
-                "Failed to get user email: Server Error: Timeout exception"
-            );
-        });
-    });
     describe("Display Signed In User Details", () => {
-        beforeAll(() => {
-            Config.REACT_APP_API_PLATFORM = "OTHER";
-        });
-        it("should display the username & email of the User who signed in", () => {
-            mockAuthClient();
+        it("should display the username & email of the User who signed in", async () => {
+            await mockGetWhatAuthToReturn({
+                attributes: {},
+                requiredFields: ["username", "password"],
+                requiredHeaders: { Authorization: "Bearer  " },
+            });
+            await mockGetWhoAmIRepoToReturn("Harry@gmail.com");
+            component = mount(
+                <MemoryRouter>
+                    <NavigationAppbar />
+                </MemoryRouter>
+            );
+            await component.update();
+            await component.update();
             inputUsername("Harry@gmail.com");
             inputPassword("asdfgh");
 
@@ -158,8 +124,24 @@ describe("Navigation Appbar Component", () => {
 
             expect(component.find("div#signedin-user-details").text()).toBe("HARRYHarry@gmail.com");
         });
-        it("should display the non-email username of the User who signed in", () => {
-            mockAuthClient();
+        it("should display the non-email username of the User who signed in", async () => {
+            await mockGetWhatAuthToReturn({
+                attributes: {},
+                requiredFields: ["username", "password"],
+                requiredHeaders: { Authorization: "Bearer  " },
+            });
+            component = mount(
+                <MemoryRouter>
+                    <NavigationAppbar />
+                </MemoryRouter>
+            );
+            await component.update();
+            await component.update();
+
+            await mockGetWhoAmIRepoToThrow(() => {
+                throw new Error("User not found");
+            });
+
             inputUsername("testUser");
             inputPassword("zxcvb");
 
@@ -198,8 +180,8 @@ function mockAuthClient() {
 }
 async function mockGetWhoAmIRepoToReturn(email: string) {
     // @ts-ignore
-    GetWhoAmIRepo.mockImplementationOnce(() => ({
-        getWhoAmI: () =>
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhatAuth: () =>
             new Promise((resolve, reject) => {
                 resolve(email);
             }),
@@ -207,8 +189,8 @@ async function mockGetWhoAmIRepoToReturn(email: string) {
 }
 async function mockGetWhoAmIRepoToThrow(f: () => void) {
     // @ts-ignore
-    GetWhoAmIRepo.mockImplementationOnce(() => ({
-        getWhoAmI: f,
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhatAuth: f,
     }));
 }
 
