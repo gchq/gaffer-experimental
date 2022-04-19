@@ -2,6 +2,8 @@ import axios, { AxiosError, AxiosRequestHeaders, AxiosResponse, Method } from "a
 import status from "statuses";
 import { RestApiError } from "../RestApiError";
 import { Config } from "../config";
+import { AuthSidecarClient } from "./auth-sidecar-client";
+import { stringify } from "querystring";
 
 export interface IApiResponse<T = any> {
     status: number;
@@ -80,7 +82,7 @@ export class RestClient<T> {
         graphs: (pathVariable?: string) => {
             const _pathVariable = pathVariable ? `/${pathVariable}` : "";
             restClient.url = `/graphs${_pathVariable}`;
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            restClient.headers = this.setHeaders();
             return restClient.executeSpec(restClient);
         },
         status: () => {
@@ -97,7 +99,7 @@ export class RestClient<T> {
         },
         namespaces: () => {
             restClient.url = "/namespaces";
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            restClient.headers = this.setHeaders();
             return restClient.executeSpec(restClient);
         },
         authentication: (pathVariable?: string) => {
@@ -107,12 +109,12 @@ export class RestClient<T> {
         },
         storeTypes: () => {
             restClient.url = "/storetypes";
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            restClient.headers = this.setHeaders();
             return restClient.executeSpec(restClient);
         },
         whoAmI: () => {
             restClient.url = "/whoami";
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
+            restClient.headers = this.setHeaders();
             return restClient.executeSpec(restClient);
         },
     });
@@ -171,5 +173,14 @@ export class RestClient<T> {
 
     private static isInstanceOfGafferApiErrorResponseBody(responseBody: object) {
         return responseBody && responseBody.hasOwnProperty("status") && responseBody.hasOwnProperty("simpleMessage");
+    }
+
+    private setHeaders(): AxiosRequestHeaders {
+        const headersToAdd: AxiosRequestHeaders = {};
+        const headers = AuthSidecarClient.getRequiredHeaders();
+        Object.entries(headers).forEach(([key, value]) => {
+            headersToAdd[key] = value;
+        });
+        return headersToAdd;
     }
 }
