@@ -130,6 +130,38 @@ describe("Navigation Appbar Component", () => {
             await component.update();
             expect(component.find("div#signedin-user-details").text()).toBe("HARRYHarry@gmail.com");
         });
+        it("should display an error message when getWhoAmI Throws", async () => {
+            await mockGetWhatAuthToReturn({
+                attributes: {},
+                requiredFields: ["username", "password"],
+                requiredHeaders: { Authorization: "Bearer  " },
+            });
+            const postAuthMap = new Map<string, string>();
+            postAuthMap.set("username", "Harry@gmail.com");
+            postAuthMap.set("password", "asdfgh");
+            await mockAuthSidecarClientPostAuth(postAuthMap);
+            await mockGetWhoAmIRepoToThrow(() => {
+                throw new Error("invalid");
+            });
+
+            component = mount(
+                <MemoryRouter>
+                    <NavigationAppbar />
+                </MemoryRouter>
+            );
+            await component.update();
+            await component.update();
+            inputUsername("Harry@gmail.com");
+            inputPassword("asdfgh");
+
+            clickSubmitSignIn();
+            await component.update();
+            await component.update();
+            console.log(component.html());
+            expect(component.find("div#navigation-drawer").find("div#user-details-error-message").text()).toBe(
+                "Failed to get user email: undefined: undefined"
+            );
+        });
     });
 });
 
