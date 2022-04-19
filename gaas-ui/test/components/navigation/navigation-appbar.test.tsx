@@ -74,6 +74,22 @@ describe("Navigation Appbar Component", () => {
 
             expect(component.html().includes("login-modal")).toBe(false);
         });
+        it("when getWhatAuth throws error display error message", async () => {
+            await mockGetWhatAuthToThrow(() => {
+                throw new Error();
+            });
+            component = mount(
+                <MemoryRouter>
+                    <NavigationAppbar />
+                </MemoryRouter>
+            );
+            await component.update();
+            await component.update();
+
+            expect(component.find("div#navigation-drawer").find("div#user-details-error-message").text()).toBe(
+                "Failed to setup Login"
+            );
+        });
     });
     it("should display appbar", () => {
         const appbar = component.find("h6");
@@ -214,6 +230,12 @@ async function mockGetWhatAuthToReturn(data: IWhatAuthInfo) {
             new Promise((resolve, reject) => {
                 resolve(data);
             }),
+    }));
+}
+async function mockGetWhatAuthToThrow(f: () => void) {
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhatAuth: f,
     }));
 }
 
