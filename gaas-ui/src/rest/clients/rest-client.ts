@@ -3,7 +3,6 @@ import status from "statuses";
 import { RestApiError } from "../RestApiError";
 import { Config } from "../config";
 import { AuthSidecarClient } from "./auth-sidecar-client";
-import { stringify } from "querystring";
 
 export interface IApiResponse<T = any> {
     status: number;
