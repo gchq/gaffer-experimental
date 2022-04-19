@@ -109,7 +109,12 @@ describe("Navigation Appbar Component", () => {
                 requiredFields: ["username", "password"],
                 requiredHeaders: { Authorization: "Bearer  " },
             });
+            const postAuthMap = new Map<string, string>();
+            postAuthMap.set("username", "Harry@gmail.com");
+            postAuthMap.set("password", "asdfgh");
+            await mockAuthSidecarClientPostAuth(postAuthMap);
             await mockGetWhoAmIRepoToReturn("Harry@gmail.com");
+
             component = mount(
                 <MemoryRouter>
                     <NavigationAppbar />
@@ -121,33 +126,9 @@ describe("Navigation Appbar Component", () => {
             inputPassword("asdfgh");
 
             clickSubmitSignIn();
-
+            await component.update();
+            await component.update();
             expect(component.find("div#signedin-user-details").text()).toBe("HARRYHarry@gmail.com");
-        });
-        it("should display the non-email username of the User who signed in", async () => {
-            await mockGetWhatAuthToReturn({
-                attributes: {},
-                requiredFields: ["username", "password"],
-                requiredHeaders: { Authorization: "Bearer  " },
-            });
-            component = mount(
-                <MemoryRouter>
-                    <NavigationAppbar />
-                </MemoryRouter>
-            );
-            await component.update();
-            await component.update();
-
-            await mockGetWhoAmIRepoToThrow(() => {
-                throw new Error("User not found");
-            });
-
-            inputUsername("testUser");
-            inputPassword("zxcvb");
-
-            clickSubmitSignIn();
-
-            expect(component.find("div#signedin-user-details").text()).toBe("TESTUSERtestUser");
         });
     });
 });
@@ -181,7 +162,7 @@ function mockAuthClient() {
 async function mockGetWhoAmIRepoToReturn(email: string) {
     // @ts-ignore
     AuthSidecarClient.mockImplementationOnce(() => ({
-        getWhatAuth: () =>
+        getWhoAmI: () =>
             new Promise((resolve, reject) => {
                 resolve(email);
             }),
@@ -200,6 +181,16 @@ async function mockGetWhatAuthToReturn(data: IWhatAuthInfo) {
         getWhatAuth: () =>
             new Promise((resolve, reject) => {
                 resolve(data);
+            }),
+    }));
+}
+
+async function mockAuthSidecarClientPostAuth(fields: Map<string, string>) {
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        postAuth: () =>
+            new Promise((resolve, reject) => {
+                resolve("Bearer Token ABC");
             }),
     }));
 }

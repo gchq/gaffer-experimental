@@ -108,11 +108,8 @@ const NavigationAppbar: React.FC = (props: any) => {
                 return <AddCircleOutlineIcon />;
             case "View Graphs":
                 return <VisibilityIcon />;
-            case "Cluster Namespaces":
-                return <CategoryIcon />;
             case "User Guide":
                 return <LocalLibraryIcon />;
-
             default:
                 return null;
         }
