@@ -10,7 +10,11 @@ export interface IWhatAuthInfo {
 }
 
 export class AuthSidecarClient {
-    private static whatAuthObject: IWhatAuthInfo;
+    private static whatAuthObject: IWhatAuthInfo = {
+        requiredFields: [],
+        requiredHeaders: {},
+        attributes: {},
+    };
     private static token: string = "";
     private whoami: object;
     public constructor() {
