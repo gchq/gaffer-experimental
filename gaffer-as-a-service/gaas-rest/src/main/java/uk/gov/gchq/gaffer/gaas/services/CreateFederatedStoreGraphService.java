@@ -80,7 +80,7 @@ public class CreateFederatedStoreGraphService {
             }
         });
         if (errorNotifications.size() > 0) {
-            LOGGER.warn("Bad Request, Invalid Proxy Graph URL(s) " + errorNotifications + 400);
+            LOGGER.error("Bad Request, Invalid Proxy Graph URL(s) " + errorNotifications + 400);
             throw new GaaSRestApiException("Bad Request", "Invalid Proxy Graph URL(s): " + errorNotifications, 400);
         }
     }
