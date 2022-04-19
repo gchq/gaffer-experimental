@@ -17,6 +17,8 @@
 package uk.gov.gchq.gaffer.gaas.controller;
 
 import io.kubernetes.client.openapi.ApiClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -55,6 +57,8 @@ import java.util.regex.Pattern;
 @CrossOrigin
 @RestController
 public class GraphController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphController.class);
 
     @Autowired
     private ApiClient apiClient;
@@ -151,6 +155,8 @@ public class GraphController {
         if (addCreatorLabel(email)) {
             return new ResponseEntity<String>(email, HttpStatus.OK);
         }
+
+        LOGGER.error("Validation error: Email must consist of alphanumeric characters or '-', '_' and '.' ", HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>("Validation error: Email must consist of alphanumeric characters or '-', '_' and '.' ", HttpStatus.BAD_REQUEST);
     }
 

@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.client.graph;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -35,6 +37,8 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
 public class AddGraphsOperation implements Command {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AddGraphsOperation.class);
 
     public static final String EXECUTE_OPERATION_URI = "/graph/operations/execute";
     public static final int GAFFER_PORT = 80;
@@ -61,10 +65,14 @@ public class AddGraphsOperation implements Command {
                     .block();
 
         } catch (final WebClientRequestException e) {
+            LOGGER.error("AddGraph OperationChain request to Federated Store Graph failed. Reason: "  +
+                    e.getMostSpecificCause().getMessage() + ", at " + e.getUri(), e);
             throw new GraphOperationException("AddGraph OperationChain request to Federated Store Graph failed. Reason: " +
                     e.getMostSpecificCause().getMessage() + ", at " + e.getUri(), e);
 
         } catch (final WebClientResponseException e) {
+            LOGGER.error("AddGraph OperationChain request to Federated Store Graph response: "  +
+                    e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
             throw new GraphOperationException("AddGraph OperationChain request to Federated Store Graph response: " +
                     e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
         }
@@ -93,6 +101,7 @@ public class AddGraphsOperation implements Command {
 
     private boolean is503ServiceUnavailable(final Throwable e) {
         if (e instanceof WebClientResponseException) {
+            LOGGER.error("Service Unavailable: " + 503);
             return ((WebClientResponseException) e).getStatusCode() == SERVICE_UNAVAILABLE;
         }
         return false;

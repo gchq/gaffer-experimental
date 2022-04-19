@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -24,7 +26,6 @@ import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ import java.util.Map;
 
 @Component
 public class GafferSpecConfigsLoader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GafferSpecConfigsLoader.class);
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -56,6 +59,7 @@ public class GafferSpecConfigsLoader {
             }
             return configSpecs;
         } catch (final IOException e) {
+            LOGGER.error(e.getMessage(), 500, e);
             throw new GaaSRestApiException(e.getMessage(), 500, e);
         }
     }
@@ -72,6 +76,7 @@ public class GafferSpecConfigsLoader {
                 }
                 return gafferSpec;
             }
+            LOGGER.error("GaaS Graph Config Not Found", "Available config names are: " + getStoreTypeNames(), 404);
             throw new GaaSRestApiException("GaaS Graph Config Not Found", "Available config names are: " + getStoreTypeNames(), 404);
 
         } catch (final IOException e) {

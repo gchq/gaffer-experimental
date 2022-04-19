@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.client.graph;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -25,6 +27,7 @@ import uk.gov.gchq.gaffer.rest.SystemStatus;
 
 public class ValidateGraphHostOperation implements Command {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateGraphHostOperation.class);
     private static final String HTTP_PROTOCOL = "http://";
     private static final String GRAPH_STATUS_URI = "/graph/status";
 
@@ -49,9 +52,11 @@ public class ValidateGraphHostOperation implements Command {
             validateSystemIsUp(response);
 
         } catch (final WebClientRequestException e) {
+            LOGGER.error("Get Status request for '" + proxySubGraph.getGraphId() + "' failed. Reason: " + e.getMostSpecificCause().getMessage() + " at " + e.getUri(), e);
             throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' failed. Reason: " + e.getMostSpecificCause().getMessage() + " at " + e.getUri(), e);
 
         } catch (final WebClientResponseException e) {
+            LOGGER.error("Get Status request for '" + proxySubGraph.getGraphId() + "' returned: " + e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
             throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' returned: " + e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
         }
     }
@@ -59,9 +64,11 @@ public class ValidateGraphHostOperation implements Command {
     private void validateSystemIsUp(final SystemStatus response) throws GraphOperationException {
         final SystemStatus.Status status = response.getStatus();
         if (status == null) {
+            LOGGER.warn("'" + proxySubGraph.getGraphId() + "' returned a null status");
             throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' returned a null status");
         }
         if (status != SystemStatus.Status.UP) {
+            LOGGER.warn("'" + proxySubGraph.getGraphId() + "' status is " + status.getCode() + ". " + status.getDescription());
             throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' status is " + status.getCode() + ". " + status.getDescription());
         }
     }
