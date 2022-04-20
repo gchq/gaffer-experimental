@@ -99,10 +99,9 @@ export class AuthSidecarClient {
                 data: this.convertMapToJson(data),
             });
             AuthSidecarClient.setToken(response.data);
-            console.log(AuthSidecarClient.getToken());
         } catch (e) {
-            console.error(e);
-            throw e;
+            const error = e as AxiosError<any>;
+            throw new Error(error.message);
         }
     }
     private static getAuthHeader = () => {
