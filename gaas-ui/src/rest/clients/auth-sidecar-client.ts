@@ -1,7 +1,6 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { Config } from "../config";
 import { RestClient } from "./rest-client";
-import { RestApiError } from "../RestApiError";
 
 export interface IWhatAuthInfo {
     requiredFields: Array<string>;
@@ -15,10 +14,13 @@ export class AuthSidecarClient {
         requiredHeaders: {},
         attributes: {},
     };
-    private static token: string = "";
-    private whoami: object;
+    private static token: string;
+    private whoami: string;
     public constructor() {
-        this.whoami = {};
+        this.whoami = "";
+    }
+    private static setToken(token: string) {
+        this.token = token;
     }
     public static getRequiredHeaders(): object {
         return this.whatAuthObject.requiredHeaders;
@@ -33,7 +35,7 @@ export class AuthSidecarClient {
         return this.token;
     }
     public static resetAuthSidecarClient() {
-        AuthSidecarClient.token = "";
+        AuthSidecarClient.setToken("");
     }
     public async getWhatAuth(): Promise<IWhatAuthInfo> {
         var response: AxiosResponse<any>;
@@ -75,12 +77,21 @@ export class AuthSidecarClient {
         return Object.fromEntries(map);
     }
     public async getWhoAmI() {
+        const config: AxiosRequestConfig = {};
+        config.baseURL = Config.REACT_APP_AUTH_ENDPOINT;
+        config.url = "/whoami";
+        config.method = "GET";
+
+        console.log(AuthSidecarClient.getToken());
+        if (AuthSidecarClient.getToken().length > 0) {
+            console.log("here" + AuthSidecarClient.getToken());
+            config.headers = {
+                Authorization: "test" + AuthSidecarClient.token,
+            };
+        }
+
         try {
-            const response: AxiosResponse<any> = await axios({
-                baseURL: Config.REACT_APP_AUTH_ENDPOINT,
-                url: "/whoami",
-                method: "GET",
-            });
+            const response: AxiosResponse<any> = await axios(config);
             this.whoami = response.data;
             return response.data;
         } catch (e) {
@@ -96,10 +107,20 @@ export class AuthSidecarClient {
                 method: "POST",
                 data: this.convertMapToJson(data),
             });
-            AuthSidecarClient.token = response.data;
+            AuthSidecarClient.setToken(response.data);
+            console.log(AuthSidecarClient.getToken());
         } catch (e) {
             console.error(e);
             throw e;
         }
     }
+    private static getAuthHeader = () => {
+        const headers = AuthSidecarClient.getRequiredHeaders();
+        Object.entries(headers).forEach(([key, value]) => {
+            if (key === "Authorization") {
+                return value;
+            }
+        });
+        return "";
+    };
 }

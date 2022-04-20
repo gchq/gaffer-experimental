@@ -4,7 +4,9 @@ import { AuthSidecarClient, IWhatAuthInfo } from "../../../src/rest/clients/auth
 
 const mock = new MockAdapter(axios);
 const authSidecarClient = new AuthSidecarClient();
-
+beforeEach(() => {
+    AuthSidecarClient.resetAuthSidecarClient();
+});
 describe("Auth Sidecar Client", () => {
     describe("/what-auth", () => {
         it("should return 200 status and a valid response when GET is successful", async () => {
@@ -167,6 +169,18 @@ describe("Auth Sidecar Client", () => {
                 } catch (e) {
                     expect(e).toEqual("Invalid Response");
                 }
+            });
+        });
+        describe("Token", () => {
+            it("should store the token on a successful postAuth", async () => {
+                const expected = "aValidToken";
+
+                mock.onPost("/auth").reply(200, expected);
+                const postMap = new Map<string, string>();
+                postMap.set("username", "validuser");
+                postMap.set("password", "password");
+                await authSidecarClient.postAuth(postMap);
+                expect(AuthSidecarClient.getToken()).toEqual(expected);
             });
         });
     });
