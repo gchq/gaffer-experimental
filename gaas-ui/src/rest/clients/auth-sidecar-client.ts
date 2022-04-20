@@ -77,21 +77,12 @@ export class AuthSidecarClient {
         return Object.fromEntries(map);
     }
     public async getWhoAmI() {
-        const config: AxiosRequestConfig = {};
-        config.baseURL = Config.REACT_APP_AUTH_ENDPOINT;
-        config.url = "/whoami";
-        config.method = "GET";
-
-        console.log(AuthSidecarClient.getToken());
-        if (AuthSidecarClient.getToken().length > 0) {
-            console.log("here" + AuthSidecarClient.getToken());
-            config.headers = {
-                Authorization: "test" + AuthSidecarClient.token,
-            };
-        }
-
         try {
-            const response: AxiosResponse<any> = await axios(config);
+            const response: AxiosResponse<any> = await axios({
+                baseURL: Config.REACT_APP_AUTH_ENDPOINT,
+                url: "/whoami",
+                method: "GET",
+            });
             this.whoami = response.data;
             return response.data;
         } catch (e) {

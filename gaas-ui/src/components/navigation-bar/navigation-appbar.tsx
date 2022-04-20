@@ -129,9 +129,11 @@ const NavigationAppbar: React.FC = (props: any) => {
     const getWhatAuth = async () => {
         try {
             const whatAuthInfo = await new AuthSidecarClient().getWhatAuth();
-            whatAuthInfo.requiredFields.forEach((field) => {
-                setRequiredFields((requiredFields) => [...requiredFields, field]);
-            });
+            if (whatAuthInfo.requiredFields) {
+                whatAuthInfo.requiredFields.forEach((field) => {
+                    setRequiredFields((requiredFields) => [...requiredFields, field]);
+                });
+            }
         } catch (e) {
             setErrorMessage(`Failed to setup Login`);
         }
@@ -139,7 +141,14 @@ const NavigationAppbar: React.FC = (props: any) => {
 
     const buildUsername = () => (userEmail.includes("@") ? userEmail.slice(0, userEmail.indexOf("@")) : userEmail);
     useEffect(() => {
-        getWhatAuth();
+        getWhatAuth().then(() => {
+            if (requiredFields.length === 0) {
+                console.log("no required fields");
+                getUserEmail().then(() => {
+                    setIsLoggedIn(true);
+                });
+            }
+        });
     }, []);
     const displayUserEmail = () => {
         if (userEmail) {
