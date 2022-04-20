@@ -74,6 +74,26 @@ describe("Navigation Appbar Component", () => {
 
             expect(component.html().includes("login-modal")).toBe(false);
         });
+        it("should call getWhatAuth on load and then call getWhoAmI", async () => {
+            await mockGetWhoAmIRepoToReturn("test@email.com");
+            await mockGetWhatAuthToReturn({
+                attributes: {
+                    withCredentials: true,
+                },
+                requiredFields: [],
+                requiredHeaders: {},
+            });
+
+            component = mount(
+                <MemoryRouter>
+                    <NavigationAppbar />
+                </MemoryRouter>
+            );
+            await component.update();
+            await component.update();
+
+            expect(component.find("div#signedin-user-details").text()).toBe("");
+        });
         it("when getWhatAuth throws error display error message", async () => {
             await mockGetWhatAuthToThrow(() => {
                 throw new Error();
@@ -130,18 +150,20 @@ describe("Navigation Appbar Component", () => {
             postAuthMap.set("password", "asdfgh");
             await mockAuthSidecarClientPostAuth(postAuthMap);
             await mockGetWhoAmIRepoToReturn("Harry@gmail.com");
-
-            component = mount(
-                <MemoryRouter>
-                    <NavigationAppbar />
-                </MemoryRouter>
-            );
+            await act(() => {
+                component = mount(
+                    <MemoryRouter>
+                        <NavigationAppbar />
+                    </MemoryRouter>
+                );
+            });
             await component.update();
             await component.update();
-            inputUsername("Harry@gmail.com");
-            inputPassword("asdfgh");
+            await component.update();
+            await inputUsername("Harry@gmail.com");
+            await inputPassword("asdfgh");
 
-            clickSubmitSignIn();
+            await clickSubmitSignIn();
             await component.update();
             await component.update();
             expect(component.find("div#signedin-user-details").text()).toBe("HARRYHarry@gmail.com");
@@ -173,7 +195,6 @@ describe("Navigation Appbar Component", () => {
             clickSubmitSignIn();
             await component.update();
             await component.update();
-            console.log(component.html());
             expect(component.find("div#navigation-drawer").find("div#user-details-error-message").text()).toBe(
                 "Failed to get user email: undefined: undefined"
             );
@@ -181,22 +202,28 @@ describe("Navigation Appbar Component", () => {
     });
 });
 
-function inputUsername(username: string): void {
-    expect(component.find("input#username").length).toBe(1);
-    component.find("input#username").simulate("change", {
-        target: { value: username },
+async function inputUsername(username: string) {
+    await act(() => {
+        expect(component.find("input#username").length).toBe(1);
+        component.find("input#username").simulate("change", {
+            target: { value: username },
+        });
     });
 }
 
-function inputPassword(password: string): void {
-    expect(component.find("input#password").length).toBe(1);
-    component.find("input#password").simulate("change", {
-        target: { value: password },
+async function inputPassword(password: string) {
+    await act(() => {
+        expect(component.find("input#password").length).toBe(1);
+        component.find("input#password").simulate("change", {
+            target: { value: password },
+        });
     });
 }
 
-function clickSubmitSignIn() {
-    component.find("button#submit-sign-in-button").simulate("click");
+async function clickSubmitSignIn() {
+    await act(() => {
+        component.find("button#submit-sign-in-button").simulate("click");
+    });
 }
 
 function mockAuthClient() {
