@@ -44,7 +44,7 @@ app.post("/auth", (req, res) => {
         token = jwt.sign({ data: username }, process.env.JWT_SECRET, { expiresIn: "1 week" });
         res.status(200).send(token);
     } else {
-        res.status(403).end();
+        res.status(403).end("Failed to login");
     }
 });
 

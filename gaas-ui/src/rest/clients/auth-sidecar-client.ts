@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { Config } from "../config";
 import { RestClient } from "./rest-client";
 
@@ -85,9 +85,8 @@ export class AuthSidecarClient {
             });
             this.whoami = response.data;
             return response.data;
-        } catch (e) {
-            const error = e as AxiosError<any>;
-            throw new Error(error.message);
+        } catch (error) {
+            throw error;
         }
     }
     public async postAuth(data: Map<string, string>) {
@@ -100,8 +99,9 @@ export class AuthSidecarClient {
             });
             AuthSidecarClient.setToken(response.data);
         } catch (e) {
+            console.log(e);
             const error = e as AxiosError<any>;
-            throw new Error(error.message);
+            throw RestClient.fromError(error);
         }
     }
     private static getAuthHeader = () => {
