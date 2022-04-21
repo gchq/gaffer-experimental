@@ -30,7 +30,7 @@ app.get("/what-auth", (req, res) => {
                     withCredentials: true,
                 },
                 requiredFields: ["username", "password"],
-                requiredHeaders: { Authorization: "Bearer" },
+                requiredHeaders: { Authorization: "Bearer " },
             });
         });
     } catch (e) {
