@@ -23,7 +23,6 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>gaas-eureka-server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>gaas-eureka-server</name>
 	<description>Gaas Eureka Server</description>
 	<properties>

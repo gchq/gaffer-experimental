@@ -23,7 +23,6 @@
         <version>${revision}</version>
     </parent>
     <artifactId>gaas-jwt-sidecar</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>gaas-jwt-sidecar</name>
     <description>GaaS JWT Sidecar</description>
 

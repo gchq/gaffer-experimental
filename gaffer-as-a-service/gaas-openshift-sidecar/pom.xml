@@ -23,7 +23,6 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>gaas-openshift-sidecar</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>gaas-openshift-sidecar</name>
 	<description>GaaS Openshift Sidecar</description>
 
