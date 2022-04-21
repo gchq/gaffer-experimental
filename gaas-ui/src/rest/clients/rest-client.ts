@@ -173,5 +173,4 @@ export class RestClient<T> {
     private static isInstanceOfGafferApiErrorResponseBody(responseBody: object) {
         return responseBody && responseBody.hasOwnProperty("status") && responseBody.hasOwnProperty("simpleMessage");
     }
-
 }

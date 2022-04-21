@@ -118,7 +118,6 @@ export class AuthSidecarClient {
         const headers = AuthSidecarClient.getRequiredHeaders();
         Object.entries(headers).forEach(([key, value]) => {
             if (key === "Authorization") {
-                console.log("Here " + AuthSidecarClient.getToken());
                 headersToAdd[key] = value + AuthSidecarClient.getToken();
             } else {
                 headersToAdd[key] = value;
