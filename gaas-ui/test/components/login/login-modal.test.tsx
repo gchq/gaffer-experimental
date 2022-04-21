@@ -1,11 +1,12 @@
-import { Dialog } from "@material-ui/core";
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import LoginModal from "../../../src/components/login/login-modal";
 import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { AuthSidecarClient } from "../../../src/rest/clients/auth-sidecar-client";
-import { Config } from "../../../src/rest/config";
 import { RestApiError } from "../../../src/rest/RestApiError";
+import { MemoryRouter } from "react-router-dom";
+import NavigationAppbar from "../../../src/components/navigation-bar/navigation-appbar";
+import { act } from "react-dom/test-utils";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
 jest.mock("../../../src/rest/clients/auth-sidecar-client");
@@ -21,7 +22,6 @@ afterEach(() => {
 describe("Login form", () => {
     beforeEach(() => {
         component = mount(<LoginModal onLogin={onLoginCallback} requiredFields={["username", "password"]} />);
-        Config.REACT_APP_API_PLATFORM = "OTHER";
     });
     describe("Login Form UI", () => {
         it("should render Login form as full screen modal", () => {
@@ -41,10 +41,12 @@ describe("Login form", () => {
             expectedMap.set("password", "testPassword");
             await mockPostAuth(expectedMap);
             jest.spyOn(AuthSidecarClient, "getToken").mockImplementation(() => "aValidJsonToken");
-            inputUsername("testUsername");
-            inputPassword("testPassword");
+            await act(async () => {
+                await inputUsername("testUsername");
+                await inputPassword("testPassword");
 
-            clickSubmitSignIn();
+                await clickSubmitSignIn();
+            });
 
             expect(onLoginCallback).toHaveBeenCalled();
         });
@@ -53,8 +55,8 @@ describe("Login form", () => {
                 throw new RestApiError("Server Error", "Timeout exception");
             });
 
-            inputUsername("testUsername");
-            inputPassword("testPassword");
+            await inputUsername("testUsername");
+            await inputPassword("testPassword");
 
             await clickSubmitSignIn();
 
@@ -65,22 +67,22 @@ describe("Login form", () => {
     });
 });
 
-function clickSubmitSignIn() {
+async function clickSubmitSignIn() {
     component.find("main#login-form").find("button#submit-sign-in-button").simulate("click");
 }
 
-function clickSignOutButton() {
+async function clickSignOutButton() {
     component.find("button#sign-out-button").simulate("click");
 }
 
-function inputUsername(username: string): void {
+async function inputUsername(username: string) {
     expect(component.find("main#login-form").find("input#username").length).toBe(1);
     component.find("input#username").simulate("change", {
         target: { value: username },
     });
 }
 
-function inputPassword(password: string): void {
+async function inputPassword(password: string) {
     expect(component.find("main#login-form").find("input#password").length).toBe(1);
     component.find("input#password").simulate("change", {
         target: { value: password },
