@@ -99,7 +99,6 @@ export class AuthSidecarClient {
             });
             AuthSidecarClient.setToken(response.data);
         } catch (e) {
-            console.log(e);
             const error = e as AxiosError<any>;
             throw RestClient.fromError(error);
         }

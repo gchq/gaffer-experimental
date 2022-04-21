@@ -143,7 +143,6 @@ const NavigationAppbar: React.FC = (props: any) => {
     useEffect(() => {
         getWhatAuth().then(() => {
             if (requiredFields.length === 0) {
-                console.log("no required fields");
                 getUserEmail().then(() => {
                     setIsLoggedIn(true);
                 });
@@ -184,12 +183,8 @@ const NavigationAppbar: React.FC = (props: any) => {
                     </Typography>
                     {requiredFields.length > 0 && (
                         <LoginModal
-                            onLogin={(isLoggedIn) => {
-                                if (!isLoggedIn) {
-                                    AuthSidecarClient.resetAuthSidecarClient();
-                                } else {
-                                    getUserEmail();
-                                }
+                            onLogin={() => {
+                                getUserEmail();
                                 setIsLoggedIn(isLoggedIn);
                             }}
                             requiredFields={requiredFields}
