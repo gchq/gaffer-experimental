@@ -61,14 +61,13 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
-@EnableKubernetesMockClient(crud = true)
 @UnitTest
+@EnableKubernetesMockClient(crud = true)
 class DeploymentHandlerTest {
 
-    private Environment environment;
+    KubernetesClient kubernetesClient;
 
-    @MockBean
-    private KubernetesClient kubernetesClient;
+    private Environment environment;
 
     @MockBean
     IKubernetesObjectFactory kubernetesObjectFactory;

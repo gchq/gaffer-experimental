@@ -1,6 +1,6 @@
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import { APIError } from "../../../src/rest/APIError";
 import { ICreateFederatedGraphRequestBody } from "../../../src/rest/http-message-interfaces/request-interfaces";
 import { CreateFederatedGraphRepo } from "../../../src/rest/repositories/create-federated-graph-repo";
 
@@ -48,7 +48,7 @@ describe("Create Graph Repo", () => {
                     repo.create("bad-request-graph", "a description", "federated", {
                         proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                     })
-                ).rejects.toEqual(new RestApiError("Error Code 400", "Bad Request"));
+                ).rejects.toEqual(new APIError("Error Code 400", "Bad Request"));
             });
 
             it("should throw RestApiError with title and detail from error response body", async () => {
@@ -64,7 +64,7 @@ describe("Create Graph Repo", () => {
                     repo.create("forbidden-graph", "a description", "federated", {
                         proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                     })
-                ).rejects.toEqual(new RestApiError("Forbidden", "Kubernetes access denied"));
+                ).rejects.toEqual(new APIError("Forbidden", "Kubernetes access denied"));
             });
         });
     });

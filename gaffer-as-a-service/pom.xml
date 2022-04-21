@@ -30,17 +30,21 @@
 
     <modules>
         <module>gaas-rest</module>
+        <module>gaas-eureka-server</module>
+        <module>gaas-jwt-sidecar</module>
+        <module>gaas-openshift-sidecar</module>
     </modules>
 
     <properties>
         <kubernetes.version>14.0.0</kubernetes.version>
-        <springboot.version>2.5.8</springboot.version>
+        <springboot.version>2.6.5</springboot.version>
         <fasterxml.jackson.version>2.9.8</fasterxml.jackson.version>
         <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
         <junit.version>5.7.0</junit.version>
         <apache.commons.text.version>1.9</apache.commons.text.version>
         <compiler.plugin.version>2.3.2</compiler.plugin.version>
         <surefire.version>3.0.0-M5</surefire.version>
+        <spring-cloud.version>2021.0.1</spring-cloud.version>
     </properties>
 
     <dependencyManagement>

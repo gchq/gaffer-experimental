@@ -1,7 +1,7 @@
 import { CreateStoreTypesGraphRepo } from "../../../src/rest/repositories/create-storetypes-graph-repo";
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import { APIError } from "../../../src/rest/APIError";
 import { ICreateGraphRequestBody } from "../../../src/rest/http-message-interfaces/request-interfaces";
 import { ElementsSchema } from "../../../src/domain/elements-schema";
 import { TypesSchema } from "../../../src/domain/types-schema";
@@ -112,7 +112,7 @@ describe("Create Graph Repo", () => {
                 repo.create("bad-request-graph", "a description", "mapstore", {
                     schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
                 })
-            ).rejects.toEqual(new RestApiError("Error Code 400", "Bad Request"));
+            ).rejects.toEqual(new APIError("Error Code 400", "Bad Request"));
         });
 
         it("should throw RestApiError with title and detail from error response body", async () => {
@@ -128,7 +128,7 @@ describe("Create Graph Repo", () => {
                 repo.create("forbidden-graph", "a description", "mapstore", {
                     schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
                 })
-            ).rejects.toEqual(new RestApiError("Forbidden", "Kubernetes access denied"));
+            ).rejects.toEqual(new APIError("Forbidden", "Kubernetes access denied"));
         });
     });
 });
