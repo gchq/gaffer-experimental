@@ -76,7 +76,7 @@ export class AuthSidecarClient {
     private convertMapToJson(map: Map<String, String>): object {
         return Object.fromEntries(map);
     }
-    public async getWhoAmI() {
+    public async getWhoAmI(): Promise<string> {
         try {
             const response: AxiosResponse<any> = await axios({
                 baseURL: Config.REACT_APP_AUTH_ENDPOINT,
@@ -118,7 +118,6 @@ export class AuthSidecarClient {
         const headers = AuthSidecarClient.getRequiredHeaders();
         Object.entries(headers).forEach(([key, value]) => {
             if (key === "Authorization") {
-                console.log("Here " + AuthSidecarClient.getToken());
                 headersToAdd[key] = value + AuthSidecarClient.getToken();
             } else {
                 headersToAdd[key] = value;
