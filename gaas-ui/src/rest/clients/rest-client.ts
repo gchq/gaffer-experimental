@@ -81,7 +81,7 @@ export class RestClient<T> {
         graphs: (pathVariable?: string) => {
             const _pathVariable = pathVariable ? `/${pathVariable}` : "";
             restClient.url = `/graphs${_pathVariable}`;
-            restClient.headers = this.setHeaders();
+            restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },
         status: () => {
@@ -98,7 +98,7 @@ export class RestClient<T> {
         },
         namespaces: () => {
             restClient.url = "/namespaces";
-            restClient.headers = this.setHeaders();
+            restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },
         authentication: (pathVariable?: string) => {
@@ -108,12 +108,12 @@ export class RestClient<T> {
         },
         storeTypes: () => {
             restClient.url = "/storetypes";
-            restClient.headers = this.setHeaders();
+            restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },
         whoAmI: () => {
             restClient.url = "/whoami";
-            restClient.headers = this.setHeaders();
+            restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },
     });
@@ -174,12 +174,4 @@ export class RestClient<T> {
         return responseBody && responseBody.hasOwnProperty("status") && responseBody.hasOwnProperty("simpleMessage");
     }
 
-    private setHeaders(): AxiosRequestHeaders {
-        const headersToAdd: AxiosRequestHeaders = {};
-        const headers = AuthSidecarClient.getRequiredHeaders();
-        Object.entries(headers).forEach(([key, value]) => {
-            headersToAdd[key] = value;
-        });
-        return headersToAdd;
-    }
 }

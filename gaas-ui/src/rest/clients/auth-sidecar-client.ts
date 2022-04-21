@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from "axios";
 import { Config } from "../config";
 import { RestClient } from "./rest-client";
 
@@ -14,7 +14,7 @@ export class AuthSidecarClient {
         requiredHeaders: {},
         attributes: {},
     };
-    private static token: string;
+    private static token: string = "";
     private whoami: string;
     public constructor() {
         this.whoami = "";
@@ -82,6 +82,7 @@ export class AuthSidecarClient {
                 baseURL: Config.REACT_APP_AUTH_ENDPOINT,
                 url: "/whoami",
                 method: "GET",
+                headers: AuthSidecarClient.setHeaders(),
             });
             this.whoami = response.data;
             return response.data;
@@ -113,4 +114,17 @@ export class AuthSidecarClient {
         });
         return "";
     };
+    public static setHeaders(): AxiosRequestHeaders {
+        const headersToAdd: AxiosRequestHeaders = {};
+        const headers = AuthSidecarClient.getRequiredHeaders();
+        Object.entries(headers).forEach(([key, value]) => {
+            if (key === "Authorization") {
+                console.log("Here " + AuthSidecarClient.getToken());
+                headersToAdd[key] = value + AuthSidecarClient.getToken();
+            } else {
+                headersToAdd[key] = value;
+            }
+        });
+        return headersToAdd;
+    }
 }
