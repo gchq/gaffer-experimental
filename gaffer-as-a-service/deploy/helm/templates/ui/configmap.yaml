@@ -1,0 +1,15 @@
+{{- if .Values.ui.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ include "helm.fullname" . }}-ui
+data:
+    web.properties: |
+        window.REACT_APP_API_PLATFORM= "{{.Values.ui.envVariables.reactAPIPlatform}}"
+        window.REACT_APP_KAI_REST_API_HOST= "{{.Values.ui.envVariables.kaiRestAPIHost}}"
+        window.REACT_APP_COGNITO_USERPOOLID= "{{.Values.ui.envVariables.cognitoUserpoolID}}"
+        window.REACT_APP_COGNITO_CLIENTID= "{{.Values.ui.envVariables.cognitoClientID}}"
+        window.REACT_APP_AUTH_ENDPOINT="{{.Values.ui.envVariables.reactAuthEndpoint}}"
+        window.REACT_APP_COGNITO_SCOPE = "{{.Values.ui.envVariables.reactCognitoScope}}"
+        window.REACT_APP_COGNITO_REDIRECT_URI = "https://{{include "helm.fullname" .}}-{{.Values.namespace}}.{{.Values.ingressSuffix}}/viewgraphs"
+{{- end }}

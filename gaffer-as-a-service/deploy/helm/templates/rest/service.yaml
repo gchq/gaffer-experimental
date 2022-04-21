@@ -1,0 +1,21 @@
+{{- if .Values.rest.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "helm.fullname" . }}-rest
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+  labels:
+  {{- include "helm.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.rest.service.type }}
+  ports:
+    - port: {{ .Values.rest.service.port }}
+      targetPort: {{ .Values.rest.service.targetPort }}
+      protocol: TCP
+      name: {{ .Values.rest.service.targetPort }}-tcp
+  selector:
+  {{- include "helm.selectorLabels" . | nindent 4 }}
+{{- end }}

@@ -1,0 +1,8 @@
+{{- if .Values.rest.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "helm.fullname" . }}-rest
+data:
+  GAFFER_NAMESPACE: {{ .Values.rest.namespace}}
+{{- end }}

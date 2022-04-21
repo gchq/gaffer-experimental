@@ -1,0 +1,32 @@
+{{- if .Values.rest.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm.fullname" . }}-rest
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "helm.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "helm.fullname" . }}-rest-service-account
+      containers:
+          - image: "{{ .Values.rest.image.repository }}:{{ .Values.rest.image.tag | default .Chart.AppVersion }}"
+            name: gaas-rest
+            envFrom:
+              - configMapRef:
+                  name: {{ include "helm.fullname" . }}-rest
+            resources:
+              requests:
+                memory: "1Gi"
+                cpu: "1000m"
+              limits:
+                memory: "1Gi"
+                cpu: "1000m"
+{{- end }}

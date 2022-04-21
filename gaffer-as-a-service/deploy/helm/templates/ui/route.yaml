@@ -1,0 +1,19 @@
+{{- if .Values.ui.enabled -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "helm.fullname" . }}-ui
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+spec:
+  to:
+    kind: Service
+    name: {{ include "helm.fullname" . }}-ui
+    weight: 100
+  port:
+    targetPort: {{ .Values.ui.service.targetPort }}-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+{{- end }}
