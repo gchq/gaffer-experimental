@@ -86,9 +86,8 @@ export class AuthSidecarClient {
             });
             this.whoami = response.data;
             return response.data;
-        } catch (e) {
-            const error = e as AxiosError<any>;
-            throw new Error(error.message);
+        } catch (error) {
+            throw error;
         }
     }
     public async postAuth(data: Map<string, string>) {
@@ -102,7 +101,7 @@ export class AuthSidecarClient {
             AuthSidecarClient.setToken(response.data);
         } catch (e) {
             const error = e as AxiosError<any>;
-            throw new Error(error.message);
+            throw RestClient.fromError(error);
         }
     }
     private static getAuthHeader = () => {
