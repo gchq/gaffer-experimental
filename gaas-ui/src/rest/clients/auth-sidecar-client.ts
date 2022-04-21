@@ -76,7 +76,7 @@ export class AuthSidecarClient {
     private convertMapToJson(map: Map<String, String>): object {
         return Object.fromEntries(map);
     }
-    public async getWhoAmI() {
+    public async getWhoAmI(): Promise<string> {
         try {
             const response: AxiosResponse<any> = await axios({
                 baseURL: Config.REACT_APP_AUTH_ENDPOINT,
