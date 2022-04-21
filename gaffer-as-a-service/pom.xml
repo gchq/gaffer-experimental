@@ -30,6 +30,9 @@
 
     <modules>
         <module>gaas-rest</module>
+        <module>gaas-eureka-server</module>
+        <module>gaas-jwt-sidecar</module>
+        <module>gaas-openshift-sidecar</module>
     </modules>
 
     <properties>

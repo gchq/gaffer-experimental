@@ -38,18 +38,14 @@ import uk.gov.gchq.gaffer.gaas.sidecar.auth.JwtUserDetailsService;
 @Order(1)
 @Configuration
 public class CustomFilter implements GlobalFilter {
-
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
-
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
     Logger logger = LoggerFactory.getLogger(CustomFilter.class);
 
     @Override
     public Mono<Void> filter(final ServerWebExchange exchange, final GatewayFilterChain chain) {
-
         ServerHttpRequest request = exchange.getRequest();
         if (request.getPath().toString().equals("/auth")) {
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
@@ -60,8 +56,8 @@ public class CustomFilter implements GlobalFilter {
         final String requestTokenHeader = request.getHeaders().getFirst("Authorization");
         String username = null;
         String jwtToken = null;
-        // JWT Token is in the form "Bearer token". Remove Bearer word and get
-        // only the Token
+        // JWT Token is in the form "Bearer token". Remove bearer word and get
+        // only the token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
@@ -77,13 +73,9 @@ public class CustomFilter implements GlobalFilter {
             logger.warn("JWT Token does not begin with Bearer String");
         }
 
-        // Once we get the token validate it.
+        // Once we get the token validate it
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
             UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-
-            // if token is valid configure Spring Security to manually set
-            // authentication
 
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 return chain.filter(exchange).then(Mono.fromRunnable(() -> {
