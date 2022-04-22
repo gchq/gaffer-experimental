@@ -81,14 +81,13 @@ describe("Navigation Appbar Component", () => {
                 requiredFields: [],
                 requiredHeaders: {},
             });
-
-            component = mount(
-                <MemoryRouter>
-                    <NavigationAppbar />
-                </MemoryRouter>
-            );
-            await component.update();
-            await component.update();
+            await act(async () => {
+                component = mount(
+                    <MemoryRouter>
+                        <NavigationAppbar />
+                    </MemoryRouter>
+                );
+            });
 
             expect(component.find("div#signedin-user-details").text()).toBe("");
         });
@@ -148,22 +147,14 @@ describe("Navigation Appbar Component", () => {
             postAuthMap.set("password", "asdfgh");
             await mockAuthSidecarClientPostAuth(postAuthMap);
             await mockGetWhoAmIRepoToReturn("Harry@gmail.com");
-            await act(() => {
-                component = mount(
-                    <MemoryRouter>
-                        <NavigationAppbar />
-                    </MemoryRouter>
-                );
-            });
-            await component.update();
-            await component.update();
-            await component.update();
-            await inputUsername("Harry@gmail.com");
-            await inputPassword("asdfgh");
 
-            await clickSubmitSignIn();
-            await component.update();
-            await component.update();
+            await act(async () => {
+                await inputUsername("Harry@gmail.com");
+                await inputPassword("asdfgh");
+
+                await clickSubmitSignIn();
+            });
+
             expect(component.find("div#signedin-user-details").text()).toBe("HARRYHarry@gmail.com");
         });
         it("should display an error message when getWhoAmI Throws", async () => {
@@ -194,34 +185,28 @@ describe("Navigation Appbar Component", () => {
             await component.update();
             await component.update();
             expect(component.find("div#navigation-drawer").find("div#user-details-error-message").text()).toBe(
-                "Failed to get user email: undefined: undefined"
+                "Failed to get user email"
             );
         });
     });
 });
 
 async function inputUsername(username: string) {
-    await act(() => {
-        expect(component.find("input#username").length).toBe(1);
-        component.find("input#username").simulate("change", {
-            target: { value: username },
-        });
+    expect(component.find("input#username").length).toBe(1);
+    component.find("input#username").simulate("change", {
+        target: { value: username },
     });
 }
 
 async function inputPassword(password: string) {
-    await act(() => {
-        expect(component.find("input#password").length).toBe(1);
-        component.find("input#password").simulate("change", {
-            target: { value: password },
-        });
+    expect(component.find("input#password").length).toBe(1);
+    component.find("input#password").simulate("change", {
+        target: { value: password },
     });
 }
 
 async function clickSubmitSignIn() {
-    await act(() => {
-        component.find("button#submit-sign-in-button").simulate("click");
-    });
+    component.find("button#submit-sign-in-button").simulate("click");
 }
 
 function mockAuthClient() {

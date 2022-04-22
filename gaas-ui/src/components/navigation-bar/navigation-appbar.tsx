@@ -18,12 +18,8 @@ import {
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import LocalLibraryIcon from "@material-ui/icons/LocalLibrary";
-import CategoryIcon from "@material-ui/icons/Category";
 import LoginModal from "../login/login-modal";
 import { NavLink } from "react-router-dom";
-import { Config } from "../../rest/config";
-import { GetWhoAmIRepo } from "../../rest/repositories/get-whoami-repo";
-import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 import { AuthSidecarClient } from "../../rest/clients/auth-sidecar-client";
 
 const drawerWidth = 240;
@@ -95,7 +91,7 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const NavigationAppbar: React.FC = (props: any) => {
+const NavigationAppbar: React.FC = () => {
     // @ts-ignore
     const classes = useStyles();
     const [userEmail, setUserEmail] = useState("");
@@ -116,38 +112,43 @@ const NavigationAppbar: React.FC = (props: any) => {
     };
     const getUserEmail = async () => {
         try {
-            const email = await new AuthSidecarClient().getWhoAmI();
-            setUserEmail(email);
+            await new AuthSidecarClient().getWhoAmI().then((response) => {
+                setUserEmail(response);
+            });
         } catch (e) {
-            setErrorMessage(
-                `Failed to get user email: ${(e as GaaSRestApiErrorResponse).title}: ${
-                    (e as GaaSRestApiErrorResponse).detail
-                }`
-            );
+            console.warn(e);
+            setErrorMessage(`Failed to get user email`);
         }
     };
     const getWhatAuth = async () => {
         try {
-            const whatAuthInfo = await new AuthSidecarClient().getWhatAuth();
-            if (whatAuthInfo.requiredFields) {
-                whatAuthInfo.requiredFields.forEach((field) => {
-                    setRequiredFields((requiredFields) => [...requiredFields, field]);
-                });
-            }
+            await new AuthSidecarClient().getWhatAuth().then((response) => {
+                if (response.requiredFields) {
+                    response.requiredFields.forEach((field) => {
+                        setRequiredFields((requiredFields) => [...requiredFields, field]);
+                    });
+                }
+            });
         } catch (e) {
+            console.warn(e);
             setErrorMessage(`Failed to setup Login`);
         }
     };
 
     const buildUsername = () => (userEmail.includes("@") ? userEmail.slice(0, userEmail.indexOf("@")) : userEmail);
     useEffect(() => {
-        getWhatAuth().then(() => {
-            if (requiredFields.length === 0) {
-                getUserEmail().then(() => {
-                    setIsLoggedIn(true);
-                });
-            }
-        });
+        getWhatAuth()
+            .then(() => {
+                if (requiredFields.length === 0) {
+                    getUserEmail().then(() => {
+                        setIsLoggedIn(true);
+                    });
+                }
+            })
+            .catch((error) => {
+                setErrorMessage(`Failed to setup Login: ${error}`);
+                setIsLoggedIn(false);
+            });
     }, []);
     const displayUserEmail = () => {
         if (userEmail) {
