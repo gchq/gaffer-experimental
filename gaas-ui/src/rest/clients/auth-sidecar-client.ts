@@ -77,13 +77,15 @@ export class AuthSidecarClient {
         return Object.fromEntries(map);
     }
     public async getWhoAmI(): Promise<string> {
+        const config: AxiosRequestConfig = {
+            baseURL: Config.REACT_APP_AUTH_ENDPOINT,
+            url: "/whoami",
+            method: "GET",
+            headers: AuthSidecarClient.setHeaders(),
+        };
+        const updatedConfig = AuthSidecarClient.addAttributes(config);
         try {
-            const response: AxiosResponse<any> = await axios({
-                baseURL: Config.REACT_APP_AUTH_ENDPOINT,
-                url: "/whoami",
-                method: "GET",
-                headers: AuthSidecarClient.setHeaders(),
-            });
+            const response: AxiosResponse<any> = await axios(updatedConfig);
             this.whoami = response.data;
             return response.data;
         } catch (error) {
@@ -91,13 +93,15 @@ export class AuthSidecarClient {
         }
     }
     public async postAuth(data: Map<string, string>) {
+        const config: AxiosRequestConfig = {
+            baseURL: Config.REACT_APP_AUTH_ENDPOINT,
+            url: "/auth",
+            method: "POST",
+            data: this.convertMapToJson(data),
+        };
+        const updatedConfig = AuthSidecarClient.addAttributes(config);
         try {
-            const response: AxiosResponse<any> = await axios({
-                baseURL: Config.REACT_APP_AUTH_ENDPOINT,
-                url: "/auth",
-                method: "POST",
-                data: this.convertMapToJson(data),
-            });
+            const response: AxiosResponse<any> = await axios(updatedConfig);
             AuthSidecarClient.setToken(response.data);
         } catch (e) {
             const error = e as AxiosError<any>;
@@ -124,5 +128,10 @@ export class AuthSidecarClient {
             }
         });
         return headersToAdd;
+    }
+    public static addAttributes(config: AxiosRequestConfig): AxiosRequestConfig<any> {
+        const attributes = AuthSidecarClient.getAttributes() as AxiosRequestConfig;
+        const updatedConfig = Object.assign(config, attributes);
+        return updatedConfig;
     }
 }
