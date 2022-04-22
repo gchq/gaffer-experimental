@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestHeaders, AxiosResponse, Method } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, Method } from "axios";
 import status from "statuses";
 import { RestApiError } from "../RestApiError";
 import { Config } from "../config";
@@ -120,27 +120,16 @@ export class RestClient<T> {
 
     private executeSpec = (restClient: RestClient<any>) => ({
         execute: async () => {
+            const config: AxiosRequestConfig = {
+                baseURL: restClient.baseURL,
+                url: restClient.url,
+                method: restClient.method,
+                headers: restClient.headers,
+                data: restClient.data,
+            };
+            const updatedConfig = AuthSidecarClient.addAttributes(config);
             try {
-                let response: AxiosResponse<any>;
-                if (Config.REACT_APP_API_PLATFORM === "OPENSHIFT") {
-                    response = await axios({
-                        baseURL: restClient.baseURL,
-                        url: restClient.url,
-                        method: restClient.method,
-                        headers: restClient.headers,
-                        data: restClient.data,
-                        withCredentials: true,
-                    });
-                } else {
-                    response = await axios({
-                        baseURL: restClient.baseURL,
-                        url: restClient.url,
-                        method: restClient.method,
-                        headers: restClient.headers,
-                        data: restClient.data,
-                    });
-                }
-
+                const response: AxiosResponse<any> = await axios(updatedConfig);
                 return RestClient.convert(response);
             } catch (e) {
                 const error = e as AxiosError<any>;
