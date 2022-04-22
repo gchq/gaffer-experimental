@@ -24,7 +24,7 @@ rest:
   replicaCount: 1
   image:
     #Set the repository value below to your own
-    repository: dockerhub/gs-rs-img
+    repository: DOCKERHUB_USERNAME/GAAS-REST-IMAGE_NAME
     pullPolicy: Always
     tag: latest
     containerPort: 8081
@@ -35,7 +35,7 @@ rest:
     targetPort: 8081
   controller:
     applicationProperties:
-      worker.image: somerepo/gaffer-worker
+      worker.image: DOCKERHUB_USERNAME/gaffer-worker
       worker.imagePullPolicy: Always
   worker:
     serviceAccount:
@@ -44,15 +44,15 @@ rest:
 
   namespace: kai-dev
 
-  eureka.server.image: dockerhub/gs-eureka-img
-  sidecar.image: dockerhub/gs-sc-img
+  eureka.server.image: DOCKERHUB_USERNAME/GAAS-EUREKA-IMAGE_NAME
+  sidecar.image: DOCKERHUB_USERNAME/GAAS-SIDECAR-IMAGE_NAME
 
 ui:
   enabled: true
   replicaCount: 1
   image:
     #Ask about repository setting
-    repository: test/test
+    repository: DOCKERHUB_USERNAME/GAAS-UI-IMAGE_NAME
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: 'latest'

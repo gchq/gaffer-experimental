@@ -14,7 +14,7 @@
 
 apiVersion: v2
 name: gaas
-description: Deploys the GaaS Rest which creates custom resource definitions
+description: Deploys the GaaS Rest and Gaas-UI which creates custom resource definitions
 type: application
 version: 0.0.1
 appVersion: 1.0-SNAPSHOT
