@@ -19,7 +19,7 @@ describe("Auth Sidecar Example", () => {
                             withCredentials: true,
                         },
                         requiredFields: ["username", "password"],
-                        requiredHeaders: { Authorization: "Bearer  " },
+                        requiredHeaders: { Authorization: "Bearer " },
                     });
                 });
         });
