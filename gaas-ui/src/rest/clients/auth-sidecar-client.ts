@@ -53,7 +53,7 @@ export class AuthSidecarClient {
             AuthSidecarClient.whatAuthObject = response.data;
             return AuthSidecarClient.whatAuthObject;
         } catch (error) {
-            throw error;
+            throw RestClient.fromError(error as AxiosError<any>);
         }
     }
     private validateWhatAuthObject(data: object) {

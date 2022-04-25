@@ -123,7 +123,7 @@ const NavigationAppbar: React.FC = () => {
     const getWhatAuth = async () => {
         try {
             await new AuthSidecarClient().getWhatAuth().then((response) => {
-                if (response.requiredFields) {
+                if (response.requiredFields.length > 0) {
                     response.requiredFields.forEach((field) => {
                         setRequiredFields((requiredFields) => [...requiredFields, field]);
                     });

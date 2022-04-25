@@ -14,11 +14,6 @@ jest.mock("../../../src/rest/clients/auth-sidecar-client");
 let component: ReactWrapper;
 
 beforeEach(async () => {
-    await mockGetWhatAuthToReturn({
-        attributes: {},
-        requiredFields: ["username", "password"],
-        requiredHeaders: { Authorization: "Bearer  " },
-    });
     await act(async () => {
         component = mount(
             <MemoryRouter>
@@ -73,13 +68,29 @@ describe("Navigation Appbar Component", () => {
             expect(component.html().includes("login-modal")).toBe(false);
         });
         it("should call getWhatAuth on load and then call getWhoAmI", async () => {
-            await mockGetWhoAmIRepoToReturn("test@email.com");
-            await mockGetWhatAuthToReturn({
-                attributes: {
-                    withCredentials: true,
-                },
-                requiredFields: [],
-                requiredHeaders: {},
+            await act(async () => {
+                await mockGetWhatAuthToReturn({
+                    attributes: {
+                        withCredentials: true,
+                    },
+                    requiredFields: [],
+                    requiredHeaders: {},
+                });
+                await mockGetWhoAmIRepoToReturn("test@email.com");
+                component = mount(
+                    <MemoryRouter>
+                        <NavigationAppbar />
+                    </MemoryRouter>
+                );
+            });
+            await component.update();
+            await component.update();
+            await component.update();
+            expect(component.find("div#signedin-user-details").text()).toBe("TESTtest@email.com");
+        });
+        it("when getWhatAuth throws error display error message", async () => {
+            await mockGetWhatAuthToThrow(() => {
+                throw new Error();
             });
             await act(async () => {
                 component = mount(
@@ -87,21 +98,9 @@ describe("Navigation Appbar Component", () => {
                         <NavigationAppbar />
                     </MemoryRouter>
                 );
+                component.update();
+                component.update();
             });
-
-            expect(component.find("div#signedin-user-details").text()).toBe("");
-        });
-        it("when getWhatAuth throws error display error message", async () => {
-            await mockGetWhatAuthToThrow(() => {
-                throw new Error();
-            });
-            component = mount(
-                <MemoryRouter>
-                    <NavigationAppbar />
-                </MemoryRouter>
-            );
-            await component.update();
-            await component.update();
 
             expect(component.find("div#navigation-drawer").find("div#user-details-error-message").text()).toBe(
                 "Failed to setup Login"
@@ -216,6 +215,22 @@ function mockAuthClient() {
             onSuccess();
         }
     );
+}
+async function mockGetWhatAuthAndGetWhoAmI(data: IWhatAuthInfo, email: string) {
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhoAmI: () =>
+            new Promise((resolve, reject) => {
+                resolve(email);
+            }),
+    }));
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhatAuth: () =>
+            new Promise((resolve, reject) => {
+                resolve(data);
+            }),
+    }));
 }
 async function mockGetWhoAmIRepoToReturn(email: string) {
     // @ts-ignore
