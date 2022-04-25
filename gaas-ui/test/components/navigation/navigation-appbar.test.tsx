@@ -88,24 +88,6 @@ describe("Navigation Appbar Component", () => {
             await component.update();
             expect(component.find("div#signedin-user-details").text()).toBe("TESTtest@email.com");
         });
-        it("when getWhatAuth throws error display error message", async () => {
-            await mockGetWhatAuthToThrow(() => {
-                throw new Error();
-            });
-            await act(async () => {
-                component = mount(
-                    <MemoryRouter>
-                        <NavigationAppbar />
-                    </MemoryRouter>
-                );
-                component.update();
-                component.update();
-            });
-
-            expect(component.find("div#navigation-drawer").find("div#user-details-error-message").text()).toBe(
-                "Failed to setup Login"
-            );
-        });
     });
     it("should display appbar", () => {
         const appbar = component.find("h6");
@@ -135,27 +117,6 @@ describe("Navigation Appbar Component", () => {
         }
     });
     describe("Display Signed In User Details", () => {
-        it("should display the username & email of the User who signed in", async () => {
-            await mockGetWhatAuthToReturn({
-                attributes: {},
-                requiredFields: ["username", "password"],
-                requiredHeaders: { Authorization: "Bearer  " },
-            });
-            const postAuthMap = new Map<string, string>();
-            postAuthMap.set("username", "Harry@gmail.com");
-            postAuthMap.set("password", "asdfgh");
-            await mockAuthSidecarClientPostAuth(postAuthMap);
-            await mockGetWhoAmIRepoToReturn("Harry@gmail.com");
-
-            await act(async () => {
-                await inputUsername("Harry@gmail.com");
-                await inputPassword("asdfgh");
-
-                await clickSubmitSignIn();
-            });
-
-            expect(component.find("div#signedin-user-details").text()).toBe("HARRYHarry@gmail.com");
-        });
         it("should display an error message when getWhoAmI Throws", async () => {
             await mockGetWhatAuthToReturn({
                 attributes: {},
