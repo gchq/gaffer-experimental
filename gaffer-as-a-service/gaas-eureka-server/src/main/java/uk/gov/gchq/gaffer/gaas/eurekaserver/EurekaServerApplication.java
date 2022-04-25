@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.eurekaserver;
 
+import org.apache.log4j.BasicConfigurator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
@@ -26,6 +27,7 @@ public class EurekaServerApplication {
 
     public static void main(final String[] args) {
         SpringApplication.run(EurekaServerApplication.class, args);
+        BasicConfigurator.configure();
     }
 
 }
