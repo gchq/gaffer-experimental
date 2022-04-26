@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021-2022 Crown Copyright
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { mount, ReactWrapper } from "enzyme";
 import NavigationAppbar from "../../../src/components/navigation-bar/navigation-appbar";
 import React from "react";
@@ -5,8 +21,8 @@ import { MemoryRouter } from "react-router-dom";
 import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { Config } from "../../../src/rest/config";
 import { act } from "@testing-library/react";
-import {OpenshiftClient} from "../../../src/rest/clients/openshift-client";
-import {APIError} from "../../../src/rest/APIError";
+import { OpenshiftClient } from "../../../src/rest/clients/openshift-client";
+import { APIError } from "../../../src/rest/APIError";
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 
@@ -30,7 +46,7 @@ afterEach(() => {
 afterAll(() => {
     process.env = Object.assign(process.env, { REACT_APP_API_PLATFORM: "" });
     Config.REACT_APP_API_PLATFORM = "";
-    mock.resetHandlers()
+    mock.resetHandlers();
 });
 
 describe("Navigation Appbar Component", () => {
@@ -70,7 +86,7 @@ describe("Navigation Appbar Component", () => {
     describe("When REACT_APP_API_PLATFORM is set to OPENSHIFT", () => {
         beforeAll(() => {
             Config.REACT_APP_API_PLATFORM = "OPENSHIFT";
-            mock.onGet("/whoami").reply(200,"test@test.com")
+            mock.onGet("/whoami").reply(200, "test@test.com");
         });
 
         it("Should not show the login modal and should display the username and email", async () => {
