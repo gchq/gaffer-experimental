@@ -14,12 +14,12 @@ rest:
     repository: DOCKER_USERNAME/GAAS-REST-IMAGE_NAME
     pullPolicy: Always
     tag: latest
-    containerPort: 8080
+    containerPort: 8081
   imagePullSecrets: [ ]
   service:
     type: ClusterIP
-    port: 8080
-    targetPort: 8080
+    port: 8081
+    targetPort: 8081
   controller:
     applicationProperties:
       worker.image:  DOCKER_USERNAME/gaffer-worker
