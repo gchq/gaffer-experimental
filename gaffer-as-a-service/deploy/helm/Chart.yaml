@@ -4,3 +4,12 @@ description: Deploys the GaaS Rest and Gaas-UI which creates custom resource def
 type: application
 version: 0.0.1
 appVersion: 1.0-SNAPSHOT
+dependencies:
+  - name: gaas-rest
+    repository: file://helm/gaas-rest
+    version: 0.0.1
+    condition: rest.enabled
+  - name: gaas-ui
+    repository: file://helm/gaas-ui
+    version: 0.0.1
+    condition: ui.enabled

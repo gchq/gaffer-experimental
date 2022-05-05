@@ -1,12 +1,11 @@
-{{- if .Values.ui.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "helm.fullname" . }}-ui
+  name: {{ include "helm.fullname" . }}
   labels:
     {{- include "helm.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.ui.replicaCount }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "helm.selectorLabels" . | nindent 6 }}
@@ -15,19 +14,19 @@ spec:
       labels:
         {{- include "helm.selectorLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/ui/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
-      {{- with .Values.ui.imagePullSecrets }}
+      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image:  {{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}
-          imagePullPolicy: {{ .Values.ui.image.pullPolicy }}
+          image:  {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.ui.image.containerPort }}
+              containerPort: {{ .Values.image.containerPort }}
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -38,14 +37,13 @@ spec:
               path: /
               port: http
           volumeMounts:
-            - mountPath: /usr/share/nginx/html/{{ .Values.ui.envConfigFile }}
+            - mountPath: /usr/share/nginx/html/{{ .Values.envConfigFile }}
               name: env-js-config
-              subPath: {{ .Values.ui.envConfigFile }}
+              subPath: {{ .Values.envConfigFile }}
       volumes:
         - name: env-js-config
           configMap:
-            name: {{ include "helm.fullname" . }}-ui
+            name: {{ include "helm.fullname" . }}
             items:
             - key: "web.properties"
-              path: {{ .Values.ui.envConfigFile }}
-{{- end }}
+              path: {{ .Values.envConfigFile }}
