@@ -18,6 +18,8 @@ package uk.gov.gchq.gaffer.gaas.services;
 
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
@@ -32,9 +34,12 @@ public class DeleteGraphService {
     @Autowired
     private MeterRegistry meterRegistry;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteGraphService.class);
+
     @Timed(value = "deleteGraph.time", description = "Time taken to delete graph", percentiles = 0)
     public boolean deleteGraph(final String graphId) throws GaaSRestApiException {
         meterRegistry.counter("DeleteGraphService", "action", "delete").increment();
+        LOGGER.info("Delete GaaS Graph = " + graphId);
         return gafferClient.deleteGaffer(graphId);
     }
 }

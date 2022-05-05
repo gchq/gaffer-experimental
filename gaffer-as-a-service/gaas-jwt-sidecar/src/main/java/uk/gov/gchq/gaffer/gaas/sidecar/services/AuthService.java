@@ -36,18 +36,18 @@ public class AuthService {
     Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     public String getToken(final JwtRequest authenticationRequest) {
-        logger.info("Find user details =" );
+        logger.info("Find user details =");
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
-        logger.info("Found user details =" );
+        logger.info("Found user details =");
         return jwtTokenUtil.generateToken(userDetails);
     }
 
     public String getOwnerName(final JwtRequest authenticationRequest) {
-        logger.info("Find owner name =" );
+        logger.info("Find owner name =");
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
-        logger.info("Found owner name =" );
+        logger.info("Found owner name =");
         return userDetails.getUsername();
     }
 }

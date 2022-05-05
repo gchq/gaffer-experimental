@@ -49,7 +49,7 @@ public class CreateFederatedStoreGraphService {
     private GafferSpecConfigsLoader loader;
     @Autowired
     private GraphCommandExecutor graphOperationExecutor;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GafferClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CreateFederatedStoreGraphService.class);
 
     public void createFederatedStore(final GaaSCreateRequestBody request) throws GaaSRestApiException {
         if (request.getProxySubGraphs().isEmpty()) {

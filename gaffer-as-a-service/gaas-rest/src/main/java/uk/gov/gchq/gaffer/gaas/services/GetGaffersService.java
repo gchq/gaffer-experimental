@@ -18,6 +18,8 @@ package uk.gov.gchq.gaffer.gaas.services;
 
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
@@ -33,10 +35,12 @@ public class GetGaffersService {
     @Autowired
     private GafferClient gafferClient;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetGaffersService.class);
+
     @Timed(value = "getAllGraphs.time", description = "Time taken to get all graphs", percentiles = 0)
     public List<GaaSGraph> getAllGraphs() throws GaaSRestApiException {
         meterRegistry.counter("GetGafferService", "action", "get").increment();
-
+        LOGGER.info("Get all graphs = ");
         return gafferClient.listAllGaffers();
     }
 }

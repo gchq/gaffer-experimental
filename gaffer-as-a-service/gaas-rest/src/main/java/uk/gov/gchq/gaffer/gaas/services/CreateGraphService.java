@@ -18,6 +18,8 @@ package uk.gov.gchq.gaffer.gaas.services;
 
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
@@ -40,13 +42,16 @@ public class CreateGraphService {
     @Autowired
     private GafferClient gafferClient;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CreateGraphService.class);
+
     @Timed(value = "createGraph.time", description = "Time taken to create graph", percentiles = 0)
     public void createGraph(final GaaSCreateRequestBody gaaSCreateRequestBodyInput) throws GaaSRestApiException {
         meterRegistry.counter("CreateGraphService", "action", "create").increment();
 
         final GafferSpec config = loader.getConfig(CONFIG_YAML_CLASSPATH, gaaSCreateRequestBodyInput.getConfigName());
-
+        LOGGER.info("GaaS Graph Config Found ");
         gafferClient.createGaffer(overrideConfig(config, gaaSCreateRequestBodyInput));
+        LOGGER.info("GaaS Graph created ");
     }
 
     private Gaffer overrideConfig(final GafferSpec gafferSpecConfig, final GaaSCreateRequestBody overrides) {

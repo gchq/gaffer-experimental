@@ -18,6 +18,8 @@ package uk.gov.gchq.gaffer.gaas.services;
 
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
@@ -33,9 +35,12 @@ public class GetNamespacesService {
     @Autowired
     private MeterRegistry meterRegistry;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetNamespacesService.class);
+
     @Timed(value = "getNamespaces.time", description = "Time taken to get all namespaces", percentiles = 0)
     public List<String> getNamespaces() throws GaaSRestApiException {
         meterRegistry.counter("GetNamespacesService", "action", "get").increment();
+        LOGGER.info("Get all namespaces = ");
         return gafferClient.getAllNameSpaces();
     }
 }

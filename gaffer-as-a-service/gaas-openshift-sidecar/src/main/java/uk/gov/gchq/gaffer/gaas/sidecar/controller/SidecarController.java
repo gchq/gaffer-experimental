@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.sidecar.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -28,8 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @RestController
 public class SidecarController {
+
+    Logger logger = LoggerFactory.getLogger(SidecarController.class);
+
     @GetMapping(path = "/whoami", produces = "application/json")
     ResponseEntity<String> whoami(@RequestHeader("x-email") final String email) {
+        logger.error("Found x-email = ");
         return new ResponseEntity<>(email, HttpStatus.OK);
     }
 }

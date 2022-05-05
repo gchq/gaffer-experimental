@@ -42,10 +42,10 @@ public class SidecarController {
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
         try {
             final String token = authService.getToken(authenticationRequest);
-            logger.error("Found token = " );
+            logger.error("Found token = ");
             return ResponseEntity.ok(token);
         } catch (Exception e) {
-            logger.error("Invalid credentials = " );
+            logger.error("Invalid credentials = ");
             return ResponseEntity.status(401).body("Invalid credentials");
         }
     }

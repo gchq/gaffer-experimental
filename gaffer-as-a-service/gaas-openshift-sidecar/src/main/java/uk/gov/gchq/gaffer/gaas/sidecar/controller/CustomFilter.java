@@ -35,18 +35,21 @@ public class CustomFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(final ServerWebExchange exchange, final GatewayFilterChain chain) {
-
+        logger.info("Enter custom Filter and check x-email= ");
         ServerHttpRequest request = exchange.getRequest();
         if (request.getHeaders().getFirst("x-email") != null) {
+            logger.info("Found x-email = ");
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 ServerHttpResponse response = exchange.getResponse();
-                logger.info("Post Filter = " + response.getStatusCode());
+                logger.info("Sidecar custom post Filter = " + response.getStatusCode());
             }));
         }
+        logger.info("Unauthorised User = ");
         return this.onError(exchange, "Unauthorised User", HttpStatus.FORBIDDEN);
     }
 
     private Mono<Void> onError(final ServerWebExchange exchange, final String err, final HttpStatus httpStatus) {
+        logger.error("Error sidecar custom filter = ");
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
         return response.setComplete();
