@@ -33,14 +33,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
-import uk.gov.gchq.gaffer.gaas.controller.GraphController;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static uk.gov.gchq.gaffer.gaas.util.Constants.CHART_VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAAS_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
@@ -171,7 +168,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
         V1PodSpec spec = helmPod.getSpec();
         if (spec == null) {
             LOGGER.error("Pod should have a spec: " + spec);
-            throw new RuntimeException("Pod should have a spec: "+ spec);
+            throw new RuntimeException("Pod should have a spec: " + spec);
         }
 
         spec.addVolumesItem(
