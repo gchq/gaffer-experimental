@@ -30,6 +30,10 @@ gaas-rest:
       name: gaffer-workers
 
   namespace: kai-dev
+  eureka:
+    image: myrepo/eureka-img
+  sidecar:
+    image: myrepo/sidecar-img
 
 gaas-ui:
   enabled: true

@@ -40,3 +40,7 @@ worker:
     name: gaffer-workers
 
 namespace: kai-dev
+eureka:
+  image: somerepo/eureka-img
+sidecar:
+  image: somerepo/sidecar-img

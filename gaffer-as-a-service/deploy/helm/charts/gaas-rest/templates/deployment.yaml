@@ -42,13 +42,13 @@ spec:
               limits:
                 memory: "1Gi"
                 cpu: "1000m"
-          - image: DOCKER_USERNAME/GAAS-SIDECAR-IMAGE_NAME
+          - image: "{{ .Values.sidecar.image }}"
             imagePullPolicy: Always
             name: jwt-sidecar-app
             ports:
               - containerPort: 8081
                 protocol: TCP
-          - image: DOCKER_USERNAME/GAAS-EUREKA-IMAGE_NAME
+          - image: "{{ .Values.eureka.image }}"
             imagePullPolicy: Always
             name: eureka-app
             ports:
