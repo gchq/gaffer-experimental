@@ -56,7 +56,6 @@ public class DeploymentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeploymentHandler.class);
 
-
     private final String workerNamespace;
 
     @Autowired
