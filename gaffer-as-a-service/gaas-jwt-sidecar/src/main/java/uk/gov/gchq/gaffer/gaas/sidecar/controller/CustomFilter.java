@@ -42,15 +42,18 @@ public class CustomFilter implements GlobalFilter {
     private JwtUserDetailsService jwtUserDetailsService;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
     Logger logger = LoggerFactory.getLogger(CustomFilter.class);
 
     @Override
     public Mono<Void> filter(final ServerWebExchange exchange, final GatewayFilterChain chain) {
+        logger.info("Enter custom Filter = " );
         ServerHttpRequest request = exchange.getRequest();
         if (request.getPath().toString().equals("/auth")) {
+            logger.info("Found /auth path" );
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 ServerHttpResponse response = exchange.getResponse();
-                logger.info("Post Filter = " + response.getStatusCode());
+                logger.info("Sidecar custom post Filter = " + response.getStatusCode());
             }));
         }
         final String requestTokenHeader = request.getHeaders().getFirst("Authorization");
@@ -59,9 +62,12 @@ public class CustomFilter implements GlobalFilter {
         // JWT Token is in the form "Bearer token". Remove bearer word and get
         // only the token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            logger.info("JWT Token is in the form \"Bearer token\" = " );
             jwtToken = requestTokenHeader.substring(7);
+            logger.info("Remove bearer word and get only the token = " );
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+                logger.info("Get username from the token = " );
             } catch (IllegalArgumentException e) {
                 logger.warn("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
@@ -76,11 +82,11 @@ public class CustomFilter implements GlobalFilter {
         // Once we get the token validate it
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-
+            logger.info("Validate the token = " );
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                     ServerHttpResponse response = exchange.getResponse();
-                    logger.info("Post Filter = " + response.getStatusCode());
+                    logger.info("Sidecar custom post Filter = " + response.getStatusCode());
                 }));
             }
         }
@@ -89,6 +95,7 @@ public class CustomFilter implements GlobalFilter {
     }
 
     private Mono<Void> onError(final ServerWebExchange exchange, final String err, final HttpStatus httpStatus) {
+        logger.error("Sidecar custom filter = " );
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
         return response.setComplete();

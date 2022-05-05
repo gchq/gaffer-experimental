@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.sidecar.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -31,16 +33,21 @@ public class AuthService {
     @Autowired
     private JwtUserDetailsService userDetailsService;
 
+    Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     public String getToken(final JwtRequest authenticationRequest) {
+        logger.info("Find user details =" );
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
+        logger.info("Found user details =" );
         return jwtTokenUtil.generateToken(userDetails);
     }
 
     public String getOwnerName(final JwtRequest authenticationRequest) {
+        logger.info("Find owner name =" );
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
+        logger.info("Found owner name =" );
         return userDetails.getUsername();
     }
 }

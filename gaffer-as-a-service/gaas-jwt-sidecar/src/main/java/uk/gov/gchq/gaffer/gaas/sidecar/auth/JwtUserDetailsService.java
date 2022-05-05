@@ -15,6 +15,8 @@
  */
 package uk.gov.gchq.gaffer.gaas.sidecar.auth;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtUserDetailsService.class);
+
     @Value("${admin.username: default}")
     private String adminUsername;
     @Value("${admin.password: default}")
@@ -33,10 +37,13 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        LOGGER.info("Enter load user by username ");
         if (adminUsername.equals(username)) {
+            LOGGER.info("User  found with username: " + username);
             return new User(adminUsername, adminPassword,
                     new ArrayList<>());
         } else {
+            LOGGER.error("User not found with username: " + username);
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
     }

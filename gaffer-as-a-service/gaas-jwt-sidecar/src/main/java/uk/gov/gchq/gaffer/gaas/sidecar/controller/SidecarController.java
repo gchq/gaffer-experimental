@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.sidecar.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -34,12 +36,16 @@ public class SidecarController {
     @Autowired
     private AuthService authService;
 
+    Logger logger = LoggerFactory.getLogger(SidecarController.class);
+
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
         try {
             final String token = authService.getToken(authenticationRequest);
+            logger.error("Found token = " );
             return ResponseEntity.ok(token);
         } catch (Exception e) {
+            logger.error("Invalid credentials = " );
             return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
