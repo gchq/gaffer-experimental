@@ -27,4 +27,6 @@
   <suppress files="[\\/]src[\\/]test[\\/].*" id="parameterNumber"/>
   <suppress files="GafferController.java" id="hideUtilityClassConstructor"/>
   <suppress files="GaaSWebApplication.java" id="hideUtilityClassConstructor"/>
+  <suppress files="SidecarApplication.java" id="hideUtilityClassConstructor"/>
+  <suppress files="EurekaServerApplication.java" id="hideUtilityClassConstructor"/>
 </suppressions>

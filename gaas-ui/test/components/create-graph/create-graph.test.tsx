@@ -11,7 +11,7 @@ import { GetAllGraphsRepo } from "../../../src/rest/repositories/get-all-graphs-
 import { GetGraphDescriptionRepo } from "../../../src/rest/repositories/get-graph-description-repo";
 import { GetGraphIdRepo } from "../../../src/rest/repositories/get-graph-id-repo";
 import { GetGraphStatusRepo } from "../../../src/rest/repositories/get-graph-status-repo";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import { APIError } from "../../../src/rest/APIError";
 import { GetStoreTypesRepo, IStoreTypes } from "../../../src/rest/repositories/get-store-types-repo";
 import { CreateFederatedGraphRepo } from "../../../src/rest/repositories/create-federated-graph-repo";
 import { GraphType } from "../../../src/domain/graph-type";
@@ -74,7 +74,7 @@ describe("CreateGraph UI component", () => {
         afterEach(() => component.unmount());
         it("Should display an error notification when GetAllGraphsRepo throws an exception", async () => {
             await mockGetAllGraphsRepoToThrow(() => {
-                throw new RestApiError("Server Error", "Timeout exception");
+                throw new APIError("Server Error", "Timeout exception");
             });
             mockGetStoreTypesRepoToReturn({ storeTypes: [], federatedStoreTypes: [] });
             await act(async () => {
@@ -122,7 +122,7 @@ describe("CreateGraph UI component", () => {
         afterEach(() => component.unmount());
         it("should show error notification when GetStoreTypesRepo throws an exception", async () => {
             await mockGetStoreTypesRepoToThrow(() => {
-                throw new RestApiError("Server Error", "Timeout exception");
+                throw new APIError("Server Error", "Timeout exception");
             });
             mockGetAllGraphsRepoToReturn([]);
             await act(async () => {
@@ -650,7 +650,7 @@ function mockGetGraphStatusRepoToThrowError() {
     // @ts-ignore
     GetGraphStatusRepo.mockImplementationOnce(() => ({
         getStatus: () => {
-            throw new RestApiError("Server Error", "Invalid proxy URL");
+            throw new APIError("Server Error", "Invalid proxy URL");
         },
     }));
 }
@@ -659,7 +659,7 @@ function mockGetGraphDescriptionRepoToThrowError() {
     // @ts-ignore
     GetGraphDescriptionRepo.mockImplementationOnce(() => ({
         getDescription: () => {
-            throw new RestApiError("Server Error", "Invalid proxy URL");
+            throw new APIError("Server Error", "Invalid proxy URL");
         },
     }));
 }
@@ -668,7 +668,7 @@ function mockGetGraphIdRepoToThrowError() {
     // @ts-ignore
     GetGraphIdRepo.mockImplementationOnce(() => ({
         getGraphId: () => {
-            throw new RestApiError("Server Error", "Invalid proxy URL");
+            throw new APIError("Server Error", "Invalid proxy URL");
         },
     }));
 }

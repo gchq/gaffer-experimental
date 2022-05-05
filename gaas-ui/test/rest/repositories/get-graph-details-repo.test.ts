@@ -1,7 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { GetGraphDescriptionRepo } from "../../../src/rest/repositories/get-graph-description-repo";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import { APIError } from "../../../src/rest/APIError";
 import { GetGraphIdRepo } from "../../../src/rest/repositories/get-graph-id-repo";
 
 const mock = new MockAdapter(axios);
@@ -27,7 +27,7 @@ describe("Get Graph Details repo", () => {
             mock.onGet("graph/config/description").reply(404);
 
             await expect(getGraphDescriptionRepo.getDescription("https://www.testURL.com/")).rejects.toEqual(
-                new RestApiError("Error Code 404", "Not Found")
+                new APIError("Error Code 404", "Not Found")
             );
         });
 
@@ -35,7 +35,7 @@ describe("Get Graph Details repo", () => {
             mock.onGet("graph/config/description").reply(403, { title: "Forbidden", detail: "Graph is invalid" });
 
             await expect(getGraphDescriptionRepo.getDescription("https://www.testURL.com/")).rejects.toEqual(
-                new RestApiError("Forbidden", "Graph is invalid")
+                new APIError("Forbidden", "Graph is invalid")
             );
         });
 
@@ -43,7 +43,7 @@ describe("Get Graph Details repo", () => {
             mock.onGet("graph/config/description").reply(0);
 
             await expect(getGraphDescriptionRepo.getDescription("https://www.testURL.com/")).rejects.toEqual(
-                new RestApiError("Unknown Error", "Unable to make request")
+                new APIError("Unknown Error", "Unable to make request")
             );
         });
     });
@@ -62,7 +62,7 @@ describe("Get Graph Details repo", () => {
             mock.onGet("graph/config/graphId").reply(404);
 
             await expect(getGraphIdRepo.getGraphId("https://www.testURL.com/")).rejects.toEqual(
-                new RestApiError("Error Code 404", "Not Found")
+                new APIError("Error Code 404", "Not Found")
             );
         });
 
@@ -70,7 +70,7 @@ describe("Get Graph Details repo", () => {
             mock.onGet("graph/config/graphId").reply(403, { title: "Forbidden", detail: "Graph is invalid" });
 
             await expect(getGraphIdRepo.getGraphId("https://www.testURL.com/")).rejects.toEqual(
-                new RestApiError("Forbidden", "Graph is invalid")
+                new APIError("Forbidden", "Graph is invalid")
             );
         });
 
@@ -78,7 +78,7 @@ describe("Get Graph Details repo", () => {
             mock.onGet("graph/config/graphId").reply(0);
 
             await expect(getGraphIdRepo.getGraphId("https://www.testURL.com/")).rejects.toEqual(
-                new RestApiError("Unknown Error", "Unable to make request")
+                new APIError("Unknown Error", "Unable to make request")
             );
         });
     });

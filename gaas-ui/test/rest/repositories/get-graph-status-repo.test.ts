@@ -2,7 +2,7 @@ import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { GetGraphStatusRepo } from "../../../src/rest/repositories/get-graph-status-repo";
 import { IGraphStatusResponse } from "../../../src/rest/http-message-interfaces/response-interfaces";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import { APIError } from "../../../src/rest/APIError";
 
 const mock = new MockAdapter(axios);
 const repo = new GetGraphStatusRepo();
@@ -26,7 +26,7 @@ describe("Get graph status repo", () => {
         mock.onGet("/graph/status").reply(404);
 
         await expect(repo.getStatus("https://www.testURL.com/")).rejects.toEqual(
-            new RestApiError("Error Code 404", "Not Found")
+            new APIError("Error Code 404", "Not Found")
         );
     });
 
@@ -34,7 +34,7 @@ describe("Get graph status repo", () => {
         mock.onGet("/graph/status").reply(403, { title: "Forbidden", detail: "Graph is invalid" });
 
         await expect(repo.getStatus("https://www.testURL.com/")).rejects.toEqual(
-            new RestApiError("Forbidden", "Graph is invalid")
+            new APIError("Forbidden", "Graph is invalid")
         );
     });
 
@@ -42,7 +42,7 @@ describe("Get graph status repo", () => {
         mock.onGet("/graph/status").reply(0);
 
         await expect(repo.getStatus("https://www.testURL.com/")).rejects.toEqual(
-            new RestApiError("Unknown Error", "Unable to make request")
+            new APIError("Unknown Error", "Unable to make request")
         );
     });
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Crown Copyright
+ * Copyright 2020-2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import io.kubernetes.client.openapi.ApiClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,19 +32,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.gchq.gaffer.gaas.auth.JwtRequest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
-import uk.gov.gchq.gaffer.gaas.services.AuthService;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -74,25 +72,9 @@ public class GraphController {
     private GetNamespacesService getNamespacesService;
     @Autowired
     private GetGaaSGraphConfigsService getStoreTypesService;
-    @Autowired(required = false)
-    private AuthService authService;
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
 
-    @Value("${cognito.enabled: false}")
-    boolean cognitoEnabled;
-
-    @Value("${openshift.enabled: false}")
-    boolean openshiftEnabled;
-
-    @PostMapping("/auth")
-    public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-        if (!cognitoEnabled) {
-            final String token = authService.getToken(authenticationRequest);
-            return ResponseEntity.ok(token);
-        }
-        return null;
-    }
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
@@ -101,14 +83,14 @@ public class GraphController {
         } else {
             createGraphService.createGraph(requestBody);
         }
-        return getResponseEntity(new ResponseEntity(HttpStatus.CREATED), headers);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("graphs", getGaffersService.getAllGraphs());
-        return getResponseEntity(new ResponseEntity(responseBody, HttpStatus.OK), headers);
+        return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
@@ -116,14 +98,14 @@ public class GraphController {
         final Map<String, Object> body = new HashMap<>();
         body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
 
-        return getResponseEntity(new ResponseEntity(body, HttpStatus.OK), headers);
+        return new ResponseEntity(body, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
 
         if (deleteGraphService.deleteGraph(graphId)) {
-            return getResponseEntity(new ResponseEntity(HttpStatus.NO_CONTENT), headers);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -131,24 +113,10 @@ public class GraphController {
     @GetMapping(path = "/namespaces", produces = "application/json")
     public ResponseEntity<?> getNamespaces(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final List<String> namespaces = getNamespacesService.getNamespaces();
-        return getResponseEntity(new ResponseEntity(namespaces, HttpStatus.OK), headers);
+        return new ResponseEntity(namespaces, HttpStatus.OK);
     }
 
-    private Boolean checkForXEmail(final HttpHeaders headers) {
-        return (headers.get("x-email") != null);
-    }
 
-    public ResponseEntity getResponseEntity(final ResponseEntity responseEntity, final HttpHeaders headers) {
-        if (openshiftEnabled) {
-            if (checkForXEmail(headers)) {
-                return responseEntity;
-            } else {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
-        } else {
-            return responseEntity;
-        }
-    }
 
     @GetMapping(path = "/whoami", produces = "application/json")
     ResponseEntity<String> whoami(@RequestHeader("x-email") final String email) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Crown Copyright
+ * Copyright 2020-2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,14 @@ import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
+import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
+import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 
 import java.util.List;
 
@@ -39,26 +43,29 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_RESTART_POLICY;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_SERVICE_ACCOUNT_NAME;
 
+@UnitTest
 class KubernetesObjectFactoryTest {
+    private Environment env = mock(Environment.class);
 
-    private Environment env;
+    @Autowired
+    private HelmValuesOverridesHandler helmValuesOverridesHandler;
 
     @BeforeEach
     public void beforeEach() {
-        env = mock(Environment.class);
         when(env.getProperty(WORKER_IMAGE)).thenReturn("helm:latest");
         when(env.getProperty(WORKER_IMAGE_PULL_POLICY)).thenReturn("Always");
         when(env.getProperty(WORKER_NAMESPACE)).thenReturn("default");
         when(env.getProperty(WORKER_RESTART_POLICY)).thenReturn("OnFailure");
         when(env.getProperty(WORKER_SERVICE_ACCOUNT_NAME)).thenReturn("alice");
         when(env.getProperty(WORKER_HELM_REPO)).thenReturn("file:///gaffer");
+
     }
 
     @Test
     void shouldUseEnvironmentToDetermineHelmRepo() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
-
+        ReflectionTestUtils.setField(kubernetesObjectFactory, "helmValuesOverridesHandler", helmValuesOverridesHandler);
         // When
         GafferSpec spec = new GafferSpec();
         spec.put("key", "value");
@@ -78,6 +85,7 @@ class KubernetesObjectFactoryTest {
     void shouldUseEnvironmentToDetermineImage() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
+        ReflectionTestUtils.setField(kubernetesObjectFactory, "helmValuesOverridesHandler", helmValuesOverridesHandler);
 
         // When
         GafferSpec spec = new GafferSpec();
@@ -100,6 +108,7 @@ class KubernetesObjectFactoryTest {
 
 
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
+        ReflectionTestUtils.setField(kubernetesObjectFactory, "helmValuesOverridesHandler", helmValuesOverridesHandler);
 
         // When
         GafferSpec spec = new GafferSpec();
@@ -119,6 +128,7 @@ class KubernetesObjectFactoryTest {
     void shouldUseEnvironmentToDetermineServiceAccountName() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
+        ReflectionTestUtils.setField(kubernetesObjectFactory, "helmValuesOverridesHandler", helmValuesOverridesHandler);
 
         // When
         GafferSpec spec = new GafferSpec();
@@ -138,6 +148,7 @@ class KubernetesObjectFactoryTest {
     public void shouldUseEnvironmentWithUnInstallHelmCommandToDetermineServiceAccountName() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
+        ReflectionTestUtils.setField(kubernetesObjectFactory, "helmValuesOverridesHandler", helmValuesOverridesHandler);
 
         // When
         GafferSpec spec = new GafferSpec();
@@ -157,6 +168,7 @@ class KubernetesObjectFactoryTest {
     public void shouldUseEnvironmentWithUpgradeHelmCommandToDetermineServiceAccountName() {
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
+        ReflectionTestUtils.setField(kubernetesObjectFactory, "helmValuesOverridesHandler", helmValuesOverridesHandler);
 
         // When
         GafferSpec spec = new GafferSpec();
@@ -177,6 +189,7 @@ class KubernetesObjectFactoryTest {
 
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
+        ReflectionTestUtils.setField(kubernetesObjectFactory, "helmValuesOverridesHandler", helmValuesOverridesHandler);
         // When
         GafferSpec spec = new GafferSpec();
         spec.put("key", "value");
@@ -192,7 +205,8 @@ class KubernetesObjectFactoryTest {
 
         // Given
         KubernetesObjectFactory kubernetesObjectFactory = new KubernetesObjectFactory(env);
-        kubernetesObjectFactory.openshiftEnabled = true;
+        ReflectionTestUtils.setField(kubernetesObjectFactory, "helmValuesOverridesHandler", helmValuesOverridesHandler);
+
         // When
         GafferSpec spec = new GafferSpec();
 

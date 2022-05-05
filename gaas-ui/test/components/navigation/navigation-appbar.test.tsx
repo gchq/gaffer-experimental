@@ -4,14 +4,17 @@ import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { Config } from "../../../src/rest/config";
-import { GetWhoAmIRepo } from "../../../src/rest/repositories/get-whoami-repo";
 import { act } from "@testing-library/react";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import {OpenshiftClient} from "../../../src/rest/clients/openshift-client";
+import {APIError} from "../../../src/rest/APIError";
+import MockAdapter from "axios-mock-adapter";
+import axios from "axios";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
-jest.mock("../../../src/rest/repositories/get-whoami-repo");
+jest.mock("../../../src/rest/clients/openshift-client");
 
 let component: ReactWrapper;
+const mock = new MockAdapter(axios);
 
 beforeEach(() => {
     component = mount(
@@ -27,6 +30,7 @@ afterEach(() => {
 afterAll(() => {
     process.env = Object.assign(process.env, { REACT_APP_API_PLATFORM: "" });
     Config.REACT_APP_API_PLATFORM = "";
+    mock.resetHandlers()
 });
 
 describe("Navigation Appbar Component", () => {
@@ -66,10 +70,11 @@ describe("Navigation Appbar Component", () => {
     describe("When REACT_APP_API_PLATFORM is set to OPENSHIFT", () => {
         beforeAll(() => {
             Config.REACT_APP_API_PLATFORM = "OPENSHIFT";
+            mock.onGet("/whoami").reply(200,"test@test.com")
         });
 
         it("Should not show the login modal and should display the username and email", async () => {
-            await mockGetWhoAmIRepoToReturn("test@test.com");
+            await mockOpenshiftClientReturn("test@test.com");
             await act(async () => {
                 component = mount(
                     <MemoryRouter>
@@ -85,8 +90,8 @@ describe("Navigation Appbar Component", () => {
             expect(component.find("div#signedin-user-details").text()).toBe("TESTtest@test.com");
         });
         it("Should display an error when getting the email has failed", async () => {
-            mockGetWhoAmIRepoToThrow(() => {
-                throw new RestApiError("Server Error", "Timeout exception");
+            mockOpenshiftClientToThrow(() => {
+                throw new APIError("Server Error", "Timeout exception");
             });
             await act(async () => {
                 component = mount(
@@ -151,18 +156,18 @@ function mockAuthClient() {
         }
     );
 }
-async function mockGetWhoAmIRepoToReturn(email: string) {
+async function mockOpenshiftClientReturn(email: string) {
     // @ts-ignore
-    GetWhoAmIRepo.mockImplementationOnce(() => ({
+    OpenshiftClient.mockImplementationOnce(() => ({
         getWhoAmI: () =>
             new Promise((resolve, reject) => {
                 resolve(email);
             }),
     }));
 }
-async function mockGetWhoAmIRepoToThrow(f: () => void) {
+async function mockOpenshiftClientToThrow(f: () => void) {
     // @ts-ignore
-    GetWhoAmIRepo.mockImplementationOnce(() => ({
+    OpenshiftClient.mockImplementationOnce(() => ({
         getWhoAmI: f,
     }));
 }

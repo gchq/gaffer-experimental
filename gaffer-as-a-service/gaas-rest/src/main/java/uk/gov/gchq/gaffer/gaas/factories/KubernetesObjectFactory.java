@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Crown Copyright
+ * Copyright 2020-2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@
 package uk.gov.gchq.gaffer.gaas.factories;
 
 import com.google.common.collect.Lists;
+import io.kubernetes.client.custom.Quantity;
 import io.kubernetes.client.openapi.models.V1Container;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1PodBuilder;
 import io.kubernetes.client.openapi.models.V1PodSpec;
+import io.kubernetes.client.openapi.models.V1ResourceRequirements;
 import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1SecretBuilder;
 import io.kubernetes.client.openapi.models.V1SecretVolumeSource;
@@ -30,13 +32,13 @@ import io.kubernetes.client.util.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.CHART_VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAAS_LABEL_VALUE;
@@ -89,8 +91,6 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
 
-    @Value("${openshift.enabled: false}")
-    boolean openshiftEnabled;
 
     public KubernetesObjectFactory(final Environment env) {
         helmImage = env.getProperty(WORKER_IMAGE);
@@ -105,9 +105,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     public V1Secret createValuesSecret(final Gaffer gaffer, final boolean initialDeployment) {
         GafferSpec spec = gaffer.getSpec();
         GafferSpec helmValues = spec != null ? spec : new GafferSpec();
-        if (openshiftEnabled) {
-            helmValues = addOpenShiftHelmValues(helmValues);
-        }
+        helmValues = addOpenShiftHelmValues(helmValues);
         return createSecretFromValues(helmValues, gaffer);
     }
 
@@ -134,6 +132,20 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
         return helmValues;
     }
 
+    private HashMap<String, Quantity> workerPodRequestValues() {
+        HashMap<String, Quantity> requests = new HashMap<>();
+        requests.put("cpu", Quantity.fromString("100m"));
+        requests.put("memory", Quantity.fromString("300Mi"));
+        return requests;
+    }
+
+    private HashMap<String, Quantity> workerPodLimitsValues() {
+        HashMap<String, Quantity> limits = new HashMap<>();
+        limits.put("cpu", Quantity.fromString("100m"));
+        limits.put("memory", Quantity.fromString("300Mi"));
+        return limits;
+    }
+
     @Override
     public V1Pod createHelmPod(final Gaffer gaffer, final HelmCommand helmCommand, final String secretName) {
         V1Pod helmPod = new V1PodBuilder()
@@ -152,6 +164,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                         .name(GAFFER_WORKER_CONTAINER_NAME)
                         .image(helmImage)
                         .imagePullPolicy(workerPullPolicy)
+                        .resources(new V1ResourceRequirements().requests(workerPodRequestValues()).limits(workerPodLimitsValues()))
                         .command(Lists.newArrayList(HELM))
                         .args(createHelmArgs(gaffer, helmCommand))
                 )
@@ -222,9 +235,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                 REPO_ARG, helmRepo,
                 VALUES_ARG, VALUES_YAML_LOCATION,
                 NAMESPACE_ARG, gaffer.getMetadata().getNamespace());
-        if (openshiftEnabled) {
-            return helmValuesOverridesHandler.helmOverridesStringBuilder(list);
-        }
-        return list;
+
+        return helmValuesOverridesHandler.helmOverridesStringBuilder(list);
     }
 }

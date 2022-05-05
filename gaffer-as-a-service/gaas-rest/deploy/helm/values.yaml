@@ -15,15 +15,15 @@
 replicaCount: 1
 image:
   #Set the repository value below to your own
-  repository: dockerhub/image
+  repository: dockerhub/gs-rs-img
   pullPolicy: Always
   tag: latest
-  containerPort: 8080
+  containerPort: 8081
 imagePullSecrets: []
 service:
   type: ClusterIP
-  port: 8080
-  targetPort: 8080
+  port: 8081
+  targetPort: 8081
 
 # Set serviceAccount.create to true if User deploying has assigned
 # ClusterRoleBinding privileges to enable cluster namespaces endpoint
@@ -40,3 +40,6 @@ worker:
     name: gaffer-workers
 
 namespace: kai-dev
+
+eureka.server.image: dockerhub/gs-eureka-img
+sidecar.image: dockerhub/gs-sc-img

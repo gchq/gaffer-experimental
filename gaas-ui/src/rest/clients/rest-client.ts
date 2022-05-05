@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestHeaders, AxiosResponse, Method } from "axios";
 import status from "statuses";
-import { RestApiError } from "../RestApiError";
+import { APIError } from "../APIError";
 import { Config } from "../config";
 
 export interface IApiResponse<T = any> {
@@ -80,7 +80,6 @@ export class RestClient<T> {
         graphs: (pathVariable?: string) => {
             const _pathVariable = pathVariable ? `/${pathVariable}` : "";
             restClient.url = `/graphs${_pathVariable}`;
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
         },
         status: () => {
@@ -97,7 +96,6 @@ export class RestClient<T> {
         },
         namespaces: () => {
             restClient.url = "/namespaces";
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
         },
         authentication: (pathVariable?: string) => {
@@ -107,12 +105,6 @@ export class RestClient<T> {
         },
         storeTypes: () => {
             restClient.url = "/storetypes";
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
-            return restClient.executeSpec(restClient);
-        },
-        whoAmI: () => {
-            restClient.url = "/whoami";
-            restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
             return restClient.executeSpec(restClient);
         },
     });
@@ -131,6 +123,7 @@ export class RestClient<T> {
                         withCredentials: true,
                     });
                 } else {
+                    restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
                     response = await axios({
                         baseURL: restClient.baseURL,
                         url: restClient.url,
@@ -155,18 +148,18 @@ export class RestClient<T> {
         };
     }
 
-    private static fromError(e: AxiosError<any>): RestApiError {
+    public static fromError(e: AxiosError<any>): APIError {
         if (e.response && RestClient.isInstanceOfGafferApiErrorResponseBody(e.response.data)) {
-            return new RestApiError(e.response.data.status, e.response.data.simpleMessage);
+            return new APIError(e.response.data.status, e.response.data.simpleMessage);
         }
         if (e.response && e.response.data) {
-            return new RestApiError(e.response.data.title, e.response.data.detail);
+            return new APIError(e.response.data.title, e.response.data.detail);
         }
         if (e.response && e.response.status) {
             // @ts-ignore
-            return new RestApiError(`Error Code ${e.response.status}`, status(e.response.status));
+            return new APIError(`Error Code ${e.response.status}`, status(e.response.status));
         }
-        return new RestApiError("Unknown Error", "Unable to make request");
+        return new APIError("Unknown Error", "Unable to make request");
     }
 
     private static isInstanceOfGafferApiErrorResponseBody(responseBody: object) {
