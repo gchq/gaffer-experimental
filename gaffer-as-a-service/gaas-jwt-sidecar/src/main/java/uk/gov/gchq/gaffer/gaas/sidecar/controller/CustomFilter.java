@@ -53,7 +53,7 @@ public class CustomFilter implements GlobalFilter {
             logger.info("Found /auth path");
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 ServerHttpResponse response = exchange.getResponse();
-                logger.info("Sidecar custom post Filter = " + response.getStatusCode());
+                logger.info("Sidecar custom post Filter status is {}.", response.getStatusCode());
             }));
         }
         final String requestTokenHeader = request.getHeaders().getFirst("Authorization");
@@ -67,7 +67,7 @@ public class CustomFilter implements GlobalFilter {
             logger.info("Remove bearer word and get only the token = ");
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-                logger.info("Get username from the token = ");
+                logger.info("Get username from the token");
             } catch (IllegalArgumentException e) {
                 logger.warn("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
@@ -86,7 +86,7 @@ public class CustomFilter implements GlobalFilter {
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                     ServerHttpResponse response = exchange.getResponse();
-                    logger.info("Sidecar custom post Filter = " + response.getStatusCode());
+                    logger.info("Sidecar custom post Filter status is {}.", response.getStatusCode());
                 }));
             }
         }
@@ -95,7 +95,7 @@ public class CustomFilter implements GlobalFilter {
     }
 
     private Mono<Void> onError(final ServerWebExchange exchange, final String err, final HttpStatus httpStatus) {
-        logger.error("Error sidecar custom filter = ");
+        logger.error("Error sidecar custom filter");
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
         return response.setComplete();

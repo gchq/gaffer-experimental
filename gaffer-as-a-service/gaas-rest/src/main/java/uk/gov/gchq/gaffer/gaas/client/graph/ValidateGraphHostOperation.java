@@ -52,11 +52,11 @@ public class ValidateGraphHostOperation implements Command {
             validateSystemIsUp(response);
 
         } catch (final WebClientRequestException e) {
-            LOGGER.error("Get Status request for '" + proxySubGraph.getGraphId() + "' failed. Reason: " + e.getMostSpecificCause().getMessage() + " at " + e.getUri(), e);
+            LOGGER.error("Get Status request for {} ", proxySubGraph.getGraphId() + " failed. Reason: {}. ", e.getMostSpecificCause().getMessage() + " at {}", e.getUri(), e);
             throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' failed. Reason: " + e.getMostSpecificCause().getMessage() + " at " + e.getUri(), e);
 
         } catch (final WebClientResponseException e) {
-            LOGGER.error("Get Status request for '" + proxySubGraph.getGraphId() + "' returned: " + e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
+            LOGGER.error("Get Status request for {}",  proxySubGraph.getGraphId() + "' returned: {}", e.getRawStatusCode() + " {}", e.getStatusText() + " at {}", e.getRequest().getURI(), e);
             throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' returned: " + e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
         }
     }
@@ -64,11 +64,11 @@ public class ValidateGraphHostOperation implements Command {
     private void validateSystemIsUp(final SystemStatus response) throws GraphOperationException {
         final SystemStatus.Status status = response.getStatus();
         if (status == null) {
-            LOGGER.warn("'" + proxySubGraph.getGraphId() + "' returned a null status");
+            LOGGER.warn("{}", proxySubGraph.getGraphId() + " returned a null status");
             throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' returned a null status");
         }
         if (status != SystemStatus.Status.UP) {
-            LOGGER.warn("'" + proxySubGraph.getGraphId() + "' status is " + status.getCode() + ". " + status.getDescription());
+            LOGGER.warn("{}" + proxySubGraph.getGraphId() + " status is {}", status.getCode() + ". {}", status.getDescription());
             throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' status is " + status.getCode() + ". " + status.getDescription());
         }
     }
