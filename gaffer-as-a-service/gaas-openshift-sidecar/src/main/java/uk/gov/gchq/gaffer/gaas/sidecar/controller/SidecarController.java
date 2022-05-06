@@ -35,7 +35,7 @@ public class SidecarController {
 
     @GetMapping(path = "/whoami", produces = "application/json")
     ResponseEntity<String> whoami(@RequestHeader("x-email") final String email) {
-        logger.error("Found x-email = ");
+        logger.info("Found x-email");
         return new ResponseEntity<>(email, HttpStatus.OK);
     }
 }
