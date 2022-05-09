@@ -20,11 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import uk.gov.gchq.gaffer.gaas.sidecar.models.WhatAuthResponse;
 import uk.gov.gchq.gaffer.gaas.sidecar.util.UnitTest;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
