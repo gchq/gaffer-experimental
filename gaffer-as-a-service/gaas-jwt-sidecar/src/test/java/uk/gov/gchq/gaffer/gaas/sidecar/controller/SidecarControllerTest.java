@@ -24,6 +24,9 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import uk.gov.gchq.gaffer.gaas.sidecar.util.UnitTest;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @WebFluxTest(controllers = SidecarController.class)
 @UnitTest
 public class SidecarControllerTest {
@@ -50,5 +53,20 @@ public class SidecarControllerTest {
                 .body(BodyInserters.fromObject(authRequest))
                 .exchange()
                 .expectStatus().isUnauthorized();
+    }
+
+    @Test
+    void whatAuthShouldReturnObjectWhenSuccess() throws Exception {
+        String expected = "{\"attributes\":{},\"requiredFields\":[\"username\",\"password\"],\"requiredHeaders\":{\"Authorization\":\"Bearer\"}}";
+        WebTestClient.BodyContentSpec response = webClient.get()
+                .uri("/what-auth")
+                .header("x-email", "mytest@email.com")
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody().consumeWith(res -> {
+                    final String body = new String(res.getResponseBody(), UTF_8);
+
+                    assertEquals(expected, body);
+                });
     }
 }
