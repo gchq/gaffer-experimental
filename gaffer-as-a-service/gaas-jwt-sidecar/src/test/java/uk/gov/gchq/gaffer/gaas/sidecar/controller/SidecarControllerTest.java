@@ -60,7 +60,6 @@ public class SidecarControllerTest {
         String expected = "{\"attributes\":{},\"requiredFields\":[\"username\",\"password\"],\"requiredHeaders\":{\"Authorization\":\"Bearer\"}}";
         WebTestClient.BodyContentSpec response = webClient.get()
                 .uri("/what-auth")
-                .header("x-email", "mytest@email.com")
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectBody().consumeWith(res -> {
