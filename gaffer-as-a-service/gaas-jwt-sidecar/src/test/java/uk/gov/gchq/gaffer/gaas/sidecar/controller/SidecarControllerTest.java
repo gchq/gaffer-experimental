@@ -56,7 +56,7 @@ public class SidecarControllerTest {
     }
 
     @Test
-    void whatAuthShouldReturnObjectWhenSuccess() throws Exception {
+    void whatAuthShouldReturnWhatAuthInformationWhenSuccess() {
         String expected = "{\"attributes\":{},\"requiredFields\":[\"username\",\"password\"],\"requiredHeaders\":{\"Authorization\":\"Bearer\"}}";
         WebTestClient.BodyContentSpec response = webClient.get()
                 .uri("/what-auth")
