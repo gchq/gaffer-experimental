@@ -55,13 +55,14 @@ public class SidecarController {
     }
 
     @GetMapping(path = "/what-auth", produces = "application/json")
-    public ResponseEntity<List<WhatAuthResponse>> getWhatAuth() {
+    public ResponseEntity<WhatAuthResponse> getWhatAuth() {
+        Map<String, String> attributes = new HashMap<>();
         Map<String, String> requiredHeaders = new HashMap<>();
         requiredHeaders.put("Authorization", "Bearer");
         ArrayList requiredFields = new ArrayList();
         requiredFields.add("username");
         requiredFields.add("password");
-        WhatAuthResponse body = new WhatAuthResponse(new HashMap<>(), requiredFields, requiredHeaders);
+        WhatAuthResponse body = new WhatAuthResponse(attributes, requiredFields, requiredHeaders);
         return new ResponseEntity(body, HttpStatus.OK);
     }
 

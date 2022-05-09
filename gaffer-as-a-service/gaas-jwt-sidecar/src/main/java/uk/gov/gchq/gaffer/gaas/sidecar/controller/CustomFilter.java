@@ -47,7 +47,7 @@ public class CustomFilter implements GlobalFilter {
     @Override
     public Mono<Void> filter(final ServerWebExchange exchange, final GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        if (request.getPath().toString().equals("/auth")) {
+        if (request.getPath().toString().equals("/auth") || request.getPath().toString().equals("/what-auth")) {
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 ServerHttpResponse response = exchange.getResponse();
                 logger.info("Post Filter = " + response.getStatusCode());
