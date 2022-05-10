@@ -24,19 +24,17 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.authentication.AuthenticationManager;
-import uk.gov.gchq.gaffer.gaas.auth.JwtTokenUtil;
-import uk.gov.gchq.gaffer.gaas.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
-import uk.gov.gchq.gaffer.gaas.services.AuthService;
+import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
@@ -71,11 +69,6 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public AuthService authService() {
-        return new AuthService();
-    }
-
-    @Bean
     public CreateGraphService createGraphService() {
         return new CreateGraphService();
     }
@@ -101,23 +94,8 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public JwtTokenUtil jwtTokenUtil() {
-        return new JwtTokenUtil();
-    }
-
-    @Bean
-    public JwtUserDetailsService jwtUserDetailsService() {
-        return new JwtUserDetailsService();
-    }
-
-    @Bean
     public Properties properties() {
         return new Properties();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        return mock(AuthenticationManager.class);
     }
 
     @Bean
@@ -130,10 +108,6 @@ public class UnitTestConfig {
         return new GafferSpecConfigsLoader();
     }
 
-    @Bean
-    KubernetesClient kubernetesClient() {
-        return mock(KubernetesClient.class);
-    }
 
     @Bean
     public DeploymentHandler deploymentHandler() {
@@ -143,5 +117,15 @@ public class UnitTestConfig {
     @Bean
     public DeleteGraphService deleteGraphService() {
         return mock(DeleteGraphService.class);
+    }
+
+    @Bean
+    public KubernetesClient kubernetesClient() {
+        return mock(KubernetesClient.class);
+    }
+
+    @Bean
+    public HelmValuesOverridesHandler helmValuesOverridesHandler() {
+        return new HelmValuesOverridesHandler();
     }
 }

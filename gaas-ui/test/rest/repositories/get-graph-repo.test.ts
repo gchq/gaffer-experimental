@@ -3,7 +3,7 @@ import MockAdapter from "axios-mock-adapter";
 import { GetGraphRepo } from "../../../src/rest/repositories/get-graph-repo";
 import { Graph } from "../../../src/domain/graph";
 import { IGraphByIdResponse } from "../../../src/rest/http-message-interfaces/response-interfaces";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import { APIError } from "../../../src/rest/APIError";
 import { GraphType } from "../../../src/domain/graph-type";
 
 const mock = new MockAdapter(axios);
@@ -38,14 +38,14 @@ describe("Get Graph By Id Repo", () => {
     it("should throw RestApiError when 404 and have correct error message when no response body returned", async () => {
         mock.onGet("/graphs/notfound-graph").reply(404);
 
-        await expect(repo.get("notfound-graph")).rejects.toEqual(new RestApiError("Error Code 404", "Not Found"));
+        await expect(repo.get("notfound-graph")).rejects.toEqual(new APIError("Error Code 404", "Not Found"));
     });
 
     it("should throw RestApiError with title and detail from response body", async () => {
         mock.onGet("/graphs/notfound-graph").reply(500, { title: "Server Error", detail: "Something went wrong" });
 
         await expect(repo.get("notfound-graph")).rejects.toEqual(
-            new RestApiError("Server Error", "Something went wrong")
+            new APIError("Server Error", "Something went wrong")
         );
     });
 
@@ -53,7 +53,7 @@ describe("Get Graph By Id Repo", () => {
         mock.onGet("/graphs/notfound-graph").reply(0);
 
         await expect(repo.get("notfound-graph")).rejects.toEqual(
-            new RestApiError("Unknown Error", "Unable to make request")
+            new APIError("Unknown Error", "Unable to make request")
         );
     });
 });

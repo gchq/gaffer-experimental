@@ -5,7 +5,7 @@ import AddProxyGraphInput from "../../../src/components/create-graph/add-proxy-g
 import { GetGraphDescriptionRepo } from "../../../src/rest/repositories/get-graph-description-repo";
 import { GetGraphIdRepo } from "../../../src/rest/repositories/get-graph-id-repo";
 import { GetGraphStatusRepo } from "../../../src/rest/repositories/get-graph-status-repo";
-import { RestApiError } from "../../../src/rest/RestApiError";
+import { APIError } from "../../../src/rest/APIError";
 
 jest.mock("../../../src/rest/repositories/get-graph-description-repo");
 jest.mock("../../../src/rest/repositories/get-graph-id-repo");
@@ -217,7 +217,7 @@ function mockGetGraphStatusRepoToThrowError() {
     // @ts-ignore
     GetGraphStatusRepo.mockImplementationOnce(() => ({
         getStatus: () => {
-            throw new RestApiError("Server Error", "Invalid proxy URL");
+            throw new APIError("Server Error", "Invalid proxy URL");
         },
     }));
 }
