@@ -99,5 +99,32 @@ public class SidecarControllerTest {
             assertEquals(expected, body);
         });
     }
-    
+
+    @Test
+    void getWhoAmIShouldThrowBadRequestErrorWhenTokenMissing() {
+        String expected = "Error resolving Authorization header";
+        webClient.get()
+                .uri("/whoami")
+                .header("Authorization", "Bearer ")
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody().consumeWith(res -> {
+            final String body = new String(res.getResponseBody(), UTF_8);
+
+            assertEquals(expected, body);
+        });
+    }
+    @Test
+    void getWhoAmIShouldThrowBadRequestErrorWhenHeaderMissing() {
+        String expected = "Error resolving Authorization header";
+        webClient.get()
+                .uri("/whoami")
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody().consumeWith(res -> {
+            final String body = new String(res.getResponseBody(), UTF_8);
+
+            assertEquals(expected, body);
+        });
+    }
 }

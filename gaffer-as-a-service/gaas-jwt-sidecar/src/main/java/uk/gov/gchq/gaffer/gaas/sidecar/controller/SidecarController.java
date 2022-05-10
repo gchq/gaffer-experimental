@@ -70,7 +70,12 @@ public class SidecarController {
 
     @GetMapping(path = "/whoami", produces = "application/json")
     ResponseEntity<String> whoami(@RequestHeader final HttpHeaders headers) {
-        String username = jwtTokenUtil.getUsernameFromToken(headers.get("Authorization").get(0).substring(7));
+        String username = "";
+        try {
+            username = jwtTokenUtil.getUsernameFromToken(headers.get("Authorization").get(0).substring(7));
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error resolving Authorization header", HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(username, HttpStatus.OK);
     }
 
