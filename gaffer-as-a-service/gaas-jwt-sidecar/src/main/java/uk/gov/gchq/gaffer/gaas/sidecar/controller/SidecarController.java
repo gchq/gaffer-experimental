@@ -17,6 +17,7 @@
 package uk.gov.gchq.gaffer.gaas.sidecar.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -24,8 +25,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.sidecar.auth.JwtRequest;
+import uk.gov.gchq.gaffer.gaas.sidecar.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.sidecar.models.WhatAuthResponse;
 import uk.gov.gchq.gaffer.gaas.sidecar.services.AuthService;
 
@@ -40,6 +43,8 @@ public class SidecarController {
 
     @Autowired
     private AuthService authService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
@@ -61,6 +66,12 @@ public class SidecarController {
         requiredFields.add("password");
         WhatAuthResponse body = new WhatAuthResponse(attributes, requiredFields, requiredHeaders);
         return new ResponseEntity(body, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/whoami", produces = "application/json")
+    ResponseEntity<String> whoami(@RequestHeader final HttpHeaders headers) {
+        String username = jwtTokenUtil.getUsernameFromToken(headers.get("Authorization").get(0).substring(7));
+        return new ResponseEntity<>(username, HttpStatus.OK);
     }
 
 }
