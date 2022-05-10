@@ -35,7 +35,7 @@ describe("Create Graph Repo", () => {
         });
 
         describe("On Error", () => {
-            it("should throw RestApiError 400 message when API no response body", async () => {
+            it("should throw APIError 400 message when API no response body", async () => {
                 const request: ICreateFederatedGraphRequestBody = {
                     proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                     graphId: "bad-request-graph",
@@ -51,7 +51,7 @@ describe("Create Graph Repo", () => {
                 ).rejects.toEqual(new APIError("Error Code 400", "Bad Request"));
             });
 
-            it("should throw RestApiError with title and detail from error response body", async () => {
+            it("should throw APIError with title and detail from error response body", async () => {
                 const request: ICreateFederatedGraphRequestBody = {
                     proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                     graphId: "forbidden-graph",

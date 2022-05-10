@@ -8,7 +8,6 @@ import { act } from "react-dom/test-utils";
 import { AuthSidecarClient, IWhatAuthInfo } from "../../../src/rest/clients/auth-sidecar-client";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
-jest.mock("../../../src/rest/repositories/get-whoami-repo");
 jest.mock("../../../src/rest/clients/auth-sidecar-client");
 
 let component: ReactWrapper;

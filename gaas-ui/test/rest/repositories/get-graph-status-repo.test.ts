@@ -22,7 +22,7 @@ describe("Get graph status repo", () => {
         expect(actual).toEqual(expected);
     });
 
-    it("should throw RestApiError with correct status message when no response body", async () => {
+    it("should throw APIError with correct status message when no response body", async () => {
         mock.onGet("/graph/status").reply(404);
 
         await expect(repo.getStatus("https://www.testURL.com/")).rejects.toEqual(
@@ -30,7 +30,7 @@ describe("Get graph status repo", () => {
         );
     });
 
-    it("should throw RestApiError with title and detail from response body", async () => {
+    it("should throw APIError with title and detail from response body", async () => {
         mock.onGet("/graph/status").reply(403, { title: "Forbidden", detail: "Graph is invalid" });
 
         await expect(repo.getStatus("https://www.testURL.com/")).rejects.toEqual(
@@ -38,7 +38,7 @@ describe("Get graph status repo", () => {
         );
     });
 
-    it("should throw unknown RestApiError when undefined status and body", async () => {
+    it("should throw unknown APIError when undefined status and body", async () => {
         mock.onGet("/graph/status").reply(0);
 
         await expect(repo.getStatus("https://www.testURL.com/")).rejects.toEqual(

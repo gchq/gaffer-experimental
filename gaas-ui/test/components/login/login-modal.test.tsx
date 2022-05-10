@@ -3,10 +3,9 @@ import React from "react";
 import LoginModal from "../../../src/components/login/login-modal";
 import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { AuthSidecarClient } from "../../../src/rest/clients/auth-sidecar-client";
-import { RestApiError } from "../../../src/rest/RestApiError";
-import { MemoryRouter } from "react-router-dom";
-import NavigationAppbar from "../../../src/components/navigation-bar/navigation-appbar";
+
 import { act } from "react-dom/test-utils";
+import { APIError } from "../../../src/rest/APIError";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
 jest.mock("../../../src/rest/clients/auth-sidecar-client");
@@ -52,7 +51,7 @@ describe("Login form", () => {
         });
         it("should display an error when login fails", async () => {
             await mockPostAuthToThrow(() => {
-                throw new RestApiError("Server Error", "Timeout exception");
+                throw new APIError("Server Error", "Timeout exception");
             });
 
             await inputUsername("testUsername");

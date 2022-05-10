@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, Method } from "axios";
 import status from "statuses";
-import { RestApiError } from "../RestApiError";
+import { APIError } from "../../../src/rest/APIError";
 import { AuthSidecarClient } from "./auth-sidecar-client";
 
 export interface IApiResponse<T = any> {
@@ -110,11 +110,6 @@ export class RestClient<T> {
             restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },
-        whoAmI: () => {
-            restClient.url = "/whoami";
-            restClient.headers = AuthSidecarClient.setHeaders();
-            return restClient.executeSpec(restClient);
-        },
     });
 
     private executeSpec = (restClient: RestClient<any>) => ({
@@ -144,18 +139,18 @@ export class RestClient<T> {
         };
     }
 
-    public static fromError(e: AxiosError<any>): RestApiError {
+    public static fromError(e: AxiosError<any>): APIError {
         if (e.response && RestClient.isInstanceOfGafferApiErrorResponseBody(e.response.data)) {
-            return new RestApiError(e.response.data.status, e.response.data.simpleMessage);
+            return new APIError(e.response.data.status, e.response.data.simpleMessage);
         }
         if (e.response && e.response.data) {
-            return new RestApiError(e.response.data.title, e.response.data.detail);
+            return new APIError(e.response.data.title, e.response.data.detail);
         }
         if (e.response && e.response.status) {
             // @ts-ignore
-            return new RestApiError(`Error Code ${e.response.status}`, status(e.response.status));
+            return new APIError(`Error Code ${e.response.status}`, status(e.response.status));
         }
-        return new RestApiError("Unknown Error", "Unable to make request");
+        return new APIError("Unknown Error", "Unable to make request");
     }
 
     private static isInstanceOfGafferApiErrorResponseBody(responseBody: object) {
