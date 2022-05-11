@@ -1,13 +1,12 @@
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
-import {RestClient} from "../../../src/rest/clients/rest-client";
-import {OpenshiftClient} from "../../../src/rest/clients/openshift-client";
+import { OpenshiftClient } from "../../../src/rest/clients/openshift-client";
 
 const mock = new MockAdapter(axios);
 describe("RestClient whoami responses", () => {
     afterAll(() => mock.resetHandlers());
     it("should return a 200 status and response when GET is successful", async () => {
-        mock.onGet("/whoami").reply(200, "test@test.com" );
+        mock.onGet("/whoami").reply(200, "test@test.com");
         const actual = await new OpenshiftClient().getWhoAmI();
 
         expect(actual).toEqual("test@test.com");
