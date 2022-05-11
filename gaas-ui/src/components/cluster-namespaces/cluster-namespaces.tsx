@@ -37,7 +37,7 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
     }
 
     public async componentDidMount() {
-        this.getNamespaces();
+        await this.getNamespaces();
     }
 
     private async getNamespaces() {

@@ -96,8 +96,8 @@ export default class CreateGraph extends React.Component<{}, IState> {
     }
 
     public async componentDidMount() {
-        this.getGraphs();
-        this.getAllStoreTypes();
+        await this.getGraphs();
+        await this.getAllStoreTypes();
     }
 
     private async getGraphs() {

@@ -137,10 +137,10 @@ describe("Navigation Appbar Component", () => {
             );
             await component.update();
             await component.update();
-            inputUsername("Harry@gmail.com");
-            inputPassword("asdfgh");
+            await inputUsername("Harry@gmail.com");
+            await inputPassword("asdfgh");
 
-            clickSubmitSignIn();
+            await clickSubmitSignIn();
             await component.update();
             await component.update();
             expect(component.find("div#navigation-drawer").find("div#user-details-error-message").text()).toBe(

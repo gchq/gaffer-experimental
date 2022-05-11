@@ -126,7 +126,7 @@ describe("Success & Error handling Adding Proxy Graph", () => {
                 onClickAddProxyGraph={onClickAddProxyMockCallback}
             />
         );
-        waitForComponentToRender(component);
+        await waitForComponentToRender(component);
 
         clickAddProxy(component);
         await component.update();

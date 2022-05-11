@@ -289,7 +289,8 @@ describe("Delete Button", () => {
         mockGetGraphsToReturn([
             new Graph("bananas", "INACTIVE", "bananas URL", "bananas URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
         ]);
-        mockGetStoreTypesRepoToReturn({
+
+        await mockGetStoreTypesRepoToReturn({
             storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
             federatedStoreTypes: ["federated"],
         });
@@ -393,11 +394,11 @@ describe("Integration with GetAllGraphIds repo", () => {
     });
     it("should display an error if GetAllGraphIds throws an error when called", async () => {
         await act(async () => {
-            mockGetAllGraphIdsRepoThrowsError(() => {
+            await mockGetAllGraphIdsRepoThrowsError(() => {
                 throw new APIError("Server Error", "Timeout exception");
             });
         });
-        mockGetStoreTypesRepoToReturn({
+        await mockGetStoreTypesRepoToReturn({
             storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
             federatedStoreTypes: ["federated"],
         });
@@ -418,7 +419,7 @@ describe("Integration with GetAllGraphIds repo", () => {
         await component.update();
         await component.update();
 
-        clickExpandRow(component);
+        await clickExpandRow(component);
         expect(component.find("tr#federated-graph-ids-0").text()).toBe(
             "Federated Graphs: [GetAllGraphIds Operation - Server Error: Timeout exception]"
         );

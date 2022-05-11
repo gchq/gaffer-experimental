@@ -169,7 +169,7 @@ describe("CreateGraph UI component", () => {
             expect(button.props().disabled).toEqual(true);
         });
         it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("Description for this Proxy Graph");
@@ -184,7 +184,7 @@ describe("CreateGraph UI component", () => {
             );
         });
         it("Should not add graph when status is down to the graphs table and display notification", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("DOWN");
             mockGetGraphStatusRepoToThrowError();
@@ -196,7 +196,7 @@ describe("CreateGraph UI component", () => {
             expect(graphTable.text()).not.toContain("http://resoucename-namespace.host-name/rest");
         });
         it("Should select a graph in table", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
@@ -212,7 +212,7 @@ describe("CreateGraph UI component", () => {
             expect(wrapper.find("table").find("input").at(1).props().checked).toBe(false);
         });
         it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
@@ -231,7 +231,7 @@ describe("CreateGraph UI component", () => {
             expect(tableInputs.at(2).props().checked).toBe(true);
         });
         it("Should disable the submit graph button when no proxy stores are selected", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             inputGraphId("test");
             inputDescription("test");
@@ -239,7 +239,7 @@ describe("CreateGraph UI component", () => {
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("Should uncheck all graphs in the table when the uncheck all button is clicked", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
@@ -267,7 +267,7 @@ describe("CreateGraph UI component", () => {
             await inputDescription("test");
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
 
             await mockGetGraphStatus("UP");
@@ -291,7 +291,7 @@ describe("CreateGraph UI component", () => {
             await inputDescription("test");
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
 
             await mockGetGraphStatus("UP");
@@ -317,7 +317,7 @@ describe("CreateGraph UI component", () => {
 
             inputGraphId("mapstoregraph");
             inputDescription("Mappy description");
-            selectStoreType(wrapper, "mapStore");
+            await selectStoreType(wrapper, "mapStore");
             await wrapper.update();
             inputElements(elementsString);
             inputTypes(typesAsString);
@@ -338,7 +338,7 @@ describe("CreateGraph UI component", () => {
 
             inputGraphId("accumulograph");
             inputDescription("None");
-            selectStoreType(wrapper, "accumulo");
+            await selectStoreType(wrapper, "accumulo");
             await wrapper.update();
             inputElements(elementsString);
             inputTypes(typesAsString);
@@ -404,7 +404,7 @@ describe("CreateGraph UI component", () => {
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(false);
         });
         it("Should be disabled when federated selected and no proxy stores added", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             inputGraphId("test");
             inputDescription("test");
