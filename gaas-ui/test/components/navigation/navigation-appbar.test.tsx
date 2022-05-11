@@ -167,31 +167,6 @@ async function inputPassword(password: string) {
 async function clickSubmitSignIn() {
     component.find("button#submit-sign-in-button").simulate("click");
 }
-
-function mockAuthClient() {
-    // @ts-ignore
-    AuthApiClient.prototype.login.mockImplementationOnce(
-        (username: string, password: string, onSuccess: () => void, onError: () => void) => {
-            onSuccess();
-        }
-    );
-}
-async function mockGetWhatAuthAndGetWhoAmI(data: IWhatAuthInfo, email: string) {
-    // @ts-ignore
-    AuthSidecarClient.mockImplementationOnce(() => ({
-        getWhoAmI: () =>
-            new Promise((resolve, reject) => {
-                resolve(email);
-            }),
-    }));
-    // @ts-ignore
-    AuthSidecarClient.mockImplementationOnce(() => ({
-        getWhatAuth: () =>
-            new Promise((resolve, reject) => {
-                resolve(data);
-            }),
-    }));
-}
 async function mockGetWhoAmIRepoToReturn(email: string) {
     // @ts-ignore
     AuthSidecarClient.mockImplementationOnce(() => ({
@@ -215,12 +190,6 @@ async function mockGetWhatAuthToReturn(data: IWhatAuthInfo) {
             new Promise((resolve, reject) => {
                 resolve(data);
             }),
-    }));
-}
-async function mockGetWhatAuthToThrow(f: () => void) {
-    // @ts-ignore
-    AuthSidecarClient.mockImplementationOnce(() => ({
-        getWhatAuth: f,
     }));
 }
 

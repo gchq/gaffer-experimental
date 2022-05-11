@@ -70,10 +70,6 @@ async function clickSubmitSignIn() {
     component.find("main#login-form").find("button#submit-sign-in-button").simulate("click");
 }
 
-async function clickSignOutButton() {
-    component.find("button#sign-out-button").simulate("click");
-}
-
 async function inputUsername(username: string) {
     expect(component.find("main#login-form").find("input#username").length).toBe(1);
     component.find("input#username").simulate("change", {
@@ -86,15 +82,6 @@ async function inputPassword(password: string) {
     component.find("input#password").simulate("change", {
         target: { value: password },
     });
-}
-
-function mockAuthApiClientLogin() {
-    // @ts-ignore
-    AuthApiClient.prototype.login.mockImplementationOnce(
-        (username: string, password: string, onSuccess: () => void, onError: () => void) => {
-            onSuccess();
-        }
-    );
 }
 
 async function mockPostAuth(data: Map<string, string>) {
@@ -111,13 +98,4 @@ async function mockPostAuthToThrow(f: () => void) {
     AuthSidecarClient.mockImplementationOnce(() => ({
         postAuth: f,
     }));
-}
-
-function mockAuthApiCFlientFailedLogOut(errorMessage: string) {
-    // @ts-ignore
-    AuthApiClient.prototype.signOut.mockImplementationOnce(
-        (onSuccess: () => void, onError: (errorMessage: string) => void) => {
-            onError(errorMessage);
-        }
-    );
 }

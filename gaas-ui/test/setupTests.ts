@@ -13,7 +13,3 @@ const syncify = async (fn: any) => {
         };
     }
 };
-
-export default {
-    syncify,
-};

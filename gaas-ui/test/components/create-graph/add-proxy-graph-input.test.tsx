@@ -2,8 +2,6 @@ import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import { act } from "react-dom/test-utils";
 import AddProxyGraphInput from "../../../src/components/create-graph/add-proxy-graph-input";
-import { GetGraphDescriptionRepo } from "../../../src/rest/repositories/get-graph-description-repo";
-import { GetGraphIdRepo } from "../../../src/rest/repositories/get-graph-id-repo";
 import { GetGraphStatusRepo } from "../../../src/rest/repositories/get-graph-status-repo";
 import { APIError } from "../../../src/rest/APIError";
 

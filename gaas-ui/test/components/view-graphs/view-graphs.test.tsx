@@ -394,11 +394,11 @@ describe("Integration with GetAllGraphIds repo", () => {
     });
     it("should display an error if GetAllGraphIds throws an error when called", async () => {
         await act(async () => {
-            await mockGetAllGraphIdsRepoThrowsError(() => {
+            mockGetAllGraphIdsRepoThrowsError(() => {
                 throw new APIError("Server Error", "Timeout exception");
             });
         });
-        await mockGetStoreTypesRepoToReturn({
+        mockGetStoreTypesRepoToReturn({
             storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
             federatedStoreTypes: ["federated"],
         });
@@ -419,7 +419,7 @@ describe("Integration with GetAllGraphIds repo", () => {
         await component.update();
         await component.update();
 
-        await clickExpandRow(component);
+        clickExpandRow(component);
         expect(component.find("tr#federated-graph-ids-0").text()).toBe(
             "Federated Graphs: [GetAllGraphIds Operation - Server Error: Timeout exception]"
         );
