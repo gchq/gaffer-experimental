@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, Method } from "axios";
 import status from "statuses";
-import { APIError } from "../../../src/rest/APIError";
+import { APIError } from "../APIError";
 import { AuthSidecarClient } from "./auth-sidecar-client";
 
 export interface IApiResponse<T = any> {

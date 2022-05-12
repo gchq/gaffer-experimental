@@ -68,7 +68,7 @@ export class TypesSchema {
                     );
                     return;
                 }
-                for (var i = 0; i < type.validateFunctions.length; i += 1) {
+                for (let i = 0; i < type.validateFunctions.length; i += 1) {
                     if (typeof type.validateFunctions[i] !== "object") {
                         notes.addError(
                             `${type.validateFunctions[i]} in validateFunctions in ${typeName} type is a ${typeof type

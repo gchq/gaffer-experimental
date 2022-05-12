@@ -1,6 +1,6 @@
 export class APIError {
-    private detail;
-    private title;
+    private readonly detail;
+    private readonly title;
     constructor(title: string, detail: string) {
         this.detail = detail;
         this.title = title;
