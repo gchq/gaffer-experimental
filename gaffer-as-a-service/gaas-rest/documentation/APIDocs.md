@@ -57,14 +57,15 @@ Creates a graph based on the passed in parameters.
 
 The data which must be passed to the POST request:
 
-| Field          | Type           |  Description   | 
-| :------------- :|:-------------:| : -----:|
-| graphId        | String         |  This is the name of your graph                 | 
-| description    | String         |   This is the description of your graph         |
-| configName     | String         |    The type of graph e.g accumulo or mapStore   |
-| schema         | Object         |    The schema which will be used by the graph   |
+| Field          | Type           |  Description                                    | Optional           |
+| :------------ :|:------------- :| : -------------------------------------------- :| :------------- :|
+| graphId        | String         |   This is the name of your graph                 | No
+| description    | String         |   This is the description of your graph         | No
+| configName     | String         |   The type of graph e.g accumulo or mapStore   | No
+| schema         | Object         |   The schema which will be used by the graph   | Yes (Not used by federatedStore)
+| proxySubGraphs | Object         |   The proxy sub graphs which will be used by the graph   | Yes (Only used by federatedStore)
 
-Example request using cURL (using the JWT sidecar with bearer token authentication):
+Example request using cURL (using the JWT sidecar with bearer token authentication) to create a mapStore graph with a basic schema:
 ```
 curl --location --request POST 'localhost:8081/gaas-rest-service/graphs' \
 --header 'Authorization: Bearer abc123.abc123.CDEFG456789' \
@@ -115,6 +116,21 @@ curl --location --request POST 'localhost:8081/gaas-rest-service/graphs' \
 }
 }'
 ```
+Example request using cURL (using the JWT sidecar with bearer token authentication) to create a federatedStore graph with a proxy subgraph:
+```
+{
+   "graphId":"myexamplefederatedgraph",
+   "description":"A Federated Store",
+   "configName":"federated",
+   "proxySubGraphs":[
+      {
+         "graphId":"myproxygraph",
+         "host":"myproxygraph-namespace.apps.k8s.example.com",
+         "root":"/rest"
+      }
+   ]
+}
+```
 
 A successful POST should return:
 
@@ -126,7 +142,7 @@ This simply indicates that the graph was created successfully.
 
 # /gaas-rest-service/graphs/{graphId}
 
-Deletes a graph given the ID of a graph.
+Deletes a graph given the ID of a graph. This will delete the graph as well as all its associated resouces in the cluster.
 
 `DELETE /gaas-rest-service/graphs/{graphId}`
 
@@ -144,3 +160,46 @@ HTTP Status: 204
 ```
 
 This indicates that the DELETE operation was successful. 
+
+# /gaas-rest-service/storetypes
+
+Returns a list of storetypes which are supported by the API.
+
+`GET /gaas-rest-service/storetypes`
+
+Example request using cURL (using the JWT sidecar with bearer token authentication):
+
+```
+curl --location --request GET 'localhost:8081/gaas-rest-service/storetypes' \
+--header 'Authorization: Bearer abc123.abc123.CDEFG456789'
+```
+
+A successful GET should return:
+
+```
+HTTP Status: 200
+{
+    "storeTypes": [
+        {
+            "name": "accumulo",
+            "parameters": [
+                "schema"
+            ]
+        },
+        {
+            "name": "federated",
+            "parameters": [
+                "proxies"
+            ]
+        },
+        {
+            "name": "mapStore",
+            "parameters": [
+                "schema"
+            ]
+        }
+    ]
+}
+```
+
+This list shows the store types which can be used to create a graph as well as the parameters they require.
