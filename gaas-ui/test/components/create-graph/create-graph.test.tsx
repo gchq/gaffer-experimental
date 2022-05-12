@@ -565,16 +565,6 @@ function inputTypes(typesString: string): void {
     expect(wrapper.find("textarea#schema-types-input").props().value).toBe(typesString);
 }
 
-// @ts-ignore
-async function waitForComponentToRender(wrapper: ReactWrapper) {
-    // React forces test to use act(() => {}) when the component state is updated in some cases
-    await act(async () => {
-        await new Promise((resolve) => setTimeout(resolve));
-        wrapper.update();
-        wrapper.update();
-    });
-}
-
 function mockCreateStoreTypesGraphRepoWithFunction(f: () => void): void {
     // @ts-ignore
     CreateStoreTypesGraphRepo.mockImplementationOnce(() => ({

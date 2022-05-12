@@ -1,7 +1,6 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import LoginModal from "../../../src/components/login/login-modal";
-import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { AuthSidecarClient } from "../../../src/rest/clients/auth-sidecar-client";
 
 import { act } from "react-dom/test-utils";
@@ -88,7 +87,7 @@ async function mockPostAuth(data: Map<string, string>) {
     // @ts-ignore
     AuthSidecarClient.mockImplementationOnce(() => ({
         postAuth: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(data);
             }),
     }));
