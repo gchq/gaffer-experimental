@@ -43,7 +43,7 @@ describe("Auth Sidecar Client", () => {
             try {
                 await authSidecarClient.getWhatAuth();
             } catch (e) {
-                expect(e).toEqual("Invalid Response");
+                expect(e).toEqual(new Error("Invalid Response"));
             }
         });
     });
@@ -125,7 +125,7 @@ describe("Auth Sidecar Client", () => {
                 try {
                     await authSidecarClient.getWhatAuth();
                 } catch (e) {
-                    expect(e).toEqual("Invalid Response");
+                    expect(e).toEqual(new Error("Invalid Response"));
                 }
             });
         });
@@ -145,7 +145,7 @@ describe("Auth Sidecar Client", () => {
                 try {
                     await authSidecarClient.getWhatAuth();
                 } catch (e) {
-                    expect(e).toEqual("Invalid Response");
+                    expect(e).toEqual(new Error("Invalid Response"));
                 }
             });
         });
@@ -167,7 +167,7 @@ describe("Auth Sidecar Client", () => {
                 try {
                     await authSidecarClient.getWhatAuth();
                 } catch (e) {
-                    expect(e).toEqual("Invalid Response");
+                    expect(e).toEqual(new Error("Invalid Response"));
                 }
             });
         });
