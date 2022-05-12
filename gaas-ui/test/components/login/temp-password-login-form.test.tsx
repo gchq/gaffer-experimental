@@ -14,7 +14,7 @@ beforeAll(
             REACT_APP_API_PLATFORM: "AWS",
         }))
 );
-beforeEach(() => (component = mount(<TempPasswordLoginForm onChangeForm={() => {}} onSuccess={onSuccessCallBack} />)));
+beforeEach(() => (component = mount(<TempPasswordLoginForm onSuccess={onSuccessCallBack} />)));
 afterEach(() => component.unmount());
 afterAll(() => (process.env = Object.assign(process.env, { REACT_APP_API_PLATFORM: "" })));
 
@@ -126,7 +126,7 @@ function clickSubmitSignIn() {
 function mockAuthApiClientNewUserLogin() {
     // @ts-ignore
     AuthApiClient.prototype.setNewPasswordAndLogin.mockImplementationOnce(
-        (username: string, password: string, oldPassword: string, onSuccess: () => void, onError: () => void) => {
+        (username: string, password: string, oldPassword: string, onSuccess: () => void) => {
             onSuccess();
         }
     );

@@ -224,7 +224,7 @@ function mockGetGraphStatusRepoIsSuccessfulAndReturns(status: string) {
     // @ts-ignore
     GetGraphStatusRepo.mockImplementationOnce(() => ({
         getStatus: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(status);
             }),
     }));

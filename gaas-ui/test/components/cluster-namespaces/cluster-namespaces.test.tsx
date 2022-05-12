@@ -84,7 +84,7 @@ function mockGetNamespacesToReturn(namespaces: string[]): void {
     // @ts-ignore
     GetAllNamespacesRepo.mockImplementationOnce(() => ({
         getAll: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(namespaces);
             }),
     }));

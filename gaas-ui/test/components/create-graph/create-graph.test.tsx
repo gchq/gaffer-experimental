@@ -583,7 +583,7 @@ function mockGetAllGraphsRepoToReturn(graphs: Graph[]): void {
     // @ts-ignore
     GetAllGraphsRepo.mockImplementationOnce(() => ({
         getAll: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(graphs);
             }),
     }));
@@ -600,7 +600,7 @@ function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypes): void {
     // @ts-ignore
     GetStoreTypesRepo.mockImplementationOnce(() => ({
         get: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(storetypes);
             }),
     }));
@@ -610,7 +610,7 @@ function mockGetGraphStatus(status: string): void {
     // @ts-ignore
     GetGraphStatusRepo.mockImplementationOnce(() => ({
         getStatus: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(status);
             }),
     }));
@@ -620,7 +620,7 @@ function mockGetGraphDescription(description: string): void {
     // @ts-ignore
     GetGraphDescriptionRepo.mockImplementationOnce(() => ({
         getDescription: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(description);
             }),
     }));
@@ -630,7 +630,7 @@ function mockGetGraphId(graphId: string): void {
     // @ts-ignore
     GetGraphIdRepo.mockImplementationOnce(() => ({
         getGraphId: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(graphId);
             }),
     }));

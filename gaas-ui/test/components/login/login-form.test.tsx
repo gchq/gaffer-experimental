@@ -13,7 +13,7 @@ beforeAll(
             REACT_APP_API_PLATFORM: "TEST",
         }))
 );
-beforeEach(() => (component = mount(<LoginForm onChangeForm={() => {}} onSuccess={onSuccessCallBack} />)));
+beforeEach(() => (component = mount(<LoginForm onSuccess={onSuccessCallBack} />)));
 afterEach(() => component.unmount());
 afterAll(() => (process.env = Object.assign(process.env, { REACT_APP_API_PLATFORM: "" })));
 
@@ -95,7 +95,7 @@ function clickSubmitSignIn() {
 function mockAuthApiClientLogin() {
     // @ts-ignore
     AuthApiClient.prototype.login.mockImplementationOnce(
-        (username: string, password: string, onSuccess: () => void, onError: () => void) => {
+        (username: string, password: string, onSuccess: () => void) => {
             onSuccess();
         }
     );
