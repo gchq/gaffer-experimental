@@ -17,7 +17,7 @@ export class OpenshiftClient {
             RestClient.setEmail(email);
             return email;
         } catch (e) {
-            const error = e as AxiosError<any>;
+            const error = e as AxiosError;
             throw RestClient.fromError(error);
         }
     }

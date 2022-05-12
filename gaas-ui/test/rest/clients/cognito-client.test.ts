@@ -23,7 +23,7 @@ describe("Existing User Sign In", () => {
         expect(RestClient.setJwtToken).toHaveBeenLastCalledWith("My-co6n1t0-t0k3n");
     });
     it("should call onError with error message when login fails", () => {
-        mockFailAuthenticateUser("Failed because of blahhh");
+        mockFailAuthenticateUser("Failed due to error");
 
         const username = "John Smith";
         const password = "Password1";
@@ -34,7 +34,7 @@ describe("Existing User Sign In", () => {
 
         expect(onSuccess).toHaveBeenCalledTimes(0);
         expect(onError).toHaveBeenCalledTimes(1);
-        expect(onError).toHaveBeenLastCalledWith("Failed because of blahhh");
+        expect(onError).toHaveBeenLastCalledWith("Failed due to error");
     });
 });
 
