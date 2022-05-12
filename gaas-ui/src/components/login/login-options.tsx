@@ -6,7 +6,7 @@ const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 interface IProps {
     cognitoLoginURL: string;
 }
-export default function LoginOptions(props: IProps) {
+function LoginOptions(props: IProps) {
     const { cognitoLoginURL } = props;
     const sanitizer = (url: string): string => {
         const regex = new RegExp("[^-A-Za-z0-9+&@#/%?=~_|!:,.;()]");

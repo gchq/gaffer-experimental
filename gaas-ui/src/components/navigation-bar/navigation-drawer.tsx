@@ -111,5 +111,3 @@ const NavigationDrawer: React.FC = (props: any) => {
         </div>
     );
 };
-
-export default NavigationDrawer;
