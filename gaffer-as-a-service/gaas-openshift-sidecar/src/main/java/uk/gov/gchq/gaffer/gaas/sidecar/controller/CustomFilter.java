@@ -38,7 +38,9 @@ public class CustomFilter implements GlobalFilter {
 
         ServerHttpRequest request = exchange.getRequest();
         if (request.getHeaders().getFirst("x-email") != null) {
-            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+            ServerHttpRequest mutatedRequest = exchange.getRequest().mutate().header("username", request.getHeaders().getFirst("x-email")).build();
+            ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+            return chain.filter(mutatedExchange).then(Mono.fromRunnable(() -> {
                 ServerHttpResponse response = exchange.getResponse();
                 logger.info("Post Filter = " + response.getStatusCode());
             }));
