@@ -97,7 +97,7 @@ public class CustomFilterTest {
         customFilter.filter(exchange, filterChain).block();
 
         exchange.getResponse().setComplete();
-        assertEquals("user" , exchange.getRequest().getHeaders().get("username").get(0));
+        assertEquals("user", exchange.getRequest().getHeaders().get("username").get(0));
         assertTrue(exchange.getResponse().getStatusCode().is2xxSuccessful());
     }
 
