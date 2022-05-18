@@ -63,7 +63,7 @@ public class CustomFilterTest {
         customFilter.filter(exchange, filterChain).block();
 
         exchange.getResponse().setComplete();
-        assertEquals("myemail@email.com" , exchange.getRequest().getHeaders().get("username").get(0));
+        assertEquals("myemail@email.com", exchange.getRequest().getHeaders().get("username").get(0));
         assertTrue(exchange.getResponse().getStatusCode().is2xxSuccessful());
     }
 
