@@ -78,7 +78,9 @@ public class CustomFilter implements GlobalFilter {
             UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
 
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-                return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                ServerHttpRequest mutatedRequest = exchange.getRequest().mutate().header("username", username).build();
+                ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+                return chain.filter(mutatedExchange).then(Mono.fromRunnable(() -> {
                     ServerHttpResponse response = exchange.getResponse();
                     logger.info("Post Filter = " + response.getStatusCode());
                 }));
