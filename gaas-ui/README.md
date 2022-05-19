@@ -63,6 +63,9 @@ Used to check package updates in the UI.
 Run the command `ncu` in the terminal after installing it via `npm install -g npm-check-updates`.
 (https://www.npmjs.com/package/npm-check-updates)
 
+### `npm run start-with-sidecar`
+Used to run Kai UI with the sidecar example.
+
 ## Semgrep
 Semgrep is a static code analysis tool.
 To use Semgrep locally, install it following the instructions in the official [documentation](https://semgrep.dev/docs/getting-started/).
