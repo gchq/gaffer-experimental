@@ -27,11 +27,10 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1Status;
+import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
@@ -54,7 +53,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 public class DeploymentHandler {
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeploymentHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(DeploymentHandler.class);
 
     private final String workerNamespace;
 
