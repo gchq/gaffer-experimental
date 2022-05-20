@@ -23,6 +23,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.gchq.gaffer.gaas.sidecar.models.WhatAuthResponse;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @CrossOrigin
@@ -31,5 +36,14 @@ public class SidecarController {
     @GetMapping(path = "/whoami", produces = "application/json")
     ResponseEntity<String> whoami(@RequestHeader("x-email") final String email) {
         return new ResponseEntity<>(email, HttpStatus.OK);
+    }
+    @GetMapping(path = "/what-auth", produces = "application/json")
+    public ResponseEntity<WhatAuthResponse> getWhatAuth() {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("withCredentials", "true");
+        Map<String, String> requiredHeaders = new HashMap<>();
+        ArrayList requiredFields = new ArrayList();
+        WhatAuthResponse body = new WhatAuthResponse(attributes, requiredFields, requiredHeaders);
+        return new ResponseEntity(body, HttpStatus.OK);
     }
 }

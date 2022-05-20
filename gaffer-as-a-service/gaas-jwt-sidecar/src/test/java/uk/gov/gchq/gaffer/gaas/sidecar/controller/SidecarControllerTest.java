@@ -24,6 +24,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import uk.gov.gchq.gaffer.gaas.sidecar.util.UnitTest;
 
+import java.util.concurrent.atomic.AtomicReference;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @WebFluxTest(controllers = SidecarController.class)
 @UnitTest
 public class SidecarControllerTest {
@@ -50,5 +55,76 @@ public class SidecarControllerTest {
                 .body(BodyInserters.fromObject(authRequest))
                 .exchange()
                 .expectStatus().isUnauthorized();
+    }
+
+    @Test
+    void whatAuthShouldReturnWhatAuthInformationWhenSuccess() {
+        String expected = "{\"attributes\":{},\"requiredFields\":[\"username\",\"password\"],\"requiredHeaders\":{\"Authorization\":\"Bearer\"}}";
+        webClient.get()
+                .uri("/what-auth")
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody().consumeWith(res -> {
+            final String body = new String(res.getResponseBody(), UTF_8);
+
+            assertEquals(expected, body);
+        });
+    }
+
+    @Test
+    void getWhoAmIShouldReturnUsernameWhenSuccessful() {
+
+        final String authRequest = "{\"username\":\"javainuse\",\"password\":\"password\"}";
+        AtomicReference<String> token = new AtomicReference<>();
+        webClient.post()
+                .uri("/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(authRequest))
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody().consumeWith(res -> {
+            token.set(new String(res.getResponseBody(), UTF_8));
+
+    });
+
+        String expected = "javainuse";
+        webClient.get()
+                .uri("/whoami")
+                .header("Authorization", "Bearer " + token)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody().consumeWith(res -> {
+            final String body = new String(res.getResponseBody(), UTF_8);
+
+            assertEquals(expected, body);
+        });
+    }
+
+    @Test
+    void getWhoAmIShouldThrowBadRequestErrorWhenTokenMissing() {
+        String expected = "Error resolving Authorization header";
+        webClient.get()
+                .uri("/whoami")
+                .header("Authorization", "Bearer ")
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody().consumeWith(res -> {
+            final String body = new String(res.getResponseBody(), UTF_8);
+
+            assertEquals(expected, body);
+        });
+    }
+    @Test
+    void getWhoAmIShouldThrowBadRequestErrorWhenHeaderMissing() {
+        String expected = "Error resolving Authorization header";
+        webClient.get()
+                .uri("/whoami")
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody().consumeWith(res -> {
+            final String body = new String(res.getResponseBody(), UTF_8);
+
+            assertEquals(expected, body);
+        });
     }
 }
