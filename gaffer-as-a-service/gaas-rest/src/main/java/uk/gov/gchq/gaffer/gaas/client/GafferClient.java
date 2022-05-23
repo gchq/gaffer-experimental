@@ -71,6 +71,16 @@ public class GafferClient {
         }
     }
 
+    public List<GaaSGraph> listUserCreatedGaffers(final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.getDeploymentsByUsername(kubernetesClient, username);
+        } catch (ApiException e) {
+            LOGGER.debug("Failed to list your owned Gaffers");
+            throw from(e);
+        }
+    }
+
     public boolean deleteGaffer(final String crdName) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {

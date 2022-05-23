@@ -94,7 +94,8 @@ public class GraphController {
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("graphs", getGaffersService.getAllGraphs());
+        //if admin responseBody.put("graphs", getGaffersService.getAllGraphs()); else responseBody.put("graphs", getGaffersService.getUserCreatedGraphs());
+        responseBody.put("graphs", getGaffersService.getUserCreatedGraphs(emailStripper(headers.getFirst("username"))));
         return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
@@ -123,10 +124,7 @@ public class GraphController {
 
 
     private void addCreatorLabel(final String email) {
-        String strippedEmail = email;
-        if (email.contains("@")) {
-            strippedEmail = email.substring(0, email.indexOf('@'));
-        }
+        String strippedEmail = emailStripper(email);
         if (isCreatorLabelValid(strippedEmail)) {
             helmValuesOverridesHandler.addOverride("labels.creator", strippedEmail);
         }
@@ -136,5 +134,13 @@ public class GraphController {
         Pattern pattern = Pattern.compile("(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])");
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+
+    private String emailStripper(final String email){
+        String strippedEmail = email;
+        if (email.contains("@")) {
+            strippedEmail = email.substring(0, email.indexOf('@'));
+        }
+        return strippedEmail;
     }
 }
