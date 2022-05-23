@@ -17,6 +17,8 @@
 package uk.gov.gchq.gaffer.gaas.controller;
 
 import io.kubernetes.client.openapi.ApiClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -71,6 +73,7 @@ public class GraphController {
     private GetGaaSGraphConfigsService getStoreTypesService;
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
+    Logger logger = LoggerFactory.getLogger(GraphController.class);
 
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
@@ -78,7 +81,7 @@ public class GraphController {
         try {
             addCreatorLabel(Objects.requireNonNull(headers.getFirst("username")));
         } catch (Exception e) {
-            //Add logging to register error
+            logger.error("Could not retrieve username");
         }
         if (requestBody.isFederatedStoreRequest()) {
             createFederatedStoreGraphService.createFederatedStore(requestBody);
