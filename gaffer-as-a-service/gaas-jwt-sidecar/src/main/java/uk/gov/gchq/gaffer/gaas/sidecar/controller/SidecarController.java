@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Crown Copyright
+ * Copyright 2021-2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,24 @@
 package uk.gov.gchq.gaffer.gaas.sidecar.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.sidecar.auth.JwtRequest;
+import uk.gov.gchq.gaffer.gaas.sidecar.auth.JwtTokenUtil;
+import uk.gov.gchq.gaffer.gaas.sidecar.models.WhatAuthResponse;
 import uk.gov.gchq.gaffer.gaas.sidecar.services.AuthService;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @CrossOrigin
@@ -33,6 +43,8 @@ public class SidecarController {
 
     @Autowired
     private AuthService authService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
@@ -42,6 +54,29 @@ public class SidecarController {
         } catch (Exception e) {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
+    }
+
+    @GetMapping(path = "/what-auth", produces = "application/json")
+    public ResponseEntity<WhatAuthResponse> getWhatAuth() {
+        Map<String, String> attributes = new HashMap<>();
+        Map<String, String> requiredHeaders = new HashMap<>();
+        requiredHeaders.put("Authorization", "Bearer");
+        ArrayList requiredFields = new ArrayList();
+        requiredFields.add("username");
+        requiredFields.add("password");
+        WhatAuthResponse body = new WhatAuthResponse(attributes, requiredFields, requiredHeaders);
+        return new ResponseEntity(body, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/whoami", produces = "application/json")
+    ResponseEntity<String> whoami(@RequestHeader final HttpHeaders headers) {
+        String username = "";
+        try {
+            username = jwtTokenUtil.getUsernameFromToken(headers.get("Authorization").get(0).substring(7));
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error resolving Authorization header", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(username, HttpStatus.OK);
     }
 
 }

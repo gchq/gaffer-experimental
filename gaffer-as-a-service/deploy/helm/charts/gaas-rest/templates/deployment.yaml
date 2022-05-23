@@ -44,16 +44,16 @@ spec:
                 cpu: "1000m"
           - image: "{{ .Values.sidecar.image }}"
             imagePullPolicy: Always
-            name: gs-sc-mg
+            name: jwt-sidecar-app
             ports:
-               - containerPort: 8081
-                 protocol: TCP
-          - image: "{{ .Values.eureka.server.image }}"
+              - containerPort: 8081
+                protocol: TCP
+          - image: "{{ .Values.eureka.image }}"
             imagePullPolicy: Always
-            name: eureka-image
+            name: eureka-app
             ports:
-               - containerPort: 8761
-                 protocol: TCP
+              - containerPort: 8761
+                protocol: TCP
             readinessProbe:
               tcpSocket:
                 port: 8081
@@ -63,10 +63,10 @@ spec:
               successThreshold: 1
               failureThreshold: 5
             livenessProbe:
-                tcpSocket:
-                  port: 8081
-                initialDelaySeconds: 120
-                timeoutSeconds: 3
-                periodSeconds: 30
-                successThreshold: 1
-                failureThreshold: 5
+              tcpSocket:
+                port: 8081
+              initialDelaySeconds: 120
+              timeoutSeconds: 3
+              periodSeconds: 30
+              successThreshold: 1
+              failureThreshold: 5

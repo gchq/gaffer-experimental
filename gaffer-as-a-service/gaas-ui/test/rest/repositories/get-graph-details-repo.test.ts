@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021-2022 Crown Copyright
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { GetGraphDescriptionRepo } from "../../../src/rest/repositories/get-graph-description-repo";
@@ -23,7 +39,7 @@ describe("Get Graph Details repo", () => {
             expect(actual).toEqual(expected);
         });
 
-        it("should throw APIError with correct status message when no response body", async () => {
+        it("should throw RestApiError with correct status message when no response body", async () => {
             mock.onGet("graph/config/description").reply(404);
 
             await expect(getGraphDescriptionRepo.getDescription("https://www.testURL.com/")).rejects.toEqual(
@@ -31,7 +47,7 @@ describe("Get Graph Details repo", () => {
             );
         });
 
-        it("should throw APIError with title and detail from response body", async () => {
+        it("should throw RestApiError with title and detail from response body", async () => {
             mock.onGet("graph/config/description").reply(403, { title: "Forbidden", detail: "Graph is invalid" });
 
             await expect(getGraphDescriptionRepo.getDescription("https://www.testURL.com/")).rejects.toEqual(
@@ -39,7 +55,7 @@ describe("Get Graph Details repo", () => {
             );
         });
 
-        it("should throw unknown APIError when undefined status and body", async () => {
+        it("should throw unknown RestApiError when undefined status and body", async () => {
             mock.onGet("graph/config/description").reply(0);
 
             await expect(getGraphDescriptionRepo.getDescription("https://www.testURL.com/")).rejects.toEqual(
@@ -58,7 +74,7 @@ describe("Get Graph Details repo", () => {
             const expected = "id";
             expect(actual).toEqual(expected);
         });
-        it("should throw APIError with correct status message when no response body", async () => {
+        it("should throw RestApiError with correct status message when no response body", async () => {
             mock.onGet("graph/config/graphId").reply(404);
 
             await expect(getGraphIdRepo.getGraphId("https://www.testURL.com/")).rejects.toEqual(
@@ -66,7 +82,7 @@ describe("Get Graph Details repo", () => {
             );
         });
 
-        it("should throw APIError with title and detail from response body", async () => {
+        it("should throw RestApiError with title and detail from response body", async () => {
             mock.onGet("graph/config/graphId").reply(403, { title: "Forbidden", detail: "Graph is invalid" });
 
             await expect(getGraphIdRepo.getGraphId("https://www.testURL.com/")).rejects.toEqual(
@@ -74,7 +90,7 @@ describe("Get Graph Details repo", () => {
             );
         });
 
-        it("should throw unknown APIError when undefined status and body", async () => {
+        it("should throw unknown RestApiError when undefined status and body", async () => {
             mock.onGet("graph/config/graphId").reply(0);
 
             await expect(getGraphIdRepo.getGraphId("https://www.testURL.com/")).rejects.toEqual(

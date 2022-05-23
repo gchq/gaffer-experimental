@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021-2022 Crown Copyright
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -18,7 +34,7 @@ import { GetAllNamespacesRepo } from "../../rest/repositories/get-all-namespaces
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import { Copyright } from "../copyright/copyright";
-import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 
 interface IState {
     namespaces: Array<string>;
@@ -46,8 +62,8 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
             this.setState({ namespaces: namespaces, errorMessage: "" });
         } catch (e) {
             this.setState({
-                errorMessage: `Failed to get all namespaces. ${(e as GaaSAPIErrorResponse).title}: ${
-                    (e as GaaSAPIErrorResponse).detail
+                errorMessage: `Failed to get all namespaces. ${(e as GaaSRestApiErrorResponse).title}: ${
+                    (e as GaaSRestApiErrorResponse).detail
                 }`,
             });
         }

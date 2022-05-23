@@ -1,8 +1,25 @@
+/*
+ * Copyright 2021-2022 Crown Copyright
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import React from "react";
 import { Button, CssBaseline, Grid, TextField, Link, InputLabel, Box } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
+import { FormType } from "./login-modal";
 import { IAuthClient } from "../../rest/clients/authclient";
 import { AuthClientFactory } from "../../rest/clients/auth-client-factory";
 import { Copyright } from "../copyright/copyright";
@@ -10,6 +27,7 @@ import DOMPurify from "dompurify";
 import { encode } from "html-entities";
 
 interface IProps {
+    onChangeForm(fromType: FormType): void;
     onSuccess(username: string): void;
 }
 
@@ -151,7 +169,10 @@ export default class LoginForm extends React.Component<IProps, IState> {
                                 </Button>
                             </form>
                             <Typography style={{ marginTop: "20px" }}>
-                                <Link id="temp-password-form-link">
+                                <Link
+                                    id="temp-password-form-link"
+                                    onClick={() => this.props.onChangeForm(FormType.TEMP_PASSWORD_LOGIN)}
+                                >
                                     Logging in for the first time with a temporary password?
                                 </Link>
                             </Typography>

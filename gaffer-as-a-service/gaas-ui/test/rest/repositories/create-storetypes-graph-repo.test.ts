@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021-2022 Crown Copyright
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { CreateStoreTypesGraphRepo } from "../../../src/rest/repositories/create-storetypes-graph-repo";
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
@@ -99,7 +115,7 @@ describe("Create Graph Repo", () => {
     });
 
     describe("On Error", () => {
-        it("should throw APIError 400 message when API no response body", async () => {
+        it("should throw RestApiError 400 message when API no response body", async () => {
             const request: ICreateGraphRequestBody = {
                 schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
                 graphId: "bad-request-graph",
@@ -115,7 +131,7 @@ describe("Create Graph Repo", () => {
             ).rejects.toEqual(new APIError("Error Code 400", "Bad Request"));
         });
 
-        it("should throw APIError with title and detail from error response body", async () => {
+        it("should throw RestApiError with title and detail from error response body", async () => {
             const request: ICreateGraphRequestBody = {
                 schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
                 graphId: "forbidden-graph",

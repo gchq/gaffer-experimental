@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Crown Copyright
+ * Copyright 2021-2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.sidecar;
 
+import org.apache.log4j.BasicConfigurator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
@@ -27,7 +28,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class SidecarApplication {
 
     public static void main(final String[] args) {
+
         SpringApplication.run(SidecarApplication.class, args);
+        BasicConfigurator.configure();
     }
 
 }
