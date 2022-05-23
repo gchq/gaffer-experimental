@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Crown Copyright
+ * Copyright 2021-2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,8 @@ public class CustomFilter implements GlobalFilter {
     public Mono<Void> filter(final ServerWebExchange exchange, final GatewayFilterChain chain) {
         logger.info("Enter custom Filter = ");
         ServerHttpRequest request = exchange.getRequest();
-        if (request.getPath().toString().equals("/auth")) {
-            logger.info("Found /auth path");
+        if (request.getPath().toString().equals("/auth") || request.getPath().toString().equals("/what-auth")) {
+            logger.info("Found /auth or /what-auth path");
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 ServerHttpResponse response = exchange.getResponse();
                 logger.info("Sidecar custom post Filter status is {}.", response.getStatusCode());
@@ -84,7 +84,9 @@ public class CustomFilter implements GlobalFilter {
             UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
             logger.info("Validate the token = ");
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-                return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                ServerHttpRequest mutatedRequest = exchange.getRequest().mutate().header("username", username).build();
+                ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+                return chain.filter(mutatedExchange).then(Mono.fromRunnable(() -> {
                     ServerHttpResponse response = exchange.getResponse();
                     logger.info("Sidecar custom post Filter status is {}.", response.getStatusCode());
                 }));

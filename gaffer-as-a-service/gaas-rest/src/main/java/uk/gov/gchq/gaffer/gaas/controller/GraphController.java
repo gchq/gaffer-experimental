@@ -48,6 +48,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,10 +75,16 @@ public class GraphController {
     private GetGaaSGraphConfigsService getStoreTypesService;
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
+    Logger logger = LoggerFactory.getLogger(GraphController.class);
 
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
+        try {
+            addCreatorLabel(Objects.requireNonNull(headers.getFirst("username")));
+        } catch (Exception e) {
+            logger.error("Could not retrieve username");
+        }
         if (requestBody.isFederatedStoreRequest()) {
             createFederatedStoreGraphService.createFederatedStore(requestBody);
         } else {
@@ -117,27 +124,14 @@ public class GraphController {
     }
 
 
-
-    @GetMapping(path = "/whoami", produces = "application/json")
-    ResponseEntity<String> whoami(@RequestHeader("x-email") final String email) {
-        if (addCreatorLabel(email)) {
-            return new ResponseEntity<String>(email, HttpStatus.OK);
-        }
-
-        LOGGER.error("Validation error: Email must consist of alphanumeric characters or '-', '_' and '.' ", HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>("Validation error: Email must consist of alphanumeric characters or '-', '_' and '.' ", HttpStatus.BAD_REQUEST);
-    }
-
-    private boolean addCreatorLabel(final String email) {
+    private void addCreatorLabel(final String email) {
         String strippedEmail = email;
         if (email.contains("@")) {
             strippedEmail = email.substring(0, email.indexOf('@'));
         }
         if (isCreatorLabelValid(strippedEmail)) {
             helmValuesOverridesHandler.addOverride("labels.creator", strippedEmail);
-            return true;
         }
-        return false;
     }
 
     private boolean isCreatorLabelValid(final String email) {

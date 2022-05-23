@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Crown Copyright
+ * Copyright 2021-2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,9 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import uk.gov.gchq.gaffer.gaas.sidecar.util.UnitTest;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @WebFluxTest(controllers = SidecarController.class)
 @UnitTest
 public class SidecarControllerTest {
@@ -37,5 +40,20 @@ public class SidecarControllerTest {
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectBody().toString().equals(xemail);
+    }
+
+    @Test
+    void whatAuthShouldReturnWhatAuthInformationWhenSuccess() {
+        String expected = "{\"attributes\":{\"withCredentials\":\"true\"},\"requiredFields\":[],\"requiredHeaders\":{}}";
+        WebTestClient.BodyContentSpec response = webClient.get()
+                .uri("/what-auth")
+                .header("x-email", "mytest@email.com")
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody().consumeWith(res -> {
+                    final String body = new String(res.getResponseBody(), UTF_8);
+
+                    assertEquals(expected, body);
+                });
     }
 }
