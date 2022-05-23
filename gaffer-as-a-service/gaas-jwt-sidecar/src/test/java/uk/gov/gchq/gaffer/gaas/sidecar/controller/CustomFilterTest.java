@@ -34,6 +34,7 @@ import uk.gov.gchq.gaffer.gaas.sidecar.auth.JwtTokenUtil;
 import uk.gov.gchq.gaffer.gaas.sidecar.auth.JwtUserDetailsService;
 import uk.gov.gchq.gaffer.gaas.sidecar.util.UnitTest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -96,7 +97,7 @@ public class CustomFilterTest {
         customFilter.filter(exchange, filterChain).block();
 
         exchange.getResponse().setComplete();
-
+        assertEquals("user", exchange.getRequest().getHeaders().get("username").get(0));
         assertTrue(exchange.getResponse().getStatusCode().is2xxSuccessful());
     }
 

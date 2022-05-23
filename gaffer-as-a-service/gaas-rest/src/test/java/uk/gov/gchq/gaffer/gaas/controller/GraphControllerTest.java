@@ -23,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
+import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
@@ -34,11 +35,13 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -54,25 +57,27 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 class GraphControllerTest extends AbstractTest {
 
-        @MockBean
-        private GetGaffersService getGafferService;
-        @MockBean
-        private CreateGraphService createGraphService;
-        @MockBean
-        private CreateFederatedStoreGraphService createFederatedStoreGraphService;
-        @MockBean
-        private DeleteGraphService deleteGraphService;
-        @MockBean
-        private GetNamespacesService getNamespacesService;
-        @MockBean
-        private GetGaaSGraphConfigsService getStoreTypesService;
+    @MockBean
+    private GetGaffersService getGafferService;
+    @MockBean
+    private CreateGraphService createGraphService;
+    @MockBean
+    private CreateFederatedStoreGraphService createFederatedStoreGraphService;
+    @MockBean
+    private DeleteGraphService deleteGraphService;
+    @MockBean
+    private GetNamespacesService getNamespacesService;
+    @MockBean
+    private GetGaaSGraphConfigsService getStoreTypesService;
+    @MockBean
+    private HelmValuesOverridesHandler helmValuesOverridesHandler;
 
-        @Test
-        void getStoretypes_ReturnsStoretypesAsList_whenSuccessful() throws Exception {
-                final List<GafferConfigSpec> specs = Arrays.asList(
-                                new GafferConfigSpec("accumulo", new String[] { "schema" }),
-                                new GafferConfigSpec("federated", new String[] { "proxies" }));
-                when(getStoreTypesService.getGafferConfigSpecs()).thenReturn(specs);
+    @Test
+    void getStoretypes_ReturnsStoretypesAsList_whenSuccessful() throws Exception {
+        final List<GafferConfigSpec> specs = Arrays.asList(
+                new GafferConfigSpec("accumulo", new String[]{"schema"}),
+                new GafferConfigSpec("federated", new String[]{"proxies"}));
+        when(getStoreTypesService.getGafferConfigSpecs()).thenReturn(specs);
 
                 final MvcResult getStoretypeResponse = mvc.perform(get("/storetypes")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -118,9 +123,11 @@ class GraphControllerTest extends AbstractTest {
                                 .header("Authorization", token)
                                 .content(inputJson)).andReturn();
 
-                verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-                assertEquals(201, result.getResponse().getStatus());
-        }
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "someUser")
+                .content(inputJson)).andReturn();
 
         @Test
         void createGraph_whenGraphIdIsNull_shouldReturn400() throws Exception {
@@ -256,11 +263,11 @@ class GraphControllerTest extends AbstractTest {
                                 .header("Authorization", token)
                                 .content(inputJson)).andReturn();
 
-                verify(createGraphService, times(1)).createGraph(any(GaaSCreateRequestBody.class));
-                assertEquals(409, result.getResponse().getStatus());
-                assertEquals("{\"title\":\"This graph\",\"detail\":\"already exists\"}",
-                                result.getResponse().getContentAsString());
-        }
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "someUser")
+                .content(inputJson)).andReturn();
 
         @Test
         void namespaces_shouldReturnErrorMessageWhenNamespaceServiceException() throws Exception {
@@ -321,12 +328,11 @@ class GraphControllerTest extends AbstractTest {
                 assertEquals(201, result.getResponse().getStatus());
         }
 
-        @Test
-        void createGraph_shouldRequestAMapStoreAndReturn201() throws Exception {
-                final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID,
-                                TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
-                final String inputJson = mapToJson(gaaSCreateRequestBody);
-                doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "someUser")
+                .content(inputJson)).andReturn();
 
                 final MvcResult result = mvc.perform(post("/graphs")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -337,12 +343,11 @@ class GraphControllerTest extends AbstractTest {
                 assertEquals(201, result.getResponse().getStatus());
         }
 
-        @Test
-        void createGraph_shouldRequestAProxyStoreAndReturn201() throws Exception {
-                final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID,
-                                TEST_GRAPH_DESCRIPTION, getSchema(), "proxy");
-                final String inputJson = mapToJson(gaaSCreateRequestBody);
-                doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "someUser")
+                .content(inputJson)).andReturn();
 
                 final MvcResult result = mvc.perform(post("/graphs")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -389,10 +394,11 @@ class GraphControllerTest extends AbstractTest {
                 assertEquals(expected, result.getResponse().getContentAsString());
         }
 
-        @Test
-        void exceptionHandler_catchRuntimeExceptionAndReturnGaaSApiErrorResponse() throws Exception {
-                doThrow(new NullPointerException("Something was null")).when(deleteGraphService)
-                                .deleteGraph("nullgraph");
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "someUser")
+                .content(inputJson)).andReturn();
 
                 final MvcResult result = mvc.perform(delete("/graphs/nullgraph")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -424,13 +430,12 @@ class GraphControllerTest extends AbstractTest {
                                 result.getResponse().getContentAsString());
         }
 
-        @Test
-        void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestIsFedStore() throws Exception {
-                final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-                final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description",
-                                "federated", Collections.singletonList(subGraph));
-                doNothing().when(createFederatedStoreGraphService)
-                                .createFederatedStore(any(GaaSCreateRequestBody.class));
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "someUser")
+                .content(mapToJson(request)))
+                .andReturn();
 
                 final MvcResult result = mvc.perform(post("/graphs")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -443,17 +448,12 @@ class GraphControllerTest extends AbstractTest {
                                 .createFederatedStore(any(GaaSCreateRequestBody.class));
         }
 
-        @Test
-        void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestHasProxiesAndSchema() throws Exception {
-                final String request = "{" +
-                                "\"graphId\":\"graphid\"," +
-                                "\"description\":\"Schema and proxies\"," +
-                                "\"configName\":\"fedStoreConfig\"," +
-                                "\"proxySubGraphs\":[]," +
-                                "\"schema\":{\"types\":{}}" +
-                                "}";
-                doNothing().when(createFederatedStoreGraphService)
-                                .createFederatedStore(any(GaaSCreateRequestBody.class));
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "someUser")
+                .content(mapToJson(request)))
+                .andReturn();
 
                 final MvcResult result = mvc.perform(post("/graphs")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -466,8 +466,12 @@ class GraphControllerTest extends AbstractTest {
                                 .createFederatedStore(any(GaaSCreateRequestBody.class));
         }
 
-        @Test
-        void whoamiShouldReturnUserEmailWhenSuccessful() throws Exception {
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "someUser")
+                .content(request))
+                .andReturn();
 
                 final MvcResult result = mvc.perform(get("/whoami")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -475,38 +479,11 @@ class GraphControllerTest extends AbstractTest {
                                 .header("x-email", "test@gmail.com"))
                                 .andReturn();
 
-                assertEquals(200, result.getResponse().getStatus());
-                assertEquals("test@gmail.com", result.getResponse().getContentAsString());
-        }
-
-        @Test
-        void whoamiShouldReturnUser400WhenHeaderEmailIsNull() throws Exception {
-
-                final MvcResult result = mvc.perform(get("/whoami")
-                                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .header("Authorization", token))
-                                .andReturn();
-
-                assertEquals(400, result.getResponse().getStatus());
-        }
-
-        @Test
-        void whoamiShouldReturnUser400WhenHeaderEmailContainsSymbols() throws Exception {
-
-                final MvcResult result = mvc.perform(get("/whoami")
-                                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .header("Authorization", token)
-                                .header("x-email", "test!@@gmail.com"))
-                                .andReturn();
-
-                assertEquals(400, result.getResponse().getStatus());
-        }
-
-        private LinkedHashMap<String, Object> getSchema() {
-                final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
-                elementsSchema.put("entities", new Object());
-                elementsSchema.put("edges", new Object());
-                elementsSchema.put("types", new Object());
-                return elementsSchema;
-        }
+    private LinkedHashMap<String, Object> getSchema() {
+        final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
+        elementsSchema.put("entities", new Object());
+        elementsSchema.put("edges", new Object());
+        elementsSchema.put("types", new Object());
+        return elementsSchema;
+    }
 }

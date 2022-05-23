@@ -30,6 +30,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import uk.gov.gchq.gaffer.gaas.sidecar.util.UnitTest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -62,7 +63,7 @@ public class CustomFilterTest {
         customFilter.filter(exchange, filterChain).block();
 
         exchange.getResponse().setComplete();
-
+        assertEquals("myemail@email.com", exchange.getRequest().getHeaders().get("username").get(0));
         assertTrue(exchange.getResponse().getStatusCode().is2xxSuccessful());
     }
 
