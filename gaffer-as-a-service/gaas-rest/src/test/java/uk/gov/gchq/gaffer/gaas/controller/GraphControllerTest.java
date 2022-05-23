@@ -102,7 +102,32 @@ class GraphControllerTest extends AbstractTest {
 
         final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token))
+                .header("Authorization", token)
+                .header("username", "test@test.com"))
+                .andReturn();
+
+        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\"}]}";
+        assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
+        assertEquals(200, getGraphsResponse.getResponse().getStatus());
+    }
+
+    @Test
+    void getGraphsByUsername_ReturnsGraphsAsList_whenSuccessful() throws Exception {
+        final GaaSGraph graph = new GaaSGraph()
+                .graphId(TEST_GRAPH_ID)
+                .description(TEST_GRAPH_DESCRIPTION)
+                .url("my-graph-namespace.apps.k8s.cluster/ui")
+                .restUrl("my-graph-namespace.apps.k8s.cluster/rest")
+                .configName("mapStore")
+                .status(RestApiStatus.UP);
+        final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
+        gaaSGraphs.add(graph);
+        when(getGafferService.getUserCreatedGraphs("myUser")).thenReturn(gaaSGraphs);
+
+        final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "myUser"))
                 .andReturn();
 
         final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\"}]}";

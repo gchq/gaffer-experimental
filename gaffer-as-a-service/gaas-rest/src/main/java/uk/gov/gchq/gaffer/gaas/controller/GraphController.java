@@ -20,6 +20,7 @@ import io.kubernetes.client.openapi.ApiClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,8 @@ import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +76,9 @@ public class GraphController {
     private GetGaaSGraphConfigsService getStoreTypesService;
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
+    @Value("${admin.users: {}}")
+    private String[] admins;
+
     Logger logger = LoggerFactory.getLogger(GraphController.class);
 
 
@@ -94,8 +100,11 @@ public class GraphController {
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> responseBody = new HashMap<>();
-        //if admin responseBody.put("graphs", getGaffersService.getAllGraphs()); else responseBody.put("graphs", getGaffersService.getUserCreatedGraphs());
-        responseBody.put("graphs", getGaffersService.getUserCreatedGraphs(emailStripper(headers.getFirst("username"))));
+        if (isAdmin(headers.getFirst("username"))) {
+            responseBody.put("graphs", getGaffersService.getAllGraphs());
+        } else {
+            responseBody.put("graphs", getGaffersService.getUserCreatedGraphs(emailStripper(headers.getFirst("username"))));
+        }
         return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
@@ -136,11 +145,16 @@ public class GraphController {
         return matcher.matches();
     }
 
-    private String emailStripper(final String email){
+    private String emailStripper(final String email) {
         String strippedEmail = email;
         if (email.contains("@")) {
             strippedEmail = email.substring(0, email.indexOf('@'));
         }
         return strippedEmail;
+    }
+
+    private boolean isAdmin(final String username) {
+        List<String> adminList = new ArrayList<>(Arrays.asList(admins));
+        return adminList.contains(username);
     }
 }
