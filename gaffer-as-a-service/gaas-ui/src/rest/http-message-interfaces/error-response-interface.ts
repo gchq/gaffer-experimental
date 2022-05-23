@@ -17,7 +17,7 @@
 /**
  * Response body when GaaS UI returns an error
  */
-export interface GaaSRestApiErrorResponse {
+export interface GaaSApiErrorResponse {
     title: string;
     detail: string;
 }

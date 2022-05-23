@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import axios, { AxiosError, AxiosRequestHeaders, AxiosResponse, Method } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, Method } from "axios";
 import status from "statuses";
-import { APIError } from "../APIError";
-import { Config } from "../config";
+import { APIError } from "../../../src/rest/APIError";
+import { AuthSidecarClient } from "./auth-sidecar-client";
 
 export interface IApiResponse<T = any> {
     status: number;
@@ -96,6 +95,7 @@ export class RestClient<T> {
         graphs: (pathVariable?: string) => {
             const _pathVariable = pathVariable ? `/${pathVariable}` : "";
             restClient.url = `/graphs${_pathVariable}`;
+            restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },
         status: () => {
@@ -112,6 +112,7 @@ export class RestClient<T> {
         },
         namespaces: () => {
             restClient.url = "/namespaces";
+            restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },
         authentication: (pathVariable?: string) => {
@@ -121,34 +122,23 @@ export class RestClient<T> {
         },
         storeTypes: () => {
             restClient.url = "/storetypes";
+            restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },
     });
 
     private executeSpec = (restClient: RestClient<any>) => ({
         execute: async () => {
+            const config: AxiosRequestConfig = {
+                baseURL: restClient.baseURL,
+                url: restClient.url,
+                method: restClient.method,
+                headers: restClient.headers,
+                data: restClient.data,
+            };
+            const updatedConfig = AuthSidecarClient.addAttributes(config);
             try {
-                let response: AxiosResponse<any>;
-                if (Config.REACT_APP_API_PLATFORM === "OPENSHIFT") {
-                    response = await axios({
-                        baseURL: restClient.baseURL,
-                        url: restClient.url,
-                        method: restClient.method,
-                        headers: restClient.headers,
-                        data: restClient.data,
-                        withCredentials: true,
-                    });
-                } else {
-                    restClient.headers = { Authorization: "Bearer " + RestClient.jwtToken };
-                    response = await axios({
-                        baseURL: restClient.baseURL,
-                        url: restClient.url,
-                        method: restClient.method,
-                        headers: restClient.headers,
-                        data: restClient.data,
-                    });
-                }
-
+                const response: AxiosResponse<any> = await axios(updatedConfig);
                 return RestClient.convert(response);
             } catch (e) {
                 const error = e as AxiosError<any>;

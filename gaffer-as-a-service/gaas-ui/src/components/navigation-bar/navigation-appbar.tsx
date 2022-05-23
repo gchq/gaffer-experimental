@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React, { useEffect, useState } from "react";
 import AppRoutes from "./AppRoutes";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
@@ -34,12 +33,9 @@ import {
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import LocalLibraryIcon from "@material-ui/icons/LocalLibrary";
-import CategoryIcon from "@material-ui/icons/Category";
 import LoginModal from "../login/login-modal";
 import { NavLink } from "react-router-dom";
-import { Config } from "../../rest/config";
-import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
-import { OpenshiftClient } from "../../rest/clients/openshift-client";
+import { AuthSidecarClient } from "../../rest/clients/auth-sidecar-client";
 
 const drawerWidth = 240;
 
@@ -110,10 +106,12 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const NavigationAppbar: React.FC = (props: any) => {
+const NavigationAppbar: React.FC = () => {
     // @ts-ignore
     const classes = useStyles();
     const [userEmail, setUserEmail] = useState("");
+    const [requiredFields, setRequiredFields] = useState<Array<string>>([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const getSideNavIcon = (sidebarName: string) => {
         switch (sidebarName) {
@@ -121,33 +119,51 @@ const NavigationAppbar: React.FC = (props: any) => {
                 return <AddCircleOutlineIcon />;
             case "View Graphs":
                 return <VisibilityIcon />;
-            case "Cluster Namespaces":
-                return <CategoryIcon />;
             case "User Guide":
                 return <LocalLibraryIcon />;
-
             default:
                 return null;
         }
     };
     const getUserEmail = async () => {
         try {
-            const email = await new OpenshiftClient().getWhoAmI();
-            setUserEmail(email);
+            await new AuthSidecarClient().getWhoAmI().then((response) => {
+                setUserEmail(response);
+            });
         } catch (e) {
-            setErrorMessage(
-                `Failed to get user email: ${(e as GaaSRestApiErrorResponse).title}: ${
-                    (e as GaaSRestApiErrorResponse).detail
-                }`
-            );
+            console.warn(e);
+            setErrorMessage(`Failed to get user email`);
+        }
+    };
+    const getWhatAuth = async () => {
+        try {
+            await new AuthSidecarClient().getWhatAuth().then((response) => {
+                if (response.requiredFields.length > 0) {
+                    response.requiredFields.forEach((field) => {
+                        setRequiredFields((requiredFields) => [...requiredFields, field]);
+                    });
+                }
+            });
+        } catch (e) {
+            console.warn(e);
+            setErrorMessage(`Failed to setup Login`);
         }
     };
 
     const buildUsername = () => (userEmail.includes("@") ? userEmail.slice(0, userEmail.indexOf("@")) : userEmail);
     useEffect(() => {
-        if (Config.REACT_APP_API_PLATFORM === "OPENSHIFT") {
-            getUserEmail();
-        }
+        getWhatAuth()
+            .then(() => {
+                if (requiredFields.length === 0) {
+                    getUserEmail().then(() => {
+                        setIsLoggedIn(true);
+                    });
+                }
+            })
+            .catch((error) => {
+                setErrorMessage(`Failed to setup Login: ${error}`);
+                setIsLoggedIn(false);
+            });
     }, []);
     const displayUserEmail = () => {
         if (userEmail) {
@@ -181,8 +197,14 @@ const NavigationAppbar: React.FC = (props: any) => {
                     <Typography variant="h6" className={classes.title}>
                         Kai: Graph As A Service
                     </Typography>
-                    {Config.REACT_APP_API_PLATFORM !== "OPENSHIFT" && (
-                        <LoginModal onLogin={(username) => setUserEmail(username)} />
+                    {requiredFields.length > 0 && (
+                        <LoginModal
+                            onLogin={() => {
+                                getUserEmail();
+                                setIsLoggedIn(isLoggedIn);
+                            }}
+                            requiredFields={requiredFields}
+                        />
                     )}
                 </Toolbar>
             </AppBar>

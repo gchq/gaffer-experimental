@@ -13,31 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mount, ReactWrapper } from "enzyme";
 import NavigationAppbar from "../../../src/components/navigation-bar/navigation-appbar";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { Config } from "../../../src/rest/config";
-import { act } from "@testing-library/react";
-import { OpenshiftClient } from "../../../src/rest/clients/openshift-client";
-import { APIError } from "../../../src/rest/APIError";
-import MockAdapter from "axios-mock-adapter";
-import axios from "axios";
+import { act } from "react-dom/test-utils";
+import { AuthSidecarClient, IWhatAuthInfo } from "../../../src/rest/clients/auth-sidecar-client";
 
 jest.mock("../../../src/rest/clients/auth-api-client");
-jest.mock("../../../src/rest/clients/openshift-client");
+jest.mock("../../../src/rest/clients/auth-sidecar-client");
 
 let component: ReactWrapper;
-const mock = new MockAdapter(axios);
 
-beforeEach(() => {
-    component = mount(
-        <MemoryRouter>
-            <NavigationAppbar />
-        </MemoryRouter>
-    );
+beforeEach(async () => {
+    await act(async () => {
+        component = mount(
+            <MemoryRouter>
+                <NavigationAppbar />
+            </MemoryRouter>
+        );
+    });
 });
 afterEach(() => {
     component.unmount();
@@ -46,21 +43,71 @@ afterEach(() => {
 afterAll(() => {
     process.env = Object.assign(process.env, { REACT_APP_API_PLATFORM: "" });
     Config.REACT_APP_API_PLATFORM = "";
-    mock.resetHandlers();
 });
 
 describe("Navigation Appbar Component", () => {
+    describe("getWhatAuth", () => {
+        it("should call getWhatAuth on load and create login page based on response", async () => {
+            await mockGetWhatAuthToReturn({
+                attributes: {},
+                requiredFields: ["username", "password"],
+                requiredHeaders: { Authorization: "Bearer  " },
+            });
+            component = mount(
+                <MemoryRouter>
+                    <NavigationAppbar />
+                </MemoryRouter>
+            );
+            await component.update();
+            await component.update();
+
+            expect(component.html().includes("login-modal")).toBe(true);
+        });
+        it("should call getWhatAuth on load and not create login page based on response", async () => {
+            await mockGetWhatAuthToReturn({
+                attributes: {
+                    withCredentials: true,
+                },
+                requiredFields: [],
+                requiredHeaders: {},
+            });
+            component = mount(
+                <MemoryRouter>
+                    <NavigationAppbar />
+                </MemoryRouter>
+            );
+            await component.update();
+            await component.update();
+
+            expect(component.html().includes("login-modal")).toBe(false);
+        });
+        it("should call getWhatAuth on load and then call getWhoAmI", async () => {
+            await act(async () => {
+                await mockGetWhatAuthToReturn({
+                    attributes: {
+                        withCredentials: true,
+                    },
+                    requiredFields: [],
+                    requiredHeaders: {},
+                });
+                await mockGetWhoAmIRepoToReturn("test@email.com");
+                component = mount(
+                    <MemoryRouter>
+                        <NavigationAppbar />
+                    </MemoryRouter>
+                );
+            });
+            await component.update();
+            await component.update();
+            await component.update();
+            expect(component.find("div#signedin-user-details").text()).toBe("TESTtest@email.com");
+        });
+    });
     it("should display appbar", () => {
         const appbar = component.find("h6");
 
         expect(appbar).toHaveLength(1);
         expect(appbar.text()).toEqual("Kai: Graph As A Service");
-    });
-
-    it("should display a Sign in button in the appbar", () => {
-        const signInButton = component.find("button#sign-out-button");
-
-        expect(signInButton.text()).toEqual("Sign out");
     });
 
     it("should display menu in Navbar", () => {
@@ -83,84 +130,56 @@ describe("Navigation Appbar Component", () => {
             expect(getAttribute).toBe(Target[index].href);
         }
     });
-    describe("When REACT_APP_API_PLATFORM is set to OPENSHIFT", () => {
-        beforeAll(() => {
-            Config.REACT_APP_API_PLATFORM = "OPENSHIFT";
-            mock.onGet("/whoami").reply(200, "test@test.com");
-        });
-
-        it("Should not show the login modal and should display the username and email", async () => {
-            await mockOpenshiftClientReturn("test@test.com");
-            await act(async () => {
-                component = mount(
-                    <MemoryRouter>
-                        <NavigationAppbar />
-                    </MemoryRouter>
-                );
-            });
-            await component.update();
-            await component.update();
-
-            expect(component.find("input#username").length).toBe(0);
-            expect(component.find("input#password").length).toBe(0);
-            expect(component.find("div#signedin-user-details").text()).toBe("TESTtest@test.com");
-        });
-        it("Should display an error when getting the email has failed", async () => {
-            mockOpenshiftClientToThrow(() => {
-                throw new APIError("Server Error", "Timeout exception");
-            });
-            await act(async () => {
-                component = mount(
-                    <MemoryRouter>
-                        <NavigationAppbar />
-                    </MemoryRouter>
-                );
-            });
-            expect(component.find("div#user-details-error-message").text()).toBe(
-                "Failed to get user email: Server Error: Timeout exception"
-            );
-        });
-    });
     describe("Display Signed In User Details", () => {
-        beforeAll(() => {
-            Config.REACT_APP_API_PLATFORM = "OTHER";
-        });
-        it("should display the username & email of the User who signed in", () => {
-            mockAuthClient();
+        it("should display an error message when getWhoAmI Throws", async () => {
+            await mockGetWhatAuthToReturn({
+                attributes: {},
+                requiredFields: ["username", "password"],
+                requiredHeaders: { Authorization: "Bearer  " },
+            });
+            const postAuthMap = new Map<string, string>();
+            postAuthMap.set("username", "Harry@gmail.com");
+            postAuthMap.set("password", "asdfgh");
+            await mockAuthSidecarClientPostAuth(postAuthMap);
+            await mockGetWhoAmIRepoToThrow(() => {
+                throw new Error("invalid");
+            });
+
+            component = mount(
+                <MemoryRouter>
+                    <NavigationAppbar />
+                </MemoryRouter>
+            );
+            await component.update();
+            await component.update();
             inputUsername("Harry@gmail.com");
             inputPassword("asdfgh");
 
             clickSubmitSignIn();
-
-            expect(component.find("div#signedin-user-details").text()).toBe("HARRYHarry@gmail.com");
-        });
-        it("should display the non-email username of the User who signed in", () => {
-            mockAuthClient();
-            inputUsername("testUser");
-            inputPassword("zxcvb");
-
-            clickSubmitSignIn();
-
-            expect(component.find("div#signedin-user-details").text()).toBe("TESTUSERtestUser");
+            await component.update();
+            await component.update();
+            expect(component.find("div#navigation-drawer").find("div#user-details-error-message").text()).toBe(
+                "Failed to get user email"
+            );
         });
     });
 });
 
-function inputUsername(username: string): void {
+async function inputUsername(username: string) {
     expect(component.find("input#username").length).toBe(1);
     component.find("input#username").simulate("change", {
         target: { value: username },
     });
 }
 
-function inputPassword(password: string): void {
+async function inputPassword(password: string) {
     expect(component.find("input#password").length).toBe(1);
     component.find("input#password").simulate("change", {
         target: { value: password },
     });
 }
 
-function clickSubmitSignIn() {
+async function clickSubmitSignIn() {
     component.find("button#submit-sign-in-button").simulate("click");
 }
 
@@ -172,18 +191,60 @@ function mockAuthClient() {
         }
     );
 }
-async function mockOpenshiftClientReturn(email: string) {
+async function mockGetWhatAuthAndGetWhoAmI(data: IWhatAuthInfo, email: string) {
     // @ts-ignore
-    OpenshiftClient.mockImplementationOnce(() => ({
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhoAmI: () =>
+            new Promise((resolve, reject) => {
+                resolve(email);
+            }),
+    }));
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhatAuth: () =>
+            new Promise((resolve, reject) => {
+                resolve(data);
+            }),
+    }));
+}
+async function mockGetWhoAmIRepoToReturn(email: string) {
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
         getWhoAmI: () =>
             new Promise((resolve, reject) => {
                 resolve(email);
             }),
     }));
 }
-async function mockOpenshiftClientToThrow(f: () => void) {
+async function mockGetWhoAmIRepoToThrow(f: () => void) {
     // @ts-ignore
-    OpenshiftClient.mockImplementationOnce(() => ({
-        getWhoAmI: f,
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhatAuth: f,
+    }));
+}
+
+async function mockGetWhatAuthToReturn(data: IWhatAuthInfo) {
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhatAuth: () =>
+            new Promise((resolve, reject) => {
+                resolve(data);
+            }),
+    }));
+}
+async function mockGetWhatAuthToThrow(f: () => void) {
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        getWhatAuth: f,
+    }));
+}
+
+async function mockAuthSidecarClientPostAuth(fields: Map<string, string>) {
+    // @ts-ignore
+    AuthSidecarClient.mockImplementationOnce(() => ({
+        postAuth: () =>
+            new Promise((resolve, reject) => {
+                resolve("Bearer Token ABC");
+            }),
     }));
 }

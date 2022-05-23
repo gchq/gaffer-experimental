@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from "react";
 import { Box, CardContent, Container, Grid, Paper, Toolbar, Typography } from "@material-ui/core";
 import { Graph } from "../../domain/graph";
@@ -24,7 +23,7 @@ import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { Copyright } from "../copyright/copyright";
 import Gauge from "./gauge";
 import { ViewGraphsTable } from "./view-graphs-table";
-import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import { GaaSApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 
 interface IState {
     graphs: Graph[];
@@ -56,8 +55,8 @@ export default class ViewGraph extends React.Component<{}, IState> {
             this.setState({ otherStores: allStoreTypes.storeTypes });
         } catch (e) {
             this.setState({
-                errorMessage: `Failed to get federated store types. ${(e as GaaSRestApiErrorResponse).title}: ${
-                    (e as GaaSRestApiErrorResponse).detail
+                errorMessage: `Failed to get federated store types. ${(e as GaaSApiErrorResponse).title}: ${
+                    (e as GaaSApiErrorResponse).detail
                 }`,
             });
         }
@@ -69,8 +68,8 @@ export default class ViewGraph extends React.Component<{}, IState> {
             this.setState({ graphs, errorMessage: "" });
         } catch (e) {
             this.setState({
-                errorMessage: `Failed to get all graphs. ${(e as GaaSRestApiErrorResponse).title}: ${
-                    (e as GaaSRestApiErrorResponse).detail
+                errorMessage: `Failed to get all graphs. ${(e as GaaSApiErrorResponse).title}: ${
+                    (e as GaaSApiErrorResponse).detail
                 }`,
             });
         }
@@ -82,8 +81,8 @@ export default class ViewGraph extends React.Component<{}, IState> {
             await this.getGraphs();
         } catch (e) {
             this.setState({
-                errorMessage: `Failed to delete graph "${graphName}". ${(e as GaaSRestApiErrorResponse).title}: ${
-                    (e as GaaSRestApiErrorResponse).detail
+                errorMessage: `Failed to delete graph "${graphName}". ${(e as GaaSApiErrorResponse).title}: ${
+                    (e as GaaSApiErrorResponse).detail
                 }`,
             });
         }
