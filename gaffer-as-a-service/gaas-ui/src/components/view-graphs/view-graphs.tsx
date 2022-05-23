@@ -23,7 +23,7 @@ import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { Copyright } from "../copyright/copyright";
 import Gauge from "./gauge";
 import { ViewGraphsTable } from "./view-graphs-table";
-import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import { GaaSApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 
 interface IState {
     graphs: Graph[];
@@ -55,8 +55,8 @@ export default class ViewGraph extends React.Component<{}, IState> {
             this.setState({ otherStores: allStoreTypes.storeTypes });
         } catch (e) {
             this.setState({
-                errorMessage: `Failed to get federated store types. ${(e as GaaSAPIErrorResponse).title}: ${
-                    (e as GaaSAPIErrorResponse).detail
+                errorMessage: `Failed to get federated store types. ${(e as GaaSApiErrorResponse).title}: ${
+                    (e as GaaSApiErrorResponse).detail
                 }`,
             });
         }
@@ -68,8 +68,8 @@ export default class ViewGraph extends React.Component<{}, IState> {
             this.setState({ graphs, errorMessage: "" });
         } catch (e) {
             this.setState({
-                errorMessage: `Failed to get all graphs. ${(e as GaaSAPIErrorResponse).title}: ${
-                    (e as GaaSAPIErrorResponse).detail
+                errorMessage: `Failed to get all graphs. ${(e as GaaSApiErrorResponse).title}: ${
+                    (e as GaaSApiErrorResponse).detail
                 }`,
             });
         }
@@ -81,8 +81,8 @@ export default class ViewGraph extends React.Component<{}, IState> {
             await this.getGraphs();
         } catch (e) {
             this.setState({
-                errorMessage: `Failed to delete graph "${graphName}". ${(e as GaaSAPIErrorResponse).title}: ${
-                    (e as GaaSAPIErrorResponse).detail
+                errorMessage: `Failed to delete graph "${graphName}". ${(e as GaaSApiErrorResponse).title}: ${
+                    (e as GaaSApiErrorResponse).detail
                 }`,
             });
         }

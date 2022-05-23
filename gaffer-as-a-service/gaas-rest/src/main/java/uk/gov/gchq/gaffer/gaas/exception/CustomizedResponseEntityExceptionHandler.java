@@ -34,30 +34,35 @@ import java.util.List;
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(GaaSRestApiException.class)
-    public final ResponseEntity<GaaSApiErrorResponse> handleAllGaaSRestApiExceptions(final GaaSRestApiException ex, final WebRequest request) {
+    public final ResponseEntity<GaaSApiErrorResponse> handleAllGaaSRestApiExceptions(final GaaSRestApiException ex,
+            final WebRequest request) {
         String title = "";
         if (ex.getCause() == null) {
             title = ex.getTitle();
         } else {
             title = ex.getCause().getMessage();
         }
-        final GaaSApiErrorResponse gaaSApiErrorResponse = new GaaSApiErrorResponse(title, ex.getMessage());
+        final GaaSApiErrorResponse GaaSApiErrorResponse = new GaaSApiErrorResponse(title, ex.getMessage());
 
-        return new ResponseEntity(gaaSApiErrorResponse, HttpStatus.valueOf(ex.getStatusCode()));
+        return new ResponseEntity(GaaSApiErrorResponse, HttpStatus.valueOf(ex.getStatusCode()));
     }
 
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<GaaSApiErrorResponse> handleAllExceptions(final Exception ex, final WebRequest request) {
+    public final ResponseEntity<GaaSApiErrorResponse> handleAllExceptions(final Exception ex,
+            final WebRequest request) {
 
-        final GaaSApiErrorResponse gaaSApiErrorResponse = new GaaSApiErrorResponse(ex.getClass().getSimpleName(), ex.getMessage());
+        final GaaSApiErrorResponse GaaSApiErrorResponse = new GaaSApiErrorResponse(ex.getClass().getSimpleName(),
+                ex.getMessage());
 
-        return new ResponseEntity(gaaSApiErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity(GaaSApiErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        final GaaSApiErrorResponse gaaSApiErrorResponse = new GaaSApiErrorResponse(ex.getCause().getClass().getSimpleName(), ex.getCause().getMessage());
-        return new ResponseEntity<>(gaaSApiErrorResponse, status);
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
+            final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+        final GaaSApiErrorResponse GaaSApiErrorResponse = new GaaSApiErrorResponse(
+                ex.getCause().getClass().getSimpleName(), ex.getCause().getMessage());
+        return new ResponseEntity<>(GaaSApiErrorResponse, status);
     }
 
     @Override
@@ -67,7 +72,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         BindingResult bindingResult = ex.getBindingResult();
         List<ObjectError> allErrors = bindingResult.getAllErrors();
         String objectError = allErrors.get(0).getDefaultMessage();
-        GaaSApiErrorResponse gaaSApiErrorResponse = new GaaSApiErrorResponse("Validation failed", objectError);
-        return new ResponseEntity<>(gaaSApiErrorResponse, HttpStatus.BAD_REQUEST);
+        GaaSApiErrorResponse GaaSApiErrorResponse = new GaaSApiErrorResponse("Validation failed", objectError);
+        return new ResponseEntity<>(GaaSApiErrorResponse, HttpStatus.BAD_REQUEST);
     }
 }
