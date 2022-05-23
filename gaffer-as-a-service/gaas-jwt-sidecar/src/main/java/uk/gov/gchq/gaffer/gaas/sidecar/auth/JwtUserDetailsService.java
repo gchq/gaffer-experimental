@@ -39,11 +39,11 @@ public class JwtUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         LOGGER.info("Enter load user by username");
         if (adminUsername.equals(username)) {
-            LOGGER.info("User found with username: " + username);
+            LOGGER.info("User found with username: {}", username);
             return new User(adminUsername, adminPassword,
                     new ArrayList<>());
         } else {
-            LOGGER.error("User not found with username: " + username);
+            LOGGER.error("User not found with username: {}", username);
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
     }
