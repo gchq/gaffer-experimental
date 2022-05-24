@@ -242,9 +242,24 @@ class GraphControllerTest extends AbstractTest {
 
         final MvcResult result = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token))
+                .header("Authorization", token)
+                .header("username", "test@test.com"))
                 .andReturn();
         verify(deleteGraphService, times(1)).deleteGraph(any(String.class));
+
+        assertEquals(204, result.getResponse().getStatus());
+    }
+
+    @Test
+    void deleteGraphWithUsername_whenGraphExistsAndCanDelete_shouldReturn204() throws Exception {
+        doReturn(true).when(deleteGraphService).deleteGraphByUsername(TEST_GRAPH_ID, "myUser");
+
+        final MvcResult result = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "myUser"))
+                .andReturn();
+        verify(deleteGraphService, times(1)).deleteGraphByUsername(any(String.class), any(String.class));
 
         assertEquals(204, result.getResponse().getStatus());
     }
@@ -255,7 +270,8 @@ class GraphControllerTest extends AbstractTest {
 
         final MvcResult result = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token))
+                .header("Authorization", token)
+                .header("username", "test@test.com"))
                 .andReturn();
 
         verify(deleteGraphService, times(1)).deleteGraph("nonexistentgraphfortestingpurposes");
@@ -406,7 +422,8 @@ class GraphControllerTest extends AbstractTest {
 
         final MvcResult result = mvc.perform(delete("/graphs/nullgraph")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token))
+                .header("Authorization", token)
+                .header("username", "test@test.com"))
                 .andReturn();
 
         assertEquals(500, result.getResponse().getStatus());
