@@ -189,7 +189,7 @@ public class DeploymentHandler {
                 }
             }
 
-            if (configMapList.isEmpty() & deploymentList.isEmpty()) {
+            if (secretsToDelete.isEmpty() & configMapList.isEmpty() & deploymentList.isEmpty()) {
                 //If all 3 are empty it means the gaffer which the user is trying to delete does not exist therefore
                 //we return false
                 LOGGER.debug(String.format("No deployments of %s to delete", gaffer));
