@@ -56,7 +56,7 @@ public class ValidateGraphHostOperation implements Command {
             throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' failed. Reason: " + e.getMostSpecificCause().getMessage() + " at " + e.getUri(), e);
 
         } catch (final WebClientResponseException e) {
-            LOGGER.error(String.format("Get Status request for {} returned: {} {} at {} ", proxySubGraph.getGraphId(), e.getRawStatusCode(), e.getStatusText(), e.getRequest().getURI()), e);
+            LOGGER.error("Get Status request for {} returned: {} {} at {} ", proxySubGraph.getGraphId(), e.getRawStatusCode(), e.getStatusText(), e.getRequest().getURI(), e);
             throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' returned: " + e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
         }
     }
@@ -69,7 +69,7 @@ public class ValidateGraphHostOperation implements Command {
             throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' returned a null status");
         }
         if (status != SystemStatus.Status.UP) {
-            LOGGER.warn(String.format("{} status is {}. {} ", proxySubGraph.getGraphId(), status.getCode(), status.getDescription()));
+            LOGGER.warn("{} status is {}. {} ", proxySubGraph.getGraphId(), status.getCode(), status.getDescription());
             throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' status is " + status.getCode() + ". " + status.getDescription());
         }
     }
