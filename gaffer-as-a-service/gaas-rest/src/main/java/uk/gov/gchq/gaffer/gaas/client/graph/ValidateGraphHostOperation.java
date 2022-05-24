@@ -52,12 +52,12 @@ public class ValidateGraphHostOperation implements Command {
             validateSystemIsUp(response);
 
         }  catch (final WebClientRequestException e) {
-            LOGGER.error(String.format("Get Status request for %s failed. Reason: %s at %s ", proxySubGraph.getGraphId(), e.getMostSpecificCause().getMessage(), e.getUri()), e);
+            LOGGER.error("Get Status request for {} failed. Reason: {} at {}", proxySubGraph.getGraphId(), e.getMostSpecificCause().getMessage(), e.getUri(), e);
             throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' failed. Reason: " + e.getMostSpecificCause().getMessage() + " at " + e.getUri(), e);
 
         } catch (final WebClientResponseException e) {
-            LOGGER.error(String.format("Get Status request for %s returned: %s %s at %s ", proxySubGraph.getGraphId(), e.getRawStatusCode(), e.getStatusText(), e.getRequest().getURI()), e);
-             throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' returned: " + e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
+            LOGGER.error(String.format("Get Status request for {} returned: {} {} at {} ", proxySubGraph.getGraphId(), e.getRawStatusCode(), e.getStatusText(), e.getRequest().getURI()), e);
+            throw new GraphOperationException("Get Status request for '" + proxySubGraph.getGraphId() + "' returned: " + e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
         }
     }
 
@@ -65,11 +65,11 @@ public class ValidateGraphHostOperation implements Command {
     private void validateSystemIsUp(final SystemStatus response) throws GraphOperationException {
         final SystemStatus.Status status = response.getStatus();
         if (status == null) {
-            LOGGER.warn("{}", proxySubGraph.getGraphId() + " returned a null status");
+            LOGGER.warn("{} returned a null status", proxySubGraph.getGraphId());
             throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' returned a null status");
         }
         if (status != SystemStatus.Status.UP) {
-            LOGGER.warn(String.format("%s status is %s. %s ", proxySubGraph.getGraphId(), status.getCode(), status.getDescription()));
+            LOGGER.warn(String.format("{} status is {}. {} ", proxySubGraph.getGraphId(), status.getCode(), status.getDescription()));
             throw new GraphOperationException("'" + proxySubGraph.getGraphId() + "' status is " + status.getCode() + ". " + status.getDescription());
         }
     }
