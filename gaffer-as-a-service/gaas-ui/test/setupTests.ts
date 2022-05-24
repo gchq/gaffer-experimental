@@ -13,3 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Enzyme from "enzyme";
+import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
+
+Enzyme.configure({ adapter: new Adapter() });
