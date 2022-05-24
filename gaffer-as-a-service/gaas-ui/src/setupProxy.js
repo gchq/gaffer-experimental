@@ -49,7 +49,8 @@ module.exports = function (app) {
             target: "http://localhost:4001",
             changeOrigin: true,
         })
-    ); app.use(
+    );
+    app.use(
         "/whoami",
         createProxyMiddleware({
             target: "http://localhost:4000",

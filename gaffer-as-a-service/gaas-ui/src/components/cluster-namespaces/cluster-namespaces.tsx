@@ -34,7 +34,7 @@ import { GetAllNamespacesRepo } from "../../rest/repositories/get-all-namespaces
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import { Copyright } from "../copyright/copyright";
-import { GaaSApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 
 interface IState {
     namespaces: Array<string>;
@@ -53,7 +53,7 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
     }
 
     public async componentDidMount() {
-        this.getNamespaces();
+        await this.getNamespaces();
     }
 
     private async getNamespaces() {
@@ -62,8 +62,8 @@ export default class ClusterNamespaces extends React.Component<{}, IState> {
             this.setState({ namespaces: namespaces, errorMessage: "" });
         } catch (e) {
             this.setState({
-                errorMessage: `Failed to get all namespaces. ${(e as GaaSApiErrorResponse).title}: ${
-                    (e as GaaSApiErrorResponse).detail
+                errorMessage: `Failed to get all namespaces. ${(e as GaaSAPIErrorResponse).title}: ${
+                    (e as GaaSAPIErrorResponse).detail
                 }`,
             });
         }

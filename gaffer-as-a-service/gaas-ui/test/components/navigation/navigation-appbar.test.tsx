@@ -17,7 +17,6 @@ import { mount, ReactWrapper } from "enzyme";
 import NavigationAppbar from "../../../src/components/navigation-bar/navigation-appbar";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
-import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { Config } from "../../../src/rest/config";
 import { act } from "react-dom/test-utils";
 import { AuthSidecarClient, IWhatAuthInfo } from "../../../src/rest/clients/auth-sidecar-client";
@@ -124,7 +123,7 @@ describe("Navigation Appbar Component", () => {
     it("should have navigation link in each list item", () => {
         const Target = [{ href: "/creategraph" }, { href: "/viewgraphs" }, { href: "/userguide" }];
         const NavUl = component.find("ul").at(1);
-        for (var index = 0; index < NavUl.length; index += 1) {
+        for (let index = 0; index < NavUl.length; index += 1) {
             const anchor = NavUl.find("a").at(index);
             const getAttribute = anchor.getDOMNode().getAttribute("href");
             expect(getAttribute).toBe(Target[index].href);
@@ -137,10 +136,7 @@ describe("Navigation Appbar Component", () => {
                 requiredFields: ["username", "password"],
                 requiredHeaders: { Authorization: "Bearer  " },
             });
-            const postAuthMap = new Map<string, string>();
-            postAuthMap.set("username", "Harry@gmail.com");
-            postAuthMap.set("password", "asdfgh");
-            await mockAuthSidecarClientPostAuth(postAuthMap);
+            await mockAuthSidecarClientPostAuth();
             await mockGetWhoAmIRepoToThrow(() => {
                 throw new Error("invalid");
             });
@@ -152,10 +148,10 @@ describe("Navigation Appbar Component", () => {
             );
             await component.update();
             await component.update();
-            inputUsername("Harry@gmail.com");
-            inputPassword("asdfgh");
+            await inputUsername("Harry@gmail.com");
+            await inputPassword("invalid-password");
 
-            clickSubmitSignIn();
+            await clickSubmitSignIn();
             await component.update();
             await component.update();
             expect(component.find("div#navigation-drawer").find("div#user-details-error-message").text()).toBe(
@@ -182,36 +178,11 @@ async function inputPassword(password: string) {
 async function clickSubmitSignIn() {
     component.find("button#submit-sign-in-button").simulate("click");
 }
-
-function mockAuthClient() {
-    // @ts-ignore
-    AuthApiClient.prototype.login.mockImplementationOnce(
-        (username: string, password: string, onSuccess: () => void, onError: () => void) => {
-            onSuccess();
-        }
-    );
-}
-async function mockGetWhatAuthAndGetWhoAmI(data: IWhatAuthInfo, email: string) {
-    // @ts-ignore
-    AuthSidecarClient.mockImplementationOnce(() => ({
-        getWhoAmI: () =>
-            new Promise((resolve, reject) => {
-                resolve(email);
-            }),
-    }));
-    // @ts-ignore
-    AuthSidecarClient.mockImplementationOnce(() => ({
-        getWhatAuth: () =>
-            new Promise((resolve, reject) => {
-                resolve(data);
-            }),
-    }));
-}
 async function mockGetWhoAmIRepoToReturn(email: string) {
     // @ts-ignore
     AuthSidecarClient.mockImplementationOnce(() => ({
         getWhoAmI: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(email);
             }),
     }));
@@ -227,23 +198,17 @@ async function mockGetWhatAuthToReturn(data: IWhatAuthInfo) {
     // @ts-ignore
     AuthSidecarClient.mockImplementationOnce(() => ({
         getWhatAuth: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(data);
             }),
     }));
 }
-async function mockGetWhatAuthToThrow(f: () => void) {
-    // @ts-ignore
-    AuthSidecarClient.mockImplementationOnce(() => ({
-        getWhatAuth: f,
-    }));
-}
 
-async function mockAuthSidecarClientPostAuth(fields: Map<string, string>) {
+async function mockAuthSidecarClientPostAuth() {
     // @ts-ignore
     AuthSidecarClient.mockImplementationOnce(() => ({
         postAuth: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve("Bearer Token ABC");
             }),
     }));

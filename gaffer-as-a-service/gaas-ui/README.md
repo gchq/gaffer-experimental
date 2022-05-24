@@ -63,9 +63,6 @@ Used to check package updates in the UI.
 Run the command `ncu` in the terminal after installing it via `npm install -g npm-check-updates`.
 (https://www.npmjs.com/package/npm-check-updates)
 
-### `npm run start-with-sidecar`
-Used to run Kai UI with the sidecar example.
-
 ## Semgrep
 Semgrep is a static code analysis tool.
 To use Semgrep locally, install it following the instructions in the official [documentation](https://semgrep.dev/docs/getting-started/).
@@ -165,9 +162,7 @@ REACT_APP_COGNITO_CLIENTID=abc123
 
 #### Cognito Integration
 
-The UI App must be authorise a User by retreiving a JWT (JSON Web Token) from Cognito and setting this in the API's request headers as `Authorisation` so that the API returns a successful response. It is configured by supplying the User Pool ID and Client ID created after deployment.
-
-For dev mode it is configured by entering these values in [cognito-config.js](./src/rest/cognito-config.ts) and if production mode it can be configured as in [.env](./.env) file.
+The UI App must authorise a User by retrieving a JWT (JSON Web Token) from Cognito and setting this in the API's request headers as `Authorisation` so that the API returns a successful response. It is configured by supplying the User Pool ID and Client ID created after deployment.
 
 #### API Integration
 

@@ -16,7 +16,6 @@
 import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import LoginModal from "../../../src/components/login/login-modal";
-import { AuthApiClient } from "../../../src/rest/clients/auth-api-client";
 import { AuthSidecarClient } from "../../../src/rest/clients/auth-sidecar-client";
 
 import { act } from "react-dom/test-utils";
@@ -85,10 +84,6 @@ async function clickSubmitSignIn() {
     component.find("main#login-form").find("button#submit-sign-in-button").simulate("click");
 }
 
-async function clickSignOutButton() {
-    component.find("button#sign-out-button").simulate("click");
-}
-
 async function inputUsername(username: string) {
     expect(component.find("main#login-form").find("input#username").length).toBe(1);
     component.find("input#username").simulate("change", {
@@ -103,20 +98,11 @@ async function inputPassword(password: string) {
     });
 }
 
-function mockAuthApiClientLogin() {
-    // @ts-ignore
-    AuthApiClient.prototype.login.mockImplementationOnce(
-        (username: string, password: string, onSuccess: () => void, onError: () => void) => {
-            onSuccess();
-        }
-    );
-}
-
 async function mockPostAuth(data: Map<string, string>) {
     // @ts-ignore
     AuthSidecarClient.mockImplementationOnce(() => ({
         postAuth: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(data);
             }),
     }));
@@ -126,13 +112,4 @@ async function mockPostAuthToThrow(f: () => void) {
     AuthSidecarClient.mockImplementationOnce(() => ({
         postAuth: f,
     }));
-}
-
-function mockAuthApiCFlientFailedLogOut(errorMessage: string) {
-    // @ts-ignore
-    AuthApiClient.prototype.signOut.mockImplementationOnce(
-        (onSuccess: () => void, onError: (errorMessage: string) => void) => {
-            onError(errorMessage);
-        }
-    );
 }

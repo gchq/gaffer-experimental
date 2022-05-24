@@ -32,9 +32,9 @@ describe("Reusable TextField", () => {
         expect(onChangeCallback).toBeCalledWith("test input");
     });
     it("should sanitize inputs", () => {
-        inputInTextfield('<img src="http://url.to.file.which/not.exist" onerror=alert(document.cookie);>');
+        inputInTextfield('<img alt="" src="http://url.to.file.which/not.exist" >');
         expect(component.find("input").props().value).toEqual(
-            "&lt;img src=&quot;http://url.to.file.which/not.exist&quot;&gt;"
+            "&lt;img src=&quot;http://url.to.file.which/not.exist&quot; alt=&quot;&quot;&gt;"
         );
     });
 });
