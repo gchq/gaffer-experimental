@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Crown Copyright
+ * Copyright 2021-2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
 @Order(2)
 @Configuration
 public class CustomFilter implements GlobalFilter {
@@ -37,8 +38,14 @@ public class CustomFilter implements GlobalFilter {
     public Mono<Void> filter(final ServerWebExchange exchange, final GatewayFilterChain chain) {
 
         ServerHttpRequest request = exchange.getRequest();
+        if (request.getPath().toString().equals("/what-auth")) {
+            ServerHttpResponse response = exchange.getResponse();
+            logger.info("Post Filter = " + response.getStatusCode());
+        }
         if (request.getHeaders().getFirst("x-email") != null) {
-            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+            ServerHttpRequest mutatedRequest = exchange.getRequest().mutate().header("username", request.getHeaders().getFirst("x-email")).build();
+            ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+            return chain.filter(mutatedExchange).then(Mono.fromRunnable(() -> {
                 ServerHttpResponse response = exchange.getResponse();
                 logger.info("Post Filter = " + response.getStatusCode());
             }));

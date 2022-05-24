@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Crown Copyright
+ * Copyright 2021-2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,8 @@ import java.util.List;
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(GaaSRestApiException.class)
-    public final ResponseEntity<GaaSApiErrorResponse> handleAllGaaSRestApiExceptions(final GaaSRestApiException ex, final WebRequest request) {
+    public final ResponseEntity<GaaSApiErrorResponse> handleAllGaaSRestApiExceptions(final GaaSRestApiException ex,
+            final WebRequest request) {
         String title = "";
         if (ex.getCause() == null) {
             title = ex.getTitle();
@@ -47,16 +48,20 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<GaaSApiErrorResponse> handleAllExceptions(final Exception ex, final WebRequest request) {
+    public final ResponseEntity<GaaSApiErrorResponse> handleAllExceptions(final Exception ex,
+            final WebRequest request) {
 
-        final GaaSApiErrorResponse gaaSApiErrorResponse = new GaaSApiErrorResponse(ex.getClass().getSimpleName(), ex.getMessage());
+        final GaaSApiErrorResponse gaaSApiErrorResponse = new GaaSApiErrorResponse(ex.getClass().getSimpleName(),
+                ex.getMessage());
 
         return new ResponseEntity(gaaSApiErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        final GaaSApiErrorResponse gaaSApiErrorResponse = new GaaSApiErrorResponse(ex.getCause().getClass().getSimpleName(), ex.getCause().getMessage());
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
+            final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+        final GaaSApiErrorResponse gaaSApiErrorResponse = new GaaSApiErrorResponse(
+                ex.getCause().getClass().getSimpleName(), ex.getCause().getMessage());
         return new ResponseEntity<>(gaaSApiErrorResponse, status);
     }
 
