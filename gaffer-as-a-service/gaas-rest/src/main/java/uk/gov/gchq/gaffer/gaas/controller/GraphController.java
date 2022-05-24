@@ -20,6 +20,7 @@ import io.kubernetes.client.openapi.ApiClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,10 @@ import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +83,9 @@ public class GraphController {
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
+
+        addDeleteGraphLabel(requestBody);
+
         try {
             addCreatorLabel(Objects.requireNonNull(headers.getFirst("username")));
         } catch (Exception e) {
@@ -90,6 +98,7 @@ public class GraphController {
         }
         return new ResponseEntity(HttpStatus.CREATED);
     }
+
 
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
@@ -136,5 +145,18 @@ public class GraphController {
         Pattern pattern = Pattern.compile("(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])");
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+
+    private void addDeleteGraphLabel(GaaSCreateRequestBody requestBody) {
+        if(requestBody.getDeleteGraph() != null) {
+            Date today = new Date();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(today);
+            cal.add(Calendar.DATE, requestBody.getDeleteGraph());
+            Date modifiedDate = cal.getTime();
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+            String dateStr = f.format(modifiedDate);
+            helmValuesOverridesHandler.addOverride("labels.deleteGraph", dateStr);
+        }
     }
 }

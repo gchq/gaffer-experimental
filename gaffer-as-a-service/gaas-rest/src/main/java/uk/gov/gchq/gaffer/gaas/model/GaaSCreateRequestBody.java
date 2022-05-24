@@ -48,6 +48,9 @@ public class GaaSCreateRequestBody {
     @JsonProperty("proxySubGraphs")
     private List<ProxySubGraph> proxySubGraphs;
 
+    @JsonProperty("deleteGraph")
+    private Integer deleteGraph;
+
     public GaaSCreateRequestBody() {
     }
 
@@ -87,6 +90,8 @@ public class GaaSCreateRequestBody {
     public List<ProxySubGraph> getProxySubGraphs() {
         return proxySubGraphs;
     }
+
+    public Integer getDeleteGraph() { return deleteGraph; }
 
     public boolean isFederatedStoreRequest() {
         return proxySubGraphs != null;
