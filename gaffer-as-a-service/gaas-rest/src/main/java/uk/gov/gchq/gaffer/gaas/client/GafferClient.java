@@ -91,6 +91,16 @@ public class GafferClient {
         }
     }
 
+    public boolean deleteGafferByUsername(final String crdName, final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.onGafferDeleteByUsername(crdName, kubernetesClient, username);
+        } catch (ApiException e) {
+            LOGGER.debug("Failed to delete CRD. Kubernetes client returned Status Code: " + e.getCode(), e);
+            throw from(e);
+        }
+    }
+
     public List<String> getAllNameSpaces() throws GaaSRestApiException {
         try {
             final V1NamespaceList v1NamespaceList =

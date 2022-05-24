@@ -37,4 +37,10 @@ public class DeleteGraphService {
         meterRegistry.counter("DeleteGraphService", "action", "delete").increment();
         return gafferClient.deleteGaffer(graphId);
     }
+
+    @Timed(value = "deleteGraphByUsername.time", description = "Time taken to delete graph", percentiles = 0)
+    public boolean deleteGraphByUsername(final String graphId, final String username) throws GaaSRestApiException {
+        meterRegistry.counter("DeleteGraphService", "action", "delete").increment();
+        return gafferClient.deleteGafferByUsername(graphId, username);
+    }
 }

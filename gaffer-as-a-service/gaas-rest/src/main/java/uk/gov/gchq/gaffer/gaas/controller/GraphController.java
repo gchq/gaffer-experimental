@@ -118,9 +118,14 @@ public class GraphController {
 
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
-
-        if (deleteGraphService.deleteGraph(graphId)) {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        if (isAdmin(headers.getFirst("username"))) {
+            if (deleteGraphService.deleteGraph(graphId)) {
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            }
+        } else {
+            if (deleteGraphService.deleteGraphByUsername(graphId, headers.getFirst("username"))) {
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
