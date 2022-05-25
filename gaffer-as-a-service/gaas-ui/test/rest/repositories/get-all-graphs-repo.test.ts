@@ -107,19 +107,19 @@ describe("Get All Graphs Repo", () => {
         expect(actual).toEqual(expected);
     });
 
-    it("should throw RestApiError with correct status message when no response body", async () => {
+    it("should throw APIError with correct status message when no response body", async () => {
         mock.onGet("/graphs").reply(404);
 
         await expect(repo.getAll()).rejects.toEqual(new APIError("Error Code 404", "Not Found"));
     });
 
-    it("should throw RestApiError with title and detail from response body", async () => {
+    it("should throw APIError with title and detail from response body", async () => {
         mock.onGet("/graphs").reply(404, { title: "Forbidden", detail: "Kubernetes access denied" });
 
         await expect(repo.getAll()).rejects.toEqual(new APIError("Forbidden", "Kubernetes access denied"));
     });
 
-    it("should throw unknown RestApiError when undefined status and body", async () => {
+    it("should throw unknown APIError when undefined status and body", async () => {
         mock.onGet("/graphs").reply(0);
 
         await expect(repo.getAll()).rejects.toEqual(new APIError("Unknown Error", "Unable to make request"));

@@ -29,7 +29,8 @@ class CustomizedResponseEntityExceptionHandlerTest {
     void handleAllExceptions_andConvertToGaaSApiErrorResponse() {
         final CustomizedResponseEntityExceptionHandler handler = new CustomizedResponseEntityExceptionHandler();
 
-        final ResponseEntity<GaaSApiErrorResponse> result = handler.handleAllExceptions(new NullPointerException("something is null"), null);
+        final ResponseEntity<GaaSApiErrorResponse> result = handler
+                .handleAllExceptions(new NullPointerException("something is null"), null);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
         assertEquals(new GaaSApiErrorResponse("NullPointerException", "something is null"), result.getBody());

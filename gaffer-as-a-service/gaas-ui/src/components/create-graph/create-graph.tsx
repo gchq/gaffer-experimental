@@ -52,7 +52,7 @@ import { GetStoreTypesRepo, IStoreTypes } from "../../rest/repositories/get-stor
 import { CreateFederatedGraphRepo } from "../../rest/repositories/create-federated-graph-repo";
 import { Copyright } from "../copyright/copyright";
 import SchemaBuilderDialog from "./schema-builder-dialog";
-import { GaaSRestApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 import DOMPurify from "dompurify";
 import { encode } from "html-entities";
 interface IState {
@@ -112,8 +112,8 @@ export default class CreateGraph extends React.Component<{}, IState> {
     }
 
     public async componentDidMount() {
-        this.getGraphs();
-        this.getAllStoreTypes();
+        await this.getGraphs();
+        await this.getAllStoreTypes();
     }
 
     private async getGraphs() {
@@ -123,8 +123,8 @@ export default class CreateGraph extends React.Component<{}, IState> {
         } catch (e: any) {
             this.setState({
                 outcome: AlertType.FAILED,
-                outcomeMessage: `Failed to get all graphs. ${(e as GaaSRestApiErrorResponse).title}: ${
-                    (e as GaaSRestApiErrorResponse).detail
+                outcomeMessage: `Failed to get all graphs. ${(e as GaaSAPIErrorResponse).title}: ${
+                    (e as GaaSAPIErrorResponse).detail
                 }`,
             });
         }
@@ -140,8 +140,8 @@ export default class CreateGraph extends React.Component<{}, IState> {
         } catch (e: any) {
             this.setState({
                 outcome: AlertType.FAILED,
-                outcomeMessage: `Storetypes unavailable: ${(e as GaaSRestApiErrorResponse).title}: ${
-                    (e as GaaSRestApiErrorResponse).detail
+                outcomeMessage: `Storetypes unavailable: ${(e as GaaSAPIErrorResponse).title}: ${
+                    (e as GaaSAPIErrorResponse).detail
                 }`,
             });
         }
@@ -195,8 +195,8 @@ export default class CreateGraph extends React.Component<{}, IState> {
         } catch (e: any) {
             this.setState({
                 outcome: AlertType.FAILED,
-                outcomeMessage: `Failed to Add '${graphId}' Graph. ${(e as GaaSRestApiErrorResponse).title}: ${
-                    (e as GaaSRestApiErrorResponse).detail
+                outcomeMessage: `Failed to Add '${graphId}' Graph. ${(e as GaaSAPIErrorResponse).title}: ${
+                    (e as GaaSAPIErrorResponse).detail
                 }`,
             });
         }

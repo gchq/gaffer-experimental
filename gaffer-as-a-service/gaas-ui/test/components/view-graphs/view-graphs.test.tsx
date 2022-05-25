@@ -305,7 +305,8 @@ describe("Delete Button", () => {
         mockGetGraphsToReturn([
             new Graph("bananas", "INACTIVE", "bananas URL", "bananas URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
         ]);
-        mockGetStoreTypesRepoToReturn({
+
+        await mockGetStoreTypesRepoToReturn({
             storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
             federatedStoreTypes: ["federated"],
         });
@@ -531,7 +532,7 @@ async function mockGetAllGraphIdsRepoToReturn(graphIds: string[]) {
     // @ts-ignore
     GetAllGraphIdsRepo.mockImplementationOnce(() => ({
         get: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(graphIds);
             }),
     }));
@@ -548,7 +549,7 @@ function mockGetGraphsToReturn(graphs: Graph[]): void {
     // @ts-ignore
     GetAllGraphsRepo.mockImplementationOnce(() => ({
         getAll: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(graphs);
             }),
     }));
@@ -565,7 +566,7 @@ async function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypes) {
     // @ts-ignore
     GetStoreTypesRepo.mockImplementationOnce(() => ({
         get: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(storetypes);
             }),
     }));

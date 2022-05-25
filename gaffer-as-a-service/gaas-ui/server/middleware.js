@@ -17,7 +17,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const users = require("./users");
-var cors = require("cors");
+const cors = require("cors");
 
 // app
 const app = express();
@@ -56,7 +56,7 @@ app.post("/auth/signout", (req, res) => {
 
 app.get("/whoami", (req, res) => {
     try {
-            res.status(200).send("testEmail@something.com");
+        res.status(200).send("testEmail@something.com");
     } catch (e) {
         res.status(404).send(e.message).end();
     }
