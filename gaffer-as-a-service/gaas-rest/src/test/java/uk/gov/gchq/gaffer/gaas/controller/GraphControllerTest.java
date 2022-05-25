@@ -279,6 +279,20 @@ class GraphControllerTest extends AbstractTest {
     }
 
     @Test
+    void deleteGraphWithUsername_whenGraphNDoesNotExist_return404() throws Exception {
+        doThrow(new GaaSRestApiException("Graph not found", "NotFound", 404)).when(deleteGraphService).deleteGraphByUsername("nonexistentgraphfortestingpurposes", "myUser");
+
+        final MvcResult result = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "myUser"))
+                .andReturn();
+
+        verify(deleteGraphService, times(1)).deleteGraphByUsername("nonexistentgraphfortestingpurposes", "myUser");
+        assertEquals(404, result.getResponse().getStatus());
+    }
+
+    @Test
     void createGraph_hasSameGraphIdAsExistingOne_shouldReturn409() throws Exception {
         final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
