@@ -35,7 +35,7 @@ public final class GaaSRestExceptionFactory {
     public static GaaSRestApiException from(final ApiException e) {
 
         if (e.getCode() == 401 && isEmpty(e.getMessage())) {
-            LOGGER.error(MESSAGE_PREFIX + "Invalid authentication credentials for Kubernetes cluster" + e.getCode(), e);
+            LOGGER.error("{} Invalid authentication credentials for Kubernetes cluster {}", MESSAGE_PREFIX, e.getCode(), e);
             return new GaaSRestApiException(MESSAGE_PREFIX + "Invalid authentication credentials for Kubernetes cluster", e.getCode(), e);
         }
         if (e.getMessage().equals("Unauthorized")) {

@@ -76,7 +76,7 @@ public class GafferSpecConfigsLoader {
                 }
                 return gafferSpec;
             }
-            LOGGER.error("GaaS Graph Config Not Found", "Available config names are: " + getStoreTypeNames(), 404);
+            LOGGER.error("GaaS Graph Config Not Found, Available config names are: {} {}", getStoreTypeNames(), 404);
             throw new GaaSRestApiException("GaaS Graph Config Not Found", "Available config names are: " + getStoreTypeNames(), 404);
 
         } catch (final IOException e) {

@@ -80,6 +80,7 @@ public class SidecarController {
         try {
             username = jwtTokenUtil.getUsernameFromToken(headers.get("Authorization").get(0).substring(7));
         } catch (Exception e) {
+            logger.info("Error resolving Authorization header {}", HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>("Error resolving Authorization header", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(username, HttpStatus.OK);

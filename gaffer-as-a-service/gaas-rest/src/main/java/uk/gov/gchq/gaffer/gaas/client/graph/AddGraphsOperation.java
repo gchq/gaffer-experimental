@@ -65,14 +65,12 @@ public class AddGraphsOperation implements Command {
                     .block();
 
         } catch (final WebClientRequestException e) {
-            LOGGER.error("AddGraph OperationChain request to Federated Store Graph failed. Reason: "  +
-                    e.getMostSpecificCause().getMessage() + ", at " + e.getUri(), e);
+            LOGGER.error("AddGraph OperationChain request to Federated Store Graph failed. Reason: {} , at {}", e.getMostSpecificCause().getMessage(), e.getUri(), e);
             throw new GraphOperationException("AddGraph OperationChain request to Federated Store Graph failed. Reason: " +
                     e.getMostSpecificCause().getMessage() + ", at " + e.getUri(), e);
 
         } catch (final WebClientResponseException e) {
-            LOGGER.error("AddGraph OperationChain request to Federated Store Graph response: "  +
-                    e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
+            LOGGER.error("AddGraph OperationChain request to Federated Store Graph response: {} {} at {}", e.getRawStatusCode(), e.getStatusText(), e.getRequest().getURI(), e);
             throw new GraphOperationException("AddGraph OperationChain request to Federated Store Graph response: " +
                     e.getRawStatusCode() + " " + e.getStatusText() + " at " + e.getRequest().getURI(), e);
         }

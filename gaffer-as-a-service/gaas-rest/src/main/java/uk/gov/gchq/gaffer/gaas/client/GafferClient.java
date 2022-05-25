@@ -55,7 +55,7 @@ public class GafferClient {
             if (requestBody == null || requestBody.getMetadata() == null) {
                 LOGGER.error("Failed to create Gaffer \"\". Error: ", e);
             } else {
-                LOGGER.error("Failed to create Gaffer with name \"" + requestBody.getMetadata().getName() + "\". Error: ", e);
+                LOGGER.error("Failed to create Gaffer with name {}. Error: ",  requestBody.getMetadata().getName(), e);
             }
             throw from(e);
         }
@@ -76,7 +76,7 @@ public class GafferClient {
         try {
             return deploymentHandler.onGafferDelete(crdName, kubernetesClient);
         } catch (ApiException e) {
-            LOGGER.error("Failed to delete Gaffer. Kubernetes client returned Status Code: " + e.getCode(), e);
+            LOGGER.error("Failed to delete Gaffer. Kubernetes client returned Status Code: {}", e.getCode(), e);
             throw from(e);
         }
     }
@@ -88,7 +88,7 @@ public class GafferClient {
                             "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE);
             return namespacesAsList(v1NamespaceList);
         } catch (ApiException e) {
-            LOGGER.error("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: " + e.getCode(), e);
+            LOGGER.error("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: {}", e.getCode(), e);
             throw from(e);
         }
     }

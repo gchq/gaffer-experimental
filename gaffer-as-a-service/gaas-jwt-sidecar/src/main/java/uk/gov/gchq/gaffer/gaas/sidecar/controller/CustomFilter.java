@@ -92,7 +92,7 @@ public class CustomFilter implements GlobalFilter {
                 }));
             }
         }
-        logger.info("Authorization = " + request.getHeaders().getFirst("Authorization"));
+        logger.info("Authorization = {}", request.getHeaders().getFirst("Authorization"));
         return this.onError(exchange, "Unauthorised User", HttpStatus.FORBIDDEN);
     }
 

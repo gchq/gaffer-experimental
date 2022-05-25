@@ -53,13 +53,13 @@ public class CreateFederatedStoreGraphService {
 
     public void createFederatedStore(final GaaSCreateRequestBody request) throws GaaSRestApiException {
         if (request.getProxySubGraphs().isEmpty()) {
-            LOGGER.warn("Bad Request, There are no sub-graphs to add: " + 400);
+            LOGGER.warn("Bad Request, There are no sub-graphs to add: {}", 400);
             throw new GaaSRestApiException("Bad Request", "There are no sub-graphs to add", 400);
         }
 
         final GafferSpec config = loader.getConfig(CONFIG_YAML_CLASSPATH, request.getConfigName());
         if (!isFederatedStoreConfig(config)) {
-            LOGGER.warn("Bad Request, Graph is not a federated store: " + 400);
+            LOGGER.warn("Bad Request, Graph is not a federated store: {}", 400);
             throw new GaaSRestApiException("Bad Request", "Graph is not a federated store", 400);
         }
 
@@ -80,7 +80,7 @@ public class CreateFederatedStoreGraphService {
             }
         });
         if (errorNotifications.size() > 0) {
-            LOGGER.error("Bad Request, Invalid Proxy Graph URL(s) " + errorNotifications + 400);
+            LOGGER.error("Bad Request, Invalid Proxy Graph URL(s) {} {}", errorNotifications,  400);
             throw new GaaSRestApiException("Bad Request", "Invalid Proxy Graph URL(s): " + errorNotifications, 400);
         }
     }
@@ -89,7 +89,7 @@ public class CreateFederatedStoreGraphService {
         try {
             graphOperationExecutor.execute(new AddGraphsOperation(url, request.getProxySubGraphs()));
         } catch (final GraphOperationException e) {
-            LOGGER.error("Failed to Add Graph(s) to \""  + request.getGraphId() + "\"", e.getMessage(), 502);
+            LOGGER.error("Failed to Add Graph(s) to {} {} {}", request.getGraphId(), e.getMessage(), 502);
             throw new GaaSRestApiException("Failed to Add Graph(s) to \"" + request.getGraphId() + "\"", e.getMessage(), 502);
         }
     }

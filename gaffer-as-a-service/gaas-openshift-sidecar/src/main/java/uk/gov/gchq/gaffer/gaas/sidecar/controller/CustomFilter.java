@@ -48,10 +48,10 @@ public class CustomFilter implements GlobalFilter {
             ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
             return chain.filter(mutatedExchange).then(Mono.fromRunnable(() -> {
                 ServerHttpResponse response = exchange.getResponse();
-                logger.info("Sidecar custom post Filter = " + response.getStatusCode());
+                logger.info("Sidecar custom post Filter = {}", response.getStatusCode());
             }));
         }
-        logger.info("Unauthorised User = ");
+        logger.info("Unauthorised User = {}.", HttpStatus.FORBIDDEN);
         return this.onError(exchange, "Unauthorised User", HttpStatus.FORBIDDEN);
     }
 

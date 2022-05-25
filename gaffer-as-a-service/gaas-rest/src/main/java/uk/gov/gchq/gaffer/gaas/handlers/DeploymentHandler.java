@@ -27,10 +27,10 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1Status;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
@@ -39,11 +39,9 @@ import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
@@ -53,7 +51,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 public class DeploymentHandler {
 
 
-    private static final Logger LOGGER = Logger.getLogger(DeploymentHandler.class);
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DeploymentHandler.class);
 
     private final String workerNamespace;
 
@@ -151,12 +149,12 @@ public class DeploymentHandler {
             if (secretsToDelete.isEmpty() & configMapList.isEmpty() & deploymentList.isEmpty()) {
                 //If all 3 are empty it means the gaffer which the user is trying to delete does not exist therefore
                 //we return false
-                LOGGER.error(String.format("No deployments of %s to delete", gaffer));
+                LOGGER.error("No deployments of {} to delete", gaffer);
                 return false;
             }
 
         } catch (KubernetesClientException e) {
-            LOGGER.error(String.format("Failed to delete deployments of %s", gaffer));
+            LOGGER.error("Failed to delete deployments of {}", gaffer);
             throw new ApiException(e.getCode(), e.getMessage());
         }
         cleanUpGafferDeploymentAfterTearDown(gaffer, workerNamespace);

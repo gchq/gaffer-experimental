@@ -180,7 +180,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private void attachSecret(final V1Pod helmPod, final String secretName) {
         V1PodSpec spec = helmPod.getSpec();
         if (spec == null) {
-            LOGGER.error("Pod should have a spec: " + spec);
+            LOGGER.error("Pod should have a spec: {}", spec);
             throw new RuntimeException("Pod should have a spec: " + spec);
         }
 
@@ -222,7 +222,7 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                         NAMESPACE_ARG, gaffer.getMetadata().getNamespace()
                 );
             default:
-                LOGGER.error("Unrecognized helm command: " + helmCommand);
+                LOGGER.error("Unrecognized helm command: {}", helmCommand);
                 throw new RuntimeException("Unrecognized helm command: " + helmCommand);
         }
     }
