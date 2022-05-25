@@ -208,13 +208,7 @@ public class DeploymentHandler {
     public List<GaaSGraph> getDeployments(final KubernetesClient kubernetesClient) throws ApiException {
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
-            List<String> apiDeployments = new ArrayList<>();
-            for (final Deployment deployment : deploymentList) {
-                if (deployment.getMetadata().getName().contains(GAFFER_NAME_SUFFIX)) {
-                    apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
-                }
-            }
-            return listAllGraphs(kubernetesClient, apiDeployments);
+            return listAllGraphs(kubernetesClient, getAPIDeployments(deploymentList));
         } catch (Exception e) {
             LOGGER.debug("Failed to list all Gaffers.");
             throw new ApiException(e.getLocalizedMessage());
@@ -224,19 +218,22 @@ public class DeploymentHandler {
     public List<GaaSGraph> getDeploymentsByUsername(final KubernetesClient kubernetesClient, final String username) throws ApiException {
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("creator", username).list().getItems();
-            List<String> apiDeployments = new ArrayList<>();
-            for (final Deployment deployment : deploymentList) {
-                if (deployment.getMetadata().getName().contains(GAFFER_NAME_SUFFIX)) {
-                    apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
-                }
-            }
-            return listAllGraphs(kubernetesClient, apiDeployments);
+            return listAllGraphs(kubernetesClient, getAPIDeployments(deploymentList));
         } catch (Exception e) {
             LOGGER.debug("Failed to list all Gaffers.");
             throw new ApiException(e.getLocalizedMessage());
         }
     }
 
+    private List<String> getAPIDeployments(final List<Deployment> deploymentList) {
+        List<String> apiDeployments = new ArrayList<>();
+        for (final Deployment deployment : deploymentList) {
+            if (deployment.getMetadata().getName().contains(GAFFER_NAME_SUFFIX)) {
+                apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
+            }
+        }
+        return apiDeployments;
+    }
 
     /**
      * Removes any resources left after a successful uninstallation including:
