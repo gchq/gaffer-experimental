@@ -20,7 +20,6 @@ import io.kubernetes.client.openapi.ApiClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,10 +43,8 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -147,8 +144,8 @@ public class GraphController {
         return matcher.matches();
     }
 
-    private void addDeleteGraphLabel(GaaSCreateRequestBody requestBody) {
-        if(requestBody.getDeleteGraph() != null) {
+    private void addDeleteGraphLabel(final GaaSCreateRequestBody requestBody) {
+        if (requestBody.getDeleteGraph() != null) {
             Date today = new Date();
             Calendar cal = Calendar.getInstance();
             cal.setTime(today);

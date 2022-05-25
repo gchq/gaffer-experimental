@@ -91,7 +91,9 @@ public class GaaSCreateRequestBody {
         return proxySubGraphs;
     }
 
-    public Integer getDeleteGraph() { return deleteGraph; }
+    public Integer getDeleteGraph() {
+        return deleteGraph;
+    }
 
     public boolean isFederatedStoreRequest() {
         return proxySubGraphs != null;
