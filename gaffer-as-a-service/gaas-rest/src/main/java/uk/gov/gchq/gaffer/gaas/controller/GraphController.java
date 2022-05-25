@@ -123,7 +123,7 @@ public class GraphController {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         } else {
-            if (deleteGraphService.deleteGraphByUsername(graphId, headers.getFirst("username"))) {
+            if (deleteGraphService.deleteGraphByUsername(graphId, emailStripper(headers.getFirst("username")))) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
