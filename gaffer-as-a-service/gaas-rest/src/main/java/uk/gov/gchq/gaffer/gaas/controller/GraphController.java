@@ -44,9 +44,7 @@ import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 import javax.validation.Valid;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,15 +143,13 @@ public class GraphController {
     }
 
     private void addDeleteGraphLabel(final GaaSCreateRequestBody requestBody) {
-        if (requestBody.getDeleteGraph() != null) {
-            Date today = new Date();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(today);
-            cal.add(Calendar.DATE, requestBody.getDeleteGraph());
-            Date modifiedDate = cal.getTime();
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-            String dateStr = f.format(modifiedDate);
-            helmValuesOverridesHandler.addOverride("labels.deleteGraph", dateStr);
+        if (requestBody.getDeleteGraph() != null &&  !requestBody.getDeleteGraph().isEmpty() && !requestBody.getDeleteGraph().toLowerCase().equals("never")) {
+            LocalDateTime currentTime = LocalDateTime.now();
+            long deleteGraphDays = new Long(requestBody.getDeleteGraph());
+            String deleteGraph = currentTime.plusDays(deleteGraphDays).toString();
+            String newDeleteGraph = deleteGraph.toLowerCase().replaceAll(":", "_");
+            logger.info("labels.deleteGraph time: {}", newDeleteGraph);
+            helmValuesOverridesHandler.addOverride("labels.deleteGraph", newDeleteGraph);
         }
     }
 }

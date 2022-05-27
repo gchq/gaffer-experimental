@@ -49,7 +49,7 @@ public class GaaSCreateRequestBody {
     private List<ProxySubGraph> proxySubGraphs;
 
     @JsonProperty("deleteGraph")
-    private Integer deleteGraph;
+    private String deleteGraph;
 
     public GaaSCreateRequestBody() {
     }
@@ -91,7 +91,7 @@ public class GaaSCreateRequestBody {
         return proxySubGraphs;
     }
 
-    public Integer getDeleteGraph() {
+    public String getDeleteGraph() {
         return deleteGraph;
     }
 
