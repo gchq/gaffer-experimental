@@ -16,7 +16,6 @@
 
 package uk.gov.gchq.gaffer.gaas.sidecar;
 
-import org.apache.log4j.BasicConfigurator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
