@@ -20,6 +20,7 @@ import io.kubernetes.client.openapi.ApiClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,8 @@ import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +76,9 @@ public class GraphController {
     private GetGaaSGraphConfigsService getStoreTypesService;
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
+    @Value("${admin.users: {}}")
+    private String[] admins;
+
     Logger logger = LoggerFactory.getLogger(GraphController.class);
 
 
@@ -94,7 +100,11 @@ public class GraphController {
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("graphs", getGaffersService.getAllGraphs());
+        if (isAdmin(headers.getFirst("username"))) {
+            responseBody.put("graphs", getGaffersService.getAllGraphs());
+        } else {
+            responseBody.put("graphs", getGaffersService.getUserCreatedGraphs(emailStripper(headers.getFirst("username"))));
+        }
         return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
@@ -108,9 +118,14 @@ public class GraphController {
 
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
-
-        if (deleteGraphService.deleteGraph(graphId)) {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        if (isAdmin(headers.getFirst("username"))) {
+            if (deleteGraphService.deleteGraph(graphId)) {
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            }
+        } else {
+            if (deleteGraphService.deleteGraphByUsername(graphId, emailStripper(headers.getFirst("username")))) {
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -123,10 +138,7 @@ public class GraphController {
 
 
     private void addCreatorLabel(final String email) {
-        String strippedEmail = email;
-        if (email.contains("@")) {
-            strippedEmail = email.substring(0, email.indexOf('@'));
-        }
+        String strippedEmail = emailStripper(email);
         if (isCreatorLabelValid(strippedEmail)) {
             helmValuesOverridesHandler.addOverride("labels.creator", strippedEmail);
         }
@@ -136,5 +148,18 @@ public class GraphController {
         Pattern pattern = Pattern.compile("(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])");
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+
+    private String emailStripper(final String email) {
+        String strippedEmail = email;
+        if (email.contains("@")) {
+            strippedEmail = email.substring(0, email.indexOf('@'));
+        }
+        return strippedEmail;
+    }
+
+    private boolean isAdmin(final String username) {
+        List<String> adminList = new ArrayList<>(Arrays.asList(admins));
+        return adminList.contains(username);
     }
 }

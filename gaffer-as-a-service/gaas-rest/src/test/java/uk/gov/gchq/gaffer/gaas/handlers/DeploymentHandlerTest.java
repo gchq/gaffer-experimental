@@ -41,8 +41,11 @@ import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.util.TestAppender;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -77,7 +80,7 @@ class DeploymentHandlerTest {
     public void beforeEach() {
         environment = mock(Environment.class);
         // default values
-        when(environment.getProperty(WORKER_NAMESPACE)).thenReturn("gaffer-workers");
+        when(environment.getProperty(WORKER_NAMESPACE)).thenReturn("kai-dev");
         when(environment.getProperty(WORKER_IMAGE)).thenReturn("tzar/helm-kubectl:latest");
         when(environment.getProperty(WORKER_IMAGE_PULL_POLICY)).thenReturn("IfNotPresent");
         when(environment.getProperty(WORKER_RESTART_POLICY)).thenReturn("Never");
@@ -173,6 +176,34 @@ class DeploymentHandlerTest {
     }
 
     @Test
+    void shouldReturnOnlyUserCreatedDeploymentsWhenGetDeploymentsByUsernameCalled() throws ApiException {
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+
+        HashMap<String, String> labels = new HashMap<>();
+        labels.put("app.kubernetes.io/instance", "test");
+
+        HashMap<String, String> usernameLabels = new HashMap<>();
+        usernameLabels.put("app.kubernetes.io/instance", "test2");
+        usernameLabels.put("creator", "myUser");
+
+        HashMap<String, String> data = new HashMap<>();
+        data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");
+
+        HashMap<String, String> data2 = new HashMap<>();
+        data2.put("graphConfig.json", "{\"configName\":\"mapStore\",\"description\":\"Test Graph Description\",\"graphId\":\"test2\",\"hooks\":[]}");
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test2-gaffer-api").withLabels(usernameLabels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test2-gaffer-ui").endMetadata().build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test2-gaffer-graph-config").endMetadata().withData(data2).build());
+        assertEquals(1, handler.getDeploymentsByUsername(kubernetesClient, "myUser").size());
+    }
+
+    @Test
     void shouldReturnTrueWhenCreateDeploymentSuccessful() throws ApiException {
         Gaffer gaffer = getGaffer();
 
@@ -202,14 +233,53 @@ class DeploymentHandlerTest {
         when(client.escapeString(anyString())).thenCallRealMethod();
         DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
         handler.setCoreV1Api(mock(CoreV1Api.class));
+        Map<String, String> labels = new HashMap<>();
+        labels.put("creator", "myUser");
+        labels.put("app.kubernetes.io/instance", "test");
+        DeploymentList deploymentList = new DeploymentListBuilder().withItems(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build(), new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build()).build();
 
-        DeploymentList deploymentList = new DeploymentListBuilder().withItems(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build(), new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build()).build();
-
-        kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").endMetadata().build());
-        kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build());
         handler.onGafferDelete("test", kubernetesClient);
 
-        assertNotEquals(deploymentList.getItems().size(), kubernetesClient.apps().deployments().list().getItems().size());
+        assertNotEquals(deploymentList.getItems().size(), kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().size());
+    }
+
+    @Test
+    void shouldUninstallTheHelmDeploymentOnDeleteWithUsername() throws ApiException {
+        // Given
+        ApiClient client = mock(ApiClient.class);
+        when(client.escapeString(anyString())).thenCallRealMethod();
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+        Map<String, String> labels = new HashMap<>();
+        labels.put("creator", "myUser");
+        labels.put("app.kubernetes.io/instance", "test");
+        DeploymentList deploymentList = new DeploymentListBuilder().withItems(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build(), new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build()).build();
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build());
+        handler.onGafferDeleteByUsername("test", kubernetesClient, "myUser");
+
+        assertNotEquals(deploymentList.getItems().size(), kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().size());
+    }
+
+    @Test
+    void shouldNotUninstallTheHelmDeploymentOnDeleteWithUsernameWhenUserDoesNotMatchCreator() throws ApiException {
+        // Given
+        ApiClient client = mock(ApiClient.class);
+        when(client.escapeString(anyString())).thenCallRealMethod();
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+        Map<String, String> labels = new HashMap<>();
+        labels.put("creator", "myUser");
+        DeploymentList deploymentList = new DeploymentListBuilder().withItems(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build(), new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build()).build();
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build());
+        handler.onGafferDeleteByUsername("test", kubernetesClient, "someOtherUser");
+
+        assertEquals(deploymentList.getItems().size(), kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().size());
     }
 
     @Test

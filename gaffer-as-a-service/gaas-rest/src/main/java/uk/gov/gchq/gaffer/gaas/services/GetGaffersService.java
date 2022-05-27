@@ -39,4 +39,11 @@ public class GetGaffersService {
 
         return gafferClient.listAllGaffers();
     }
+
+    @Timed(value = "getUserCreatedGraphs.time", description = "Time taken to get user graphs", percentiles = 0)
+    public List<GaaSGraph> getUserCreatedGraphs(final String username) throws GaaSRestApiException {
+        meterRegistry.counter("GetGafferService", "action", "get").increment();
+
+        return gafferClient.listUserCreatedGaffers(username);
+    }
 }

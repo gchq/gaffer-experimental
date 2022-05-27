@@ -85,6 +85,29 @@ class GetGaffersServiceTest {
     }
 
     @Test
+    void testGetGraphsByUsername_whenGraphRequestIsNotEmpty() throws GaaSRestApiException {
+        when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
+        final GaaSGraph graph = new GaaSGraph()
+                .graphId(TEST_GRAPH_ID)
+                .description(TEST_GRAPH_DESCRIPTION)
+                .url(TEST_GRAPH_URL)
+                .status(TEST_GRAPH_STATUS)
+                .problems(TEST_GRAPH_PROBLEMS);
+        final List<GaaSGraph> graphList = new ArrayList<>();
+        graphList.add(graph);
+        when(gafferClient.listUserCreatedGaffers("myUser")).thenReturn(graphList);
+
+        final List<GaaSGraph> actual = getGafferService.getUserCreatedGraphs("myUser");
+
+        assertEquals(TEST_GRAPH_ID, actual.get(0).getGraphId());
+        assertEquals(TEST_GRAPH_DESCRIPTION, actual.get(0).getDescription());
+        assertEquals(TEST_GRAPH_URL, actual.get(0).getUrl());
+        assertEquals(TEST_GRAPH_STATUS, actual.get(0).getStatus());
+        assertEquals(TEST_GRAPH_PROBLEMS, actual.get(0).getProblems());
+        assertEquals(1, actual.size());
+    }
+
+    @Test
     void testGetGraphs_whenGraphRequestIsEmpty() throws GaaSRestApiException {
         when(meterRegistry.counter(anyString(), ArgumentMatchers.<String>any())).thenReturn(mockCounter);
         final List<GaaSGraph> graphList = new ArrayList<>();
