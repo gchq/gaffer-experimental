@@ -30,7 +30,6 @@ public class SidecarApplication {
     public static void main(final String[] args) {
 
         SpringApplication.run(SidecarApplication.class, args);
-        BasicConfigurator.configure();
     }
 
 }
