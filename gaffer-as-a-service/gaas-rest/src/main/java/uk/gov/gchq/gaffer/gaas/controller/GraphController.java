@@ -60,6 +60,8 @@ import java.util.regex.Pattern;
 @RestController
 public class GraphController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphController.class);
+
     @Autowired
     private ApiClient apiClient;
     @Autowired

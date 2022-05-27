@@ -27,10 +27,10 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1Status;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
@@ -39,11 +39,9 @@ import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
@@ -53,7 +51,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 public class DeploymentHandler {
 
 
-    private static final Logger LOGGER = Logger.getLogger(DeploymentHandler.class);
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DeploymentHandler.class);
 
     private final String workerNamespace;
 
@@ -88,13 +86,13 @@ public class DeploymentHandler {
                 coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
                 LOGGER.info("Install Pod deployment successful");
             } catch (final ApiException e) {
-                LOGGER.info("Failed to create worker pod");
+                LOGGER.error("Failed to create worker pod", e);
                 throw e;
             }
 
 
         } catch (final ApiException e) {
-            LOGGER.info("Failed to create Gaffer");
+            LOGGER.error("Failed to create Gaffer", e);
             throw e;
         }
 
@@ -108,6 +106,7 @@ public class DeploymentHandler {
         String secretName = gaffer.getSpec().getNestedObject("graph", "config", "graphId").toString();
         if (secretName == null) {
             // This would be really weird, and we'd want to know about it.
+            LOGGER.error("A secret was generated without a name. Unable to proceed");
             throw new ApiException("A secret was generated without a name. Unable to proceed");
         }
         gaffer.metaData(new V1ObjectMeta()
@@ -150,12 +149,12 @@ public class DeploymentHandler {
             if (secretsToDelete.isEmpty() & configMapList.isEmpty() & deploymentList.isEmpty()) {
                 //If all 3 are empty it means the gaffer which the user is trying to delete does not exist therefore
                 //we return false
-                LOGGER.debug(String.format("No deployments of %s to delete", gaffer));
+                LOGGER.error("No deployments of {} to delete", gaffer);
                 return false;
             }
 
         } catch (KubernetesClientException e) {
-            LOGGER.debug(String.format("Failed to delete deployments of %s", gaffer));
+            LOGGER.error("Failed to delete deployments of {}", gaffer);
             throw new ApiException(e.getCode(), e.getMessage());
         }
         cleanUpGafferDeploymentAfterTearDown(gaffer, workerNamespace);
@@ -210,7 +209,7 @@ public class DeploymentHandler {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
             return listAllGraphs(kubernetesClient, getAPIDeployments(deploymentList));
         } catch (Exception e) {
-            LOGGER.debug("Failed to list all Gaffers.");
+            LOGGER.error("Failed to list all Gaffers.", e);
             throw new ApiException(e.getLocalizedMessage());
         }
     }
@@ -255,16 +254,16 @@ public class DeploymentHandler {
         final String hdfsLabelSelector = "app.kubernetes.io/name=hdfs," + gafferLabelSelector;
         final String zookeeperLabelSelector = "app=zookeeper,release=" + gafferName;
 
-        LOGGER.debug("Removing any workers working on this gaffer deployment");
+        LOGGER.info("Removing any workers working on this gaffer deployment");
         deleteCollectionNamespacePod(gafferNamespace, workerLabelSelector);
 
-        LOGGER.debug("Removing HDFS PVCs");
+        LOGGER.info("Removing HDFS PVCs");
         deleteCollectionNamespacePersistentVolumeClaimWithHDFsLabelSelector(gafferNamespace, hdfsLabelSelector);
 
-        LOGGER.debug("Removing Zookeeper PVCs");
+        LOGGER.info("Removing Zookeeper PVCs");
         deleteCollectionNamespacePersistentVolumeClaimWithZookeeperLabels(gafferNamespace, zookeeperLabelSelector);
 
-        LOGGER.debug("Removing any stranded pods");
+        LOGGER.info("Removing any stranded pods");
         deleteCollectionNamespaceStandardPod(gafferNamespace, gafferLabelSelector);
 
     }
@@ -275,7 +274,7 @@ public class DeploymentHandler {
                 null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, err) -> {
                     if (err == null) {
                         try {
-                            LOGGER.debug("All worker pods have been removed. Removing any attached secrets");
+                            LOGGER.info("All worker pods have been removed. Removing any attached secrets");
                             coreV1Api.deleteCollectionNamespacedSecret(workerNamespace, null, null,
                                     null, null, 0, workerLabelSelector, null,
                                     null, null, null, null, null, null);
@@ -339,7 +338,7 @@ public class DeploymentHandler {
 
                 graphs.add(gaaSGraph);
             } catch (Exception e) {
-                LOGGER.info(gaffer + " could not be retrieved ");
+                LOGGER.error(gaffer + " could not be retrieved ", e);
             }
         }
         return graphs;
