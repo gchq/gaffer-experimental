@@ -55,6 +55,7 @@ import SchemaBuilderDialog from "./schema-builder-dialog";
 import { GaaSApiErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 import DOMPurify from "dompurify";
 import { encode } from "html-entities";
+import DeleteDateSelect from "./deletedate-select";
 interface IState {
     graphId: string;
     graphIdIsValid: boolean;
@@ -77,6 +78,7 @@ interface IState {
     selectedGraphs: string[];
     outcome: AlertType | undefined;
     outcomeMessage: string;
+    deleteDate: string;
 }
 
 const Transition = React.forwardRef((props: TransitionProps & { children?: React.ReactElement<any, any> }) => (
@@ -108,6 +110,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
             selectedGraphs: [],
             outcome: undefined,
             outcomeMessage: "",
+            deleteDate: "",
         };
     }
 
@@ -149,7 +152,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
 
     private async submitNewGraph() {
         //TODO: separate functions
-        const { graphId, description, storeType, graphs, selectedGraphs } = this.state;
+        const { graphId, description, storeType, graphs, selectedGraphs, deleteDate } = this.state;
 
         let config: ICreateGraphConfig;
         if (this.currentStoreTypeIsFederated()) {
@@ -177,6 +180,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                     encode(DOMPurify.sanitize(graphId)),
                     encode(DOMPurify.sanitize(description)),
                     storeType,
+                    deleteDate,
                     config
                 );
             } else {
@@ -184,6 +188,7 @@ export default class CreateGraph extends React.Component<{}, IState> {
                     encode(DOMPurify.sanitize(graphId)),
                     encode(DOMPurify.sanitize(description)),
                     storeType,
+                    deleteDate,
                     config
                 );
             }
@@ -352,6 +357,14 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                         onChangeStoreType={(storeType) => {
                                             this.setState({
                                                 storeType,
+                                            });
+                                        }}
+                                    />
+                                    <DeleteDateSelect
+                                        value={this.state.deleteDate}
+                                        onChangeDeleteDate={(deleteDate) => {
+                                            this.setState({
+                                                deleteDate,
                                             });
                                         }}
                                     />

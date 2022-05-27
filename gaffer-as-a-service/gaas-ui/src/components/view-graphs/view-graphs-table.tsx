@@ -85,6 +85,7 @@ export function ViewGraphsTable(props: IProps) {
                                 <TableCell>Status</TableCell>
                                 <TableCell>UI URL</TableCell>
                                 <TableCell>REST URL</TableCell>
+                                <TableCell>Delete Date</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -221,6 +222,17 @@ function MainGraphTableRow(props: IGraphRow) {
                     >
                         {graph.getRestUrl()}
                     </a>
+                </TableCell>
+                <TableCell aria-label={"graph-delete-date"}>
+                    <Avatar
+                        style={{
+                            color: "white",
+                            backgroundColor: "#5A7C81",
+                        }}
+                    >
+                        {" "}
+                        {graph.getDeleteGraph().charAt(0).toUpperCase()}
+                    </Avatar>
                 </TableCell>
                 <TableCell aria-label={"delete-graph"}>
                     <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
