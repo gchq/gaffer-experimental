@@ -18,35 +18,40 @@ import React, { ReactElement } from "react";
 import { Box, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
 interface IProps {
     value: string;
-    onChangeDeleteDate(deleteDate: string): void;
+    onChangeGraphLifetimeInDays(graphLifetimeInDays: string): void;
 }
-export default function DeleteDateSelect(props: IProps): ReactElement {
-    const { value, onChangeDeleteDate } = props;
+export default function GraphLifetimeInDaysSelect(props: IProps): ReactElement {
+    const { value, onChangeGraphLifetimeInDays } = props;
     return (
-        <Grid item xs={12} id={"deletedate-select-grid"} aria-label="delete-date-grid">
-            <FormControl variant="outlined" id={"deletedate-formcontrol"} aria-label="delete-date-input" fullWidth>
+        <Grid item xs={12} id={"graphlifetimeindays-select-grid"} aria-label="graph-lifetime-in-days-grid">
+            <FormControl
+                variant="outlined"
+                id={"graph-lifetime-in-days-formcontrol"}
+                aria-label="graph-lifetime-in-days-input"
+                fullWidth
+            >
                 <InputLabel
-                    aria-label="delete-date-input-label"
+                    aria-label="graph-lifetime-in-days-input-label"
                     style={{ fontSize: "20px" }}
-                    htmlFor={"deletedate-select"}
-                    id={"deletedate-select-label"}
+                    htmlFor={"graphlifetimeindays-select"}
+                    id={"graphlifetimeindays-select-label"}
                 >
-                    Delete Date
+                    Graph Lifetime In Days
                 </InputLabel>
                 <Box my={1} />
                 <Select
                     inputProps={{
-                        name: "Delete Date",
-                        id: "delete-date-input",
-                        "aria-label": "delete-date-input",
+                        name: "Graph Lifetime In Days",
+                        id: "graph-lifetime-in-days-input",
+                        "aria-label": "graph-lifetime-in-days-input",
                     }}
-                    labelId="deletedate-select-label"
-                    id="deletedate-select"
-                    aria-label="delete-date-select"
+                    labelId="graphlifetimeindays-select-label"
+                    id="graphlifetimeindays-select"
+                    aria-label="graphlifetimeindays-select"
                     fullWidth
                     value={value}
                     onChange={(event) => {
-                        onChangeDeleteDate(event.target.value as string);
+                        onChangeGraphLifetimeInDays(event.target.value as string);
                     }}
                 >
                     <MenuItem
@@ -63,7 +68,7 @@ export default function DeleteDateSelect(props: IProps): ReactElement {
                         id={"20-menu-item"}
                         aria-labelledby={"20-select-label"}
                     >
-                        10
+                        20
                     </MenuItem>
                     <MenuItem
                         value={"30"}
@@ -79,10 +84,10 @@ export default function DeleteDateSelect(props: IProps): ReactElement {
                         id={"never-menu-item"}
                         aria-labelledby={"never-select-label"}
                     >
-                        NEVER
+                        never
                     </MenuItem>
                 </Select>
-                <FormHelperText id="deletedate-form-helper"></FormHelperText>
+                <FormHelperText id="graphlifetimeindays-form-helper"></FormHelperText>
             </FormControl>
         </Grid>
     );

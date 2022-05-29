@@ -23,7 +23,7 @@ export class CreateStoreTypesGraphRepo {
         graphId: string,
         description: string,
         configName: string,
-        deleteGraph: string,
+        graphLifetimeInDays: string,
         config: ICreateGraphConfig
     ): Promise<void> {
         if (config.schema === undefined) {
@@ -33,7 +33,7 @@ export class CreateStoreTypesGraphRepo {
             graphId: graphId,
             description: description,
             configName: configName,
-            deleteGraph: deleteGraph,
+            graphLifetimeInDays: graphLifetimeInDays,
             schema: config.schema,
         };
         await new RestClient()

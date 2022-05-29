@@ -143,9 +143,9 @@ public class GraphController {
     }
 
     private void addDeleteGraphLabel(final GaaSCreateRequestBody requestBody) {
-        if (requestBody.getDeleteGraph() != null &&  !requestBody.getDeleteGraph().isEmpty() && !requestBody.getDeleteGraph().toLowerCase().equals("never")) {
+        if (requestBody.getGraphLifetimeInDays() != null &&  !requestBody.getGraphLifetimeInDays().isEmpty() && !requestBody.getGraphLifetimeInDays().toLowerCase().equals("never")) {
             LocalDateTime currentTime = LocalDateTime.now();
-            long deleteGraphDays = new Long(requestBody.getDeleteGraph());
+            long deleteGraphDays = new Long(requestBody.getGraphLifetimeInDays());
             String deleteGraph = currentTime.plusDays(deleteGraphDays).toString();
             String newDeleteGraph = deleteGraph.toLowerCase().replaceAll(":", "_");
             logger.info("labels.deleteGraph time: {}", newDeleteGraph);

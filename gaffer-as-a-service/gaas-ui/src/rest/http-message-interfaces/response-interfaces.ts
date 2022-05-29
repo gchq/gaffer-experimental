@@ -21,7 +21,7 @@ export interface IGraphByIdResponse {
     restUrl: string;
     status: "UP" | "DOWN";
     configName: string;
-    deleteGraph: string;
+    graphLifetimeInDays: string;
 }
 
 export interface IAllGraphsResponse {

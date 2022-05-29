@@ -85,7 +85,7 @@ export function ViewGraphsTable(props: IProps) {
                                 <TableCell>Status</TableCell>
                                 <TableCell>UI URL</TableCell>
                                 <TableCell>REST URL</TableCell>
-                                <TableCell>Delete Date</TableCell>
+                                <TableCell>Graph Lifetime In Days</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -223,7 +223,7 @@ function MainGraphTableRow(props: IGraphRow) {
                         {graph.getRestUrl()}
                     </a>
                 </TableCell>
-                <TableCell aria-label={"graph-delete-date"}>
+                <TableCell aria-label={"graph-lifetim-iIn-days"}>
                     <Avatar
                         style={{
                             color: "white",
@@ -231,7 +231,7 @@ function MainGraphTableRow(props: IGraphRow) {
                         }}
                     >
                         {" "}
-                        {graph.getDeleteGraph().charAt(0).toUpperCase()}
+                        {graph.getGraphLifetimeInDays().charAt(0).toUpperCase()}
                     </Avatar>
                 </TableCell>
                 <TableCell aria-label={"delete-graph"}>

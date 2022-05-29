@@ -24,7 +24,7 @@ export class CreateFederatedGraphRepo {
         graphId: string,
         description: string,
         configName: string,
-        deleteGraph: string,
+        graphLifetimeInDays: string,
         config: ICreateGraphConfig
     ): Promise<void> {
         if (config.proxySubGraphs === undefined) {
@@ -34,7 +34,7 @@ export class CreateFederatedGraphRepo {
             graphId: graphId,
             description: description,
             configName: configName,
-            deleteGraph: deleteGraph,
+            graphLifetimeInDays: graphLifetimeInDays,
             proxySubGraphs: config.proxySubGraphs,
         };
         await new RestClient()

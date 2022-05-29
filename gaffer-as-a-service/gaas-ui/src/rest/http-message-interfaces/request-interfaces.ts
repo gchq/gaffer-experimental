@@ -25,12 +25,12 @@ export interface ICreateGraphRequestBody extends ICreateGraphInterface {
         types: object;
     };
     configName: string;
-    deleteGraph: string;
+    graphLifetimeInDays: string;
 }
 export interface ICreateFederatedGraphRequestBody extends ICreateGraphInterface {
     proxySubGraphs: Array<{ graphId: string; host: string; root: string }>;
     configName: string;
-    deleteGraph: string;
+    graphLifetimeInDays: string;
 }
 export interface ICreateProxyGraphRequestBody extends ICreateGraphInterface {
     proxyContextRoot: string;

@@ -48,8 +48,9 @@ public class GaaSCreateRequestBody {
     @JsonProperty("proxySubGraphs")
     private List<ProxySubGraph> proxySubGraphs;
 
-    @JsonProperty("deleteGraph")
-    private String deleteGraph;
+    @JsonProperty("graphLifetimeInDays")
+    @NotBlank(message = "GraphLifetimeInDays should not be empty")
+    private String graphLifetimeInDays;
 
     public GaaSCreateRequestBody() {
     }
@@ -91,8 +92,8 @@ public class GaaSCreateRequestBody {
         return proxySubGraphs;
     }
 
-    public String getDeleteGraph() {
-        return deleteGraph;
+    public String getGraphLifetimeInDays() {
+        return graphLifetimeInDays;
     }
 
     public boolean isFederatedStoreRequest() {
