@@ -285,8 +285,8 @@ public class DeploymentHandler {
                 List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("app.kubernetes.io/instance", graphId).list().getItems();
                 if (!deploymentList.isEmpty()) {
                     for (final Deployment deployment : deploymentList) {
-                        String expireDate = deployment.getMetadata().getLabels().get("expireDate").toLowerCase().replaceAll("_", ":");
-                        gaaSGraph.expiredDate(expireDate);
+                        String graphAutoDestroyDate = deployment.getMetadata().getLabels().get("graphAutoDestroyDate").toLowerCase().replaceAll("_", ":");
+                        gaaSGraph.graphAutoDestroyDate(graphAutoDestroyDate);
                     }
                 }
 

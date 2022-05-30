@@ -23,7 +23,7 @@ export class Graph {
     private readonly restUrl: string;
     private readonly status: "UP" | "DOWN";
     private readonly configName: string;
-    private readonly graphLifetimeInDays: string;
+    private readonly graphAutoDestroyDate: string;
     private readonly type: GraphType;
 
     constructor(
@@ -33,7 +33,7 @@ export class Graph {
         restUrl: string,
         status: "UP" | "DOWN",
         configName: string,
-        graphLifetimeInDays: string,
+        graphAutoDestroyDate: string,
         type: GraphType
     ) {
         this.graphId = graphId;
@@ -42,7 +42,7 @@ export class Graph {
         this.restUrl = restUrl;
         this.status = status;
         this.configName = configName;
-        this.graphLifetimeInDays = graphLifetimeInDays;
+        this.graphAutoDestroyDate = graphAutoDestroyDate;
         this.type = type;
     }
 
@@ -66,8 +66,8 @@ export class Graph {
         return this.configName;
     }
 
-    public getGraphLifetimeInDays(): string {
-        return this.graphLifetimeInDays;
+    public getGraphAutoDestroyDate(): string {
+        return this.graphAutoDestroyDate;
     }
 
     public getType(): GraphType {

@@ -68,7 +68,7 @@ public class GaaSGraph {
         return this;
     }
 
-    public GaaSGraph expiredDate(final String expiredDate) {
+    public GaaSGraph graphAutoDestroyDate(final String expiredDate) {
         this.graphAutoDestroyDate = expiredDate;
         return this;
     }
