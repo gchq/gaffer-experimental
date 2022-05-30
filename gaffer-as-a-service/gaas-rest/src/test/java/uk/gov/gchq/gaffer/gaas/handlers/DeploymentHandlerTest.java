@@ -164,7 +164,7 @@ class DeploymentHandlerTest {
         labels.put("app.kubernetes.io/instance", "test");
 
         HashMap<String, String> data = new HashMap<>();
-        data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");
+        data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"graphLifetimeInDays\":\"10\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");
 
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());

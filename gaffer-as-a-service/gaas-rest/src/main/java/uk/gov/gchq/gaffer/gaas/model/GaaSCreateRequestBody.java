@@ -55,20 +55,21 @@ public class GaaSCreateRequestBody {
     public GaaSCreateRequestBody() {
     }
 
-    private GaaSCreateRequestBody(final String graphId, final String description, final String configName) {
+    private GaaSCreateRequestBody(final String graphId, final String description, final String configName, final String graphLifetimeInDays) {
         this.graphId = graphId;
         this.description = description;
         this.configName = configName;
+        this.graphLifetimeInDays = graphLifetimeInDays;
     }
 
-    public GaaSCreateRequestBody(final String graphId, final String description, final Map<String, Object> schema, final String configName) {
-        this(graphId, description, configName);
+    public GaaSCreateRequestBody(final String graphId, final String description, final Map<String, Object> schema, final String configName, final String graphLifetimeInDays) {
+        this(graphId, description, configName, graphLifetimeInDays);
         this.schema = schema;
     }
 
     // Federated Store Request Body Constructor
-    public GaaSCreateRequestBody(final String graphId, final String description, final String configName, final List<ProxySubGraph> proxySubGraphs) {
-        this(graphId, description, configName);
+    public GaaSCreateRequestBody(final String graphId, final String description, final String configName, final String graphLifetimeInDays, final List<ProxySubGraph> proxySubGraphs) {
+        this(graphId, description, configName, graphLifetimeInDays);
         this.proxySubGraphs = proxySubGraphs;
     }
 

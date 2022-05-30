@@ -95,7 +95,9 @@ class GraphControllerTest extends AbstractTest {
                 .url("my-graph-namespace.apps.k8s.cluster/ui")
                 .restUrl("my-graph-namespace.apps.k8s.cluster/rest")
                 .configName("mapStore")
-                .status(RestApiStatus.UP);
+                .status(RestApiStatus.UP)
+                .graphAutoDestroyDate("2022-06-09t15:55:34.006");
+
         final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
         gaaSGraphs.add(graph);
         when(getGafferService.getAllGraphs()).thenReturn(gaaSGraphs);
@@ -105,7 +107,7 @@ class GraphControllerTest extends AbstractTest {
                 .header("Authorization", token))
                 .andReturn();
 
-        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\"}]}";
+        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"2022-06-09t15:55:34.006\"}]}";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
@@ -113,7 +115,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_whenSuccessful_shouldReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore");
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore", "10");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -129,7 +131,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_whenGraphIdIsNull_shouldReturn400() throws Exception {
-        final String graphRequest = "{\"description\":\"password\",\"configName\":\"accumuloStore\"}";
+        final String graphRequest = "{\"description\":\"password\",\"configName\":\"accumuloStore\",\"graphLifetimeInDays\":\"10\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -157,7 +159,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_whenGraphIdHasDashes_isValidAndShouldReturn201() throws Exception {
-        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"graph-with-dash\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\",\"graphLifetimeInDays\":\"10\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -171,7 +173,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_graphIdWithSpecialCharacters_isInvalidAndShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"a description\",\"configName\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"a description\",\"configName\":\"accumuloStore\",\"graphLifetimeInDays\":\"10\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -185,7 +187,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_whenGraphIdHasCapitalLetters_shouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\",\"graphLifetimeInDays\":\"10\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -199,7 +201,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_whenDescriptionIsEmptyOnly_return400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"configName\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"" + TEST_GRAPH_ID + "\",\"description\":\"\",\"configName\":\"accumuloStore\",\"graphLifetimeInDays\":\"10\"}";
 
         final MvcResult response = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -239,7 +241,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_hasSameGraphIdAsExistingOne_shouldReturn409() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore");
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore", "10");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doThrow(new GaaSRestApiException("This graph", "already exists", 409)).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
@@ -296,7 +298,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_shouldRequestAnAccumuloStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore");
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "accumuloStore", "10");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -312,7 +314,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_shouldRequestAMapStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore", "10");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -328,7 +330,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_shouldRequestAProxyStoreAndReturn201() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "proxy");
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "proxy", "10");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doNothing().when(createGraphService).createGraph(gaaSCreateRequestBody);
 
@@ -345,7 +347,8 @@ class GraphControllerTest extends AbstractTest {
     void createGraph_shouldReturn400BadRequestWhenStoreTypeIsNull() throws Exception {
         final String gaaSCreateRequestBody = "{" +
                 "\"graphId\":\"invalidstoretype\"," +
-                "\"description\":\"any\"" +
+                "\"description\":\"any\"," +
+                "\"graphLifetimeInDays\":\"10\"" +
                 "}";
 
         final MvcResult result = mvc.perform(post("/graphs")
@@ -360,7 +363,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_shouldReturn500BadRequestWhenStoreTypeIsInvalidType() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "invalidStore");
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, getSchema(), "invalidStore", "10");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         doThrow(new RuntimeException("configName is Invalid must be defined Valid Store Types supported are: federatedStore, accumuloStore, proxyStore and mapStore")).when(createGraphService).createGraph(any(GaaSCreateRequestBody.class));
 
@@ -393,7 +396,7 @@ class GraphControllerTest extends AbstractTest {
         doThrow(new GaaSRestApiException("Not Found", "Config not found", 404))
                 .when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description", "federated", Collections.singletonList(subGraph));
+        final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description", "federated", "10", Collections.singletonList(subGraph));
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -409,7 +412,7 @@ class GraphControllerTest extends AbstractTest {
     @Test
     void createFedGraph_shouldCallCreateFedStoreGraphService_whenRequestIsFedStore() throws Exception {
         final ProxySubGraph subGraph = new ProxySubGraph("proxygraph", "localhost:1234", "/rest");
-        final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description", "federated", Collections.singletonList(subGraph));
+        final GaaSCreateRequestBody request = new GaaSCreateRequestBody("fedgraph", "Some description", "federated", "10", Collections.singletonList(subGraph));
         doNothing().when(createFederatedStoreGraphService).createFederatedStore(any(GaaSCreateRequestBody.class));
 
         final MvcResult result = mvc.perform(post("/graphs")
@@ -429,6 +432,7 @@ class GraphControllerTest extends AbstractTest {
                 "\"graphId\":\"graphid\"," +
                 "\"description\":\"Schema and proxies\"," +
                 "\"configName\":\"fedStoreConfig\"," +
+                "\"graphLifetimeInDays\":\"10\"," +
                 "\"proxySubGraphs\":[]," +
                 "\"schema\":{\"types\":{}}" +
                 "}";

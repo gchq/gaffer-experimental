@@ -50,7 +50,7 @@ class GraphControllerIT extends AbstractTest {
 
     @Test
     void testAddGraph_WithSchema_Returns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore", "10");
         final Gson gson = new Gson();
         final String inputJson = gson.toJson(gaaSCreateRequestBody);
 
@@ -151,7 +151,7 @@ class GraphControllerIT extends AbstractTest {
 
     @Test
     void testDeleteShouldReturn200AndRemoveDeployment() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore");
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, getSchema(), "mapStore", "10");
         final String inputJson = mapToJson(gaaSCreateRequestBody);
         final MvcResult createGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -186,7 +186,7 @@ class GraphControllerIT extends AbstractTest {
 
     @Test
     void testAddGraphFederatedStoreWithHook_WithSchema_Returns201OnSuccess() throws Exception {
-        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, null, "federated");
+        final GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody(graphName, TEST_GRAPH_DESCRIPTION, null, "federated", "10");
         final Gson gson = new Gson();
         final String inputJson = gson.toJson(gaaSCreateRequestBody);
 
