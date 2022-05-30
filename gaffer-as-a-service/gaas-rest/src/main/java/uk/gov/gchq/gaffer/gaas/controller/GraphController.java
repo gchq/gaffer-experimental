@@ -145,11 +145,10 @@ public class GraphController {
     private void addDeleteGraphLabel(final GaaSCreateRequestBody requestBody) {
         if (requestBody.getGraphLifetimeInDays() != null &&  !requestBody.getGraphLifetimeInDays().isEmpty() && !requestBody.getGraphLifetimeInDays().toLowerCase().equals("never")) {
             LocalDateTime currentTime = LocalDateTime.now();
-            long deleteGraphDays = new Long(requestBody.getGraphLifetimeInDays());
-            String deleteGraph = currentTime.plusDays(deleteGraphDays).toString();
-            String newDeleteGraph = deleteGraph.toLowerCase().replaceAll(":", "_");
-            logger.info("labels.deleteGraph time: {}", newDeleteGraph);
-            helmValuesOverridesHandler.addOverride("labels.deleteGraph", newDeleteGraph);
+            long graphLifetimeInDays = new Long(requestBody.getGraphLifetimeInDays());
+            String graphAutoDestroyDate = currentTime.plusDays(graphLifetimeInDays).toString();
+            logger.info("labels.graphAutoDestroyDate time: {}", graphAutoDestroyDate);
+            helmValuesOverridesHandler.addOverride("labels.graphAutoDestroyDate", graphAutoDestroyDate.toLowerCase().replaceAll(":", "_"));
         }
     }
 }

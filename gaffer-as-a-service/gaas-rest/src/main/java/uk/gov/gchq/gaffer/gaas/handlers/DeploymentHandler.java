@@ -166,13 +166,13 @@ public class DeploymentHandler {
     public List<GaaSGraph> getDeployments(final KubernetesClient kubernetesClient) throws ApiException {
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
-            List<String> apiDeployments = new ArrayList<>();
+            List<String> graphIds = new ArrayList<>();
             for (final Deployment deployment : deploymentList) {
                 if (deployment.getMetadata().getName().contains(GAFFER_NAME_SUFFIX)) {
-                    apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
+                    graphIds.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
                 }
             }
-            return listAllGraphs(kubernetesClient, apiDeployments);
+            return listAllGraphs(kubernetesClient, graphIds);
         } catch (Exception e) {
             LOGGER.debug("Failed to list all Gaffers.");
             throw new ApiException(e.getLocalizedMessage());
@@ -262,29 +262,37 @@ public class DeploymentHandler {
                 });
     }
 
-    private List<GaaSGraph> listAllGraphs(final KubernetesClient kubernetesClient, final List<String> apiDeployments) {
+    private List<GaaSGraph> listAllGraphs(final KubernetesClient kubernetesClient, final List<String> graphIds) {
         List<GaaSGraph> graphs = new ArrayList<>();
-        for (final String gaffer : apiDeployments) {
+        for (final String graphId : graphIds) {
             try {
                 GaaSGraph gaaSGraph = new GaaSGraph();
-                gaaSGraph.graphId(gaffer);
-                Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
+                gaaSGraph.graphId(graphId);
+                Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(graphId + "-gaffer-graph-config").get().getData().values();
                 gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
                 if (getValueOfConfig(graphConfig, "configName") != null) {
                     gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
                 }
-                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
+                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(graphId + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
                 if (availableReplicas >= 1) {
                     gaaSGraph.status(RestApiStatus.UP);
                 } else {
                     gaaSGraph.status(RestApiStatus.DOWN);
                 }
-                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
-                gaaSGraph.restUrl("https://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/rest");
+                gaaSGraph.url("http://" + graphId + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
+                gaaSGraph.restUrl("https://" + graphId + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/rest");
+
+                List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("app.kubernetes.io/instance", graphId).list().getItems();
+                if (!deploymentList.isEmpty()) {
+                    for (final Deployment deployment : deploymentList) {
+                        String expireDate = deployment.getMetadata().getLabels().get("expireDate").toLowerCase().replaceAll("_", ":");
+                        gaaSGraph.expiredDate(expireDate);
+                    }
+                }
 
                 graphs.add(gaaSGraph);
             } catch (Exception e) {
-                LOGGER.info(gaffer + " could not be retrieved ");
+                LOGGER.info(graphId + " could not be retrieved ");
             }
         }
         return graphs;
