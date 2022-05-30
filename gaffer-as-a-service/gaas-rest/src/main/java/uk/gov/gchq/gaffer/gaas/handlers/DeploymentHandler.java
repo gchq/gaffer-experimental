@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.handlers;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.kubernetes.client.openapi.ApiException;
@@ -39,9 +40,13 @@ import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
@@ -97,6 +102,25 @@ public class DeploymentHandler {
         }
 
         return true;
+    }
+
+    public boolean addGraphCollaborator(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd) {
+        try {
+            // Scales Deployment to 2 replicas
+            updateDeploymentLabels(gaffer+"-gaffer-api", kubernetesClient, usernameToAdd);
+            updateDeploymentLabels(gaffer+"-gaffer-ui", kubernetesClient, usernameToAdd);
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Failed to add collaborator.", e);
+            return false;
+        }
+    }
+
+    private void updateDeploymentLabels(final String deploymentName, final KubernetesClient kubernetesClient, final String usernameToAdd) {
+        kubernetesClient.apps().deployments().inNamespace(NAMESPACE)
+                .withName(deploymentName).edit(
+                d -> new DeploymentBuilder(d).editOrNewMetadata().addToLabels("collaborator/" + usernameToAdd, usernameToAdd).endMetadata().build()
+        );
     }
 
     @NotNull
