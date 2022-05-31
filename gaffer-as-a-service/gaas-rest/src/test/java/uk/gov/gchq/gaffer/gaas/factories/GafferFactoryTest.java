@@ -18,7 +18,6 @@ package uk.gov.gchq.gaffer.gaas.factories;
 
 import com.google.gson.Gson;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
@@ -31,6 +30,7 @@ import uk.gov.gchq.gaffer.proxystore.operation.handler.GetProxyUrlHandler;
 import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclaration;
 import uk.gov.gchq.gaffer.store.operation.declaration.OperationDeclarations;
 
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;

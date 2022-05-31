@@ -17,6 +17,7 @@
 package uk.gov.gchq.gaffer.gaas;
 
 import com.google.gson.Gson;
+import io.fabric8.mockwebserver.DefaultMockServer;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

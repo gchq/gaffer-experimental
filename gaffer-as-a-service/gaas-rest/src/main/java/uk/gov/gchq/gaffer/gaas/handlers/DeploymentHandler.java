@@ -29,7 +29,6 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1Status;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
@@ -42,6 +41,7 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -108,8 +108,8 @@ public class DeploymentHandler {
     public boolean addGraphCollaborator(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd) throws ApiException {
         try {
             // Scales Deployment to 2 replicas
-            updateDeploymentLabels(gaffer+"-gaffer-api", kubernetesClient, usernameToAdd);
-            updateDeploymentLabels(gaffer+"-gaffer-ui", kubernetesClient, usernameToAdd);
+            updateDeploymentLabels(gaffer + "-gaffer-api", kubernetesClient, usernameToAdd);
+            updateDeploymentLabels(gaffer + "-gaffer-ui", kubernetesClient, usernameToAdd);
             return true;
         } catch (KubernetesClientException e) {
             LOGGER.error("Failed to add collaborator.", e);

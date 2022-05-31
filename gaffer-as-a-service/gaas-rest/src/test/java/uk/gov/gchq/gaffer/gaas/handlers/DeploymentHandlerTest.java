@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.handlers;
 
+import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentList;
@@ -322,7 +323,7 @@ class DeploymentHandlerTest {
 
         assertEquals("someUser",kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().get("collaborator/someUser"));
     }
-
+    
 
     private Gaffer getGaffer() {
         GafferSpec gafferSpec = new GafferSpec();
