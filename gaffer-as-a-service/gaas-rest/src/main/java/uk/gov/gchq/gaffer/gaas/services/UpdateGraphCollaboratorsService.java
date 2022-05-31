@@ -28,4 +28,7 @@ public class UpdateGraphCollaboratorsService {
     public boolean updateCollaborators(final GaaSAddCollaboratorRequestBody requestBody) {
         return gafferClient.addCollaborator(requestBody);
     }
+    public boolean updateCollaboratorsWithUsername(final GaaSAddCollaboratorRequestBody requestBody, final String username) {
+        return gafferClient.addCollaboratorWithUsername(requestBody, username);
+    }
 }

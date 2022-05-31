@@ -515,11 +515,28 @@ class GraphControllerTest extends AbstractTest {
         final MvcResult result = mvc.perform(post("/addCollaborator")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
-                .header("username", "myUser")
+                .header("username", "test@test.com")
                 .content(request))
                 .andReturn();
         assertEquals(202, result.getResponse().getStatus());
         verify(updateGraphCollaboratorsService, times(1)).updateCollaborators(any(GaaSAddCollaboratorRequestBody.class));
+
+    }
+    @Test
+    void addCollaborator_shouldCallUpdateGraphCollaboratorWithUsernameService_andReturn202_whenSuccess() throws Exception {
+        final String request = "{" +
+                "\"graphId\":\"mygraph\"," +
+                "\"collaborator\":\"someUser\"" +
+                "}";
+        when(updateGraphCollaboratorsService.updateCollaboratorsWithUsername(any(GaaSAddCollaboratorRequestBody.class), any())).thenReturn(true);
+        final MvcResult result = mvc.perform(post("/addCollaborator")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "someUser")
+                .content(request))
+                .andReturn();
+        assertEquals(202, result.getResponse().getStatus());
+        verify(updateGraphCollaboratorsService, times(1)).updateCollaboratorsWithUsername(any(GaaSAddCollaboratorRequestBody.class), any());
 
     }
 

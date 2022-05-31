@@ -41,4 +41,14 @@ public class UpdateGraphCollaboratorServiceTest {
 
         assertTrue(actual);
     }
+
+    @Test
+    void shouldReturnTrueWhenAddingCollaboratorWithUsernameSuccessful() {
+        GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("myGraph", "myUser");
+        when(gafferClient.addCollaboratorWithUsername(gaaSAddCollaboratorRequestBody, "myUser")).thenReturn(true);
+
+        final boolean actual = updateGraphCollaboratorsService.updateCollaboratorsWithUsername(gaaSAddCollaboratorRequestBody, "myUser");
+
+        assertTrue(actual);
+    }
 }

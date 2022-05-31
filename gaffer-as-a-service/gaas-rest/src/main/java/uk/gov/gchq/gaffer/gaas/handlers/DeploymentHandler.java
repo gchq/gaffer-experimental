@@ -104,10 +104,23 @@ public class DeploymentHandler {
 
     public boolean addGraphCollaborator(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd) throws ApiException {
         try {
-            // Scales Deployment to 2 replicas
             updateDeploymentLabels(gaffer + "-gaffer-api", kubernetesClient, usernameToAdd);
             updateDeploymentLabels(gaffer + "-gaffer-ui", kubernetesClient, usernameToAdd);
             return true;
+        } catch (KubernetesClientException e) {
+            LOGGER.error("Failed to add collaborator.", e);
+            throw new ApiException(e.getCode(), e.getMessage());
+        }
+    }
+
+    public boolean addGraphCollaboratorWithUsername(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd, final String username) throws ApiException {
+        try {
+            if(kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer+"-gaffer-api").get().getMetadata().getLabels().get("creator").equals(username)){
+                updateDeploymentLabels(gaffer + "-gaffer-api", kubernetesClient, usernameToAdd);
+                updateDeploymentLabels(gaffer + "-gaffer-ui", kubernetesClient, usernameToAdd);
+                return true;
+            }
+            return false;
         } catch (KubernetesClientException e) {
             LOGGER.error("Failed to add collaborator.", e);
             throw new ApiException(e.getCode(), e.getMessage());

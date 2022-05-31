@@ -116,9 +116,16 @@ public class GraphController {
 
     @PostMapping(path = "/addCollaborator", produces = "application/json")
     public ResponseEntity<?> addCollaborator(@RequestBody final GaaSAddCollaboratorRequestBody requestBody, @RequestHeader final HttpHeaders headers) {
-        if (updateGraphCollaboratorsService.updateCollaborators(requestBody)) {
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        if(isAdmin(headers.getFirst("username"))){
+            if (updateGraphCollaboratorsService.updateCollaborators(requestBody)) {
+                return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            }
+        }else{
+            if(updateGraphCollaboratorsService.updateCollaboratorsWithUsername(requestBody, emailStripper(headers.getFirst("username")))){
+                return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            }
         }
+
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
