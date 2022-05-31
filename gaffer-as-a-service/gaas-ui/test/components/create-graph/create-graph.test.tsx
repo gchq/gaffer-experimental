@@ -113,6 +113,7 @@ describe("CreateGraph UI component", () => {
                     "http://resoucename-namespace.host-name/rest",
                     "UP",
                     "mapStore",
+                    "2022-06-09t15:55:34.006",
                     GraphType.GAAS_GRAPH
                 ),
             ]);

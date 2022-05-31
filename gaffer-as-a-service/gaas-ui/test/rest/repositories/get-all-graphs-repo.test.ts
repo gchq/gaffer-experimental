@@ -37,6 +37,7 @@ describe("Get All Graphs Repo", () => {
                     url: "roadTraffic URL",
                     restUrl: "roadTraffic URL rest",
                     configName: "mapStore",
+                    graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                     status: "UP",
                 },
                 {
@@ -45,6 +46,7 @@ describe("Get All Graphs Repo", () => {
                     url: "basicGraph URL",
                     restUrl: "basicGraph URL rest",
                     configName: "mapStore",
+                    graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                     status: "UP",
                 },
             ],
@@ -61,6 +63,7 @@ describe("Get All Graphs Repo", () => {
                 "roadTraffic URL rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
             new Graph(
@@ -70,6 +73,7 @@ describe("Get All Graphs Repo", () => {
                 "basicGraph URL rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ];
@@ -85,6 +89,7 @@ describe("Get All Graphs Repo", () => {
                     url: "streetTraffic URL",
                     restUrl: "streetTraffic URL rest",
                     configName: "accumuloStore",
+                    graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                     status: "UP",
                 },
             ],
@@ -101,6 +106,7 @@ describe("Get All Graphs Repo", () => {
                 "streetTraffic URL rest",
                 "UP",
                 "accumuloStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ];

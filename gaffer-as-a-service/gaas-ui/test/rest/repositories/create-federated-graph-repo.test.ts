@@ -31,11 +31,12 @@ describe("Create Graph Repo", () => {
                 graphId: "fed-store",
                 description: "a description",
                 configName: "federated",
+                graphLifetimeInDays: "10",
             };
             mock.onPost("/graphs", request).reply(201);
 
             await expect(
-                repo.create("fed-store", "a description", "federated", {
+                repo.create("fed-store", "a description", "federated", "10", {
                     proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                 })
             ).resolves.toEqual(undefined);
@@ -45,7 +46,7 @@ describe("Create Graph Repo", () => {
     describe("Null checks", () => {
         it("Should throw an error when configName is Federated and proxyStores is undefined", async () => {
             const config = {};
-            await expect(repo.create("bad-request-graph", "a description", "federated", config)).rejects.toEqual(
+            await expect(repo.create("bad-request-graph", "a description", "federated", "10", config)).rejects.toEqual(
                 new Error("Proxy Stores is undefined")
             );
         });
@@ -57,11 +58,12 @@ describe("Create Graph Repo", () => {
                     graphId: "bad-request-graph",
                     description: "a description",
                     configName: "federated",
+                    graphLifetimeInDays: "10",
                 };
                 mock.onPost("/graphs", request).reply(400);
 
                 await expect(
-                    repo.create("bad-request-graph", "a description", "federated", {
+                    repo.create("bad-request-graph", "a description", "federated", "10",{
                         proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                     })
                 ).rejects.toEqual(new APIError("Error Code 400", "Bad Request"));
@@ -73,11 +75,12 @@ describe("Create Graph Repo", () => {
                     graphId: "forbidden-graph",
                     description: "a description",
                     configName: "federated",
+                    graphLifetimeInDays: "10",
                 };
                 mock.onPost("/graphs", request).reply(403, { title: "Forbidden", detail: "Kubernetes access denied" });
 
                 await expect(
-                    repo.create("forbidden-graph", "a description", "federated", {
+                    repo.create("forbidden-graph", "a description", "federated", "10" {
                         proxySubGraphs: [{ graphId: "test-graph", host: "test.graph.host", root: "/rest" }],
                     })
                 ).rejects.toEqual(new APIError("Forbidden", "Kubernetes access denied"));

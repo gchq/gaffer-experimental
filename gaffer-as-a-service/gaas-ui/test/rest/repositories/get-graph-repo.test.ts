@@ -33,6 +33,7 @@ describe("Get Graph By Id Repo", () => {
             url: "graph-1 URL",
             restUrl: "graph-1 URL rest",
             configName: "mapStore",
+            graphAutoDestroyDate: "2022-06-09t15:55:34.006",
             status: "UP",
         };
         mock.onGet("/graphs/graph-1").reply(200, apiResponse);
@@ -46,6 +47,7 @@ describe("Get Graph By Id Repo", () => {
             "graph-1 URL rest",
             "UP",
             "mapStore",
+            "2022-06-09t15:55:34.006",
             GraphType.GAAS_GRAPH
         );
         expect(actual).toEqual(expected);
