@@ -115,7 +115,7 @@ public class DeploymentHandler {
 
     public boolean addGraphCollaboratorWithUsername(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd, final String username) throws ApiException {
         try {
-            if(kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer+"-gaffer-api").get().getMetadata().getLabels().get("creator").equals(username)){
+            if (kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-api").get().getMetadata().getLabels().get("creator").equals(username)) {
                 updateDeploymentLabels(gaffer + "-gaffer-api", kubernetesClient, usernameToAdd);
                 updateDeploymentLabels(gaffer + "-gaffer-ui", kubernetesClient, usernameToAdd);
                 return true;
