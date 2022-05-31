@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas;
 
 import com.google.gson.Gson;
-import io.fabric8.mockwebserver.DefaultMockServer;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 

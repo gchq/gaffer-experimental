@@ -114,11 +114,11 @@ public class GraphController {
         return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
-    @PostMapping(path="/addCollaborator", produces = "application/json")
-    public ResponseEntity<?> addCollaborator(@RequestBody final GaaSAddCollaboratorRequestBody requestBody, @RequestHeader final HttpHeaders headers){
-        if(updateGraphCollaboratorsService.updateCollaborators(requestBody)){
+    @PostMapping(path = "/addCollaborator", produces = "application/json")
+    public ResponseEntity<?> addCollaborator(@RequestBody final GaaSAddCollaboratorRequestBody requestBody, @RequestHeader final HttpHeaders headers) {
+        if (updateGraphCollaboratorsService.updateCollaborators(requestBody)) {
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
-        };
+        }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

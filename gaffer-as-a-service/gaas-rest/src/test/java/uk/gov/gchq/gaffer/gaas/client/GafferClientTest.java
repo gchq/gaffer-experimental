@@ -87,7 +87,7 @@ class GafferClientTest {
         assertEquals("Failed to create Gaffer as it is null", exception.getTitle());
     }
 
-//create Gaffer with name
+    //create Gaffer with name
     @Test
     void createGraph_ShouldThrowGaaSRestApiException_WhenFailsToCreateGaffer() throws ApiException {
         GafferSpec gafferSpec = new GafferSpec();
@@ -160,7 +160,7 @@ class GafferClientTest {
     @Test
     void addCollaborator_shouldReturnTrueWhenSuccess() throws ApiException {
         GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("mygraph", "myUser");
-        when(deploymentHandler.addGraphCollaborator(any(),any(),any())).thenReturn(true);
+        when(deploymentHandler.addGraphCollaborator(any(), any(), any())).thenReturn(true);
         assertTrue(gafferClient.addCollaborator(gaaSAddCollaboratorRequestBody));
     }
 

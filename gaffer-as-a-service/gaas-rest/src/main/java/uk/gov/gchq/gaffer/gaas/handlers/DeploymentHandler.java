@@ -17,7 +17,6 @@
 package uk.gov.gchq.gaffer.gaas.handlers;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
-import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
@@ -44,9 +43,7 @@ import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAME_LABEL;
