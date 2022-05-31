@@ -321,6 +321,8 @@ class DeploymentHandlerTest {
         handler.addGraphCollaborator("test", kubernetesClient, "someUser");
 
         assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().get("collaborator/someUser"));
+        assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().get("collaborator/someUser"));
+
     }
 
 
