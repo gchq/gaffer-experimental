@@ -17,6 +17,7 @@
 package uk.gov.gchq.gaffer.gaas.handlers;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
@@ -104,22 +105,22 @@ public class DeploymentHandler {
         return true;
     }
 
-    public boolean addGraphCollaborator(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd) {
+    public boolean addGraphCollaborator(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd) throws ApiException {
         try {
             // Scales Deployment to 2 replicas
             updateDeploymentLabels(gaffer+"-gaffer-api", kubernetesClient, usernameToAdd);
             updateDeploymentLabels(gaffer+"-gaffer-ui", kubernetesClient, usernameToAdd);
             return true;
-        } catch (Exception e) {
+        } catch (KubernetesClientException e) {
             LOGGER.error("Failed to add collaborator.", e);
-            return false;
+            throw new ApiException(e.getCode(), e.getMessage());
         }
     }
 
     private void updateDeploymentLabels(final String deploymentName, final KubernetesClient kubernetesClient, final String usernameToAdd) {
         kubernetesClient.apps().deployments().inNamespace(NAMESPACE)
                 .withName(deploymentName).edit(
-                d -> new DeploymentBuilder(d).editOrNewMetadata().addToLabels("collaborator/" + usernameToAdd, usernameToAdd).endMetadata().build()
+                d -> new DeploymentBuilder(d).editMetadata().addToLabels("collaborator/" + usernameToAdd, usernameToAdd).endMetadata().build()
         );
     }
 

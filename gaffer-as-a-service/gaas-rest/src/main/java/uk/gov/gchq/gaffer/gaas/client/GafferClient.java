@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
+import uk.gov.gchq.gaffer.gaas.model.GaaSAddCollaboratorRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
@@ -55,10 +56,20 @@ public class GafferClient {
             if (requestBody == null || requestBody.getMetadata() == null) {
                 LOGGER.error("Failed to create Gaffer \"\". Error: ", e);
             } else {
-                LOGGER.error("Failed to create Gaffer with name {}. Error: ",  requestBody.getMetadata().getName(), e);
+                LOGGER.error("Failed to create Gaffer with name {}. Error: ", requestBody.getMetadata().getName(), e);
             }
             throw from(e);
         }
+    }
+
+    public boolean addCollaborator(final GaaSAddCollaboratorRequestBody requestBody) {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.addGraphCollaborator(requestBody.getGraphId(), kubernetesClient, requestBody.getCollaborator());
+        } catch (ApiException e) {
+            //
+        }
+        return false;
     }
 
     public List<GaaSGraph> listAllGaffers() throws GaaSRestApiException {

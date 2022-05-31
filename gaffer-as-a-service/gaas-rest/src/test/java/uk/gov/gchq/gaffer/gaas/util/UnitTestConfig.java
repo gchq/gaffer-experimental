@@ -34,6 +34,7 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+import uk.gov.gchq.gaffer.gaas.services.UpdateGraphCollaboratorsService;
 
 import static org.mockito.Mockito.mock;
 
@@ -91,6 +92,11 @@ public class UnitTestConfig {
     @Bean
     public GetGaaSGraphConfigsService getStoreTypesService() {
         return new GetGaaSGraphConfigsService();
+    }
+
+    @Bean
+    public UpdateGraphCollaboratorsService updateGraphCollaboratorsService() {
+        return new UpdateGraphCollaboratorsService();
     }
 
     @Bean

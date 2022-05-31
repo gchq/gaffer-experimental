@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
+import uk.gov.gchq.gaffer.gaas.model.GaaSAddCollaboratorRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
@@ -35,6 +36,7 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+import uk.gov.gchq.gaffer.gaas.services.UpdateGraphCollaboratorsService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,6 +67,8 @@ class GraphControllerTest extends AbstractTest {
     private CreateFederatedStoreGraphService createFederatedStoreGraphService;
     @MockBean
     private DeleteGraphService deleteGraphService;
+    @MockBean
+    private UpdateGraphCollaboratorsService updateGraphCollaboratorsService;
     @MockBean
     private GetNamespacesService getNamespacesService;
     @MockBean
@@ -499,6 +503,24 @@ class GraphControllerTest extends AbstractTest {
 
         assertEquals(201, result.getResponse().getStatus());
         verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
+    }
+
+    @Test
+    void addCollaborator_shouldCallUpdateGraphCollaboratorService_andReturn202_whenSuccess() throws Exception {
+        final String request = "{" +
+                "\"graphId\":\"mygraph\"," +
+                "\"collaborator\":\"someUser\"" +
+                "}";
+        when(updateGraphCollaboratorsService.updateCollaborators(any(GaaSAddCollaboratorRequestBody.class))).thenReturn(true);
+        final MvcResult result = mvc.perform(post("/addCollaborator")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "myUser")
+                .content(request))
+                .andReturn();
+        assertEquals(202, result.getResponse().getStatus());
+        verify(updateGraphCollaboratorsService, times(1)).updateCollaborators(any(GaaSAddCollaboratorRequestBody.class));
+
     }
 
     private LinkedHashMap<String, Object> getSchema() {
