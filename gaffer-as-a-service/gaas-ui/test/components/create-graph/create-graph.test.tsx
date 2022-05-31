@@ -58,7 +58,7 @@ afterEach(() => {
 
 describe("CreateGraph UI component", () => {
     describe("Layout On Render", () => {
-        it("Should have a Graph Id, Description, Store Type dropdown inputs", () => {
+        it("Should have a Graph Id, Description, Store Type dropdown inputs, Graph Lifetime In Days dropdown inputs", () => {
             const textfield = wrapper.find("input");
             expect(textfield.at(0).props().name).toBe("Graph ID");
 
@@ -67,6 +67,9 @@ describe("CreateGraph UI component", () => {
 
             const select = wrapper.find("div#storetype-select-grid");
             expect(select.text()).toBe("Store Type​​");
+
+            const selectGraphLifeTime = wrapper.find("div#graphlifetimeindays-select-grid");
+            expect(selectGraphLifeTime.text()).toBe("Graph Lifetime In Days​​");
         });
         it("should have icon button", () => {
             const fileButton = wrapper.find("button").at(1).find("svg");
@@ -286,6 +289,8 @@ describe("CreateGraph UI component", () => {
             mockGetGraphStatus("UP");
             selectStoreType(wrapper, "federated");
             await wrapper.update();
+            selectGraphLifeTime(wrapper, "10");
+            await wrapper.update();
 
             await mockGetGraphStatus("UP");
             await mockGetGraphId("graphid");
@@ -299,7 +304,7 @@ describe("CreateGraph UI component", () => {
                 proxySubGraphs: [{ graphId: "graphid", host: "resoucename-namespace.host-name", root: "/rest" }],
             };
             expect(wrapper.find("div#notification-alert").text()).toBe("okgraph was successfully added");
-            expect(mock).toHaveBeenLastCalledWith("okgraph", "test", "federated", expectedConfig);
+            expect(mock).toHaveBeenLastCalledWith("okgraph", "test", "federated", "10", expectedConfig);
         });
         it("Should call CreateGraphRepo with Federated Store Graph request params and display success message even if getGraphId and getDescription throws exception", async () => {
             const mock = jest.fn();
@@ -309,6 +314,8 @@ describe("CreateGraph UI component", () => {
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
             selectStoreType(wrapper, "federated");
+            await wrapper.update();
+            selectGraphLifeTime(wrapper, "10");
             await wrapper.update();
 
             await mockGetGraphStatus("UP");
@@ -324,7 +331,7 @@ describe("CreateGraph UI component", () => {
                 proxySubGraphs: [{ graphId: "n/a", host: "resoucename-namespace.host-name", root: "/rest" }],
             };
             expect(wrapper.find("div#notification-alert").text()).toBe("okgraph was successfully added");
-            expect(mock).toHaveBeenLastCalledWith("okgraph", "test", "federated", expectedConfig);
+            expect(mock).toHaveBeenLastCalledWith("okgraph", "test", "federated", "10", expectedConfig);
         });
     });
     describe("When Map Store Is Selected", () => {
@@ -336,6 +343,8 @@ describe("CreateGraph UI component", () => {
             inputDescription("Mappy description");
             selectStoreType(wrapper, "mapStore");
             await wrapper.update();
+            selectGraphLifeTime(wrapper, "10");
+            await wrapper.update();
             inputElements(elementsString);
             inputTypes(typesAsString);
 
@@ -344,7 +353,13 @@ describe("CreateGraph UI component", () => {
             const expectedConfig: ICreateGraphConfig = {
                 schema: { entities: entities, edges: edges, types: typesAsObject },
             };
-            expect(mock).toHaveBeenLastCalledWith("mapstoregraph", "Mappy description", "mapStore", expectedConfig);
+            expect(mock).toHaveBeenLastCalledWith(
+                "mapstoregraph",
+                "Mappy description",
+                "mapStore",
+                "10",
+                expectedConfig
+            );
             expect(wrapper.find("div#notification-alert").text()).toBe("mapstoregraph was successfully added");
         });
     });
@@ -356,6 +371,7 @@ describe("CreateGraph UI component", () => {
             inputGraphId("accumulograph");
             inputDescription("None");
             selectStoreType(wrapper, "accumulo");
+            selectGraphLifeTime(wrapper, "10");
             await wrapper.update();
             inputElements(elementsString);
             inputTypes(typesAsString);
@@ -365,7 +381,7 @@ describe("CreateGraph UI component", () => {
             const expectedConfig: ICreateGraphConfig = {
                 schema: { entities: entities, edges: edges, types: typesAsObject },
             };
-            expect(mock).toHaveBeenLastCalledWith("accumulograph", "None", "accumulo", expectedConfig);
+            expect(mock).toHaveBeenLastCalledWith("accumulograph", "None", "accumulo", "10", expectedConfig);
             expect(wrapper.find("div#notification-alert").text()).toBe("accumulograph was successfully added");
         });
     });
@@ -407,6 +423,7 @@ describe("CreateGraph UI component", () => {
             inputTypes(typesAsString);
 
             selectStoreType(wrapper, "mapStore");
+            selectGraphLifeTime(wrapper, "10");
 
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(false);
         });
@@ -417,7 +434,7 @@ describe("CreateGraph UI component", () => {
             inputTypes(typesAsString);
 
             selectStoreType(wrapper, "accumulo");
-
+            selectGraphLifeTime(wrapper, "10");
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(false);
         });
         it("Should be disabled when federated selected and no proxy stores added", async () => {
@@ -466,6 +483,7 @@ describe("CreateGraph UI component", () => {
             inputGraphId("G");
             inputDescription("test");
             selectStoreType(wrapper, "accumulo");
+            selectGraphLifeTime(wrapper, "10");
             inputElements("invalid: json");
             inputTypes(typesAsString);
 
@@ -487,6 +505,7 @@ describe("CreateGraph UI component", () => {
             mockCreateStoreTypesGraphRepoWithFunction(() => {});
             inputGraphId("okgraph");
             inputDescription("test");
+            selectGraphLifeTime(wrapper, "10");
             inputElements(elementsString);
             inputTypes(typesAsString);
 
@@ -519,6 +538,17 @@ async function selectStoreType(component: ReactWrapper, storeType: string) {
             .find("input")
             .simulate("change", {
                 target: { value: storeType },
+            });
+    });
+}
+
+async function selectGraphLifeTime(component: ReactWrapper, graphLifetimeInDays: string) {
+    await act(async () => {
+        component
+            .find("div#graph-lifetime-in-days-formcontrol")
+            .find("input")
+            .simulate("change", {
+                target: { value: graphLifetimeInDays },
             });
     });
 }
