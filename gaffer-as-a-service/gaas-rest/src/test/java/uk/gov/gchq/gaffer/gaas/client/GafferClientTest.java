@@ -126,6 +126,19 @@ class GafferClientTest {
 
         assertEquals(graphs, gaaSGraphs);
     }
+    @Test
+    void getGraphsWithUsername_ShouldReturnEmptyWhenNoGraphsExists() throws GaaSRestApiException {
+
+        List<GaaSGraph> graphs = new ArrayList<>();
+        try {
+            when(deploymentHandler.getDeploymentsByUsername(kubernetesClient, "myUser")).thenReturn(graphs);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        List<GaaSGraph> gaaSGraphs = gafferClient.listUserCreatedGaffers("myUser");
+
+        assertEquals(graphs, gaaSGraphs);
+    }
 
     @Test
     void testGetAllNameSpaces_ShouldReturnMockedNamesSpaceResponse() throws ApiException, GaaSRestApiException {
@@ -168,6 +181,19 @@ class GafferClientTest {
         GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("mygraph", "myUser");
         when(deploymentHandler.addGraphCollaboratorWithUsername(any(), any(), any(), any())).thenReturn(true);
         assertTrue(gafferClient.addCollaboratorWithUsername(gaaSAddCollaboratorRequestBody, "someUser"));
+    }
+
+    @Test
+    void addCollaboratorWithUsername_shouldThrowGaaSRestApiExceptionWhenError() throws ApiException, GaaSRestApiException {
+        GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("mygraph", "myUser");
+        when(deploymentHandler.addGraphCollaboratorWithUsername(any(), any(), any(), any())).thenThrow(new ApiException("Failed to add collaborator label"));
+        assertThrows(GaaSRestApiException.class,() -> gafferClient.addCollaboratorWithUsername(gaaSAddCollaboratorRequestBody, "someUser"));
+    }
+    @Test
+    void addCollaborator_shouldThrowGaaSRestApiExceptionWhenError() throws ApiException, GaaSRestApiException {
+        GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("mygraph", "myUser");
+        when(deploymentHandler.addGraphCollaborator(any(), any(), any())).thenThrow(new ApiException("Failed to add collaborator label"));
+        assertThrows(GaaSRestApiException.class,() -> gafferClient.addCollaborator(gaaSAddCollaboratorRequestBody));
     }
 
     @Ignore
