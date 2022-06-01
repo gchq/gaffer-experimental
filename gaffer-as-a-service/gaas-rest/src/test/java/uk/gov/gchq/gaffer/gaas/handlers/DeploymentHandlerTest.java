@@ -162,6 +162,7 @@ class DeploymentHandlerTest {
 
         HashMap<String, String> labels = new HashMap<>();
         labels.put("app.kubernetes.io/instance", "test");
+        labels.put("graphAutoDestroyDate", "");
 
         HashMap<String, String> data = new HashMap<>();
         data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"graphLifetimeInDays\":\"10\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");

@@ -24,6 +24,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import uk.gov.gchq.gaffer.gaas.client.graph.GraphAutoDestroy;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
@@ -62,5 +63,10 @@ public class AppConfig {
     @Bean
     public HelmValuesOverridesHandler helmValuesOverrides() {
         return new HelmValuesOverridesHandler();
+    }
+
+    @Bean
+    public GraphAutoDestroy graphAutoDestroy() throws IOException {
+        return new GraphAutoDestroy();
     }
 }
