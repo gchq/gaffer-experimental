@@ -205,6 +205,48 @@ class DeploymentHandlerTest {
     }
 
     @Test
+    void shouldReturnOnlyUserCreatedDeploymentsAndCollaboratorGraphsWhenGetDeploymentsByUsernameCalled() throws ApiException {
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+
+        HashMap<String, String> labels = new HashMap<>();
+        labels.put("app.kubernetes.io/instance", "test");
+
+        HashMap<String, String> usernameLabels = new HashMap<>();
+        usernameLabels.put("app.kubernetes.io/instance", "test2");
+        usernameLabels.put("creator", "myUser");
+
+        HashMap<String, String> collaboratorLabels = new HashMap<>();
+        collaboratorLabels.put("app.kubernetes.io/instance", "test2");
+        collaboratorLabels.put("creator", "someOtherUser");
+        collaboratorLabels.put("collaborator/myUser", "myUser");
+
+        HashMap<String, String> data = new HashMap<>();
+        data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");
+
+        HashMap<String, String> data2 = new HashMap<>();
+        data2.put("graphConfig.json", "{\"configName\":\"mapStore\",\"description\":\"Test Graph Description\",\"graphId\":\"test2\",\"hooks\":[]}");
+
+        HashMap<String, String> data3 = new HashMap<>();
+        data3.put("graphConfig.json", "{\"configName\":\"mapStore\",\"description\":\"Test Graph Description\",\"graphId\":\"test3\",\"hooks\":[]}");
+
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test2-gaffer-api").withLabels(usernameLabels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test2-gaffer-ui").endMetadata().build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test2-gaffer-graph-config").endMetadata().withData(data2).build());
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test3-gaffer-api").withLabels(collaboratorLabels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test3-gaffer-ui").endMetadata().build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test3-gaffer-graph-config").endMetadata().withData(data3).build());
+
+        assertEquals(2, handler.getDeploymentsByUsername(kubernetesClient, "myUser").size());
+    }
+
+    @Test
     void shouldReturnTrueWhenCreateDeploymentSuccessful() throws ApiException {
         Gaffer gaffer = getGaffer();
 

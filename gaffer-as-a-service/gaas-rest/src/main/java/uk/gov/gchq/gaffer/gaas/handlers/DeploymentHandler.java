@@ -252,6 +252,7 @@ public class DeploymentHandler {
     public List<GaaSGraph> getDeploymentsByUsername(final KubernetesClient kubernetesClient, final String username) throws ApiException {
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("creator", username).list().getItems();
+            deploymentList.addAll(kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("collaborator/" + username, username).list().getItems());
             return listAllGraphs(kubernetesClient, getAPIDeployments(deploymentList));
         } catch (Exception e) {
             LOGGER.debug("Failed to list all Gaffers.");
