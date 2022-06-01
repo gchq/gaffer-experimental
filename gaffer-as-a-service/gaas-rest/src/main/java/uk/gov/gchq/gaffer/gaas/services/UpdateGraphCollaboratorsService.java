@@ -26,7 +26,7 @@ public class UpdateGraphCollaboratorsService {
     @Autowired
     private GafferClient gafferClient;
 
-    public boolean updateCollaborators(final GaaSAddCollaboratorRequestBody requestBody) {
+    public boolean updateCollaborators(final GaaSAddCollaboratorRequestBody requestBody) throws GaaSRestApiException {
         return gafferClient.addCollaborator(requestBody);
     }
     public boolean updateCollaboratorsWithUsername(final GaaSAddCollaboratorRequestBody requestBody, final String username) throws GaaSRestApiException {

@@ -62,14 +62,14 @@ public class GafferClient {
         }
     }
 
-    public boolean addCollaborator(final GaaSAddCollaboratorRequestBody requestBody) {
+    public boolean addCollaborator(final GaaSAddCollaboratorRequestBody requestBody) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
             return deploymentHandler.addGraphCollaborator(requestBody.getGraphId(), kubernetesClient, requestBody.getCollaborator());
         } catch (ApiException e) {
-            //
+            LOGGER.error("Failed to add collaborator label");
+            throw from(e);
         }
-        return false;
     }
 
     public boolean addCollaboratorWithUsername(final GaaSAddCollaboratorRequestBody requestBody, final String username) throws GaaSRestApiException {

@@ -34,7 +34,7 @@ public class UpdateGraphCollaboratorServiceTest {
     private UpdateGraphCollaboratorsService updateGraphCollaboratorsService;
 
     @Test
-    void shouldReturnTrueWhenAddingCollaboratorSuccessful() {
+    void shouldReturnTrueWhenAddingCollaboratorSuccessful() throws GaaSRestApiException {
         GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("myGraph", "myUser");
         when(gafferClient.addCollaborator(gaaSAddCollaboratorRequestBody)).thenReturn(true);
 

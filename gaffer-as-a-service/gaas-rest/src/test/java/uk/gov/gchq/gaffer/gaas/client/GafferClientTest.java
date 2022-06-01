@@ -158,10 +158,16 @@ class GafferClientTest {
     }
 
     @Test
-    void addCollaborator_shouldReturnTrueWhenSuccess() throws ApiException {
+    void addCollaborator_shouldReturnTrueWhenSuccess() throws ApiException, GaaSRestApiException {
         GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("mygraph", "myUser");
         when(deploymentHandler.addGraphCollaborator(any(), any(), any())).thenReturn(true);
         assertTrue(gafferClient.addCollaborator(gaaSAddCollaboratorRequestBody));
+    }
+    @Test
+    void addCollaboratorWithUsername_shouldReturnTrueWhenSuccess() throws ApiException, GaaSRestApiException {
+        GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("mygraph", "myUser");
+        when(deploymentHandler.addGraphCollaboratorWithUsername(any(), any(), any(), any())).thenReturn(true);
+        assertTrue(gafferClient.addCollaboratorWithUsername(gaaSAddCollaboratorRequestBody, "someUser"));
     }
 
     @Ignore
