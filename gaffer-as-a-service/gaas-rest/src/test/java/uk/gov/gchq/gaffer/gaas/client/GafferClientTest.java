@@ -126,6 +126,7 @@ class GafferClientTest {
 
         assertEquals(graphs, gaaSGraphs);
     }
+
     @Test
     void getGraphsWithUsername_ShouldReturnEmptyWhenNoGraphsExists() throws GaaSRestApiException {
 
@@ -176,6 +177,7 @@ class GafferClientTest {
         when(deploymentHandler.addGraphCollaborator(any(), any(), any())).thenReturn(true);
         assertTrue(gafferClient.addCollaborator(gaaSAddCollaboratorRequestBody));
     }
+
     @Test
     void addCollaboratorWithUsername_shouldReturnTrueWhenSuccess() throws ApiException, GaaSRestApiException {
         GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("mygraph", "myUser");
@@ -187,13 +189,14 @@ class GafferClientTest {
     void addCollaboratorWithUsername_shouldThrowGaaSRestApiExceptionWhenError() throws ApiException, GaaSRestApiException {
         GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("mygraph", "myUser");
         when(deploymentHandler.addGraphCollaboratorWithUsername(any(), any(), any(), any())).thenThrow(new ApiException("Failed to add collaborator label"));
-        assertThrows(GaaSRestApiException.class,() -> gafferClient.addCollaboratorWithUsername(gaaSAddCollaboratorRequestBody, "someUser"));
+        assertThrows(GaaSRestApiException.class, () -> gafferClient.addCollaboratorWithUsername(gaaSAddCollaboratorRequestBody, "someUser"));
     }
+
     @Test
     void addCollaborator_shouldThrowGaaSRestApiExceptionWhenError() throws ApiException, GaaSRestApiException {
         GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("mygraph", "myUser");
         when(deploymentHandler.addGraphCollaborator(any(), any(), any())).thenThrow(new ApiException("Failed to add collaborator label"));
-        assertThrows(GaaSRestApiException.class,() -> gafferClient.addCollaborator(gaaSAddCollaboratorRequestBody));
+        assertThrows(GaaSRestApiException.class, () -> gafferClient.addCollaborator(gaaSAddCollaboratorRequestBody));
     }
 
     @Ignore

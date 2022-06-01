@@ -125,7 +125,6 @@ public class GraphController {
                 return new ResponseEntity<>(HttpStatus.ACCEPTED);
             }
         }
-
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
