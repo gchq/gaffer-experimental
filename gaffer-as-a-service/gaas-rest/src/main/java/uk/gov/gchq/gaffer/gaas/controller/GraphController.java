@@ -115,7 +115,7 @@ public class GraphController {
     }
 
     @PostMapping(path = "/addCollaborator", produces = "application/json")
-    public ResponseEntity<?> addCollaborator(@RequestBody final GaaSAddCollaboratorRequestBody requestBody, @RequestHeader final HttpHeaders headers) {
+    public ResponseEntity<?> addCollaborator(@RequestBody final GaaSAddCollaboratorRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         if (isAdmin(headers.getFirst("username"))) {
             if (updateGraphCollaboratorsService.updateCollaborators(requestBody)) {
                 return new ResponseEntity<>(HttpStatus.ACCEPTED);

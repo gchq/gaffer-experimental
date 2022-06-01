@@ -18,6 +18,7 @@ package uk.gov.gchq.gaffer.gaas.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSAddCollaboratorRequestBody;
 
 @Service
@@ -28,7 +29,7 @@ public class UpdateGraphCollaboratorsService {
     public boolean updateCollaborators(final GaaSAddCollaboratorRequestBody requestBody) {
         return gafferClient.addCollaborator(requestBody);
     }
-    public boolean updateCollaboratorsWithUsername(final GaaSAddCollaboratorRequestBody requestBody, final String username) {
+    public boolean updateCollaboratorsWithUsername(final GaaSAddCollaboratorRequestBody requestBody, final String username) throws GaaSRestApiException {
         return gafferClient.addCollaboratorWithUsername(requestBody, username);
     }
 }

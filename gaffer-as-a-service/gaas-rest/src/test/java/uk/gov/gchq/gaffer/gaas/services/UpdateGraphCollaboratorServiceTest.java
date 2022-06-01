@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSAddCollaboratorRequestBody;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 
@@ -43,7 +44,7 @@ public class UpdateGraphCollaboratorServiceTest {
     }
 
     @Test
-    void shouldReturnTrueWhenAddingCollaboratorWithUsernameSuccessful() {
+    void shouldReturnTrueWhenAddingCollaboratorWithUsernameSuccessful() throws GaaSRestApiException {
         GaaSAddCollaboratorRequestBody gaaSAddCollaboratorRequestBody = new GaaSAddCollaboratorRequestBody("myGraph", "myUser");
         when(gafferClient.addCollaboratorWithUsername(gaaSAddCollaboratorRequestBody, "myUser")).thenReturn(true);
 
