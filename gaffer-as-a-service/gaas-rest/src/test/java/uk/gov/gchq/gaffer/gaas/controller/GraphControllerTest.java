@@ -104,7 +104,33 @@ class GraphControllerTest extends AbstractTest {
 
         final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token))
+                .header("Authorization", token)
+                .header("username", "test@test.com"))
+                .andReturn();
+
+        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"2022-06-09t15:55:34.006\"}]}";
+        assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
+        assertEquals(200, getGraphsResponse.getResponse().getStatus());
+    }
+
+    @Test
+    void getGraphsByUsername_ReturnsGraphsAsList_whenSuccessful() throws Exception {
+        final GaaSGraph graph = new GaaSGraph()
+                .graphId(TEST_GRAPH_ID)
+                .description(TEST_GRAPH_DESCRIPTION)
+                .url("my-graph-namespace.apps.k8s.cluster/ui")
+                .restUrl("my-graph-namespace.apps.k8s.cluster/rest")
+                .configName("mapStore")
+                .graphAutoDestroyDate("2022-06-09t15:55:34.006")
+                .status(RestApiStatus.UP);
+        final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
+        gaaSGraphs.add(graph);
+        when(getGafferService.getUserCreatedGraphs("myUser")).thenReturn(gaaSGraphs);
+
+        final MvcResult getGraphsResponse = mvc.perform(get("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "myUser"))
                 .andReturn();
 
         final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"2022-06-09t15:55:34.006\"}]}";
@@ -219,9 +245,24 @@ class GraphControllerTest extends AbstractTest {
 
         final MvcResult result = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token))
+                .header("Authorization", token)
+                .header("username", "test@test.com"))
                 .andReturn();
         verify(deleteGraphService, times(1)).deleteGraph(any(String.class));
+
+        assertEquals(204, result.getResponse().getStatus());
+    }
+
+    @Test
+    void deleteGraphWithUsername_whenGraphExistsAndCanDelete_shouldReturn204() throws Exception {
+        doReturn(true).when(deleteGraphService).deleteGraphByUsername(TEST_GRAPH_ID, "myUser");
+
+        final MvcResult result = mvc.perform(delete("/graphs/" + TEST_GRAPH_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "myUser"))
+                .andReturn();
+        verify(deleteGraphService, times(1)).deleteGraphByUsername(any(String.class), any(String.class));
 
         assertEquals(204, result.getResponse().getStatus());
     }
@@ -232,10 +273,25 @@ class GraphControllerTest extends AbstractTest {
 
         final MvcResult result = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token))
+                .header("Authorization", token)
+                .header("username", "test@test.com"))
                 .andReturn();
 
         verify(deleteGraphService, times(1)).deleteGraph("nonexistentgraphfortestingpurposes");
+        assertEquals(404, result.getResponse().getStatus());
+    }
+
+    @Test
+    void deleteGraphWithUsername_whenGraphNDoesNotExist_return404() throws Exception {
+        doThrow(new GaaSRestApiException("Graph not found", "NotFound", 404)).when(deleteGraphService).deleteGraphByUsername("nonexistentgraphfortestingpurposes", "myUser");
+
+        final MvcResult result = mvc.perform(delete("/graphs/nonexistentgraphfortestingpurposes")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "myUser"))
+                .andReturn();
+
+        verify(deleteGraphService, times(1)).deleteGraphByUsername("nonexistentgraphfortestingpurposes", "myUser");
         assertEquals(404, result.getResponse().getStatus());
     }
 
@@ -384,7 +440,8 @@ class GraphControllerTest extends AbstractTest {
 
         final MvcResult result = mvc.perform(delete("/graphs/nullgraph")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", token))
+                .header("Authorization", token)
+                .header("username", "test@test.com"))
                 .andReturn();
 
         assertEquals(500, result.getResponse().getStatus());

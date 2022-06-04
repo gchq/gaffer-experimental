@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas.sidecar.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -46,12 +48,16 @@ public class SidecarController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    Logger logger = LoggerFactory.getLogger(SidecarController.class);
+
     @PostMapping("/auth")
     public ResponseEntity<String> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
         try {
             final String token = authService.getToken(authenticationRequest);
+            logger.error("Found token = ");
             return ResponseEntity.ok(token);
         } catch (Exception e) {
+            logger.error("Invalid credentials = ");
             return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
@@ -74,6 +80,7 @@ public class SidecarController {
         try {
             username = jwtTokenUtil.getUsernameFromToken(headers.get("Authorization").get(0).substring(7));
         } catch (Exception e) {
+            logger.info("Error resolving Authorization header {}", HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>("Error resolving Authorization header", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(username, HttpStatus.OK);

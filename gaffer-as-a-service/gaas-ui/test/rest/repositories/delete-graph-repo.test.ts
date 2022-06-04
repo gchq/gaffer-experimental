@@ -32,13 +32,13 @@ describe("Delete Graph Repo", () => {
     });
 
     describe("On Error", () => {
-        it("should throw RestApiError with correct 403 Error Code and Message when response body is empty", async () => {
+        it("should throw APIError with correct 403 Error Code and Message when response body is empty", async () => {
             mock.onDelete("/graphs/graph-2").reply(403);
 
             await expect(repo.delete("graph-2")).rejects.toEqual(new APIError("Error Code 403", "Forbidden"));
         });
 
-        it("should throw RestApiError with correct 500 Error Code and Message when response body is empty", async () => {
+        it("should throw APIError with correct 500 Error Code and Message when response body is empty", async () => {
             mock.onDelete("/graphs/graph-2").reply(500);
 
             await expect(repo.delete("graph-2")).rejects.toEqual(
@@ -46,7 +46,7 @@ describe("Delete Graph Repo", () => {
             );
         });
 
-        it("should throw RestApiError with title and detail from response body", async () => {
+        it("should throw APIError with title and detail from response body", async () => {
             mock.onDelete("/graphs/graph-2").reply(500, {
                 title: "ServerError",
                 detail: "There was a server error",
@@ -56,7 +56,7 @@ describe("Delete Graph Repo", () => {
                 new APIError("ServerError", "There was a server error")
             );
         });
-        it("should throw Unknowen RestApiError when no status or response body", async () => {
+        it("should throw Unknowen APIError when no status or response body", async () => {
             mock.onDelete("/graphs/graph-2").reply(0);
 
             await expect(repo.delete("graph-2")).rejects.toEqual(

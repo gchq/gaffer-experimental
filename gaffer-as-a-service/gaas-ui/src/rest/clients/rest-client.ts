@@ -15,7 +15,7 @@
  */
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, Method } from "axios";
 import status from "statuses";
-import { APIError } from "../../../src/rest/APIError";
+import { APIError } from "../APIError";
 import { AuthSidecarClient } from "./auth-sidecar-client";
 
 export interface IApiResponse<T = any> {
@@ -33,13 +33,6 @@ export class RestClient<T> {
 
     public static setEmail(email: string) {
         this.email = email;
-    }
-
-    public static getEmail(): string {
-        if (this.email === undefined) {
-            return "";
-        }
-        return this.email;
     }
 
     private baseURL: string;
@@ -138,23 +131,23 @@ export class RestClient<T> {
             };
             const updatedConfig = AuthSidecarClient.addAttributes(config);
             try {
-                const response: AxiosResponse<any> = await axios(updatedConfig);
+                const response: AxiosResponse = await axios(updatedConfig);
                 return RestClient.convert(response);
             } catch (e) {
-                const error = e as AxiosError<any>;
+                const error = e as AxiosError;
                 throw RestClient.fromError(error);
             }
         },
     });
 
-    private static async convert(response: AxiosResponse<any>): Promise<IApiResponse> {
+    private static async convert(response: AxiosResponse): Promise<IApiResponse> {
         return {
             status: response.status,
             data: response.data,
         };
     }
 
-    public static fromError(e: AxiosError<any>): APIError {
+    public static fromError(e: AxiosError): APIError {
         if (e.response && RestClient.isInstanceOfGafferApiErrorResponseBody(e.response.data)) {
             return new APIError(e.response.data.status, e.response.data.simpleMessage);
         }

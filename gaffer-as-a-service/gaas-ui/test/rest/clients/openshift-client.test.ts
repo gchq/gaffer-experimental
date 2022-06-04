@@ -16,7 +16,6 @@
 
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
-import { RestClient } from "../../../src/rest/clients/rest-client";
 import { OpenshiftClient } from "../../../src/rest/clients/openshift-client";
 
 const mock = new MockAdapter(axios);

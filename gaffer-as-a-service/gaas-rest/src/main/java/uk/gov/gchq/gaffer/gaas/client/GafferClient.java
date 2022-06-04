@@ -53,9 +53,9 @@ public class GafferClient {
             return GraphUrl.from(requestBody);
         } catch (ApiException e) {
             if (requestBody == null || requestBody.getMetadata() == null) {
-                LOGGER.debug("Failed to create Gaffer \"\". Error: ", e);
+                LOGGER.error("Failed to create Gaffer \"\". Error: ", e);
             } else {
-                LOGGER.debug("Failed to create Gaffer with name \"" + requestBody.getMetadata().getName() + "\". Error: ", e);
+                LOGGER.error("Failed to create Gaffer with name {}. Error: ",  requestBody.getMetadata().getName(), e);
             }
             throw from(e);
         }
@@ -66,7 +66,17 @@ public class GafferClient {
         try {
             return deploymentHandler.getDeployments(kubernetesClient);
         } catch (ApiException e) {
-            LOGGER.debug("Failed to list all Gaffers");
+            LOGGER.error("Failed to list all Gaffers", e);
+            throw from(e);
+        }
+    }
+
+    public List<GaaSGraph> listUserCreatedGaffers(final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.getDeploymentsByUsername(kubernetesClient, username);
+        } catch (ApiException e) {
+            LOGGER.debug("Failed to list your owned Gaffers");
             throw from(e);
         }
     }
@@ -75,6 +85,16 @@ public class GafferClient {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
             return deploymentHandler.onGafferDelete(crdName, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to delete Gaffer. Kubernetes client returned Status Code: {}", e.getCode(), e);
+            throw from(e);
+        }
+    }
+
+    public boolean deleteGafferByUsername(final String crdName, final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.onGafferDeleteByUsername(crdName, kubernetesClient, username);
         } catch (ApiException e) {
             LOGGER.debug("Failed to delete CRD. Kubernetes client returned Status Code: " + e.getCode(), e);
             throw from(e);
@@ -88,7 +108,7 @@ public class GafferClient {
                             "true", null, null, null, null, 0, null, null, Integer.MAX_VALUE, Boolean.FALSE);
             return namespacesAsList(v1NamespaceList);
         } catch (ApiException e) {
-            LOGGER.debug("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: " + e.getCode(), e);
+            LOGGER.error("Failed to list all namespaces. Kubernetes CoreV1Api returned Status Code: {}", e.getCode(), e);
             throw from(e);
         }
     }

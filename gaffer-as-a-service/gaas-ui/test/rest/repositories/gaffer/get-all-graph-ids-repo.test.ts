@@ -32,7 +32,7 @@ describe("GetAllGraphIds Graph Operation", () => {
 
         expect(actual).toEqual(["mapEntities", "mapEdges"]);
     });
-    it("should throw RestApiError with correct status message when no response body", async () => {
+    it("should throw APIError with correct status message when no response body", async () => {
         mock.onPost("/graph/operations/execute").reply(500);
 
         await expect(repo.get("https://www.testURL.com/")).rejects.toEqual(
@@ -40,7 +40,7 @@ describe("GetAllGraphIds Graph Operation", () => {
         );
     });
 
-    it("should throw RestApiError with title and detail from response body", async () => {
+    it("should throw APIError with title and detail from response body", async () => {
         mock.onPost("/graph/operations/execute").reply(403, {
             title: "Forbidden",
             detail: "User does not have permission",
@@ -51,7 +51,7 @@ describe("GetAllGraphIds Graph Operation", () => {
         );
     });
 
-    it("should throw unknown RestApiError when undefined status and body", async () => {
+    it("should throw unknown APIError when undefined status and body", async () => {
         mock.onPost("/graph/operations/execute").reply(0);
 
         await expect(repo.get("https://www.testURL.com/")).rejects.toEqual(

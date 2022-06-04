@@ -61,8 +61,6 @@ class GafferClientTest {
     @MockBean
     private DeploymentHandler deploymentHandler;
 
-
-
     @Test
     void createGraph_ShouldReturnGraphUrl() throws GaaSRestApiException {
         GafferSpec gafferSpec = new GafferSpec();

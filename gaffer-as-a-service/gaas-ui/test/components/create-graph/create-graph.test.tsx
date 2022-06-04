@@ -189,7 +189,7 @@ describe("CreateGraph UI component", () => {
             expect(button.props().disabled).toEqual(true);
         });
         it("Should add a graph to the graphs table when a URL is entered and the Add proxy button is clicked", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("Description for this Proxy Graph");
@@ -204,7 +204,7 @@ describe("CreateGraph UI component", () => {
             );
         });
         it("Should not add graph when status is down to the graphs table and display notification", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("DOWN");
             mockGetGraphStatusRepoToThrowError();
@@ -216,7 +216,7 @@ describe("CreateGraph UI component", () => {
             expect(graphTable.text()).not.toContain("http://resoucename-namespace.host-name/rest");
         });
         it("Should select a graph in table", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
@@ -232,7 +232,7 @@ describe("CreateGraph UI component", () => {
             expect(wrapper.find("table").find("input").at(1).props().checked).toBe(false);
         });
         it("Should allow all graphs in the table to be selected when the checkbox in the header is checked", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
@@ -251,7 +251,7 @@ describe("CreateGraph UI component", () => {
             expect(tableInputs.at(2).props().checked).toBe(true);
         });
         it("Should disable the submit graph button when no proxy stores are selected", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             inputGraphId("test");
             inputDescription("test");
@@ -259,7 +259,7 @@ describe("CreateGraph UI component", () => {
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(true);
         });
         it("Should uncheck all graphs in the table when the uncheck all button is clicked", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             mockGetGraphStatus("UP");
             mockGetGraphDescription("AnotherDesc");
@@ -287,7 +287,7 @@ describe("CreateGraph UI component", () => {
             await inputDescription("test");
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             selectGraphLifeTime(wrapper, "10");
             await wrapper.update();
@@ -313,7 +313,7 @@ describe("CreateGraph UI component", () => {
             await inputDescription("test");
             mockGetGraphDescriptionRepoToThrowError();
             mockGetGraphStatus("UP");
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             selectGraphLifeTime(wrapper, "10");
             await wrapper.update();
@@ -341,7 +341,7 @@ describe("CreateGraph UI component", () => {
 
             inputGraphId("mapstoregraph");
             inputDescription("Mappy description");
-            selectStoreType(wrapper, "mapStore");
+            await selectStoreType(wrapper, "mapStore");
             await wrapper.update();
             selectGraphLifeTime(wrapper, "10");
             await wrapper.update();
@@ -438,7 +438,7 @@ describe("CreateGraph UI component", () => {
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(false);
         });
         it("Should be disabled when federated selected and no proxy stores added", async () => {
-            selectStoreType(wrapper, "federated");
+            await selectStoreType(wrapper, "federated");
             await wrapper.update();
             inputGraphId("test");
             inputDescription("test");
@@ -612,16 +612,6 @@ function inputTypes(typesString: string): void {
     expect(wrapper.find("textarea#schema-types-input").props().value).toBe(typesString);
 }
 
-// @ts-ignore
-async function waitForComponentToRender(wrapper: ReactWrapper) {
-    // React forces test to use act(() => {}) when the component state is updated in some cases
-    await act(async () => {
-        await new Promise((resolve) => setTimeout(resolve));
-        wrapper.update();
-        wrapper.update();
-    });
-}
-
 function mockCreateStoreTypesGraphRepoWithFunction(f: () => void): void {
     // @ts-ignore
     CreateStoreTypesGraphRepo.mockImplementationOnce(() => ({
@@ -640,7 +630,7 @@ function mockGetAllGraphsRepoToReturn(graphs: Graph[]): void {
     // @ts-ignore
     GetAllGraphsRepo.mockImplementationOnce(() => ({
         getAll: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(graphs);
             }),
     }));
@@ -657,7 +647,7 @@ function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypes): void {
     // @ts-ignore
     GetStoreTypesRepo.mockImplementationOnce(() => ({
         get: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(storetypes);
             }),
     }));
@@ -667,7 +657,7 @@ function mockGetGraphStatus(status: string): void {
     // @ts-ignore
     GetGraphStatusRepo.mockImplementationOnce(() => ({
         getStatus: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(status);
             }),
     }));
@@ -677,7 +667,7 @@ function mockGetGraphDescription(description: string): void {
     // @ts-ignore
     GetGraphDescriptionRepo.mockImplementationOnce(() => ({
         getDescription: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(description);
             }),
     }));
@@ -687,7 +677,7 @@ function mockGetGraphId(graphId: string): void {
     // @ts-ignore
     GetGraphIdRepo.mockImplementationOnce(() => ({
         getGraphId: () =>
-            new Promise((resolve, reject) => {
+            new Promise((resolve) => {
                 resolve(graphId);
             }),
     }));

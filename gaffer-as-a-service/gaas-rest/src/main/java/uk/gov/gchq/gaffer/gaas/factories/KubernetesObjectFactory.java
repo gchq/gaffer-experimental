@@ -29,17 +29,17 @@ import io.kubernetes.client.openapi.models.V1SecretVolumeSource;
 import io.kubernetes.client.openapi.models.V1Volume;
 import io.kubernetes.client.openapi.models.V1VolumeMount;
 import io.kubernetes.client.util.Yaml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import static uk.gov.gchq.gaffer.gaas.util.Constants.CHART_VERSION;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAAS_LABEL_VALUE;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
@@ -60,6 +60,9 @@ import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_SERVICE_ACCOUNT_NAME
  * Factory class used to create Kubernetes objects
  */
 public class KubernetesObjectFactory implements IKubernetesObjectFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(KubernetesObjectFactory.class);
+
     // Values.yaml constants
     private static final String GAFFER = "gaffer";
 
@@ -177,7 +180,8 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
     private void attachSecret(final V1Pod helmPod, final String secretName) {
         V1PodSpec spec = helmPod.getSpec();
         if (spec == null) {
-            throw new RuntimeException("Pod should have a spec");
+            LOGGER.error("Pod should have a spec: {}", spec);
+            throw new RuntimeException("Pod should have a spec: " + spec);
         }
 
         spec.addVolumesItem(
@@ -218,7 +222,8 @@ public class KubernetesObjectFactory implements IKubernetesObjectFactory {
                         NAMESPACE_ARG, gaffer.getMetadata().getNamespace()
                 );
             default:
-                throw new RuntimeException("Unrecognized command: " + helmCommand);
+                LOGGER.error("Unrecognized helm command: {}", helmCommand);
+                throw new RuntimeException("Unrecognized helm command: " + helmCommand);
         }
     }
 

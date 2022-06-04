@@ -88,13 +88,13 @@ public class DeploymentHandler {
                 coreV1Api.createNamespacedPod(workerNamespace, pod, null, null, null);
                 LOGGER.info("Install Pod deployment successful");
             } catch (final ApiException e) {
-                LOGGER.info("Failed to create worker pod");
+                LOGGER.error("Failed to create worker pod", e);
                 throw e;
             }
 
 
         } catch (final ApiException e) {
-            LOGGER.info("Failed to create Gaffer");
+            LOGGER.error("Failed to create Gaffer", e);
             throw e;
         }
 
@@ -108,6 +108,7 @@ public class DeploymentHandler {
         String secretName = gaffer.getSpec().getNestedObject("graph", "config", "graphId").toString();
         if (secretName == null) {
             // This would be really weird, and we'd want to know about it.
+            LOGGER.error("A secret was generated without a name. Unable to proceed");
             throw new ApiException("A secret was generated without a name. Unable to proceed");
         }
         gaffer.metaData(new V1ObjectMeta()
@@ -150,6 +151,48 @@ public class DeploymentHandler {
             if (secretsToDelete.isEmpty() & configMapList.isEmpty() & deploymentList.isEmpty()) {
                 //If all 3 are empty it means the gaffer which the user is trying to delete does not exist therefore
                 //we return false
+                LOGGER.error("No deployments of {} to delete", gaffer);
+                return false;
+            }
+
+        } catch (KubernetesClientException e) {
+            LOGGER.error("Failed to delete deployments of {}", gaffer);
+            throw new ApiException(e.getCode(), e.getMessage());
+        }
+        cleanUpGafferDeploymentAfterTearDown(gaffer, workerNamespace);
+        return true;
+    }
+
+    public boolean onGafferDeleteByUsername(final String gaffer, final KubernetesClient kubernetesClient, final String username) throws ApiException {
+        try {
+            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("app.kubernetes.io/instance", gaffer).withLabel("creator", username).list().getItems();
+            if (!deploymentList.isEmpty()) {
+                kubernetesClient.apps().deployments().inNamespace(workerNamespace).delete(deploymentList);
+            }
+
+            List<ConfigMap> configMapList = kubernetesClient.configMaps().inNamespace(workerNamespace).withLabel("app.kubernetes.io/instance", gaffer).withLabel("creator", username).list().getItems();
+            if (!configMapList.isEmpty()) {
+                kubernetesClient.configMaps().inNamespace(workerNamespace).delete(configMapList);
+            }
+
+            List<Secret> secrets = kubernetesClient.secrets().inNamespace(workerNamespace).list().getItems();
+            List<Secret> secretsToDelete = new ArrayList<>();
+            for (final Secret secret : secrets) {
+                if (secret.getMetadata().getName().equals(gaffer + "-gaffer-store-properties") || secret.getMetadata().getName().equals(gaffer) || secret.getMetadata().getName().equals("sh.helm.release.v1." + gaffer + ".v1")) {
+                    secretsToDelete.add(secret);
+                }
+            }
+            if (!deploymentList.isEmpty() || !configMapList.isEmpty()) {
+                //The secrets do not have a label associated with them therefore check if there are deployments or configmaps
+                //related to the secrets in order to determine if the user has permissions to delete the secrets
+                if (!secretsToDelete.isEmpty()) {
+                    kubernetesClient.secrets().inNamespace(workerNamespace).delete(secretsToDelete);
+                }
+            }
+
+            if (configMapList.isEmpty() & deploymentList.isEmpty()) {
+                //If all 3 are empty it means the gaffer which the user is trying to delete does not exist therefore
+                //we return false
                 LOGGER.debug(String.format("No deployments of %s to delete", gaffer));
                 return false;
             }
@@ -166,19 +209,32 @@ public class DeploymentHandler {
     public List<GaaSGraph> getDeployments(final KubernetesClient kubernetesClient) throws ApiException {
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).list().getItems();
-            List<String> graphIds = new ArrayList<>();
-            for (final Deployment deployment : deploymentList) {
-                if (deployment.getMetadata().getName().contains(GAFFER_NAME_SUFFIX)) {
-                    graphIds.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
-                }
-            }
-            return listAllGraphs(kubernetesClient, graphIds);
+            return listAllGraphs(kubernetesClient, getAPIDeployments(deploymentList));
+        } catch (Exception e) {
+            LOGGER.error("Failed to list all Gaffers.", e);
+            throw new ApiException(e.getLocalizedMessage());
+        }
+    }
+
+    public List<GaaSGraph> getDeploymentsByUsername(final KubernetesClient kubernetesClient, final String username) throws ApiException {
+        try {
+            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("creator", username).list().getItems();
+            return listAllGraphs(kubernetesClient, getAPIDeployments(deploymentList));
         } catch (Exception e) {
             LOGGER.debug("Failed to list all Gaffers.");
             throw new ApiException(e.getLocalizedMessage());
         }
     }
 
+    private List<String> getAPIDeployments(final List<Deployment> deploymentList) {
+        List<String> apiDeployments = new ArrayList<>();
+        for (final Deployment deployment : deploymentList) {
+            if (deployment.getMetadata().getName().contains(GAFFER_NAME_SUFFIX)) {
+                apiDeployments.add(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"));
+            }
+        }
+        return apiDeployments;
+    }
 
     /**
      * Starts the Uninstallation process for a Gaffer Graph.
@@ -233,16 +289,16 @@ public class DeploymentHandler {
         final String hdfsLabelSelector = "app.kubernetes.io/name=hdfs," + gafferLabelSelector;
         final String zookeeperLabelSelector = "app=zookeeper,release=" + gafferName;
 
-        LOGGER.debug("Removing any workers working on this gaffer deployment");
+        LOGGER.info("Removing any workers working on this gaffer deployment");
         deleteCollectionNamespacePod(gafferNamespace, workerLabelSelector);
 
-        LOGGER.debug("Removing HDFS PVCs");
+        LOGGER.info("Removing HDFS PVCs");
         deleteCollectionNamespacePersistentVolumeClaimWithHDFsLabelSelector(gafferNamespace, hdfsLabelSelector);
 
-        LOGGER.debug("Removing Zookeeper PVCs");
+        LOGGER.info("Removing Zookeeper PVCs");
         deleteCollectionNamespacePersistentVolumeClaimWithZookeeperLabels(gafferNamespace, zookeeperLabelSelector);
 
-        LOGGER.debug("Removing any stranded pods");
+        LOGGER.info("Removing any stranded pods");
         deleteCollectionNamespaceStandardPod(gafferNamespace, gafferLabelSelector);
 
     }
@@ -253,7 +309,7 @@ public class DeploymentHandler {
                 null, null, null, null, null, (SimpleApiCallback<V1Status>) (result, err) -> {
                     if (err == null) {
                         try {
-                            LOGGER.debug("All worker pods have been removed. Removing any attached secrets");
+                            LOGGER.info("All worker pods have been removed. Removing any attached secrets");
                             coreV1Api.deleteCollectionNamespacedSecret(workerNamespace, null, null,
                                     null, null, 0, workerLabelSelector, null,
                                     null, null, null, null, null, null);

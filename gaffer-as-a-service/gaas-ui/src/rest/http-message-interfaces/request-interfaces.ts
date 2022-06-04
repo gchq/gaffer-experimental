@@ -32,8 +32,3 @@ export interface ICreateFederatedGraphRequestBody extends ICreateGraphInterface 
     configName: string;
     graphLifetimeInDays: string;
 }
-export interface ICreateProxyGraphRequestBody extends ICreateGraphInterface {
-    proxyContextRoot: string;
-    proxyHost: string;
-    storeType: string;
-}

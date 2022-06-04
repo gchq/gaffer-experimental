@@ -26,9 +26,6 @@ export class ElementsSchema {
     constructor(elements: string) {
         this.elements = elements;
     }
-    public getElements(): IElementsSchema {
-        return this.elements;
-    }
     public getEntities(): object {
         return ElementsSchema.entities;
     }

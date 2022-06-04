@@ -17,7 +17,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const users = require("./users");
-var cors = require("cors");
+const cors = require("cors");
 
 // app
 const app = express();

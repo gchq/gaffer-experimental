@@ -38,7 +38,7 @@ export class AuthSidecarClient {
         AuthSidecarClient.setToken("");
     }
     public async getWhatAuth(): Promise<IWhatAuthInfo> {
-        var response: AxiosResponse<any>;
+        let response: AxiosResponse;
         try {
             response = await axios({
                 baseURL: Config.REACT_APP_AUTH_ENDPOINT,
@@ -46,17 +46,17 @@ export class AuthSidecarClient {
                 method: "GET",
             });
         } catch (error) {
-            throw RestClient.fromError(error as AxiosError<any>);
+            throw RestClient.fromError(error as AxiosError);
         }
         try {
-            this.validateWhatAuthObject(response.data);
+            AuthSidecarClient.validateWhatAuthObject(response.data);
             AuthSidecarClient.whatAuthObject = response.data;
             return AuthSidecarClient.whatAuthObject;
         } catch (error) {
-            throw error as AxiosError<any>;
+            throw new Error(error as string);
         }
     }
-    private validateWhatAuthObject(data: object) {
+    private static validateWhatAuthObject(data: object) {
         const requiredAttributes: string = ["attributes", "requiredFields", "requiredHeaders"].sort().toString();
         const objectKeys: string = Object.keys(data).sort().toString();
         if (objectKeys === requiredAttributes) {
@@ -73,7 +73,8 @@ export class AuthSidecarClient {
             throw new Error("Invalid Response").message;
         }
     }
-    private convertMapToJson(map: Map<String, String>): object {
+
+    private static convertMapToJson(map: Map<string, string>): object {
         return Object.fromEntries(map);
     }
     public async getWhoAmI(): Promise<string> {
@@ -85,11 +86,11 @@ export class AuthSidecarClient {
         };
         const updatedConfig = AuthSidecarClient.addAttributes(config);
         try {
-            const response: AxiosResponse<any> = await axios(updatedConfig);
+            const response: AxiosResponse = await axios(updatedConfig);
             this.whoami = response.data;
             return response.data;
         } catch (error) {
-            throw error as AxiosError<any>;
+            throw new Error(error as string);
         }
     }
     public async postAuth(data: Map<string, string>) {
@@ -97,25 +98,16 @@ export class AuthSidecarClient {
             baseURL: Config.REACT_APP_AUTH_ENDPOINT,
             url: "/auth",
             method: "POST",
-            data: this.convertMapToJson(data),
+            data: AuthSidecarClient.convertMapToJson(data),
         };
         const updatedConfig = AuthSidecarClient.addAttributes(config);
         try {
-            const response: AxiosResponse<any> = await axios(updatedConfig);
+            const response: AxiosResponse = await axios(updatedConfig);
             AuthSidecarClient.setToken(response.data);
         } catch (error) {
-            throw error as AxiosError<any>;
+            throw new Error(error as string);
         }
     }
-    private static getAuthHeader = () => {
-        const headers = AuthSidecarClient.getRequiredHeaders();
-        Object.entries(headers).forEach(([key, value]) => {
-            if (key === "Authorization") {
-                return value;
-            }
-        });
-        return "";
-    };
     public static setHeaders(): AxiosRequestHeaders {
         const headersToAdd: AxiosRequestHeaders = {};
         const headers = AuthSidecarClient.getRequiredHeaders();
@@ -128,9 +120,8 @@ export class AuthSidecarClient {
         });
         return headersToAdd;
     }
-    public static addAttributes(config: AxiosRequestConfig): AxiosRequestConfig<any> {
+    public static addAttributes(config: AxiosRequestConfig): AxiosRequestConfig {
         const attributes = AuthSidecarClient.getAttributes() as AxiosRequestConfig;
-        const updatedConfig = Object.assign(config, attributes);
-        return updatedConfig;
+        return Object.assign(config, attributes);
     }
 }
