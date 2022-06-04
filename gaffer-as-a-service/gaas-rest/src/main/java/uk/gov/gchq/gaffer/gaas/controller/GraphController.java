@@ -146,8 +146,9 @@ public class GraphController {
         if (requestBody.getGraphLifetimeInDays() != null &&  !requestBody.getGraphLifetimeInDays().isEmpty() && !requestBody.getGraphLifetimeInDays().toLowerCase().equals("never")) {
             LocalDateTime currentTime = LocalDateTime.now();
             long graphLifetimeInDays = new Long(requestBody.getGraphLifetimeInDays());
-            String graphAutoDestroyDate = currentTime.minusMinutes(graphLifetimeInDays).toString();
-            logger.info("labels.graphAutoDestroyDate time: {}", graphAutoDestroyDate);
+            logger.info("graphLifetimeInDays: {}", graphLifetimeInDays);
+            String graphAutoDestroyDate = currentTime.plusDays(graphLifetimeInDays).toString();
+            logger.info("labels.graphAutoDestroyDate : {}", graphAutoDestroyDate);
             helmValuesOverridesHandler.addOverride("labels.graphAutoDestroyDate", graphAutoDestroyDate.toLowerCase().replaceAll(":", "_"));
         }
     }
