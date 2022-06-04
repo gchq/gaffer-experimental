@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas;
 
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.util.ClientBuilder;
@@ -24,12 +26,10 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import uk.gov.gchq.gaffer.gaas.client.graph.GraphAutoDestroy;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
-
 import java.io.IOException;
 
 @Configuration
@@ -66,7 +66,8 @@ public class AppConfig {
     }
 
     @Bean
-    public GraphAutoDestroy graphAutoDestroy() throws IOException {
-        return new GraphAutoDestroy();
+    public KubernetesClient kubernetesClient() {
+        return new DefaultKubernetesClient();
     }
+
 }

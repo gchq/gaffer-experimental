@@ -16,32 +16,29 @@
 
 package uk.gov.gchq.gaffer.gaas.client.graph;
 
-import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
-import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
-import io.fabric8.kubernetes.api.model.apps.DeploymentStatusBuilder;
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.kubernetes.client.openapi.ApiException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
-import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @UnitTest
 @EnableKubernetesMockClient(crud = true)
 class GraphAutoDestroyTest {
 
-    KubernetesClient kubernetesClient;
+    private KubernetesClient kubernetesClient;
 
     @Autowired
-    GraphAutoDestroy graphAutoDestroy;
+    private GraphAutoDestroy graphAutoDestroy;
 
     @MockBean
     private DeploymentHandler deploymentHandler;
@@ -49,45 +46,31 @@ class GraphAutoDestroyTest {
 
     @Test
     void shouldAutoDestroyGraph() throws ApiException, GaaSRestApiException {
+        kubernetesClient = new DefaultKubernetesClient();
         ReflectionTestUtils.setField(graphAutoDestroy, "kubernetesClient", kubernetesClient);
-        HashMap<String, String> labels = new HashMap<>();
-        labels.put("app.kubernetes.io/instance", "test");
-        labels.put("graphAutoDestroyDate", "2022-06-09t15:55:34.006");
-
-        HashMap<String, String> data = new HashMap<>();
-        data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"graphLifetimeInDays\":\"10\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");
-
-        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
-        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
-        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
-
-        graphAutoDestroy.autoDestroyGraph();
-
-
-        assertEquals(0, kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().size());
+        when(deploymentHandler.onAutoGafferDestroy(kubernetesClient)).thenReturn(true);
+        assertEquals(true, graphAutoDestroy.autoDestroyGraph());
     }
 
     @Test
-    void shouldAutoDestroyGraphEmpty() throws ApiException, GaaSRestApiException {
+    void shouldReturnFalseAutoDestroyGraph() throws ApiException, GaaSRestApiException {
+        kubernetesClient = new DefaultKubernetesClient();
         ReflectionTestUtils.setField(graphAutoDestroy, "kubernetesClient", kubernetesClient);
-        HashMap<String, String> labels = new HashMap<>();
-        labels.put("app.kubernetes.io/instance", "test");
-
-        HashMap<String, String> data = new HashMap<>();
-        data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"graphLifetimeInDays\":\"never\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");
-
-        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
-        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
-        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
-
-        graphAutoDestroy.autoDestroyGraph();
-
-
-        assertEquals(2, kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().size());
+        when(deploymentHandler.onAutoGafferDestroy(kubernetesClient)).thenReturn(false);
+        assertEquals(false, graphAutoDestroy.autoDestroyGraph());
     }
 
+    @Test
+    void autoDestroy_ShouldThrowGaaSRestApiException_WhenRequestFails() throws ApiException {
 
+        kubernetesClient = new DefaultKubernetesClient();
+        ReflectionTestUtils.setField(graphAutoDestroy, "kubernetesClient", kubernetesClient);
+        when(deploymentHandler.onAutoGafferDestroy(kubernetesClient))
+                .thenThrow(new ApiException("Failed to delete Gaffer as it is null"));
 
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> graphAutoDestroy.autoDestroyGraph());
 
-
+        assertEquals("Kubernetes Cluster Error: Failed to delete Gaffer as it is null", exception.getMessage());
+    }
 }
+

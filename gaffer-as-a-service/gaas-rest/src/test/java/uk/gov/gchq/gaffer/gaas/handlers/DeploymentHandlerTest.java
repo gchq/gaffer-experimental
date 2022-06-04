@@ -36,11 +36,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.util.TestAppender;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -212,6 +214,58 @@ class DeploymentHandlerTest {
 
         assertNotEquals(deploymentList.getItems().size(), kubernetesClient.apps().deployments().list().getItems().size());
     }
+
+    @Test
+    void shouldAutoDestroyGraph() throws ApiException, GaaSRestApiException {
+        // Given
+        ApiClient client = mock(ApiClient.class);
+        when(client.escapeString(anyString())).thenCallRealMethod();
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        HashMap<String, String> labels = new HashMap<>();
+        labels.put("app.kubernetes.io/instance", "test");
+        labels.put("graphAutoDestroyDate", currentTime.toString());
+
+        HashMap<String, String> data = new HashMap<>();
+        data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"graphLifetimeInDays\":\"10\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");
+
+        kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
+        kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
+        kubernetesClient.configMaps().inNamespace("gaffer-workers").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
+
+        handler.onAutoGafferDestroy(kubernetesClient);
+
+
+        assertEquals(0, kubernetesClient.apps().deployments().inNamespace("gaffer-workers").list().getItems().size());
+    }
+
+    @Test
+    void shouldAutoDestroyGraphEmpty() throws ApiException, GaaSRestApiException {
+        // Given
+        ApiClient client = mock(ApiClient.class);
+        when(client.escapeString(anyString())).thenCallRealMethod();
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        HashMap<String, String> labels = new HashMap<>();
+        labels.put("app.kubernetes.io/instance", "test");
+
+        HashMap<String, String> data = new HashMap<>();
+        data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"graphLifetimeInDays\":\"10\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");
+
+        kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
+        kubernetesClient.apps().deployments().inNamespace("gaffer-workers").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
+        kubernetesClient.configMaps().inNamespace("gaffer-workers").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
+
+        handler.onAutoGafferDestroy(kubernetesClient);
+
+
+        assertEquals(2, kubernetesClient.apps().deployments().inNamespace("gaffer-workers").list().getItems().size());
+    }
+
 
     @Test
     void shouldLogMessagesWhenOnGafferDeleteThrows() {

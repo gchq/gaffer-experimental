@@ -35,8 +35,6 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-
-import java.io.IOException;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
@@ -125,8 +123,9 @@ public class UnitTestConfig {
     public KubernetesClient kubernetesClient() {
         return mock(KubernetesClient.class);
     }
+
     @Bean
-    public GraphAutoDestroy graphAutoDestroy() throws IOException {
+    public GraphAutoDestroy graphAutoDestroy() {
         return new GraphAutoDestroy();
     }
 

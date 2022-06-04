@@ -83,7 +83,7 @@ class CreateFederatedStoreGraphServiceTest {
         gafferSpec.put("federated_config", getMapStoreGafferSpec());
         when(loader.getConfig("/config", "mapStore")).thenReturn(gafferSpec);
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "mapStore","10", proxySubGraphsList)));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "mapStore", "10", proxySubGraphsList)));
 
         assertEquals("Graph is not a federated store", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatusCode());
