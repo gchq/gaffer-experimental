@@ -64,7 +64,7 @@ class GraphControllerIT extends AbstractTest {
 
     @Test
     void testAddGraphNotNullShouldReturn400() throws Exception {
-        final String jsonRequest = "{\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
+        final String jsonRequest = "{\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\" ,\"graphLifetimeInDays\":\"10\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -75,7 +75,7 @@ class GraphControllerIT extends AbstractTest {
 
     @Test
     void testAddGraphWithSameGraphIdShouldReturn409() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
+        final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\" ,\"graphLifetimeInDays\":\"10\"}";
         mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -90,7 +90,7 @@ class GraphControllerIT extends AbstractTest {
 
     @Test
     void getGraphEndpointReturnsGraph() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
+        final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\" ,\"graphLifetimeInDays\":\"10\"}";
         final MvcResult addGraphResponse = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -106,7 +106,7 @@ class GraphControllerIT extends AbstractTest {
 
     @Test
     void testGraphIdWithSpacesShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
+        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\" ,\"graphLifetimeInDays\":\"10\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -118,7 +118,7 @@ class GraphControllerIT extends AbstractTest {
 
     @Test
     void testGraphIdWithSpecialCharactersShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
+        final String graphRequest = "{\"graphId\":\"some!!!!graph@@\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\" ,\"graphLifetimeInDays\":\"10\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -129,7 +129,7 @@ class GraphControllerIT extends AbstractTest {
 
     @Test
     void testGraphIdWitCapitalLettersShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\"}";
+        final String graphRequest = "{\"graphId\":\"SomeGraph\",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"mapStore\" ,\"graphLifetimeInDays\":\"10\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
@@ -140,7 +140,7 @@ class GraphControllerIT extends AbstractTest {
 
     @Test
     void testDescriptionEmptyShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"\",\"configName\":\"mapStore\"}";
+        final String graphRequest = "{\"graphId\":\"" + graphName + "\",\"description\":\"\",\"configName\":\"mapStore\" ,\"graphLifetimeInDays\":\"10\"}";
         final MvcResult mvcResult = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)

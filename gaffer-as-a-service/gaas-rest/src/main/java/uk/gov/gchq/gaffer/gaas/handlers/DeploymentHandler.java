@@ -195,8 +195,7 @@ public class DeploymentHandler {
                     String graphAutoDestroyDate = deployment.getMetadata().getLabels().get("graphAutoDestroyDate").toLowerCase().replaceAll("_", ":");
                     LocalDateTime graphAutoDestroyDateTime = LocalDateTime.parse(graphAutoDestroyDate);
                     LocalDateTime currentTime = LocalDateTime.now();
-                    LocalDateTime fiveMinutesTime = currentTime.minusMinutes(5);
-                    if ((graphAutoDestroyDateTime.isAfter(fiveMinutesTime) && graphAutoDestroyDateTime.isBefore(currentTime)) || graphAutoDestroyDateTime.isEqual(currentTime)) {
+                    if (graphAutoDestroyDateTime.isBefore(currentTime) || graphAutoDestroyDateTime.isEqual(currentTime)) {
                         String graphId = deployment.getMetadata().getLabels().get("app.kubernetes.io/instance");
                         LOGGER.info("Graph to be deleted {} {}", graphId, graphAutoDestroyDateTime);
                         autoDestroy = onGafferDelete(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"), kubernetesClient);
@@ -319,7 +318,7 @@ public class DeploymentHandler {
                 List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("app.kubernetes.io/instance", graphId).list().getItems();
                 if (!deploymentList.isEmpty()) {
                     for (final Deployment deployment : deploymentList) {
-                        if(deployment.getMetadata().getLabels().get("graphAutoDestroyDate") != null){
+                        if (deployment.getMetadata().getLabels().get("graphAutoDestroyDate") != null) {
                             gaaSGraph.graphAutoDestroyDate(deployment.getMetadata().getLabels().get("graphAutoDestroyDate").toLowerCase().replaceAll("_", ":"));
                         }
                         gaaSGraph.graphAutoDestroyDate("");

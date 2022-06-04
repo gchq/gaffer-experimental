@@ -145,7 +145,7 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void createGraph_whenGraphIdHasSpaces_isInvalidAndShouldReturn400() throws Exception {
-        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\"}";
+        final String graphRequest = "{\"graphId\":\"some graph \",\"description\":\"" + TEST_GRAPH_DESCRIPTION + "\",\"configName\":\"accumuloStore\" ,\"graphLifetimeInDays\":\"10\"}";
 
         final MvcResult result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -447,6 +447,24 @@ class GraphControllerTest extends AbstractTest {
 
         assertEquals(201, result.getResponse().getStatus());
         verify(createFederatedStoreGraphService, times(1)).createFederatedStore(any(GaaSCreateRequestBody.class));
+    }
+
+    @Test
+    void createGraph_shouldReturn400BadRequestWhenGraphLifetimeInDaysIsNull() throws Exception {
+        final String gaaSCreateRequestBody = "{" +
+                "\"graphId\":\"emptygraphlifetimeindays\"," +
+                "\"description\":\"any\"," +
+                "\"configName\":\"fedStoreConfig\"" +
+                "}";
+
+        final MvcResult result = mvc.perform(post("/graphs")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .content(gaaSCreateRequestBody)).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"graphLifetimeInDays\\\" should not be empty.\"}";
+        assertEquals(expected, result.getResponse().getContentAsString());
     }
 
     private LinkedHashMap<String, Object> getSchema() {

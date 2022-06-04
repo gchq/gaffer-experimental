@@ -53,7 +53,7 @@ class GraphAutoDestroyTest {
     }
 
     @Test
-    void shouldReturnFalseAutoDestroyGraph() throws ApiException, GaaSRestApiException {
+    void shouldReturnFalseWhenAutoDestroyGraphFails() throws ApiException, GaaSRestApiException {
         kubernetesClient = new DefaultKubernetesClient();
         ReflectionTestUtils.setField(graphAutoDestroy, "kubernetesClient", kubernetesClient);
         when(deploymentHandler.onAutoGafferDestroy(kubernetesClient)).thenReturn(false);
@@ -66,11 +66,11 @@ class GraphAutoDestroyTest {
         kubernetesClient = new DefaultKubernetesClient();
         ReflectionTestUtils.setField(graphAutoDestroy, "kubernetesClient", kubernetesClient);
         when(deploymentHandler.onAutoGafferDestroy(kubernetesClient))
-                .thenThrow(new ApiException("Failed to delete Gaffer as it is null"));
+                .thenThrow(new ApiException("Failed to auto destroy Gaffer"));
 
         final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> graphAutoDestroy.autoDestroyGraph());
 
-        assertEquals("Kubernetes Cluster Error: Failed to delete Gaffer as it is null", exception.getMessage());
+        assertEquals("Kubernetes Cluster Error: Failed to auto destroy Gaffer", exception.getMessage());
     }
 }
 

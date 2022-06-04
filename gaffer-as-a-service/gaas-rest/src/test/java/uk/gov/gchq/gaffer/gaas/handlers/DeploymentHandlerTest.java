@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
@@ -216,7 +215,7 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    void shouldAutoDestroyGraph() throws ApiException, GaaSRestApiException {
+    void shouldAutoDestroyGraph() throws ApiException {
         // Given
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();
@@ -242,7 +241,7 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    void shouldAutoDestroyGraphEmpty() throws ApiException, GaaSRestApiException {
+    void shouldNotAutoDestroyGraphWhenGraphAutoDestroyDateIsEmpty() throws ApiException {
         // Given
         ApiClient client = mock(ApiClient.class);
         when(client.escapeString(anyString())).thenCallRealMethod();

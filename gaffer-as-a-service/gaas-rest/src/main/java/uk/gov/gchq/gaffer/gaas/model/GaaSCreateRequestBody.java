@@ -49,7 +49,7 @@ public class GaaSCreateRequestBody {
     private List<ProxySubGraph> proxySubGraphs;
 
     @JsonProperty("graphLifetimeInDays")
-    @NotBlank(message = "GraphLifetimeInDays should not be empty")
+    @NotNull(message = "\"graphLifetimeInDays\" should not be empty.")
     private String graphLifetimeInDays;
 
     public GaaSCreateRequestBody() {
