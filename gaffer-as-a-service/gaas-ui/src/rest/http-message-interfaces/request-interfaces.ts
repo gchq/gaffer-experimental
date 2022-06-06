@@ -30,3 +30,8 @@ export interface ICreateFederatedGraphRequestBody extends ICreateGraphInterface 
     proxySubGraphs: Array<{ graphId: string; host: string; root: string }>;
     configName: string;
 }
+
+export interface IAddCollaboratorInterface {
+    graphId: string;
+    collaborator: string;
+}

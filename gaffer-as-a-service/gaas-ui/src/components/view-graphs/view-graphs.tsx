@@ -24,6 +24,7 @@ import { Copyright } from "../copyright/copyright";
 import Gauge from "./gauge";
 import { ViewGraphsTable } from "./view-graphs-table";
 import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import { AddCollaboratorRepo } from "../../rest/repositories/add-collaborator-repo";
 
 interface IState {
     graphs: Graph[];
@@ -82,6 +83,18 @@ export default class ViewGraph extends React.Component<{}, IState> {
         } catch (e) {
             this.setState({
                 errorMessage: `Failed to delete graph "${graphName}". ${(e as GaaSAPIErrorResponse).title}: ${
+                    (e as GaaSAPIErrorResponse).detail
+                }`,
+            });
+        }
+    }
+
+    private async addCollaborator(graphId: string) {
+        try {
+            await new AddCollaboratorRepo().addCollaborator(graphId);
+        } catch (e) {
+            this.setState({
+                errorMessage: `Failed to add collaborator "${graphId}". ${(e as GaaSAPIErrorResponse).title}: ${
                     (e as GaaSAPIErrorResponse).detail
                 }`,
             });
@@ -168,6 +181,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                         graphs={this.state.graphs}
                         federatedStores={this.state.federatedStores}
                         deleteGraph={(graphName) => this.deleteGraph(graphName)}
+                        addCollaborator={(graphId) => this.addCollaborator(graphId)}
                         refreshTable={async () => await this.getGraphs()}
                     />
                     <Box pt={4}>
