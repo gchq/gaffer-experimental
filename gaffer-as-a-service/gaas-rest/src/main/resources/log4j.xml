@@ -24,7 +24,7 @@
     </layout>
   </appender>
   <appender name="default.file" class="org.apache.log4j.FileAppender">
-    <param name="file" value="logs/gaas-rest-logs.out"/>
+    <param name="file" value="gaffer-as-a-service/gaas-rest/logs/gaas-rest-logs.out"/>
     <param name="immediateFlush" value="true"/>
     <param name="threshold" value="debug"/>
     <param name="append" value="false"/>
