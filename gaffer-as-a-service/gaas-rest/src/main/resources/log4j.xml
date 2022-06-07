@@ -23,18 +23,18 @@
       <param name="ConversionPattern" value="%c{3} %p %x - %m%n"/>
     </layout>
   </appender>
-  <appender name="default.file" class="org.apache.log4j.FileAppender">
-    <param name="file" value="gaffer-as-a-service/gaas-rest/logs/gaas-rest-logs.out"/>
-    <param name="immediateFlush" value="true"/>
-    <param name="threshold" value="debug"/>
-    <param name="append" value="false"/>
-    <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%c{3} %p %x - %m%n"/>
+  <appender name="DB" class="org.apache.log4j.jdbc.JDBCAppender">
+    <param name="driver" value="com.mysql.jdbc.Driver"/>
+    <param name="URL" value="jdbc:h2:file:./logs/logdb"/>
+    <param name="user" value="sa"/>
+    <param name="password" value="test"/>
+    <param name="sql" value="INSERT INTO LOGS VALUES('%x','%d','%C','%p','%m')"/>
+    <layout class="org.apache.log4j.EnhancedPatternLayout">
     </layout>
   </appender>
   <root>
     <priority value="info"></priority>
     <appender-ref ref="console"></appender-ref>
-    <appender-ref ref="default.file" />
+    <appender-ref ref="DB" />
   </root>
 </log4j:configuration>
