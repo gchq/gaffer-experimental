@@ -55,11 +55,9 @@ export default class AddCollaborator extends React.Component<{}, IState> {
         super(props);
         this.state = {
             graphId: "",
-            collaborator: "",
-            graphIdIsValid: false,
-            graphCollaboratorIsValid: false,
+            username: "",
+            usernameIsValid: false,
             root: "",
-            dialogIsOpen: false,
             outcome: undefined,
             outcomeMessage: "",
         };
