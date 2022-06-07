@@ -33,5 +33,5 @@ export interface ICreateFederatedGraphRequestBody extends ICreateGraphInterface 
 
 export interface IAddCollaboratorInterface {
     graphId: string;
-    collaborator: string;
+    username: string;
 }

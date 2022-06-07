@@ -35,15 +35,13 @@ import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-r
 import DOMPurify from "dompurify";
 import { encode } from "html-entities";
 import { AddCollaboratorRepo } from "../../rest/repositories/add-collaborator-repo";
-import GraphIdCollaboratorInput from "./graph-id-collaborator";
+import GraphIdUsernameInput from "./graph-id-collaborator";
 
 interface IState {
     graphId: string;
-    collaborator: string;
-    graphIdIsValid: boolean;
-    graphCollaboratorIsValid: boolean;
+    username: string;
+    usernameIsValid: boolean;
     root: string;
-    dialogIsOpen: boolean;
     outcome: AlertType | undefined;
     outcomeMessage: string;
 }
@@ -71,10 +69,13 @@ export default class AddCollaborator extends React.Component<{}, IState> {
 
     private async submitAddCollaborator() {
         //TODO: separate functions
-        const { graphId } = this.state;
+        const { graphId, username } = this.state;
 
         try {
-            await new AddCollaboratorRepo().addCollaborator(encode(DOMPurify.sanitize(graphId)));
+            await new AddCollaboratorRepo().addCollaborator(
+                encode(DOMPurify.sanitize(graphId)),
+                encode(DOMPurify.sanitize(username))
+            );
             this.setState({
                 outcome: AlertType.SUCCESS,
                 outcomeMessage: `${graphId} was successfully added collaborator`,
@@ -93,13 +94,13 @@ export default class AddCollaborator extends React.Component<{}, IState> {
     private resetForm() {
         this.setState({
             graphId: "",
-            collaborator: "",
+            username: "",
         });
     }
 
     private disableSubmitButton(): boolean {
-        const { graphId } = this.state;
-        return !graphId;
+        const { username, usernameIsValid } = this.state;
+        return !username || !usernameIsValid;
     }
 
     public render() {
@@ -136,14 +137,11 @@ export default class AddCollaborator extends React.Component<{}, IState> {
                             </Grid>
                             <form className={this.classes.form} noValidate>
                                 <Grid container spacing={1}>
-                                    <GraphIdCollaboratorInput
+                                    <GraphIdUsernameInput
                                         graphIdValue={this.state.graphId}
-                                        onChangeGraphId={(graphId, graphIdIsValid) =>
-                                            this.setState({ graphId, graphIdIsValid })
-                                        }
-                                        collaboratorValue={this.state.collaborator}
-                                        onChangeCollaborator={(collaborator, graphCollaboratorIsValid) =>
-                                            this.setState({ collaborator, graphCollaboratorIsValid })
+                                        usernameValue={this.state.username}
+                                        onChangeUsername={(username, usernameIsValid) =>
+                                            this.setState({ username, usernameIsValid })
                                         }
                                     />
 

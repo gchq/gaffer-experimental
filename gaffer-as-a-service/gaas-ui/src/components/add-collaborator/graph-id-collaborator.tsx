@@ -21,15 +21,13 @@ import { InputLabel } from "@material-ui/core";
 
 interface IProps {
     graphIdValue: string;
-    collaboratorValue: string;
-    onChangeGraphId(graphId: string, graphIdIsValid: boolean): void;
-    onChangeCollaborator(graphId: string, graphCollaboratorIsValid: boolean): void;
+    usernameValue: string;
+    onChangeUsername(graphId: string, usernameIsValid: boolean): void;
 }
 
-export default function GraphIdCollaboratorInput(props: IProps): ReactElement {
-    const { graphIdValue, collaboratorValue, onChangeGraphId, onChangeCollaborator } = props;
-    const [graphIdErrorHelperText, setGraphIdErrorHelperText] = useState("");
-    const [collaboratorErrorHelperText, setCollaboratorErrorHelperText] = useState("");
+export default function GraphIdUsernameInput(props: IProps): ReactElement {
+    const { graphIdValue, usernameValue, onChangeUsername } = props;
+    const [usernameErrorHelperText, setUsernameErrorHelperText] = useState("");
 
     return (
         <>
@@ -39,62 +37,47 @@ export default function GraphIdCollaboratorInput(props: IProps): ReactElement {
                 </InputLabel>
                 <TextField
                     id="graph-id"
-                    inputProps={{
-                        name: "Graph ID",
-                        id: "graph-id-input",
-                        "aria-label": "graph-id-input",
-                    }}
                     aria-label="graph-id-input"
                     variant="outlined"
-                    value={graphIdValue}
-                    error={graphIdErrorHelperText.length > 0}
+                    value="testgraph"
                     required
                     fullWidth
                     autoFocus
-                    helperText={graphIdErrorHelperText}
                     name="graph-id"
-                    onChange={(event) => {
-                        const regex = new RegExp("^[a-z0-9]*$");
-                        if (regex.test(event.target.value)) {
-                            onChangeGraphId(event.target.value, true);
-                            setGraphIdErrorHelperText("");
-                        } else {
-                            onChangeGraphId(event.target.value, false);
-                            setGraphIdErrorHelperText("Graph ID can only contain numbers and lowercase letters");
-                        }
-                    }}
                 />
             </Grid>
             <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
             <Grid item xs={12}>
-                <InputLabel aria-label="graph-collaborator-input-label" id="graph-collaborator-input-label" required>
-                    Graph Collaborator
+                <InputLabel aria-label="username-input-label" id="username-input-label" required>
+                    User name
                 </InputLabel>
                 <TextField
-                    id="graph-collaborator"
-                    aria-label="graph-collaborator-input"
+                    id="username"
+                    aria-label="username-input"
                     inputProps={{
-                        name: "Graph Collaborator",
-                        id: "graph-collaborator-input",
-                        "aria-label": "graph-collaborator-input",
+                        name: "User Name",
+                        id: "username-input",
+                        "aria-label": "username-input",
                     }}
-                    value={collaboratorValue}
-                    error={collaboratorErrorHelperText.length > 0}
+                    value={usernameValue}
+                    error={usernameErrorHelperText.length > 0}
                     required
                     multiline
                     autoFocus
                     fullWidth
-                    name="graph-collaborator"
+                    name="username"
                     variant="outlined"
-                    helperText={collaboratorErrorHelperText}
+                    helperText={usernameErrorHelperText}
                     onChange={(event) => {
-                        const regex = new RegExp("^[a-zA-Z0-9 ]*$");
+                        const regex = new RegExp("^[ A-Za-z0-9_@.-]*$");
                         if (regex.test(event.target.value)) {
-                            onChangeCollaborator(event.target.value, true);
-                            setCollaboratorErrorHelperText("");
+                            onChangeUsername(event.target.value, true);
+                            setUsernameErrorHelperText("");
                         } else {
-                            onChangeCollaborator(event.target.value, false);
-                            setCollaboratorErrorHelperText("Graph Collaborator can only contain numbers and letters");
+                            onChangeUsername(event.target.value, false);
+                            setUsernameErrorHelperText(
+                                "User name can only contain alphanumeric and some special characters @ . - _"
+                            );
                         }
                     }}
                 />

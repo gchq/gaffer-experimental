@@ -65,7 +65,7 @@ public class GafferClient {
     public boolean addCollaborator(final GaaSAddCollaboratorRequestBody requestBody) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
-            return deploymentHandler.addGraphCollaborator(requestBody.getGraphId(), kubernetesClient, emailStripper(requestBody.getCollaborator()));
+            return deploymentHandler.addGraphCollaborator(requestBody.getGraphId(), kubernetesClient, emailStripper(requestBody.getUsername()));
         } catch (ApiException e) {
             LOGGER.error("Failed to add collaborator label");
             throw from(e);
@@ -75,7 +75,7 @@ public class GafferClient {
     public boolean addCollaboratorWithUsername(final GaaSAddCollaboratorRequestBody requestBody, final String username) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
-            return deploymentHandler.addGraphCollaboratorWithUsername(requestBody.getGraphId(), kubernetesClient, emailStripper(requestBody.getCollaborator()), username);
+            return deploymentHandler.addGraphCollaboratorWithUsername(requestBody.getGraphId(), kubernetesClient, emailStripper(requestBody.getUsername()), username);
         } catch (ApiException e) {
             LOGGER.error("Failed to add collaborator label");
             throw from(e);

@@ -19,10 +19,10 @@ import { IAddCollaboratorInterface } from "../http-message-interfaces/request-in
 import { Config } from "../config";
 
 export class AddCollaboratorRepo {
-    public async addCollaborator(graphId: string): Promise<void> {
+    public async addCollaborator(graphId: string, username: string): Promise<void> {
         const httpRequestBody: IAddCollaboratorInterface = {
             graphId: graphId,
-            collaborator: "test-gmail_com",
+            username: username,
         };
         await new RestClient()
             .baseUrl(Config.REACT_APP_KAI_REST_API_HOST)

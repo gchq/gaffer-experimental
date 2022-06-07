@@ -21,22 +21,22 @@ public class GaaSAddCollaboratorRequestBody {
     @JsonProperty
     private String graphId;
     @JsonProperty
-    private String collaborator;
+    private String username;
 
     public GaaSAddCollaboratorRequestBody() {
 
     }
 
-    public GaaSAddCollaboratorRequestBody(final String graphId, final String collaborator) {
+    public GaaSAddCollaboratorRequestBody(final String graphId, final String username) {
         this.graphId = graphId;
-        this.collaborator = collaborator;
+        this.username = username;
     }
 
     public String getGraphId() {
         return graphId;
     }
 
-    public String getCollaborator() {
-        return collaborator;
+    public String getUsername() {
+        return username;
     }
 }

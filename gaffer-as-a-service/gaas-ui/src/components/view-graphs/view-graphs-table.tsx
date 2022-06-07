@@ -50,7 +50,6 @@ interface IProps {
     graphs: Graph[];
     federatedStores: Array<string>;
     deleteGraph: (graphName: string) => void;
-    addCollaborator: (graphId: string) => void;
     refreshTable: () => void;
 }
 
@@ -58,7 +57,6 @@ interface IGraphRow {
     index: number;
     graph: Graph;
     federatedStores: Array<string>;
-    onClickAddCollaborator: (graphId: string) => void;
     onClickDelete: (graphId: string) => void;
 }
 
@@ -100,7 +98,6 @@ export function ViewGraphsTable(props: IProps) {
                                     index={index}
                                     graph={graph}
                                     federatedStores={props.federatedStores}
-                                    onClickAddCollaborator={(graphId: string) => props.addCollaborator(graphId)}
                                     onClickDelete={(graphId: string) => props.deleteGraph(graphId)}
                                 />
                             ))}
@@ -142,7 +139,7 @@ function StatusChip(graph: { status: string }) {
 }
 
 function MainGraphTableRow(props: IGraphRow) {
-    const { graph, index, federatedStores, onClickDelete, onClickAddCollaborator } = props;
+    const { graph, index, federatedStores, onClickDelete } = props;
     const classes = useStyles();
     const [rowIsExpanded, setRowIsExpanded] = React.useState(false);
     const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>("");
