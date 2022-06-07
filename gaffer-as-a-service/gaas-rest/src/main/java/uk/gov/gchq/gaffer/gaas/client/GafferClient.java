@@ -65,7 +65,7 @@ public class GafferClient {
     public boolean addCollaborator(final GaaSAddCollaboratorRequestBody requestBody) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
-            return deploymentHandler.addGraphCollaborator(requestBody.getGraphId(), kubernetesClient, requestBody.getCollaborator());
+            return deploymentHandler.addGraphCollaborator(requestBody.getGraphId(), kubernetesClient, emailStripper(requestBody.getCollaborator()));
         } catch (ApiException e) {
             LOGGER.error("Failed to add collaborator label");
             throw from(e);
@@ -75,7 +75,7 @@ public class GafferClient {
     public boolean addCollaboratorWithUsername(final GaaSAddCollaboratorRequestBody requestBody, final String username) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
-            return deploymentHandler.addGraphCollaboratorWithUsername(requestBody.getGraphId(), kubernetesClient, requestBody.getCollaborator(), username);
+            return deploymentHandler.addGraphCollaboratorWithUsername(requestBody.getGraphId(), kubernetesClient, emailStripper(requestBody.getCollaborator()), username);
         } catch (ApiException e) {
             LOGGER.error("Failed to add collaborator label");
             throw from(e);
@@ -138,6 +138,14 @@ public class GafferClient {
         return v1NamespaceList.getItems().stream()
                 .map(v1Namespace -> v1Namespace.getMetadata().getName())
                 .collect(Collectors.toList());
+    }
+
+    private String emailStripper(final String email) {
+        String strippedEmail = email;
+        if (email.contains("@")) {
+            strippedEmail = email.substring(0, email.indexOf('@')) + "-AT-" + email.substring(email.indexOf('@') + 1);
+        }
+        return strippedEmail;
     }
 
 }
