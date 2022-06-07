@@ -173,7 +173,7 @@ public class GraphController {
     private String emailStripper(final String email) {
         String strippedEmail = email;
         if (email.contains("@")) {
-            strippedEmail = email.substring(0, email.indexOf('@'));
+            strippedEmail = email.substring(0, email.indexOf('@')) + "-AT-" + email.substring(email.indexOf('@') + 1);
         }
         return strippedEmail;
     }
