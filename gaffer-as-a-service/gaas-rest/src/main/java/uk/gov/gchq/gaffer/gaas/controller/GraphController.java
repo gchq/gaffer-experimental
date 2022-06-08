@@ -82,7 +82,7 @@ public class GraphController {
     private String[] admins;
 
     Logger logger = LoggerFactory.getLogger(GraphController.class);
-
+    Logger eventLogger = LoggerFactory.getLogger("eventLogger");
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
@@ -92,8 +92,10 @@ public class GraphController {
             logger.error("Could not retrieve username");
         }
         if (requestBody.isFederatedStoreRequest()) {
+            eventLogger.info(headers.getFirst("username") + " made a create federated store request");
             createFederatedStoreGraphService.createFederatedStore(requestBody);
         } else {
+            eventLogger.info(headers.getFirst("username") + " made a create graph request");
             createGraphService.createGraph(requestBody);
         }
         return new ResponseEntity(HttpStatus.CREATED);
@@ -113,6 +115,7 @@ public class GraphController {
     @GetMapping(path = "/storetypes", produces = "application/json")
     public ResponseEntity<List<GafferConfigSpec>> getGafferConfigSpecs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> body = new HashMap<>();
+        eventLogger.info(headers.getFirst("username") + " made a get storetypes request");
         body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
 
         return new ResponseEntity(body, HttpStatus.OK);

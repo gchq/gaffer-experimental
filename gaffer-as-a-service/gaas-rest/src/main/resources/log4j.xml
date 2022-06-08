@@ -32,9 +32,12 @@
     <layout class="org.apache.log4j.PatternLayout">
     </layout>
   </appender>
+  <logger name="eventLogger" additivity="false">
+    <level value="info"></level>
+    <appender-ref ref="DB" />
+  </logger>
   <root>
     <priority value="info"></priority>
     <appender-ref ref="console"></appender-ref>
-    <appender-ref ref="DB" />
   </root>
 </log4j:configuration>
