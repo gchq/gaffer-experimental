@@ -78,10 +78,10 @@ app.post("/graphs", (req, res) => {
 });
 
 // Get all graphs
-app.get("/graphs", (req, res) => {
+app.get("/graphs", (req, resp) => {
     try {
         jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
-            res.send({
+            resp.send({
                 graphs: [
                     {
                         graphId: "federated",
