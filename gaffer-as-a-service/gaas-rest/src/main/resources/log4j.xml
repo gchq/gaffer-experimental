@@ -25,11 +25,11 @@
   </appender>
   <appender name="DB" class="org.apache.log4j.jdbc.JDBCAppender">
     <param name="driver" value="com.mysql.jdbc.Driver"/>
-    <param name="URL" value="jdbc:h2:file:./logs/logdb"/>
+    <param name="URL" value="jdbc:h2:file:./logs/logDB"/>
     <param name="user" value="sa"/>
     <param name="password" value="test"/>
-    <param name="sql" value="INSERT INTO LOGS VALUES('%x','%d','%C','%p','%m')"/>
-    <layout class="org.apache.log4j.EnhancedPatternLayout">
+    <param name="sql" value="INSERT INTO LOGS VALUES('%x','%d','%c','%p', '%m')"/>
+    <layout class="org.apache.log4j.PatternLayout">
     </layout>
   </appender>
   <root>
