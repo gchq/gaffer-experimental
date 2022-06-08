@@ -105,8 +105,10 @@ public class GraphController {
     public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> responseBody = new HashMap<>();
         if (isAdmin(headers.getFirst("username"))) {
+            eventLogger.info(headers.getFirst("username") + " made a get graph request");
             responseBody.put("graphs", getGaffersService.getAllGraphs());
         } else {
+            eventLogger.info(headers.getFirst("username") + " made a get graph request");
             responseBody.put("graphs", getGaffersService.getUserCreatedGraphs(emailStripper(headers.getFirst("username"))));
         }
         return new ResponseEntity(responseBody, HttpStatus.OK);
@@ -124,10 +126,12 @@ public class GraphController {
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         if (isAdmin(headers.getFirst("username"))) {
+            eventLogger.info(headers.getFirst("username") + " made a delete graph request on " + graphId);
             if (deleteGraphService.deleteGraph(graphId)) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         } else {
+            eventLogger.info(headers.getFirst("username") + " made a delete graph request on " + graphId);
             if (deleteGraphService.deleteGraphByUsername(graphId, emailStripper(headers.getFirst("username")))) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
