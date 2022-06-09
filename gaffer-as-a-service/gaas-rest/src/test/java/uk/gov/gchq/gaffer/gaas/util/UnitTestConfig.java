@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
+import uk.gov.gchq.gaffer.gaas.client.graph.GraphAutoDestroy;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
