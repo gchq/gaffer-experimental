@@ -29,8 +29,15 @@ spec:
         {{- include "helm.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "helm.fullname" . }}-service-account
+      volumes:
+      - name: logs-pv-storage
+        persistentVolumeClaim:
+          claimName: logs-pv-claim
       containers:
           - image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            volumeMounts:
+              - mountPath: "/logs"
+                name: logs-pv-storage
             name: gaas-rest
             envFrom:
               - configMapRef:
