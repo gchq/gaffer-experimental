@@ -193,12 +193,12 @@ public class DeploymentHandler {
             if (configMapList.isEmpty() & deploymentList.isEmpty()) {
                 //If all 3 are empty it means the gaffer which the user is trying to delete does not exist therefore
                 //we return false
-                LOGGER.debug(String.format("No deployments of {} to delete", gaffer));
+                LOGGER.debug("No deployments of {} to delete", gaffer);
                 return false;
             }
 
         } catch (KubernetesClientException e) {
-            LOGGER.debug(String.format("Failed to delete deployments of {}", gaffer));
+            LOGGER.debug("Failed to delete deployments of {}", gaffer);
             throw new ApiException(e.getCode(), e.getMessage());
         }
         cleanUpGafferDeploymentAfterTearDown(gaffer, workerNamespace);
