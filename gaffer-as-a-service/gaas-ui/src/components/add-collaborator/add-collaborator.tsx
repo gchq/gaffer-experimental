@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    Box,
-    Button,
-    Container,
-    CssBaseline,
-    Grid,
-    makeStyles,
-    Slide,
-    Toolbar,
-    Typography,
-    Zoom,
-} from "@material-ui/core";
+import { Box, Button, Container, CssBaseline, Grid, makeStyles, Toolbar, Typography } from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import React, { useState } from "react";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
@@ -73,7 +62,7 @@ export default function AddCollaborator(props: any) {
         setUsername("");
     };
 
-    const setUsernameValid = (username: string, usernameIsValid: boolean) => {
+    const updateUsername = (username: string, usernameIsValid: boolean) => {
         setUsernameIsValid(usernameIsValid);
         setUsername(username);
     };
@@ -139,7 +128,7 @@ export default function AddCollaborator(props: any) {
                                     graphIdValue={DOMPurify.sanitize(graphId)}
                                     usernameValue={username}
                                     onChangeUsername={(username, usernameIsValid) =>
-                                        setUsernameValid(username, usernameIsValid)
+                                        updateUsername(username, usernameIsValid)
                                     }
                                 />
 
