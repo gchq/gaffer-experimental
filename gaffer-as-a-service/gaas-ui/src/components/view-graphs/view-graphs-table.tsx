@@ -148,7 +148,7 @@ function MainGraphTableRow(props: IGraphRow) {
 
     const navigateToAddcollaborator = () => {
         // 👇️ navigate to /addcollaborator
-        navigate("/addcollaborator");
+        navigate("/addcollaborator", { state: { graphId: graph.getId() } });
     };
 
     useEffect(() => {

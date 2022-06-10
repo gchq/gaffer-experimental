@@ -39,11 +39,12 @@ export default function GraphIdUsernameInput(props: IProps): ReactElement {
                     id="graph-id"
                     aria-label="graph-id-input"
                     variant="outlined"
-                    value="testgraph"
+                    value={graphIdValue}
                     required
                     fullWidth
                     autoFocus
                     name="graph-id"
+                    disabled
                 />
             </Grid>
             <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
