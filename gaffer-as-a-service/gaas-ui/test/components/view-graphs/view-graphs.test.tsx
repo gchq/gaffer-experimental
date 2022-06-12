@@ -31,6 +31,12 @@ jest.mock("../../../src/rest/repositories/delete-graph-repo");
 jest.mock("../../../src/rest/repositories/get-store-types-repo");
 jest.mock("../../../src/rest/repositories/gaffer/get-all-graph-ids-repo");
 
+const mockedUsedNavigate = jest.fn();
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom"),
+    useNavigate: () => mockedUsedNavigate,
+}));
+
 afterEach(() => jest.resetAllMocks());
 
 describe("When ViewGraphs mounts", () => {
@@ -51,7 +57,7 @@ describe("When ViewGraphs mounts", () => {
         await component.update();
         await component.update();
 
-        expect(component.find("thead").text()).toBe("Graph IDStore TypeStatusUI URLREST URLActions");
+        expect(component.find("thead").text()).toBe("Graph IDStore TypeStatusUI URLREST URLAdd CollaboratorActions");
         expect(component.find("tbody").text()).toBe("testId1 MUPhttp://testId-1.app/uihttp://testId-1.app/rest");
         expect(component.find("caption").length).toBe(0);
     });

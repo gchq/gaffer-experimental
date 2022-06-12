@@ -58,6 +58,7 @@ interface IGraphRow {
     graph: Graph;
     federatedStores: Array<string>;
     onClickDelete: (graphId: string) => void;
+    onClickAddcollaborator: (graphId: string) => void;
 }
 
 const useStyles = makeStyles({
@@ -73,6 +74,12 @@ const useStyles = makeStyles({
 
 export function ViewGraphsTable(props: IProps) {
     const classes = useStyles();
+
+    const navigate = useNavigate();
+
+    const navigateToAddcollaborator = (graphId: string) => {
+        navigate("/addcollaborator", { state: { graphId: graphId } });
+    };
 
     return (
         <Grid container spacing={3}>
@@ -98,6 +105,7 @@ export function ViewGraphsTable(props: IProps) {
                                     index={index}
                                     graph={graph}
                                     federatedStores={props.federatedStores}
+                                    onClickAddcollaborator={(graphId: string) => navigateToAddcollaborator(graphId)}
                                     onClickDelete={(graphId: string) => props.deleteGraph(graphId)}
                                 />
                             ))}
@@ -139,17 +147,10 @@ function StatusChip(graph: { status: string }) {
 }
 
 function MainGraphTableRow(props: IGraphRow) {
-    const { graph, index, federatedStores, onClickDelete } = props;
+    const { graph, index, federatedStores, onClickDelete, onClickAddcollaborator } = props;
     const classes = useStyles();
     const [rowIsExpanded, setRowIsExpanded] = React.useState(false);
     const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>("");
-
-    const navigate = useNavigate();
-
-    const navigateToAddcollaborator = () => {
-        // 👇️ navigate to /addcollaborator
-        navigate("/addcollaborator", { state: { graphId: graph.getId() } });
-    };
 
     useEffect(() => {
         setGraphUrl();
@@ -237,7 +238,7 @@ function MainGraphTableRow(props: IGraphRow) {
                         <IconButton
                             id={"add-collaborator-button-" + index}
                             aria-label={graph.getId() + "-add-collaborator-button"}
-                            onClick={navigateToAddcollaborator}
+                            onClick={() => onClickAddcollaborator(graph.getId())}
                         >
                             <PersonAddOutlinedIcon />
                         </IconButton>
