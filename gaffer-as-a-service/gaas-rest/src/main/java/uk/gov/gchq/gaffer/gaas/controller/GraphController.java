@@ -87,7 +87,7 @@ public class GraphController {
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
 
-        addDeleteGraphLabel(requestBody);
+        graphAutoDestroyDateLabel(requestBody);
 
         try {
             addCreatorLabel(Objects.requireNonNull(headers.getFirst("username")));
@@ -156,7 +156,7 @@ public class GraphController {
         return matcher.matches();
     }
 
-    private void addDeleteGraphLabel(final GaaSCreateRequestBody requestBody) {
+    private void graphAutoDestroyDateLabel(final GaaSCreateRequestBody requestBody) {
         if (requestBody.getGraphLifetimeInDays() != null && !requestBody.getGraphLifetimeInDays().isEmpty() && !requestBody.getGraphLifetimeInDays().toLowerCase().equals("never")) {
             LocalDateTime currentTime = LocalDateTime.now();
             long graphLifetimeInDays = new Long(requestBody.getGraphLifetimeInDays());
