@@ -261,7 +261,7 @@ public class DeploymentHandler {
             }
 
         } catch (KubernetesClientException e) {
-            LOGGER.debug(String.format("Failed to gaffer auto destroy deployments"));
+            LOGGER.error("Failed to gaffer auto destroy deployments");
             throw new ApiException(e.getCode(), e.getMessage());
         }
         return autoDestroy;
@@ -377,7 +377,6 @@ public class DeploymentHandler {
                         if (deployment.getMetadata().getLabels().get("graphAutoDestroyDate") != null) {
                             gaaSGraph.graphAutoDestroyDate(deployment.getMetadata().getLabels().get("graphAutoDestroyDate").toLowerCase().replaceAll("_", ":"));
                         }
-                        gaaSGraph.graphAutoDestroyDate("");
                     }
                 }
 

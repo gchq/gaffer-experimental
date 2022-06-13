@@ -36,6 +36,7 @@ import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -89,6 +90,8 @@ class GraphControllerTest extends AbstractTest {
 
     @Test
     void getGraphs_ReturnsGraphsAsList_whenSuccessful() throws Exception {
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime tenDaysLater = currentTime.plusDays(10);
         final GaaSGraph graph = new GaaSGraph()
                 .graphId(TEST_GRAPH_ID)
                 .description(TEST_GRAPH_DESCRIPTION)
@@ -96,7 +99,7 @@ class GraphControllerTest extends AbstractTest {
                 .restUrl("my-graph-namespace.apps.k8s.cluster/rest")
                 .configName("mapStore")
                 .status(RestApiStatus.UP)
-                .graphAutoDestroyDate("2022-06-09t15:55:34.006");
+                .graphAutoDestroyDate(tenDaysLater.toString());
 
         final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
         gaaSGraphs.add(graph);
@@ -108,20 +111,23 @@ class GraphControllerTest extends AbstractTest {
                 .header("username", "test@test.com"))
                 .andReturn();
 
-        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"2022-06-09t15:55:34.006\"}]}";
+        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"" + tenDaysLater.toString() + "\"}]}";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 
     @Test
     void getGraphsByUsername_ReturnsGraphsAsList_whenSuccessful() throws Exception {
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime tenDaysLater = currentTime.plusDays(10);
+        currentTime.plusDays(10);
         final GaaSGraph graph = new GaaSGraph()
                 .graphId(TEST_GRAPH_ID)
                 .description(TEST_GRAPH_DESCRIPTION)
                 .url("my-graph-namespace.apps.k8s.cluster/ui")
                 .restUrl("my-graph-namespace.apps.k8s.cluster/rest")
                 .configName("mapStore")
-                .graphAutoDestroyDate("2022-06-09t15:55:34.006")
+                .graphAutoDestroyDate(tenDaysLater.toString())
                 .status(RestApiStatus.UP);
         final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
         gaaSGraphs.add(graph);
@@ -133,7 +139,7 @@ class GraphControllerTest extends AbstractTest {
                 .header("username", "myUser"))
                 .andReturn();
 
-        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"2022-06-09t15:55:34.006\"}]}";
+        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"" + tenDaysLater.toString() + "\"}]}";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }

@@ -36,7 +36,7 @@ public class GraphAutoDestroy {
     @Autowired
     KubernetesClient kubernetesClient;
 
-    Logger logger = LoggerFactory.getLogger(GraphAutoDestroy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphAutoDestroy.class);
 
     @Scheduled(cron = "0 0/5 * * * ?")
     public boolean autoDestroyGraph() throws GaaSRestApiException {
@@ -44,7 +44,7 @@ public class GraphAutoDestroy {
         try {
             return deploymentHandler.onAutoGafferDestroy(kubernetesClient);
         } catch (ApiException e) {
-            logger.debug("Failed to auto destroy graph. Kubernetes client returned Status Code: {}" + e.getCode(), e);
+            LOGGER.error("Failed to auto destroy graph. Kubernetes client returned Status Code: {}",  e.getCode(), e);
             throw from(e);
         }
 
