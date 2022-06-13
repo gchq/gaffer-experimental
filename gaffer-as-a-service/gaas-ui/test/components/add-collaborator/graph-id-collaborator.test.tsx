@@ -31,6 +31,10 @@ const component: ReactWrapper = mount(
 afterEach(() => jest.resetAllMocks());
 
 describe("Graph ID & Username", () => {
+    it("should populate input value with graphIdValue prop", () => {
+        expect(component.find("input").get(0).props.value).toEqual("display-id");
+    });
+
     it("should populate input value with usernameValue prop", () => {
         expect(component.find("input#username-input").props().value).toBe("Inputted username here");
     });
