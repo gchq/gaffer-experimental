@@ -48,7 +48,7 @@ export default function GraphIdUsernameInput(props: IProps): ReactElement {
                 />
             </Grid>
             <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center"></Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} id={"id-username-fields"} aria-label="id-username-fields">
                 <InputLabel aria-label="username-input-label" id="username-input-label" required>
                     User name
                 </InputLabel>
@@ -60,15 +60,14 @@ export default function GraphIdUsernameInput(props: IProps): ReactElement {
                         id: "username-input",
                         "aria-label": "username-input",
                     }}
+                    variant="outlined"
                     value={usernameValue}
                     error={usernameErrorHelperText.length > 0}
                     required
-                    multiline
-                    autoFocus
                     fullWidth
-                    name="username"
-                    variant="outlined"
+                    autoFocus
                     helperText={usernameErrorHelperText}
+                    name="username"
                     onChange={(event) => {
                         const regex = new RegExp("^[ A-Za-z0-9_@.-]*$");
                         if (regex.test(event.target.value)) {
