@@ -44,8 +44,8 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
-
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -86,6 +86,9 @@ public class GraphController {
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
+
+        graphAutoDestroyDateLabel(requestBody);
+
         try {
             addCreatorLabel(Objects.requireNonNull(headers.getFirst("username")));
         } catch (Exception e) {
@@ -98,6 +101,7 @@ public class GraphController {
         }
         return new ResponseEntity(HttpStatus.CREATED);
     }
+
 
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
@@ -152,6 +156,17 @@ public class GraphController {
         return matcher.matches();
     }
 
+    private void graphAutoDestroyDateLabel(final GaaSCreateRequestBody requestBody) {
+        if (requestBody.getGraphLifetimeInDays() != null && !requestBody.getGraphLifetimeInDays().isEmpty() && !requestBody.getGraphLifetimeInDays().toLowerCase().equals("never")) {
+            LocalDateTime currentTime = LocalDateTime.now();
+            long graphLifetimeInDays = new Long(requestBody.getGraphLifetimeInDays());
+            logger.info("graphLifetimeInDays: {}", graphLifetimeInDays);
+            String graphAutoDestroyDate = currentTime.plusDays(graphLifetimeInDays).toString();
+            logger.info("labels.graphAutoDestroyDate : {}", graphAutoDestroyDate);
+            helmValuesOverridesHandler.addOverride("labels.graphAutoDestroyDate", graphAutoDestroyDate.toLowerCase().replaceAll(":", "_"));
+        }
+    }
+
     private String emailStripper(final String email) {
         String strippedEmail = email;
         if (email.contains("@")) {
@@ -163,5 +178,6 @@ public class GraphController {
     private boolean isAdmin(final String username) {
         List<String> adminList = new ArrayList<>(Arrays.asList(admins));
         return adminList.contains(username);
+
     }
 }

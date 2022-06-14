@@ -22,9 +22,27 @@ import { GraphType } from "../../../src/domain/graph-type";
 
 let component: ReactWrapper;
 const graphs = [
-    new Graph("test-graph", "A description", "", "", "UP", "mapStore", GraphType.GAAS_GRAPH),
-    new Graph("test-graph2", "Another description", "", "", "UP", "federated", GraphType.GAAS_GRAPH),
-    new Graph("another-graph3", "Some description", "", "", "DOWN", "accumulo", GraphType.GAAS_GRAPH),
+    new Graph("test-graph", "A description", "", "", "UP", "mapStore", "2022-06-09t15:55:34.006", GraphType.GAAS_GRAPH),
+    new Graph(
+        "test-graph2",
+        "Another description",
+        "",
+        "",
+        "UP",
+        "federated",
+        "2022-06-09t15:55:34.006",
+        GraphType.GAAS_GRAPH
+    ),
+    new Graph(
+        "another-graph3",
+        "Some description",
+        "",
+        "",
+        "DOWN",
+        "accumulo",
+        "2022-06-09t15:55:34.006",
+        GraphType.GAAS_GRAPH
+    ),
 ];
 const selectedGraphs = ["test-graph"];
 const onClickCheckboxMockCallback = jest.fn();

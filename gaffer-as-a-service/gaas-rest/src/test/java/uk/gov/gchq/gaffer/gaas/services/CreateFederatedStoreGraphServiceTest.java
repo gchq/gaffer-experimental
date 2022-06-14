@@ -69,7 +69,7 @@ class CreateFederatedStoreGraphServiceTest {
     void shouldThrowError_WhenSubGraphsListIsEmpty() {
         final List<ProxySubGraph> proxySubGraphs = new ArrayList<>();
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", proxySubGraphs)));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", "10", proxySubGraphs)));
 
         assertEquals("There are no sub-graphs to add", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatusCode());
@@ -83,7 +83,7 @@ class CreateFederatedStoreGraphServiceTest {
         gafferSpec.put("federated_config", getMapStoreGafferSpec());
         when(loader.getConfig("/config", "mapStore")).thenReturn(gafferSpec);
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "mapStore", proxySubGraphsList)));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "mapStore", "10", proxySubGraphsList)));
 
         assertEquals("Graph is not a federated store", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatusCode());
@@ -95,7 +95,7 @@ class CreateFederatedStoreGraphServiceTest {
         doThrow(new GraphOperationException("Invalid Proxy Graph URL")).when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
         final List<ProxySubGraph> proxySubGraphsList = Collections.singletonList(proxySubGraph);
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", proxySubGraphsList)));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", "10", proxySubGraphsList)));
 
         final String expected = "Invalid Proxy Graph URL(s): [TestGraph: Invalid Proxy Graph URL]";
         assertEquals(expected, exception.getMessage());
@@ -110,7 +110,7 @@ class CreateFederatedStoreGraphServiceTest {
                 .when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph, proxySubGraph2);
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", proxySubGraphsList)));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", "10", proxySubGraphsList)));
 
         final String expected = "Invalid Proxy Graph URL(s): [TestGraph: The request to testGraph returned: 500 Internal Server Error, TestGraph2: TestGraph2 has invalid host. Reason: connection refused at TestGraph2]";
         assertEquals(expected, exception.getMessage());
@@ -125,7 +125,7 @@ class CreateFederatedStoreGraphServiceTest {
         final List<ProxySubGraph> proxySubGraphsList = Collections.singletonList(subGraph);
         when(loader.getConfig("/config", "federated")).thenReturn(getFederatedStoreGafferSpec());
 
-        service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", proxySubGraphsList));
+        service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", "10", proxySubGraphsList));
 
         verify(gafferClient, times(1)).createGaffer(any(Gaffer.class));
     }
@@ -138,7 +138,7 @@ class CreateFederatedStoreGraphServiceTest {
         final List<ProxySubGraph> proxySubGraphsList = Collections.singletonList(subGraph);
         when(loader.getConfig("/config", "federated_config")).thenReturn(getFederatedStoreGafferSpec());
 
-        assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated_config", proxySubGraphsList)));
+        assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated_config", "10",  proxySubGraphsList)));
     }
 
     @Test
@@ -146,7 +146,7 @@ class CreateFederatedStoreGraphServiceTest {
         when(gafferClient.createGaffer(any(Gaffer.class))).thenReturn(new GraphUrl("localhost:8080", "/root"));
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph, proxySubGraph2);
         when(loader.getConfig("/config", "federated")).thenReturn(getFederatedStoreGafferSpec());
-        service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", proxySubGraphsList));
+        service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", "10", proxySubGraphsList));
 
         final ArgumentCaptor<Gaffer> argumentCaptor = ArgumentCaptor.forClass(Gaffer.class);
         verify(gafferClient, times(1)).createGaffer(argumentCaptor.capture());
@@ -166,7 +166,7 @@ class CreateFederatedStoreGraphServiceTest {
                 .when(graphCommandExecutor).execute(any(ValidateGraphHostOperation.class));
         final List<ProxySubGraph> proxySubGraphsList = Arrays.asList(proxySubGraph, proxySubGraph2);
 
-        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", proxySubGraphsList)));
+        final GaaSRestApiException exception = assertThrows(GaaSRestApiException.class, () -> service.createFederatedStore(new GaaSCreateRequestBody(TEST_GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", "10", proxySubGraphsList)));
 
         final String expected = "Invalid Proxy Graph URL(s): [TestGraph: The request to testGraph returned: 500 Internal Server Error]";
         assertEquals(expected, exception.getMessage());

@@ -36,6 +36,7 @@ export class GetAllGraphsRepo {
                     jsonObject.restUrl,
                     jsonObject.status,
                     jsonObject.configName,
+                    jsonObject.graphAutoDestroyDate,
                     GraphType.GAAS_GRAPH
                 )
         );

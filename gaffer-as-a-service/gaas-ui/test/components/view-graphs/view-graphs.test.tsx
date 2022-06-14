@@ -43,6 +43,7 @@ describe("When ViewGraphs mounts", () => {
                 "http://testId-1.app/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -51,8 +52,12 @@ describe("When ViewGraphs mounts", () => {
         await component.update();
         await component.update();
 
-        expect(component.find("thead").text()).toBe("Graph IDStore TypeStatusUI URLREST URLActions");
-        expect(component.find("tbody").text()).toBe("testId1 MUPhttp://testId-1.app/uihttp://testId-1.app/rest");
+        expect(component.find("thead").text()).toBe(
+            "Graph IDStore TypeStatusUI URLREST URLGraph Auto Destroy DateActions"
+        );
+        expect(component.find("tbody").text()).toBe(
+            "testId1 MUPhttp://testId-1.app/uihttp://testId-1.app/rest2022-06-09t15:55:34.006"
+        );
         expect(component.find("caption").length).toBe(0);
     });
     it("should display No Graphs caption when ", async () => {
@@ -83,6 +88,7 @@ describe("When ViewGraphs mounts", () => {
                 "http://roadTraffic.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -93,7 +99,7 @@ describe("When ViewGraphs mounts", () => {
         const table = component.find("table");
         expect(table).toHaveLength(1);
         expect(table.find("tbody").text()).toBe(
-            "roadTraffic MUPhttp://roadTraffic.graph/uihttp://roadTraffic.graph/rest"
+            "roadTraffic MUPhttp://roadTraffic.graph/uihttp://roadTraffic.graph/rest2022-06-09t15:55:34.006"
         );
         expect(component.find("div#notification-alert").length).toBe(0);
     });
@@ -106,6 +112,7 @@ describe("When ViewGraphs mounts", () => {
                 "http://roadTraffic.graph/rest",
                 "DOWN",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -115,7 +122,7 @@ describe("When ViewGraphs mounts", () => {
 
         const table = component.find("table");
         expect(table.find("tbody").text()).toBe(
-            "roadTraffic MDOWNhttp://roadTraffic.graph/uihttp://roadTraffic.graph/rest"
+            "roadTraffic MDOWNhttp://roadTraffic.graph/uihttp://roadTraffic.graph/rest2022-06-09t15:55:34.006"
         );
     });
 });
@@ -130,6 +137,7 @@ describe("Refresh Button", () => {
                 "http://roadtraffic.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -137,7 +145,7 @@ describe("Refresh Button", () => {
         const component = mount(<ViewGraph />);
         await component.update();
         expect(component.find("tbody").text()).toBe(
-            "roadTraffic MUPhttp://roadtraffic.graph/uihttp://roadtraffic.graph/rest"
+            "roadTraffic MUPhttp://roadtraffic.graph/uihttp://roadtraffic.graph/rest2022-06-09t15:55:34.006"
         );
 
         mockGetGraphsToReturn([
@@ -148,13 +156,14 @@ describe("Refresh Button", () => {
                 "http://roadTraffic.app/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
         await clickRefreshButton(component);
 
         expect(component.find("tbody").text()).toBe(
-            "roadTraffic MUPhttp://roadTraffic.app/uihttp://roadTraffic.app/rest"
+            "roadTraffic MUPhttp://roadTraffic.app/uihttp://roadTraffic.app/rest2022-06-09t15:55:34.006"
         );
     });
     it("should reset an existing error message when refresh button is clicked", async () => {
@@ -175,6 +184,7 @@ describe("Refresh Button", () => {
                 "http://roadTraffic.app/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -199,6 +209,7 @@ describe("Delete Button", () => {
                 "http://peaches.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -208,7 +219,9 @@ describe("Delete Button", () => {
         });
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("peaches MUPhttp://peaches.graph/uihttp://peaches.graph/rest");
+        expect(component.find("tbody").text()).toBe(
+            "peaches MUPhttp://peaches.graph/uihttp://peaches.graph/rest2022-06-09t15:55:34.006"
+        );
 
         mockGetGraphsToReturn([
             new Graph(
@@ -218,6 +231,7 @@ describe("Delete Button", () => {
                 "http://peaches.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -230,8 +244,26 @@ describe("Delete Button", () => {
     it("should send a delete request for correct graphId from many graphs when the delete button has been clicked", async () => {
         DeleteGraphRepo.prototype.delete = jest.fn();
         mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "apples URL", "apples URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
-            new Graph("pears", "INACTIVE", "pears URL", "pears URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "apples",
+                "ACTIVE",
+                "apples URL",
+                "apples URL rest",
+                "UP",
+                "mapStore",
+                "2022-06-09t15:55:34.006",
+                GraphType.GAAS_GRAPH
+            ),
+            new Graph(
+                "pears",
+                "INACTIVE",
+                "pears URL",
+                "pears URL rest",
+                "UP",
+                "mapStore",
+                "2022-06-09t15:55:34.006",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
 
         await act(async () => {
@@ -240,12 +272,30 @@ describe("Delete Button", () => {
         await component.update();
         await component.update();
         expect(component.find("tbody").text()).toBe(
-            "apples MUPapples URLapples URL restpears MUPpears URLpears URL rest"
+            "apples MUPapples URLapples URL rest2022-06-09t15:55:34.006pears MUPpears URLpears URL rest2022-06-09t15:55:34.006"
         );
 
         mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "apples URL", "apples URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
-            new Graph("pears", "DELETED", "pears URL", "pears URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "apples",
+                "ACTIVE",
+                "apples URL",
+                "apples URL rest",
+                "UP",
+                "mapStore",
+                "2022-06-09t15:55:34.006",
+                GraphType.GAAS_GRAPH
+            ),
+            new Graph(
+                "pears",
+                "DELETED",
+                "pears URL",
+                "pears URL rest",
+                "UP",
+                "mapStore",
+                "2022-06-09t15:55:34.006",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
         component.find("tbody").find("button#view-graphs-delete-button-1").simulate("click");
         await component.update();
@@ -256,8 +306,26 @@ describe("Delete Button", () => {
     it("should change the current status of the graph when the delete button is clicked", async () => {
         DeleteGraphRepo.prototype.delete = jest.fn();
         mockGetGraphsToReturn([
-            new Graph("apples", "ACTIVE", "apples URL", "apples URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
-            new Graph("pears", "INACTIVE", "pears URL", "pears URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "apples",
+                "ACTIVE",
+                "apples URL",
+                "apples URL rest",
+                "UP",
+                "mapStore",
+                "2022-06-09t15:55:34.006",
+                GraphType.GAAS_GRAPH
+            ),
+            new Graph(
+                "pears",
+                "INACTIVE",
+                "pears URL",
+                "pears URL rest",
+                "UP",
+                "mapStore",
+                "2022-06-09t15:55:34.006",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
 
         await act(async () => {
@@ -266,7 +334,7 @@ describe("Delete Button", () => {
         await component.update();
         await component.update();
         expect(component.find("tbody").text()).toBe(
-            "apples MUPapples URLapples URL restpears MUPpears URLpears URL rest"
+            "apples MUPapples URLapples URL rest2022-06-09t15:55:34.006pears MUPpears URLpears URL rest2022-06-09t15:55:34.006"
         );
 
         mockGetGraphsToReturn([
@@ -277,6 +345,7 @@ describe("Delete Button", () => {
                 "http://apples.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
             new Graph(
@@ -286,6 +355,7 @@ describe("Delete Button", () => {
                 "http://pears.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -295,7 +365,7 @@ describe("Delete Button", () => {
         await component.update();
 
         expect(component.find("tbody").text()).toBe(
-            "apples MUPhttp://apples.graph/uihttp://apples.graph/restpears MUPhttp://pears.graph/uihttp://pears.graph/rest"
+            "apples MUPhttp://apples.graph/uihttp://apples.graph/rest2022-06-09t15:55:34.006pears MUPhttp://pears.graph/uihttp://pears.graph/rest2022-06-09t15:55:34.006"
         );
     });
     it("should notify error and not refresh graphs when delete request returns server error", async () => {
@@ -303,7 +373,16 @@ describe("Delete Button", () => {
             throw new APIError("Server Error", "Timeout exception");
         });
         mockGetGraphsToReturn([
-            new Graph("bananas", "INACTIVE", "bananas URL", "bananas URL rest", "UP", "mapStore", GraphType.GAAS_GRAPH),
+            new Graph(
+                "bananas",
+                "INACTIVE",
+                "bananas URL",
+                "bananas URL rest",
+                "UP",
+                "mapStore",
+                "2022-06-09t15:55:34.006",
+                GraphType.GAAS_GRAPH
+            ),
         ]);
 
         await mockGetStoreTypesRepoToReturn({
@@ -315,7 +394,7 @@ describe("Delete Button", () => {
         });
         await component.update();
         await component.update();
-        expect(component.find("tbody").text()).toBe("bananas MUPbananas URLbananas URL rest");
+        expect(component.find("tbody").text()).toBe("bananas MUPbananas URLbananas URL rest2022-06-09t15:55:34.006");
 
         component.find("tbody").find("button#view-graphs-delete-button-0").simulate("click");
         await component.update();
@@ -345,6 +424,7 @@ describe("Integration with GetAllGraphIds repo", () => {
                 "http://apples.graph/rest",
                 "UP",
                 "federated",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
             new Graph(
@@ -354,6 +434,7 @@ describe("Integration with GetAllGraphIds repo", () => {
                 "http://pears.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -384,6 +465,7 @@ describe("Integration with GetAllGraphIds repo", () => {
                 "http://apples.graph/rest",
                 "UP",
                 "federated",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
             new Graph(
@@ -393,6 +475,7 @@ describe("Integration with GetAllGraphIds repo", () => {
                 "http://pears.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -426,6 +509,7 @@ describe("Integration with GetAllGraphIds repo", () => {
                 "http://apples.graph/rest",
                 "UP",
                 "federated",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -453,6 +537,7 @@ describe("Integration with GetAllGraphIds repo", () => {
                 "http://apples.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
             new Graph(
@@ -462,6 +547,7 @@ describe("Integration with GetAllGraphIds repo", () => {
                 "http://pears.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);
@@ -490,6 +576,7 @@ describe("Integration with GetStoreTypes Repo", () => {
                 "http://apples.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
             new Graph(
@@ -499,6 +586,7 @@ describe("Integration with GetStoreTypes Repo", () => {
                 "http://pears.graph/rest",
                 "UP",
                 "mapStore",
+                "2022-06-09t15:55:34.006",
                 GraphType.GAAS_GRAPH
             ),
         ]);

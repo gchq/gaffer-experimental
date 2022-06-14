@@ -60,7 +60,7 @@ class GafferFactoryTest {
 
     @Test
     void emptyGafferSpec_shouldReturnGafferWithOverridesOnly() {
-        final Gaffer gaffer = GafferFactory.from(new GafferSpec(), new GaaSCreateRequestBody("empty_config_id", "Empty graph config", getSchema(), "empty_config"));
+        final Gaffer gaffer = GafferFactory.from(new GafferSpec(), new GaaSCreateRequestBody("empty_config_id", "Empty graph config", getSchema(), "empty_config", "10"));
 
         final String expected = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"empty_config\"},\"name\":\"empty_config_id\"},\"spec\":{\"graph\":{\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"},\"config\":{\"configName\":\"empty_config\",\"description\":\"Empty graph config\",\"graphId\":\"empty_config_id\"}},\"ingress\":{\"host\":\"empty_config_id-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
         assertEquals(expected, gson.toJson(gaffer));
@@ -72,7 +72,7 @@ class GafferFactoryTest {
         proxyConfig.putNestedObject("http://my.graph.co.uk", "graph", "storeProperties", "gaffer.host");
         proxyConfig.putNestedObject("uk.gov.gchq.gaffer.proxystore.ProxyStore", "graph", "storeProperties", "gaffer.store.class");
 
-        final Gaffer requestBody = GafferFactory.from(proxyConfig, new GaaSCreateRequestBody("MyGraph", "Another description", getSchema(), "proxyNoContextRoot"));
+        final Gaffer requestBody = GafferFactory.from(proxyConfig, new GaaSCreateRequestBody("MyGraph", "Another description", getSchema(), "proxyNoContextRoot", "10"));
 
         final String expected = "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"proxyNoContextRoot\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":{\"schema\":{\"schema.json\":\"{\\\"entities\\\":{},\\\"edges\\\":{},\\\"types\\\":{}}\"},\"storeProperties\":{\"gaffer.host\":\"http://my.graph.co.uk\",\"gaffer.store.class\":\"uk.gov.gchq.gaffer.proxystore.ProxyStore\"},\"config\":{\"configName\":\"proxyNoContextRoot\",\"description\":\"Another description\",\"graphId\":\"MyGraph\"}},\"ingress\":{\"host\":\"mygraph-kai-dev.apps.my.kubernetes.cluster\",\"pathPrefix\":{\"ui\":\"/ui\",\"api\":\"/rest\"}}}}";
         assertEquals(expected, gson.toJson(requestBody));
@@ -82,7 +82,7 @@ class GafferFactoryTest {
     void federatedStoreRequest_shouldReturnFederatedRequestBody() {
         final GafferSpec federatedConfig = getGafferSpec();
 
-        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("MyGraph", "Another description", "federated", null);
+        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("MyGraph", "Another description", "federated", "10", null);
 
         final Gaffer requestBody = GafferFactory.from(federatedConfig, gaaSCreateRequestBody);
 
@@ -104,7 +104,7 @@ class GafferFactoryTest {
 
         federatedConfig.putNestedObject(declarations, "graph", "operationDeclarations");
 
-        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedOpDeclaration");
+        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("MyGraph", "Another description", null, "federatedOpDeclaration", "10");
 
         final Gaffer requestBody = GafferFactory.from(federatedConfig, gaaSCreateRequestBody);
 
@@ -119,7 +119,7 @@ class GafferFactoryTest {
         final GafferSpec accumuloConfig = new GafferSpec();
         accumuloConfig.putNestedObject(true, "accumulo", "enabled");
 
-        final Gaffer gaffer = GafferFactory.from(accumuloConfig, new GaaSCreateRequestBody("MyGraph", "Another description", getSchema(), "accumulo"));
+        final Gaffer gaffer = GafferFactory.from(accumuloConfig, new GaaSCreateRequestBody("MyGraph", "Another description", getSchema(), "accumulo", "10"));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"accumulo\"},\"name\":\"MyGraph\"},\"spec\":{\"accumulo\":" +
@@ -135,7 +135,7 @@ class GafferFactoryTest {
         mapStoreConfig.putNestedObject("uk.gov.gchq.gaffer.cache.impl.HashMapCacheService", "graph", "storeProperties", "gaffer.cache.service.class");
         mapStoreConfig.putNestedObject(true, "graph", "storeProperties", "gaffer.store.job.tracker.enabled");
 
-        final Gaffer requestBody = GafferFactory.from(mapStoreConfig, new GaaSCreateRequestBody("MyGraph", "Another description", getSchema(), "mapStore"));
+        final Gaffer requestBody = GafferFactory.from(mapStoreConfig, new GaaSCreateRequestBody("MyGraph", "Another description", getSchema(), "mapStore", "10"));
 
         final String expected =
                 "{\"apiVersion\":\"gchq.gov.uk/v1\",\"kind\":\"Gaffer\",\"metadata\":{\"labels\":{\"configName\":\"mapStore\"},\"name\":\"MyGraph\"},\"spec\":{\"graph\":" +
@@ -150,7 +150,7 @@ class GafferFactoryTest {
     void federatedBigStoreRequest_shouldReturnFederatedRequestBody() {
         final GafferSpec federatedConfig = getGafferSpec();
 
-        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("MyGraph", "Another description", getSchema(), "federatedBig");
+        GaaSCreateRequestBody gaaSCreateRequestBody = new GaaSCreateRequestBody("MyGraph", "Another description", getSchema(), "federatedBig", "10");
 
         final Gaffer requestBody = GafferFactory.from(federatedConfig, gaaSCreateRequestBody);
 
