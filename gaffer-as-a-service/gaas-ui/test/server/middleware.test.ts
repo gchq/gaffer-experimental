@@ -132,6 +132,7 @@ describe("Graph API", () => {
                             url: "http://federated-namespace.host-name/ui",
                             restUrl: "http://localhost:4000/rest",
                             configName: "federated",
+                            graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                             status: "UP",
                         },
                         {
@@ -140,6 +141,7 @@ describe("Graph API", () => {
                             url: "http://mapstore1-namespace.host-name/ui",
                             restUrl: "http://mapstore1-namespace.host-name/rest",
                             configName: "mapStore",
+                            graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                             status: "UP",
                         },
                         {
@@ -148,6 +150,7 @@ describe("Graph API", () => {
                             url: "http://accumulodown-namespace.host-name/ui",
                             restUrl: "http://accumulodown-namespace.host-name/rest",
                             configName: "accumuloStore",
+                            graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                             status: "DOWN",
                         },
                         {
@@ -156,6 +159,7 @@ describe("Graph API", () => {
                             url: "http://mapstore2-namespace.host-name/ui",
                             restUrl: "http://mapstore2-namespace.host-name/rest",
                             configName: "mapStore",
+                            graphAutoDestroyDate: "",
                             status: "UP",
                         },
                         {
@@ -164,6 +168,7 @@ describe("Graph API", () => {
                             url: "http://accumulo1-namespace.host-name/ui",
                             restUrl: "http://accumulo1-namespace.host-name/rest",
                             configName: "accumuloStore",
+                            graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                             status: "UP",
                         },
                         {
@@ -172,6 +177,7 @@ describe("Graph API", () => {
                             url: "http://accumulo2-namespace.host-name/ui",
                             restUrl: "http://accumulo2-namespace.host-name/rest",
                             configName: "accumuloStore",
+                            graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                             status: "UP",
                         },
                         {
@@ -180,6 +186,7 @@ describe("Graph API", () => {
                             url: "http://mapstoredown-namespace.host-name/ui",
                             restUrl: "http://mapstoredown-namespace.host-name/rest",
                             configName: "mapStore",
+                            graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                             status: "DOWN",
                         },
                         {
@@ -188,6 +195,7 @@ describe("Graph API", () => {
                             url: "http://mapstore3-namespace.host-name/ui",
                             restUrl: "http://mapstore3-namespace.host-name/rest",
                             configName: "mapStore",
+                            graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                             status: "UP",
                         },
                         {
@@ -196,6 +204,7 @@ describe("Graph API", () => {
                             url: "http://mapstore4-namespace.host-name/ui",
                             restUrl: "http://mapstore4-namespace.host-name/rest",
                             configName: "mapStore",
+                            graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                             status: "UP",
                         },
                     ],

@@ -79,10 +79,11 @@ describe("Create Graph Repo", () => {
                 graphId: "accumulo-graph",
                 description: "a description",
                 configName: "accumulo",
+                graphLifetimeInDays: "10",
             };
             mock.onPost("/graphs", request).reply(201);
             await expect(
-                repo.create("accumulo-graph", "a description", "accumulo", {
+                repo.create("accumulo-graph", "a description", "accumulo", "10", {
                     schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
                 })
             ).resolves.toEqual(undefined);
@@ -94,11 +95,12 @@ describe("Create Graph Repo", () => {
                 graphId: "map-graph",
                 description: "a description",
                 configName: "mapstore",
+                graphLifetimeInDays: "10",
             };
             mock.onPost("/graphs", request).reply(201);
 
             await expect(
-                repo.create("map-graph", "a description", "mapstore", {
+                repo.create("map-graph", "a description", "mapstore", "10", {
                     schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
                 })
             ).resolves.toEqual(undefined);
@@ -108,7 +110,7 @@ describe("Create Graph Repo", () => {
     describe("Null checks", () => {
         it("Should throw an error when configName is Mapstore or Accumulo and schema is undefined", async () => {
             const config = {};
-            await expect(repo.create("bad-request-graph", "a description", "mapstore", config)).rejects.toEqual(
+            await expect(repo.create("bad-request-graph", "a description", "mapstore", "10", config)).rejects.toEqual(
                 new Error("Schema is undefined")
             );
         });
@@ -121,11 +123,12 @@ describe("Create Graph Repo", () => {
                 graphId: "bad-request-graph",
                 description: "a description",
                 configName: "mapstore",
+                graphLifetimeInDays: "10",
             };
             mock.onPost("/graphs", request).reply(400);
 
             await expect(
-                repo.create("bad-request-graph", "a description", "mapstore", {
+                repo.create("bad-request-graph", "a description", "mapstore", "10", {
                     schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
                 })
             ).rejects.toEqual(new APIError("Error Code 400", "Bad Request"));
@@ -137,11 +140,12 @@ describe("Create Graph Repo", () => {
                 graphId: "forbidden-graph",
                 description: "a description",
                 configName: "mapstore",
+                graphLifetimeInDays: "10",
             };
             mock.onPost("/graphs", request).reply(403, { title: "Forbidden", detail: "Kubernetes access denied" });
 
             await expect(
-                repo.create("forbidden-graph", "a description", "mapstore", {
+                repo.create("forbidden-graph", "a description", "mapstore", "10", {
                     schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
                 })
             ).rejects.toEqual(new APIError("Forbidden", "Kubernetes access denied"));

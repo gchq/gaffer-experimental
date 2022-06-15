@@ -95,6 +95,7 @@ export function ViewGraphsTable(props: IProps) {
                                 <TableCell>UI URL</TableCell>
                                 <TableCell>REST URL</TableCell>
                                 <TableCell>Add Collaborator</TableCell>
+                                <TableCell>Graph Auto Destroy Date</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -244,6 +245,7 @@ function MainGraphTableRow(props: IGraphRow) {
                         </IconButton>
                     </Tooltip>
                 </TableCell>
+                <TableCell aria-label={"graph-lifetim-iIn-days"}>{graph.getGraphAutoDestroyDate()}</TableCell>
                 <TableCell aria-label={"delete-graph"}>
                     <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
                         <IconButton
