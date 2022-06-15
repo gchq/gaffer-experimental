@@ -38,6 +38,12 @@ export default function GraphIdUsernameInput(props: IProps): ReactElement {
                 <TextField
                     id="graph-id"
                     aria-label="graph-id-input"
+                    inputProps={{
+                        readOnly: true,
+                        name: "graph id",
+                        id: "graph-id-input",
+                        "aria-label": "graph-id-input",
+                    }}
                     variant="outlined"
                     value={graphIdValue}
                     required

@@ -35,7 +35,6 @@ export default function AddCollaborator(props: any) {
     const [outcomeMessage, setOutcomeMessage] = useState("");
 
     const submitAddCollaborator = async () => {
-        setGraphId(graphId);
         setUsername(username);
 
         try {
