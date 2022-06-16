@@ -17,6 +17,7 @@
 import CreateGraph from "../create-graph/create-graph";
 import UserGuide from "../user-guide/user-guide";
 import ViewGraph from "../view-graphs/view-graphs";
+import AddCollaborator from "../add-collaborator/add-collaborator";
 
 const AppRoutes = [
     {
@@ -33,6 +34,11 @@ const AppRoutes = [
         path: "/userguide",
         sidebarName: "User Guide",
         component: UserGuide,
+    },
+    {
+        path: "/addcollaborator",
+        sidebarName: "",
+        component: AddCollaborator,
     },
 ];
 

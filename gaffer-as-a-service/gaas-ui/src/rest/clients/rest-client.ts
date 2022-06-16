@@ -53,6 +53,10 @@ export class RestClient<T> {
         return this.methodSpec(this);
     }
 
+    public addCollaborator(): any {
+        return this.methodSpec(this);
+    }
+
     public baseUrl(baseURL: string): any {
         this.baseURL = baseURL;
         return this.methodSpec(this);
@@ -115,6 +119,11 @@ export class RestClient<T> {
         },
         storeTypes: () => {
             restClient.url = "/storetypes";
+            restClient.headers = AuthSidecarClient.setHeaders();
+            return restClient.executeSpec(restClient);
+        },
+        addCollaborator: () => {
+            restClient.url = "/addCollaborator";
             restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },

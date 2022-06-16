@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.handlers;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.kubernetes.client.openapi.ApiException;
@@ -27,7 +28,6 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1Status;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -40,10 +40,13 @@ import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
+
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
@@ -99,6 +102,38 @@ public class DeploymentHandler {
         }
 
         return true;
+    }
+
+    public boolean addGraphCollaborator(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd) throws ApiException {
+        try {
+            updateDeploymentLabels(gaffer + "-gaffer-api", kubernetesClient, usernameToAdd);
+            updateDeploymentLabels(gaffer + "-gaffer-ui", kubernetesClient, usernameToAdd);
+            return true;
+        } catch (KubernetesClientException e) {
+            LOGGER.error("Failed to add collaborator.", e);
+            throw new ApiException(e.getCode(), e.getMessage());
+        }
+    }
+
+    public boolean addGraphCollaboratorWithUsername(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd, final String username) throws ApiException {
+        try {
+            if (kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-api").get().getMetadata().getLabels().get("creator").equals(username)) {
+                updateDeploymentLabels(gaffer + "-gaffer-api", kubernetesClient, usernameToAdd);
+                updateDeploymentLabels(gaffer + "-gaffer-ui", kubernetesClient, usernameToAdd);
+                return true;
+            }
+            return false;
+        } catch (KubernetesClientException e) {
+            LOGGER.error("Failed to add collaborator.", e);
+            throw new ApiException(e.getCode(), e.getMessage());
+        }
+    }
+
+    private void updateDeploymentLabels(final String deploymentName, final KubernetesClient kubernetesClient, final String usernameToAdd) {
+        kubernetesClient.apps().deployments().inNamespace(NAMESPACE)
+                .withName(deploymentName).edit(
+                d -> new DeploymentBuilder(d).editMetadata().addToLabels("collaborator/" + usernameToAdd, usernameToAdd).endMetadata().build()
+        );
     }
 
     @NotNull
@@ -219,6 +254,7 @@ public class DeploymentHandler {
     public List<GaaSGraph> getDeploymentsByUsername(final KubernetesClient kubernetesClient, final String username) throws ApiException {
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("creator", username).list().getItems();
+            deploymentList.addAll(kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("collaborator/" + username, username).list().getItems());
             return listAllGraphs(kubernetesClient, getAPIDeployments(deploymentList));
         } catch (Exception e) {
             LOGGER.debug("Failed to list all Gaffers.");

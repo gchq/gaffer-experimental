@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.gchq.gaffer.gaas.AbstractTest;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
+import uk.gov.gchq.gaffer.gaas.model.GaaSAddCollaboratorRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
@@ -35,6 +36,7 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+import uk.gov.gchq.gaffer.gaas.services.UpdateGraphCollaboratorsService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -66,6 +68,8 @@ class GraphControllerTest extends AbstractTest {
     private CreateFederatedStoreGraphService createFederatedStoreGraphService;
     @MockBean
     private DeleteGraphService deleteGraphService;
+    @MockBean
+    private UpdateGraphCollaboratorsService updateGraphCollaboratorsService;
     @MockBean
     private GetNamespacesService getNamespacesService;
     @MockBean
@@ -528,6 +532,41 @@ class GraphControllerTest extends AbstractTest {
         assertEquals(400, result.getResponse().getStatus());
         final String expected = "{\"title\":\"Validation failed\",\"detail\":\"\\\"graphLifetimeInDays\\\" should not be empty.\"}";
         assertEquals(expected, result.getResponse().getContentAsString());
+    }
+
+    @Test
+    void addCollaborator_shouldCallUpdateGraphCollaboratorService_andReturn202_whenSuccess() throws Exception {
+        final String request = "{" +
+                "\"graphId\":\"mygraph\"," +
+                "\"collaborator\":\"someUser\"" +
+                "}";
+        when(updateGraphCollaboratorsService.updateCollaborators(any(GaaSAddCollaboratorRequestBody.class))).thenReturn(true);
+        final MvcResult result = mvc.perform(post("/addCollaborator")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "test@test.com")
+                .content(request))
+                .andReturn();
+        assertEquals(202, result.getResponse().getStatus());
+        verify(updateGraphCollaboratorsService, times(1)).updateCollaborators(any(GaaSAddCollaboratorRequestBody.class));
+
+    }
+    @Test
+    void addCollaborator_shouldCallUpdateGraphCollaboratorWithUsernameService_andReturn202_whenSuccess() throws Exception {
+        final String request = "{" +
+                "\"graphId\":\"mygraph\"," +
+                "\"collaborator\":\"someUser\"" +
+                "}";
+        when(updateGraphCollaboratorsService.updateCollaboratorsWithUsername(any(GaaSAddCollaboratorRequestBody.class), any())).thenReturn(true);
+        final MvcResult result = mvc.perform(post("/addCollaborator")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "someUser")
+                .content(request))
+                .andReturn();
+        assertEquals(202, result.getResponse().getStatus());
+        verify(updateGraphCollaboratorsService, times(1)).updateCollaboratorsWithUsername(any(GaaSAddCollaboratorRequestBody.class), any());
+
     }
 
     private LinkedHashMap<String, Object> getSchema() {

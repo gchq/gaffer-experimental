@@ -32,3 +32,8 @@ export interface ICreateFederatedGraphRequestBody extends ICreateGraphInterface 
     configName: string;
     graphLifetimeInDays: string;
 }
+
+export interface IAddCollaboratorInterface {
+    graphId: string;
+    username: string;
+}

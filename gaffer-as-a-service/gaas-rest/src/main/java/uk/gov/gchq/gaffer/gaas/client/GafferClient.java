@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
+import uk.gov.gchq.gaffer.gaas.model.GaaSAddCollaboratorRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
@@ -55,8 +56,28 @@ public class GafferClient {
             if (requestBody == null || requestBody.getMetadata() == null) {
                 LOGGER.error("Failed to create Gaffer \"\". Error: ", e);
             } else {
-                LOGGER.error("Failed to create Gaffer with name {}. Error: ",  requestBody.getMetadata().getName(), e);
+                LOGGER.error("Failed to create Gaffer with name {}. Error: ", requestBody.getMetadata().getName(), e);
             }
+            throw from(e);
+        }
+    }
+
+    public boolean addCollaborator(final GaaSAddCollaboratorRequestBody requestBody) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.addGraphCollaborator(requestBody.getGraphId(), kubernetesClient, emailStripper(requestBody.getUsername()));
+        } catch (ApiException e) {
+            LOGGER.error("Failed to add collaborator label");
+            throw from(e);
+        }
+    }
+
+    public boolean addCollaboratorWithUsername(final GaaSAddCollaboratorRequestBody requestBody, final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.addGraphCollaboratorWithUsername(requestBody.getGraphId(), kubernetesClient, emailStripper(requestBody.getUsername()), username);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to add collaborator label");
             throw from(e);
         }
     }
@@ -117,6 +138,14 @@ public class GafferClient {
         return v1NamespaceList.getItems().stream()
                 .map(v1Namespace -> v1Namespace.getMetadata().getName())
                 .collect(Collectors.toList());
+    }
+
+    private String emailStripper(final String email) {
+        String strippedEmail = email;
+        if (email.contains("@")) {
+            strippedEmail = email.substring(0, email.indexOf('@')) + "-AT-" + email.substring(email.indexOf('@') + 1);
+        }
+        return strippedEmail;
     }
 
 }
