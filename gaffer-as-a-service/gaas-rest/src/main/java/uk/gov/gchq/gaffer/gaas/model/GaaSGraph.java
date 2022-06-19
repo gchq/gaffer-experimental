@@ -30,6 +30,7 @@ public class GaaSGraph {
     private List<String> problems;
     private String configName;
     private String restUrl;
+    private String graphAutoDestroyDate;
 
     public GaaSGraph configName(final String config) {
         this.configName = config;
@@ -65,6 +66,15 @@ public class GaaSGraph {
     public GaaSGraph restUrl(final String restUrl) {
         this.restUrl = restUrl;
         return this;
+    }
+
+    public GaaSGraph graphAutoDestroyDate(final String expiredDate) {
+        this.graphAutoDestroyDate = expiredDate;
+        return this;
+    }
+
+    public String getGraphAutoDestroyDate() {
+        return graphAutoDestroyDate;
     }
 
     public String getGraphId() {
@@ -104,6 +114,7 @@ public class GaaSGraph {
                 ", rest url='" + url + '\'' +
                 ", config=" + configName + '\'' +
                 ", status=" + status +
+                ", graph auto destroy date=" + graphAutoDestroyDate + '\'' +
                 ", problems=" + problems +
                 '}';
     }

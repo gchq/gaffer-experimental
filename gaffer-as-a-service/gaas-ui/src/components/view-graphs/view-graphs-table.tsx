@@ -42,7 +42,9 @@ import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
+import PersonAddOutlinedIcon from "@material-ui/icons/PersonAddOutlined";
 import { sanitizeUrl } from "@braintree/sanitize-url";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
     graphs: Graph[];
@@ -56,6 +58,7 @@ interface IGraphRow {
     graph: Graph;
     federatedStores: Array<string>;
     onClickDelete: (graphId: string) => void;
+    onClickAddcollaborator: (graphId: string) => void;
 }
 
 const useStyles = makeStyles({
@@ -72,6 +75,12 @@ const useStyles = makeStyles({
 export function ViewGraphsTable(props: IProps) {
     const classes = useStyles();
 
+    const navigate = useNavigate();
+
+    const navigateToAddcollaborator = (graphId: string) => {
+        navigate("/addcollaborator", { state: { graphId: graphId } });
+    };
+
     return (
         <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -85,6 +94,8 @@ export function ViewGraphsTable(props: IProps) {
                                 <TableCell>Status</TableCell>
                                 <TableCell>UI URL</TableCell>
                                 <TableCell>REST URL</TableCell>
+                                <TableCell>Add Collaborator</TableCell>
+                                <TableCell>Graph Auto Destroy Date</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -95,6 +106,7 @@ export function ViewGraphsTable(props: IProps) {
                                     index={index}
                                     graph={graph}
                                     federatedStores={props.federatedStores}
+                                    onClickAddcollaborator={(graphId: string) => navigateToAddcollaborator(graphId)}
                                     onClickDelete={(graphId: string) => props.deleteGraph(graphId)}
                                 />
                             ))}
@@ -136,7 +148,7 @@ function StatusChip(graph: { status: string }) {
 }
 
 function MainGraphTableRow(props: IGraphRow) {
-    const { graph, index, federatedStores, onClickDelete } = props;
+    const { graph, index, federatedStores, onClickDelete, onClickAddcollaborator } = props;
     const classes = useStyles();
     const [rowIsExpanded, setRowIsExpanded] = React.useState(false);
     const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>("");
@@ -222,6 +234,18 @@ function MainGraphTableRow(props: IGraphRow) {
                         {graph.getRestUrl()}
                     </a>
                 </TableCell>
+                <TableCell aria-label={"add-collaborator"}>
+                    <Tooltip TransitionComponent={Zoom} title={`AddCollaborator ${graph.getId()}`}>
+                        <IconButton
+                            id={"add-collaborator-button-" + index}
+                            aria-label={graph.getId() + "-add-collaborator-button"}
+                            onClick={() => onClickAddcollaborator(graph.getId())}
+                        >
+                            <PersonAddOutlinedIcon />
+                        </IconButton>
+                    </Tooltip>
+                </TableCell>
+                <TableCell aria-label={"graph-lifetim-iIn-days"}>{graph.getGraphAutoDestroyDate()}</TableCell>
                 <TableCell aria-label={"delete-graph"}>
                     <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
                         <IconButton

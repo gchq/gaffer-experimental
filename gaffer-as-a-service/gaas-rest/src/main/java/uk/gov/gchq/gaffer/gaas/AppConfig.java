@@ -16,6 +16,8 @@
 
 package uk.gov.gchq.gaffer.gaas;
 
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.util.ClientBuilder;
@@ -28,7 +30,6 @@ import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.factories.KubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
-
 import java.io.IOException;
 
 @Configuration
@@ -63,4 +64,10 @@ public class AppConfig {
     public HelmValuesOverridesHandler helmValuesOverrides() {
         return new HelmValuesOverridesHandler();
     }
+
+    @Bean
+    public KubernetesClient kubernetesClient() {
+        return new DefaultKubernetesClient();
+    }
+
 }

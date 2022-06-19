@@ -35,6 +35,7 @@ export class GetGraphRepo {
             response.data.restUrl,
             response.data.status,
             response.data.configName,
+            response.data.graphAutoDestroyDate,
             GraphType.GAAS_GRAPH
         );
     }

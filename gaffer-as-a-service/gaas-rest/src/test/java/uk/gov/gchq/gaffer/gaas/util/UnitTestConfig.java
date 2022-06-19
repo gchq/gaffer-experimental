@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
+import uk.gov.gchq.gaffer.gaas.client.graph.GraphAutoDestroy;
 import uk.gov.gchq.gaffer.gaas.client.graph.GraphCommandExecutor;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
@@ -34,6 +35,7 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+import uk.gov.gchq.gaffer.gaas.services.UpdateGraphCollaboratorsService;
 
 import static org.mockito.Mockito.mock;
 
@@ -94,6 +96,11 @@ public class UnitTestConfig {
     }
 
     @Bean
+    public UpdateGraphCollaboratorsService updateGraphCollaboratorsService() {
+        return new UpdateGraphCollaboratorsService();
+    }
+
+    @Bean
     public Properties properties() {
         return new Properties();
     }
@@ -122,6 +129,11 @@ public class UnitTestConfig {
     @Bean
     public KubernetesClient kubernetesClient() {
         return mock(KubernetesClient.class);
+    }
+
+    @Bean
+    public GraphAutoDestroy graphAutoDestroy() {
+        return new GraphAutoDestroy();
     }
 
     @Bean

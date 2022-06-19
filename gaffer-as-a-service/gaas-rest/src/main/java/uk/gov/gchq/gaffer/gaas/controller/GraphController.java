@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.HelmValuesOverridesHandler;
+import uk.gov.gchq.gaffer.gaas.model.GaaSAddCollaboratorRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
@@ -44,8 +45,10 @@ import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
+import uk.gov.gchq.gaffer.gaas.services.UpdateGraphCollaboratorsService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -78,6 +81,8 @@ public class GraphController {
     private GetGaaSGraphConfigsService getStoreTypesService;
     @Autowired
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
+    @Autowired
+    private UpdateGraphCollaboratorsService updateGraphCollaboratorsService;
     @Value("${admin.users: {}}")
     private String[] admins;
 
@@ -86,6 +91,9 @@ public class GraphController {
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
+
+        graphAutoDestroyDateLabel(requestBody);
+
         try {
             addCreatorLabel(Objects.requireNonNull(headers.getFirst("username")));
         } catch (Exception e) {
@@ -101,6 +109,7 @@ public class GraphController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
+
     @GetMapping(path = "/graphs", produces = "application/json")
     public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> responseBody = new HashMap<>();
@@ -112,6 +121,20 @@ public class GraphController {
             responseBody.put("graphs", getGaffersService.getUserCreatedGraphs(emailStripper(headers.getFirst("username"))));
         }
         return new ResponseEntity(responseBody, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/addCollaborator", produces = "application/json")
+    public ResponseEntity<?> addCollaborator(@RequestBody final GaaSAddCollaboratorRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
+        if (isAdmin(headers.getFirst("username"))) {
+            if (updateGraphCollaboratorsService.updateCollaborators(requestBody)) {
+                return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            }
+        } else {
+            if (updateGraphCollaboratorsService.updateCollaboratorsWithUsername(requestBody, emailStripper(headers.getFirst("username")))) {
+                return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(path = "/storetypes", produces = "application/json")
@@ -159,10 +182,21 @@ public class GraphController {
         return matcher.matches();
     }
 
+    private void graphAutoDestroyDateLabel(final GaaSCreateRequestBody requestBody) {
+        if (requestBody.getGraphLifetimeInDays() != null && !requestBody.getGraphLifetimeInDays().isEmpty() && !requestBody.getGraphLifetimeInDays().toLowerCase().equals("never")) {
+            LocalDateTime currentTime = LocalDateTime.now();
+            long graphLifetimeInDays = new Long(requestBody.getGraphLifetimeInDays());
+            logger.info("graphLifetimeInDays: {}", graphLifetimeInDays);
+            String graphAutoDestroyDate = currentTime.plusDays(graphLifetimeInDays).toString();
+            logger.info("labels.graphAutoDestroyDate : {}", graphAutoDestroyDate);
+            helmValuesOverridesHandler.addOverride("labels.graphAutoDestroyDate", graphAutoDestroyDate.toLowerCase().replaceAll(":", "_"));
+        }
+    }
+
     private String emailStripper(final String email) {
         String strippedEmail = email;
         if (email.contains("@")) {
-            strippedEmail = email.substring(0, email.indexOf('@'));
+            strippedEmail = email.substring(0, email.indexOf('@')) + "-AT-" + email.substring(email.indexOf('@') + 1);
         }
         return strippedEmail;
     }
@@ -170,5 +204,6 @@ public class GraphController {
     private boolean isAdmin(final String username) {
         List<String> adminList = new ArrayList<>(Arrays.asList(admins));
         return adminList.contains(username);
+
     }
 }

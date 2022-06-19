@@ -50,7 +50,7 @@ class CreateFederatedGraphIT extends AbstractTest {
     @Test
     void testAddGraphReturns201OnSuccess() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph(proxyGraphId, proxyGraphHost, VALID_ROOT));
-        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
+        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", "10", subGraphs);
 
         final MockHttpServletResponse response = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -66,7 +66,7 @@ class CreateFederatedGraphIT extends AbstractTest {
     @Test
     void whenSubGraphURLIsInvalid_shouldReturnBadRequest() throws Exception {
         final List<ProxySubGraph> subGraphs = Arrays.asList(new ProxySubGraph("TestGraph", "http://invalid.url", "/rest"));
-        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", subGraphs);
+        final GaaSCreateRequestBody federatedRequestBody = new GaaSCreateRequestBody(GRAPH_ID, TEST_GRAPH_DESCRIPTION, "federated", "10",  subGraphs);
 
         final MockHttpServletResponse result = mvc.perform(post("/graphs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

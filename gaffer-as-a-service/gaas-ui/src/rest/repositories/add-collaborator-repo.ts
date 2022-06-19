@@ -15,33 +15,20 @@
  */
 
 import { RestClient } from "../clients/rest-client";
-import { ICreateFederatedGraphRequestBody } from "../http-message-interfaces/request-interfaces";
+import { IAddCollaboratorInterface } from "../http-message-interfaces/request-interfaces";
 import { Config } from "../config";
-import { ICreateGraphConfig } from "./create-storetypes-graph-repo";
 
-export class CreateFederatedGraphRepo {
-    public async create(
-        graphId: string,
-        description: string,
-        configName: string,
-        graphLifetimeInDays: string,
-        config: ICreateGraphConfig
-    ): Promise<void> {
-        if (config.proxySubGraphs === undefined) {
-            throw new Error("Proxy Stores is undefined");
-        }
-        const httpRequestBody: ICreateFederatedGraphRequestBody = {
+export class AddCollaboratorRepo {
+    public async addCollaborator(graphId: string, username: string): Promise<void> {
+        const httpRequestBody: IAddCollaboratorInterface = {
             graphId: graphId,
-            description: description,
-            configName: configName,
-            graphLifetimeInDays: graphLifetimeInDays,
-            proxySubGraphs: config.proxySubGraphs,
+            username: username,
         };
         await new RestClient()
             .baseUrl(Config.REACT_APP_KAI_REST_API_HOST)
             .post()
             .requestBody(httpRequestBody)
-            .graphs()
+            .addCollaborator()
             .execute();
     }
 }

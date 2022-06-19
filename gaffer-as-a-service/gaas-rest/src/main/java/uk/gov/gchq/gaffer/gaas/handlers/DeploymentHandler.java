@@ -19,6 +19,7 @@ package uk.gov.gchq.gaffer.gaas.handlers;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.kubernetes.client.openapi.ApiException;
@@ -27,9 +28,9 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1Secret;
 import io.kubernetes.client.openapi.models.V1Status;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -39,9 +40,13 @@ import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
+
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
@@ -51,7 +56,7 @@ import static uk.gov.gchq.gaffer.gaas.util.Properties.NAMESPACE;
 public class DeploymentHandler {
 
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DeploymentHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeploymentHandler.class);
 
     private final String workerNamespace;
 
@@ -99,6 +104,38 @@ public class DeploymentHandler {
         return true;
     }
 
+    public boolean addGraphCollaborator(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd) throws ApiException {
+        try {
+            updateDeploymentLabels(gaffer + "-gaffer-api", kubernetesClient, usernameToAdd);
+            updateDeploymentLabels(gaffer + "-gaffer-ui", kubernetesClient, usernameToAdd);
+            return true;
+        } catch (KubernetesClientException e) {
+            LOGGER.error("Failed to add collaborator.", e);
+            throw new ApiException(e.getCode(), e.getMessage());
+        }
+    }
+
+    public boolean addGraphCollaboratorWithUsername(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd, final String username) throws ApiException {
+        try {
+            if (kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-api").get().getMetadata().getLabels().get("creator").equals(username)) {
+                updateDeploymentLabels(gaffer + "-gaffer-api", kubernetesClient, usernameToAdd);
+                updateDeploymentLabels(gaffer + "-gaffer-ui", kubernetesClient, usernameToAdd);
+                return true;
+            }
+            return false;
+        } catch (KubernetesClientException e) {
+            LOGGER.error("Failed to add collaborator.", e);
+            throw new ApiException(e.getCode(), e.getMessage());
+        }
+    }
+
+    private void updateDeploymentLabels(final String deploymentName, final KubernetesClient kubernetesClient, final String usernameToAdd) {
+        kubernetesClient.apps().deployments().inNamespace(NAMESPACE)
+                .withName(deploymentName).edit(
+                d -> new DeploymentBuilder(d).editMetadata().addToLabels("collaborator/" + usernameToAdd, usernameToAdd).endMetadata().build()
+        );
+    }
+
     @NotNull
     private String getSecretName(final Gaffer gaffer, final V1Secret helmValuesSecret) throws ApiException {
         coreV1Api.createNamespacedSecret(workerNamespace, helmValuesSecret, null, null, null);
@@ -126,7 +163,7 @@ public class DeploymentHandler {
      */
     public boolean onGafferDelete(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
         try {
-            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("app.kubernetes.io/instance", gaffer).list().getItems();
+            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(workerNamespace).withLabel("app.kubernetes.io/instance", gaffer).list().getItems();
             if (!deploymentList.isEmpty()) {
                 kubernetesClient.apps().deployments().inNamespace(workerNamespace).delete(deploymentList);
             }
@@ -191,12 +228,12 @@ public class DeploymentHandler {
             if (configMapList.isEmpty() & deploymentList.isEmpty()) {
                 //If all 3 are empty it means the gaffer which the user is trying to delete does not exist therefore
                 //we return false
-                LOGGER.debug(String.format("No deployments of %s to delete", gaffer));
+                LOGGER.debug("No deployments of {} to delete", gaffer);
                 return false;
             }
 
         } catch (KubernetesClientException e) {
-            LOGGER.debug(String.format("Failed to delete deployments of %s", gaffer));
+            LOGGER.debug("Failed to delete deployments of {}", gaffer);
             throw new ApiException(e.getCode(), e.getMessage());
         }
         cleanUpGafferDeploymentAfterTearDown(gaffer, workerNamespace);
@@ -217,6 +254,7 @@ public class DeploymentHandler {
     public List<GaaSGraph> getDeploymentsByUsername(final KubernetesClient kubernetesClient, final String username) throws ApiException {
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("creator", username).list().getItems();
+            deploymentList.addAll(kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("collaborator/" + username, username).list().getItems());
             return listAllGraphs(kubernetesClient, getAPIDeployments(deploymentList));
         } catch (Exception e) {
             LOGGER.debug("Failed to list all Gaffers.");
@@ -233,6 +271,39 @@ public class DeploymentHandler {
         }
         return apiDeployments;
     }
+
+    /**
+     * Starts the Uninstallation process for a Gaffer Graph.
+     * @param kubernetesClient kubernetesClient
+     * @return True if the uninstallation process started, false if not
+     * @throws ApiException exception
+     */
+    public boolean onAutoGafferDestroy(final KubernetesClient kubernetesClient) throws ApiException {
+        boolean autoDestroy = false;
+        try {
+            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(workerNamespace).withLabel("graphAutoDestroyDate").list().getItems();
+            if (!deploymentList.isEmpty()) {
+                for (final Deployment deployment : deploymentList) {
+                    String graphAutoDestroyDate = deployment.getMetadata().getLabels().get("graphAutoDestroyDate").toLowerCase().replaceAll("_", ":");
+                    LocalDateTime graphAutoDestroyDateTime = LocalDateTime.parse(graphAutoDestroyDate);
+                    LocalDateTime currentTime = LocalDateTime.now();
+                    if (graphAutoDestroyDateTime.isBefore(currentTime) || graphAutoDestroyDateTime.isEqual(currentTime)) {
+                        String graphId = deployment.getMetadata().getLabels().get("app.kubernetes.io/instance");
+                        LOGGER.info("Graph to be deleted {} {}", graphId, graphAutoDestroyDateTime);
+                        autoDestroy = onGafferDelete(deployment.getMetadata().getLabels().get("app.kubernetes.io/instance"), kubernetesClient);
+                        LOGGER.info("Graph is deleted {} {}", graphId, graphAutoDestroyDateTime);
+                    }
+                }
+            }
+
+        } catch (KubernetesClientException e) {
+            LOGGER.error("Failed to gaffer auto destroy deployments");
+            throw new ApiException(e.getCode(), e.getMessage());
+        }
+        return autoDestroy;
+    }
+
+
 
     /**
      * Removes any resources left after a successful uninstallation including:
@@ -316,29 +387,38 @@ public class DeploymentHandler {
                 });
     }
 
-    private List<GaaSGraph> listAllGraphs(final KubernetesClient kubernetesClient, final List<String> apiDeployments) {
+    private List<GaaSGraph> listAllGraphs(final KubernetesClient kubernetesClient, final List<String> graphIds) {
         List<GaaSGraph> graphs = new ArrayList<>();
-        for (final String gaffer : apiDeployments) {
+        for (final String graphId : graphIds) {
             try {
                 GaaSGraph gaaSGraph = new GaaSGraph();
-                gaaSGraph.graphId(gaffer);
-                Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(gaffer + "-gaffer-graph-config").get().getData().values();
+                gaaSGraph.graphId(graphId);
+                Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(graphId + "-gaffer-graph-config").get().getData().values();
                 gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
                 if (getValueOfConfig(graphConfig, "configName") != null) {
                     gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
                 }
-                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(gaffer + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
+                int availableReplicas = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(graphId + GAFFER_NAME_SUFFIX).get().getStatus().getAvailableReplicas();
                 if (availableReplicas >= 1) {
                     gaaSGraph.status(RestApiStatus.UP);
                 } else {
                     gaaSGraph.status(RestApiStatus.DOWN);
                 }
-                gaaSGraph.url("http://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
-                gaaSGraph.restUrl("https://" + gaffer + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/rest");
+                gaaSGraph.url("http://" + graphId + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/ui");
+                gaaSGraph.restUrl("https://" + graphId + "-" + NAMESPACE + "." + INGRESS_SUFFIX + "/rest");
+
+                List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withLabel("app.kubernetes.io/instance", graphId).list().getItems();
+                if (!deploymentList.isEmpty()) {
+                    for (final Deployment deployment : deploymentList) {
+                        if (deployment.getMetadata().getLabels().get("graphAutoDestroyDate") != null) {
+                            gaaSGraph.graphAutoDestroyDate(deployment.getMetadata().getLabels().get("graphAutoDestroyDate").toLowerCase().replaceAll("_", ":"));
+                        }
+                    }
+                }
 
                 graphs.add(gaaSGraph);
             } catch (Exception e) {
-                LOGGER.error(gaffer + " could not be retrieved ", e);
+                LOGGER.info("{} could not be retrieved ", graphId, e);
             }
         }
         return graphs;
