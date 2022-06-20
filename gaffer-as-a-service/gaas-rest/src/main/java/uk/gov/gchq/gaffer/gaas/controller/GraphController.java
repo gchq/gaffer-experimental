@@ -100,10 +100,10 @@ public class GraphController {
             logger.error("Could not retrieve username");
         }
         if (requestBody.isFederatedStoreRequest()) {
-            eventLogger.info(headers.getFirst("username") + " made a create federated store request");
+            eventLogger.info("{} made a create federated store request with graph id: {}", headers.getFirst("username"), requestBody.getGraphId());
             createFederatedStoreGraphService.createFederatedStore(requestBody);
         } else {
-            eventLogger.info(headers.getFirst("username") + " made a create graph request");
+            eventLogger.info("{} made a create graph request with graph id: {}", headers.getFirst("username"), requestBody.getGraphId());
             createGraphService.createGraph(requestBody);
         }
         return new ResponseEntity(HttpStatus.CREATED);
@@ -114,10 +114,8 @@ public class GraphController {
     public ResponseEntity<List<GaaSGraph>> getAllGraphs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> responseBody = new HashMap<>();
         if (isAdmin(headers.getFirst("username"))) {
-            eventLogger.info(headers.getFirst("username") + " made a get graph request");
             responseBody.put("graphs", getGaffersService.getAllGraphs());
         } else {
-            eventLogger.info(headers.getFirst("username") + " made a get graph request");
             responseBody.put("graphs", getGaffersService.getUserCreatedGraphs(emailStripper(headers.getFirst("username"))));
         }
         return new ResponseEntity(responseBody, HttpStatus.OK);
@@ -127,10 +125,12 @@ public class GraphController {
     public ResponseEntity<?> addCollaborator(@RequestBody final GaaSAddCollaboratorRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         if (isAdmin(headers.getFirst("username"))) {
             if (updateGraphCollaboratorsService.updateCollaborators(requestBody)) {
+                eventLogger.info("{} made an add collaborator request - {} - to graph id: {}", headers.getFirst("username"), requestBody.getUsername(), requestBody.getGraphId());
                 return new ResponseEntity<>(HttpStatus.ACCEPTED);
             }
         } else {
             if (updateGraphCollaboratorsService.updateCollaboratorsWithUsername(requestBody, emailStripper(headers.getFirst("username")))) {
+                eventLogger.info("{} made an add collaborator request - {} - to graph id: {}", headers.getFirst("username"), requestBody.getUsername(), requestBody.getGraphId());
                 return new ResponseEntity<>(HttpStatus.ACCEPTED);
             }
         }
@@ -140,7 +140,6 @@ public class GraphController {
     @GetMapping(path = "/storetypes", produces = "application/json")
     public ResponseEntity<List<GafferConfigSpec>> getGafferConfigSpecs(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final Map<String, Object> body = new HashMap<>();
-        eventLogger.info(headers.getFirst("username") + " made a get storetypes request");
         body.put("storeTypes", getStoreTypesService.getGafferConfigSpecs());
 
         return new ResponseEntity(body, HttpStatus.OK);
@@ -149,12 +148,12 @@ public class GraphController {
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         if (isAdmin(headers.getFirst("username"))) {
-            eventLogger.info(headers.getFirst("username") + " made a delete graph request on " + graphId);
+            eventLogger.info("{} made a delete graph request to graph id: {}", headers.getFirst("username"), graphId);
             if (deleteGraphService.deleteGraph(graphId)) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         } else {
-            eventLogger.info(headers.getFirst("username") + " made a delete graph request on " + graphId);
+            eventLogger.info("{} made a delete graph request to graph id: {}", headers.getFirst("username"), graphId);
             if (deleteGraphService.deleteGraphByUsername(graphId, emailStripper(headers.getFirst("username")))) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
