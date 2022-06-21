@@ -105,12 +105,14 @@ jobs:
     needs: [ run-gaas-code-analysis, run-ui-code-analysis ]
     runs-on: ubuntu-latest
     # Skip any PR created by dependabot to avoid permission issues
+    container:
+      image: returntocorp/semgrep
     if: (github.actor != 'dependabot[bot]')
     steps:
-      - uses: actions/checkout@v2
-      - uses: returntocorp/semgrep-action@v1
-        with:
-          config:
+      - uses: actions/checkout@v3
+      - run: semgrep ci
+        env:
+          SEMGREP_RULES:
             p/r2c
             p/owasp-top-ten
             p/r2c-ci
@@ -119,9 +121,3 @@ jobs:
             p/jwt
             p/nodejs
             p/nodejsscan
-          auditOn: push
-          generateSarif: "1"
-      - name: Github Security Dashboard
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: semgrep.sarif
