@@ -23,18 +23,8 @@
       <param name="ConversionPattern" value="%c{3} %p %x - %m%n"/>
     </layout>
   </appender>
-    <appender name="default.file" class="org.apache.log4j.FileAppender">
-        <param name="file" value="gaffer-as-a-service/gaas-jwt-sidecar/logs/jwt-sidecar-logs.out"/>
-        <param name="immediateFlush" value="true"/>
-        <param name="threshold" value="debug"/>
-        <param name="append" value="false"/>
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%c{3} %p %x - %m%n"/>
-        </layout>
-    </appender>
   <root>
     <priority value="info"></priority>
     <appender-ref ref="console"></appender-ref>
-    <appender-ref ref="default.file" />
   </root>
 </log4j:configuration>
