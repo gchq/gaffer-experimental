@@ -38,6 +38,7 @@ import uk.gov.gchq.gaffer.gaas.HelmCommand;
 import uk.gov.gchq.gaffer.gaas.callback.SimpleApiCallback;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.GraphCollaborator;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
 
@@ -46,6 +47,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAME_LABEL;
@@ -162,6 +165,8 @@ public class DeploymentHandler {
      * @throws ApiException exception
      */
     public boolean onGafferDelete(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
+        getGraphCollaborators(gaffer, kubernetesClient);
+        ;
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(workerNamespace).withLabel("app.kubernetes.io/instance", gaffer).list().getItems();
             if (!deploymentList.isEmpty()) {
@@ -274,6 +279,7 @@ public class DeploymentHandler {
 
     /**
      * Starts the Uninstallation process for a Gaffer Graph.
+     *
      * @param kubernetesClient kubernetesClient
      * @return True if the uninstallation process started, false if not
      * @throws ApiException exception
@@ -303,6 +309,33 @@ public class DeploymentHandler {
         return autoDestroy;
     }
 
+
+    /**
+     * Starts the Uninstallation process for a Gaffer Graph.
+     *
+     * @param gaffer           The Gaffer Object
+     * @param kubernetesClient kubernetesClient
+     * @return
+     * @throws ApiException exception
+     */
+    public List<GraphCollaborator> getGraphCollaborators(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
+        List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(workerNamespace).withLabel("app.kubernetes.io/instance", gaffer).list().getItems();
+        Map<String, String> labels = null;
+        try {
+            if (!deploymentList.isEmpty()) {
+                for (final Deployment deployment : deploymentList) {
+                    labels = deployment.getMetadata().getLabels();
+                }
+            }
+            List<GraphCollaborator> graphCollaborators = listGraphCollaborators(labels, gaffer);
+            //graphCollaborators.forEach(graphCollaborator -> System.out.println(graphCollaborator.getUserName().toLowerCase()));
+            return graphCollaborators;
+
+        } catch (Exception e) {
+            LOGGER.error("Failed to list all graph collaborators.", e);
+            throw new ApiException(e.getLocalizedMessage());
+        }
+    }
 
 
     /**
@@ -422,6 +455,28 @@ public class DeploymentHandler {
             }
         }
         return graphs;
+    }
+
+    private List<GraphCollaborator> listGraphCollaborators(final Map<String, String> labels, final String graphId) {
+        List<GraphCollaborator> graphCollaborators = new ArrayList<>();
+
+        Map<String, String> collaborator =
+                labels.entrySet()
+                        .stream()
+                        .filter(map -> map.getKey().startsWith("collaborator"))
+                        .collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+
+        if (collaborator != null) {
+            for (Map.Entry<String, String> entry : collaborator.entrySet()) {
+                GraphCollaborator graphCollaborator = new GraphCollaborator();
+                graphCollaborator.graphId(graphId);
+                graphCollaborator.userName(entry.getKey());
+                graphCollaborators.add(graphCollaborator);
+            }
+        }
+
+
+        return graphCollaborators;
     }
 
     private String getValueOfConfig(final Collection<String> value, final String fieldToGet) {

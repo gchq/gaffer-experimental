@@ -155,6 +155,20 @@ public class GraphController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping(path = "/graphs/{graphId}", produces = "application/json")
+    public ResponseEntity<?> getGraphCollaborators(@PathVariable final String graphId, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
+
+        final Map<String, Object> responseBody = new HashMap<>();
+        if (isAdmin(headers.getFirst("username"))) {
+            responseBody.put("collaborators", getGaffersService.getGraphCollaborators(graphId));
+        }
+//        else {
+//            responseBody.put("graphs", getGaffersService.getUserCreatedGraphs(emailStripper(headers.getFirst("username"))));
+//        }
+        return new ResponseEntity(responseBody, HttpStatus.OK);
+
+    }
+
     @GetMapping(path = "/namespaces", produces = "application/json")
     public ResponseEntity<?> getNamespaces(@RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         final List<String> namespaces = getNamespacesService.getNamespaces();
