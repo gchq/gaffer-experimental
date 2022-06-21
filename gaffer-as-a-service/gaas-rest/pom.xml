@@ -509,12 +509,6 @@
                         <image>${userName}/${imageName}</image>
                         <credHelper>${credHelper}</credHelper>
                     </to>
-                    <container>
-                        <volumes>
-                            <volume>/logs/logDB</volume>>
-                            <volume>/var/log/logDB</volume>
-                        </volumes>
-                    </container>
                 </configuration>
             </plugin>
             <plugin>
