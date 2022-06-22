@@ -42,3 +42,12 @@ export interface IStoreTypesResponse {
         parameters: string[];
     }>;
 }
+
+export interface ICollaboratorByIdResponse {
+    graphId: string;
+    username: string;
+}
+
+export interface IAllGraphCollaboratorsResponse {
+    graphCollaborators: ICollaboratorByIdResponse[];
+}

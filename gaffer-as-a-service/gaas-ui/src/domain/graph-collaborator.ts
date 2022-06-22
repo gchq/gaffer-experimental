@@ -14,37 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.gchq.gaffer.gaas.model;
+export class GraphCollaborator {
+    private readonly graphId: string;
+    private readonly username: string;
 
-public class GraphCollaborator {
-
-    private String graphId;
-
-    private String username;
-
-    public GraphCollaborator graphId(final String graphId) {
+    constructor(graphId: string, username: string) {
         this.graphId = graphId;
-        return this;
-    }
-
-    public GraphCollaborator username(final String username) {
         this.username = username;
-        return this;
     }
 
-    public String getGraphId() {
-        return graphId;
+    public getId(): string {
+        return this.graphId;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public String toString() {
-        return "GraphCollaborator{" +
-                "graphId='" + graphId + '\'' +
-                ", username='" + username + '\'' +
-                '}';
+    public getUsername(): string {
+        return this.username;
     }
 }

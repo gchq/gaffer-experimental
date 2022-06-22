@@ -18,6 +18,7 @@ import CreateGraph from "../create-graph/create-graph";
 import UserGuide from "../user-guide/user-guide";
 import ViewGraph from "../view-graphs/view-graphs";
 import AddCollaborator from "../add-collaborator/add-collaborator";
+import ViewCollaborator from "../view-collaborators/view-collaborators";
 
 const AppRoutes = [
     {
@@ -39,6 +40,11 @@ const AppRoutes = [
         path: "/addcollaborator",
         sidebarName: "",
         component: AddCollaborator,
+    },
+    {
+        path: "/getcollaborators",
+        sidebarName: "View Graph Collaborators",
+        component: ViewCollaborator,
     },
 ];
 

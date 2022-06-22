@@ -470,7 +470,7 @@ public class DeploymentHandler {
             for (Map.Entry<String, String> entry : collaborator.entrySet()) {
                 GraphCollaborator graphCollaborator = new GraphCollaborator();
                 graphCollaborator.graphId(graphId);
-                graphCollaborator.userName(entry.getKey());
+                graphCollaborator.username(entry.getKey());
                 graphCollaborators.add(graphCollaborator);
             }
         }

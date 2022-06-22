@@ -155,7 +155,7 @@ public class GraphController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(path = "/graphs/{graphId}", produces = "application/json")
+    @GetMapping(path = "/collaborators/{graphId}", produces = "application/json")
     public ResponseEntity<?> getGraphCollaborators(@PathVariable final String graphId, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
 
         final Map<String, Object> responseBody = new HashMap<>();
