@@ -42,6 +42,9 @@ spec:
               limits:
                 memory: "1Gi"
                 cpu: "1000m"
+            volumeMounts:
+              - name: gaas-persistent-storage
+                mountPath: /logs
           - image: "{{ .Values.sidecar.image }}"
             imagePullPolicy: Always
             name: jwt-sidecar-app
@@ -70,3 +73,7 @@ spec:
               periodSeconds: 30
               successThreshold: 1
               failureThreshold: 5
+      volumes:
+        - name: gaas-persistent-storage
+          persistentVolumeClaim:
+            claimName: gaas-pvc

@@ -87,6 +87,15 @@ the correct endpoint should be: [http://your_service:8080]/actuator/prometheus
 
 Test Rest API via postman or Kai UI
 
+How to Access Event Logs on OpenShift
+=======================
+1. Log in to OpenShift using `oc login [token]`.
+2. Get name of pod where gaas-rest is running using `oc get pods`.
+3. Run `oc port-forward [podName] 8080`. This forwards the pod port 8080 (where GaaS-Rest runs) to localhost:8080.
+4. Go to `http://localhost:8080/h2-console/`
+5. Ensure that URL field in h2 console page is set to `jdbc:h2:file:./logs/logDB`
+6. Log in using username and password
+
 GaaS Endpoint Documentation
 =======================
 
