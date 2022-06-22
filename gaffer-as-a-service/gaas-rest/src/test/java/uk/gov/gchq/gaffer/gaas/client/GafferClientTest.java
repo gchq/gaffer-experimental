@@ -199,6 +199,18 @@ class GafferClientTest {
         assertThrows(GaaSRestApiException.class, () -> gafferClient.addCollaborator(gaaSAddCollaboratorRequestBody));
     }
 
+    @Test
+    void deleteCollaborator_shouldReturnTrueWhenSuccess() throws ApiException, GaaSRestApiException {
+        when(deploymentHandler.deleteCollaborator(any(), any(), any())).thenReturn(true);
+        assertTrue(gafferClient.deleteCollaborator("someGraph", "someUser"));
+    }
+
+    @Test
+    void deleteCollaboratorByUsername_shouldReturnTrueWhenSuccess() throws ApiException, GaaSRestApiException {
+        when(deploymentHandler.deleteCollaboratorByUsername(any(), any(), any(), any())).thenReturn(true);
+        assertTrue(gafferClient.deleteCollaboratorByUsername("someGraph", "someUser", "myUser"));
+    }
+
     @Ignore
     void deleteGraph_ShouldThrowGaaSRestApiException_WhenRequestFails() throws ApiException {
         when(deploymentHandler.onGafferDelete(null, kubernetesClient)).thenThrow(new ApiException("Failed to delete Gaffer as it is null"));

@@ -463,6 +463,81 @@ class DeploymentHandlerTest {
 
     }
 
+    @Test
+    void shouldDeleteCollaboratorWhenDeleteCollaboratorCalled() throws ApiException {
+        // Given
+        ApiClient client = mock(ApiClient.class);
+        when(client.escapeString(anyString())).thenCallRealMethod();
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+        Map<String, String> labels = new HashMap<>();
+        labels.put("creator", "myUser");
+        labels.put("app.kubernetes.io/instance", "test");
+
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build());
+        handler.addGraphCollaborator("test", kubernetesClient, "someUser");
+
+        assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().get("collaborator/someUser"));
+        assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().get("collaborator/someUser"));
+
+        handler.deleteCollaborator("test","someUser" ,kubernetesClient);
+
+        assertFalse(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().containsValue("someUser"));
+        assertFalse(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().containsValue("someUser"));
+    }
+
+    @Test
+    void shouldDeleteCollaboratorWhenDeleteCollaboratorByUsernameCalled() throws ApiException {
+        // Given
+        ApiClient client = mock(ApiClient.class);
+        when(client.escapeString(anyString())).thenCallRealMethod();
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+        Map<String, String> labels = new HashMap<>();
+        labels.put("creator", "myUser");
+        labels.put("app.kubernetes.io/instance", "test");
+
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build());
+        handler.addGraphCollaborator("test", kubernetesClient, "someUser");
+
+        assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().get("collaborator/someUser"));
+        assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().get("collaborator/someUser"));
+
+        handler.deleteCollaboratorByUsername("test","someUser", "myUser" ,kubernetesClient);
+
+        assertFalse(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().containsValue("someUser"));
+        assertFalse(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().containsValue("someUser"));
+    }
+
+    @Test
+    void shouldNotDeleteCollaboratorWhenDeleteCollaboratorByUsernameCalledAndUserIsNotCreatorOrAdmin() throws ApiException {
+        // Given
+        ApiClient client = mock(ApiClient.class);
+        when(client.escapeString(anyString())).thenCallRealMethod();
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+        Map<String, String> labels = new HashMap<>();
+        labels.put("creator", "myUser");
+        labels.put("app.kubernetes.io/instance", "test");
+
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build());
+        handler.addGraphCollaborator("test", kubernetesClient, "someUser");
+
+        assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().get("collaborator/someUser"));
+        assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().get("collaborator/someUser"));
+
+        handler.deleteCollaboratorByUsername("test","someUser", "someRandomUser" ,kubernetesClient);
+
+        assertTrue(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().containsValue("someUser"));
+        assertTrue(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().containsValue("someUser"));
+    }
+
     private Gaffer getGaffer() {
         GafferSpec gafferSpec = new GafferSpec();
         gafferSpec.putNestedObject("name", GRAPH_ID_KEY);
