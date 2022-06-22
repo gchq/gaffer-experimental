@@ -200,6 +200,18 @@ class GafferClientTest {
     }
 
     @Test
+    void deleteCollaborator_shouldThrowGaaSRestApiExceptionWhenError() throws ApiException {
+        when(deploymentHandler.deleteCollaborator(any(), any(), any())).thenThrow(new ApiException("Failed to delete collaborator"));
+        assertThrows(GaaSRestApiException.class, () -> gafferClient.deleteCollaborator("myGraph", "someCollaborator"));
+    }
+
+    @Test
+    void deleteCollaboratorByUsername_shouldThrowGaaSRestApiExceptionWhenError() throws ApiException {
+        when(deploymentHandler.deleteCollaboratorByUsername(any(), any(), any(), any())).thenThrow(new ApiException("Failed to delete collaborator"));
+        assertThrows(GaaSRestApiException.class, () -> gafferClient.deleteCollaboratorByUsername("myGraph", "someCollaborator", "myUser"));
+    }
+
+    @Test
     void deleteCollaborator_shouldReturnTrueWhenSuccess() throws ApiException, GaaSRestApiException {
         when(deploymentHandler.deleteCollaborator(any(), any(), any())).thenReturn(true);
         assertTrue(gafferClient.deleteCollaborator("someGraph", "someUser"));
