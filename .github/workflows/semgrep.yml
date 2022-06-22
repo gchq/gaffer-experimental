@@ -17,7 +17,6 @@ on: [ push, pull_request ]
 jobs:
   run-semgrep:
     name: Semgrep Scan
-    needs: [ run-gaas-code-analysis, run-ui-code-analysis ]
     runs-on: ubuntu-20.04
     # Skip any PR created by dependabot to avoid permission issues
     container:
@@ -36,4 +35,3 @@ jobs:
             p/jwt
             p/nodejs
             p/nodejsscan
-          
