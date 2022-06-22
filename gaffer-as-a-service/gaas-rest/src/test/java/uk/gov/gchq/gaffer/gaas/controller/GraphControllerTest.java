@@ -32,6 +32,7 @@ import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+import uk.gov.gchq.gaffer.gaas.services.DeleteCollaboratorService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
@@ -47,6 +48,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -76,6 +78,8 @@ class GraphControllerTest extends AbstractTest {
     private GetGaaSGraphConfigsService getStoreTypesService;
     @MockBean
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
+    @MockBean
+    private DeleteCollaboratorService deleteCollaboratorService;
 
     @Test
     void getStoretypes_ReturnsStoretypesAsList_whenSuccessful() throws Exception {
@@ -567,6 +571,34 @@ class GraphControllerTest extends AbstractTest {
         assertEquals(202, result.getResponse().getStatus());
         verify(updateGraphCollaboratorsService, times(1)).updateCollaboratorsWithUsername(any(GaaSAddCollaboratorRequestBody.class), any());
 
+    }
+
+    @Test
+    void deleteCollaboratorWhenCollaboratorExistsShouldReturn204() throws Exception {
+        doReturn(true).when(deleteCollaboratorService).deleteCollaborator(TEST_GRAPH_ID, "userToDelete");
+
+        final MvcResult result = mvc.perform(delete("/deleteCollaborator/" + TEST_GRAPH_ID + "/userToDelete")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "test@test.com"))
+                .andReturn();
+        verify(deleteCollaboratorService, times(1)).deleteCollaborator(any(String.class), any(String.class));
+
+        assertEquals(204, result.getResponse().getStatus());
+    }
+
+    @Test
+    void deleteCollaboratorByUsernameWhenCollaboratorExistsAndPermissionToDeleteShouldReturn204() throws Exception {
+        doReturn(true).when(deleteCollaboratorService).deleteCollaboratorByUsername(TEST_GRAPH_ID, "userToDelete", "creator");
+
+        final MvcResult result = mvc.perform(delete("/deleteCollaborator/" + TEST_GRAPH_ID + "/userToDelete")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "creator"))
+                .andReturn();
+        verify(deleteCollaboratorService, times(1)).deleteCollaboratorByUsername(any(String.class), any(String.class), eq("creator"));
+
+        assertEquals(204, result.getResponse().getStatus());
     }
 
     private LinkedHashMap<String, Object> getSchema() {

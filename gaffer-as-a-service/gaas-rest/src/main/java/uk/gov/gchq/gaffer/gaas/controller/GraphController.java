@@ -41,6 +41,7 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+import uk.gov.gchq.gaffer.gaas.services.DeleteCollaboratorService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
@@ -83,6 +84,8 @@ public class GraphController {
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
     @Autowired
     private UpdateGraphCollaboratorsService updateGraphCollaboratorsService;
+    @Autowired
+    private DeleteCollaboratorService deleteCollaboratorService;
     @Value("${admin.users: {}}")
     private String[] admins;
 
@@ -155,6 +158,22 @@ public class GraphController {
         } else {
             eventLogger.info("{} made a delete graph request to graph id: {}", headers.getFirst("username"), graphId);
             if (deleteGraphService.deleteGraphByUsername(graphId, emailStripper(headers.getFirst("username")))) {
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping(path = "/deleteCollaborator/{graphId}/{username}", produces = "application/json")
+    public ResponseEntity<?> deleteCollaborator(@PathVariable final String graphId, @PathVariable final String username, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
+        if (isAdmin(headers.getFirst("username"))) {
+            eventLogger.info("{} made a delete collaborator request to remove {} as a collaborator from graph id: {}", headers.getFirst("username"), username, graphId);
+            if (deleteCollaboratorService.deleteCollaborator(graphId, username)) {
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            }
+        } else {
+            eventLogger.info("{} made a delete collaborator request to remove {} as a collaborator from graph id: {}", headers.getFirst("username"), username, graphId);
+            if (deleteCollaboratorService.deleteCollaboratorByUsername(graphId, username, emailStripper(headers.getFirst("username")))) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
