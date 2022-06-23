@@ -76,7 +76,6 @@ export function ViewCollaboratorsTable(props: IProps) {
                     <Table size="medium" className={classes.table} aria-label="Graphs Table">
                         <TableHead>
                             <TableRow style={{ background: "#F4F2F2" }}>
-                                <TableCell />
                                 <TableCell>Graph ID</TableCell>
                                 <TableCell>User Name</TableCell>
                                 <TableCell>Actions</TableCell>
@@ -143,35 +142,11 @@ function MainGraphCollaboratorTableRow(props: IGraphCollaboratorRow) {
     return (
         <React.Fragment>
             <TableRow className={classes.root} hover aria-label={"view-collaborators-table"}>
-                <TableCell aria-label={"expand-row-icon"}>
-                    <IconButton
-                        id={"expand-row-button-" + index}
-                        aria-label={graphCollaborator.getId() + "-expand-button"}
-                        size="small"
-                        onClick={() => setRowIsExpanded(!rowIsExpanded)}
-                    >
-                        {rowIsExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                    </IconButton>
-                </TableCell>
                 <TableCell component="th" scope="row" aria-label={"row-id"}>
                     {graphCollaborator.getId()}
                 </TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={rowIsExpanded} timeout="auto" unmountOnExit>
-                        <Box margin={1}>
-                            <Table size="small" aria-label="collaborator-details">
-                                <TableBody>
-                                    <TableRow aria-label={"username"}>
-                                        <TableCell component="th" scope="row">
-                                            Username: {graphCollaborator.getUsername()}
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
+                <TableCell component="th" scope="row" aria-label={"row-id"}>
+                    {graphCollaborator.getUsername()}
                 </TableCell>
             </TableRow>
         </React.Fragment>

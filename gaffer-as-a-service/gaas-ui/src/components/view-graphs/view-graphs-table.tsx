@@ -83,8 +83,7 @@ const useStyles = makeStyles({
 
 export function ViewGraphsTable(props: IProps) {
     const classes = useStyles();
-
-    const [graphCollaborators, setGraphCollaborators] = useState({});
+    const [graphCollaborators, setGraphCollaborators] = useState(props.graphCollaborators);
     const [errorMessage, setErrorMessage] = useState("");
 
     const navigate = useNavigate();
@@ -100,11 +99,12 @@ export function ViewGraphsTable(props: IProps) {
 
     const getGraphCollaborators = async (graphId: string) => {
         try {
-            const collaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
+            const graphCollaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
                 encode(DOMPurify.sanitize(graphId))
             );
-            console.log("collaborators:" + collaborators[0]);
-            setGraphCollaborators(collaborators);
+
+            console.log("collaborators:" + graphCollaborators[0].getUsername());
+            setGraphCollaborators(graphCollaborators);
             setErrorMessage("");
         } catch (e) {
             setErrorMessage(

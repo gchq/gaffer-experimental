@@ -43,7 +43,7 @@ const AppRoutes = [
     },
     {
         path: "/viewcollaborators",
-        sidebarName: "View Graph Collaborators",
+        sidebarName: "",
         component: ViewCollaborator,
     },
 ];

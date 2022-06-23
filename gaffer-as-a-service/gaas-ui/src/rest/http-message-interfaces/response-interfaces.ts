@@ -49,5 +49,5 @@ export interface ICollaboratorByIdResponse {
 }
 
 export interface IAllGraphCollaboratorsResponse {
-    graphCollaborators: ICollaboratorByIdResponse[];
+    collaborators: ICollaboratorByIdResponse[];
 }

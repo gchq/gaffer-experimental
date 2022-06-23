@@ -33,7 +33,6 @@ interface IProps {
 
 export default function ViewCollaborator(props: IProps) {
     const location: any = useLocation();
-
     const [graphCollaborators, setGraphCollaborators] = useState(location.state.graphCollaborators);
     const [errorMessage, setErrorMessage] = useState("");
     console.log("graphCollaborators:" + graphCollaborators);
@@ -43,8 +42,8 @@ export default function ViewCollaborator(props: IProps) {
             const collaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
                 encode(DOMPurify.sanitize("redgraph"))
             );
-            console.log("collaborators:" + collaborators[0]);
-            // setGraphCollaborators(collaborators);
+            setGraphCollaborators(collaborators);
+            console.log("collaborators:" + collaborators[0].getUsername());
         } catch (e) {
             setErrorMessage(
                 `Failed to get all graph collaborators. ${(e as GaaSAPIErrorResponse).title}: ${
@@ -83,7 +82,7 @@ export default function ViewCollaborator(props: IProps) {
                     </Typography>
                 </Box>
                 <ViewCollaboratorsTable
-                    graphCollaborators={[]}
+                    graphCollaborators={graphCollaborators}
                     // deleteGraph={(graphName) => this.deleteGraph(graphName)}
                     refreshTable={async () => await getGraphCollaborators()}
                 />
