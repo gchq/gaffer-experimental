@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Crown Copyright
+ * Copyright 2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.gov.gchq.gaffer.gaas.services;
 
 import io.micrometer.core.annotation.Timed;
@@ -24,31 +23,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
-import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.GraphCollaborator;
 
 import java.util.List;
 
 @Service
-public class GetGaffersService {
-
-    @Autowired
-    private MeterRegistry meterRegistry;
+public class GetCollaboratorsService {
     @Autowired
     private GafferClient gafferClient;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetGaffersService.class);
+    @Autowired
+    private MeterRegistry meterRegistry;
 
-    @Timed(value = "getAllGraphs.time", description = "Time taken to get all graphs", percentiles = 0)
-    public List<GaaSGraph> getAllGraphs() throws GaaSRestApiException {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetCollaboratorsService.class);
+
+    @Timed(value = "getGraphCollaborators.time", description = "Time taken to get collaborators on a graph", percentiles = 0)
+    public List<GraphCollaborator> getGraphCollaborators(final String graphId) throws GaaSRestApiException {
         meterRegistry.counter("GetGafferService", "action", "get").increment();
         LOGGER.info("Get all graphs = ");
-        return gafferClient.listAllGaffers();
+        return gafferClient.getGraphCollaborators(graphId);
     }
 
-    @Timed(value = "getUserCreatedGraphs.time", description = "Time taken to get user graphs", percentiles = 0)
-    public List<GaaSGraph> getUserCreatedGraphs(final String username) throws GaaSRestApiException {
+    @Timed(value = "getGraphCollaboratorsByUsername.time", description = "Time taken to get collaborators on a graph", percentiles = 0)
+    public List<GraphCollaborator> getGraphCollaboratorsByUsername(final String graphId, final String username) throws GaaSRestApiException {
         meterRegistry.counter("GetGafferService", "action", "get").increment();
-
-        return gafferClient.listUserCreatedGaffers(username);
+        LOGGER.info("Get all graphs = ");
+        return gafferClient.getGraphCollaboratorsByUsername(graphId, username);
     }
 }

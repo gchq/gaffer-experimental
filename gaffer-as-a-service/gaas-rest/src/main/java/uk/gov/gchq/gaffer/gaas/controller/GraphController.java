@@ -41,7 +41,9 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
+import uk.gov.gchq.gaffer.gaas.services.DeleteCollaboratorService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
+import uk.gov.gchq.gaffer.gaas.services.GetCollaboratorsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
@@ -83,11 +85,15 @@ public class GraphController {
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
     @Autowired
     private UpdateGraphCollaboratorsService updateGraphCollaboratorsService;
+    @Autowired
+    private DeleteCollaboratorService deleteCollaboratorService;
+    @Autowired
+    private GetCollaboratorsService getCollaboratorsService;
     @Value("${admin.users: {}}")
     private String[] admins;
 
     Logger logger = LoggerFactory.getLogger(GraphController.class);
-
+    Logger eventLogger = LoggerFactory.getLogger("eventLogger");
 
     @PostMapping(path = "/graphs", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGraph(@Valid @RequestBody final GaaSCreateRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
@@ -100,8 +106,10 @@ public class GraphController {
             logger.error("Could not retrieve username");
         }
         if (requestBody.isFederatedStoreRequest()) {
+            eventLogger.info("{} made a create federated store request with graph id: {}", headers.getFirst("username"), requestBody.getGraphId());
             createFederatedStoreGraphService.createFederatedStore(requestBody);
         } else {
+            eventLogger.info("{} made a create graph request with graph id: {}", headers.getFirst("username"), requestBody.getGraphId());
             createGraphService.createGraph(requestBody);
         }
         return new ResponseEntity(HttpStatus.CREATED);
@@ -123,10 +131,12 @@ public class GraphController {
     public ResponseEntity<?> addCollaborator(@RequestBody final GaaSAddCollaboratorRequestBody requestBody, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         if (isAdmin(headers.getFirst("username"))) {
             if (updateGraphCollaboratorsService.updateCollaborators(requestBody)) {
+                eventLogger.info("{} made an add collaborator request - {} - to graph id: {}", headers.getFirst("username"), requestBody.getUsername(), requestBody.getGraphId());
                 return new ResponseEntity<>(HttpStatus.ACCEPTED);
             }
         } else {
             if (updateGraphCollaboratorsService.updateCollaboratorsWithUsername(requestBody, emailStripper(headers.getFirst("username")))) {
+                eventLogger.info("{} made an add collaborator request - {} - to graph id: {}", headers.getFirst("username"), requestBody.getUsername(), requestBody.getGraphId());
                 return new ResponseEntity<>(HttpStatus.ACCEPTED);
             }
         }
@@ -144,10 +154,12 @@ public class GraphController {
     @DeleteMapping(path = "/graphs/{graphId}", produces = "application/json")
     public ResponseEntity<?> deleteGraph(@PathVariable final String graphId, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
         if (isAdmin(headers.getFirst("username"))) {
+            eventLogger.info("{} made a delete graph request to graph id: {}", headers.getFirst("username"), graphId);
             if (deleteGraphService.deleteGraph(graphId)) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         } else {
+            eventLogger.info("{} made a delete graph request to graph id: {}", headers.getFirst("username"), graphId);
             if (deleteGraphService.deleteGraphByUsername(graphId, emailStripper(headers.getFirst("username")))) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
@@ -160,13 +172,28 @@ public class GraphController {
 
         final Map<String, Object> responseBody = new HashMap<>();
         if (isAdmin(headers.getFirst("username"))) {
-            responseBody.put("collaborators", getGaffersService.getGraphCollaborators(graphId));
+            responseBody.put("collaborators", getCollaboratorsService.getGraphCollaborators(graphId));
+        } else {
+            responseBody.put("collaborators", getCollaboratorsService.getGraphCollaboratorsByUsername(graphId, emailStripper(headers.getFirst("username"))));
         }
-//        else {
-//            responseBody.put("graphs", getGaffersService.getUserCreatedGraphs(emailStripper(headers.getFirst("username"))));
-//        }
         return new ResponseEntity(responseBody, HttpStatus.OK);
 
+    }
+
+    @DeleteMapping(path = "/deleteCollaborator/{graphId}/{username}", produces = "application/json")
+    public ResponseEntity<?> deleteCollaborator(@PathVariable final String graphId, @PathVariable final String username, @RequestHeader final HttpHeaders headers) throws GaaSRestApiException {
+        if (isAdmin(headers.getFirst("username"))) {
+            eventLogger.info("{} made a delete collaborator request to remove {} as a collaborator from graph id: {}", headers.getFirst("username"), username, graphId);
+            if (deleteCollaboratorService.deleteCollaborator(graphId, username)) {
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            }
+        } else {
+            eventLogger.info("{} made a delete collaborator request to remove {} as a collaborator from graph id: {}", headers.getFirst("username"), username, graphId);
+            if (deleteCollaboratorService.deleteCollaboratorByUsername(graphId, username, emailStripper(headers.getFirst("username")))) {
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(path = "/namespaces", produces = "application/json")

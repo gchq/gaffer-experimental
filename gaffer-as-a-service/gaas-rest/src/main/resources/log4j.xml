@@ -23,6 +23,19 @@
       <param name="ConversionPattern" value="%c{3} %p %x - %m%n"/>
     </layout>
   </appender>
+  <appender name="DB" class="org.apache.log4j.jdbc.JDBCAppender">
+    <param name="driver" value="com.mysql.jdbc.Driver"/>
+    <param name="URL" value="jdbc:h2:file:./logs/logDB"/>
+    <param name="user" value="sa"/>
+    <param name="password" value="test"/>
+    <param name="sql" value="INSERT INTO LOGS VALUES('%d' ,'%C','%p', '%m')"/>
+    <layout class="org.apache.log4j.PatternLayout">
+    </layout>
+  </appender>
+  <logger name="eventLogger" additivity="false">
+    <level value="info"></level>
+    <appender-ref ref="DB" />
+  </logger>
   <root>
     <priority value="info"></priority>
     <appender-ref ref="console"></appender-ref>

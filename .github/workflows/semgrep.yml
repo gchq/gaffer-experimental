@@ -1,0 +1,42 @@
+# Copyright 2022 Crown Copyright
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Semgrep
+on: [ push, pull_request ]
+jobs:
+  run-semgrep:
+    name: Semgrep Scan
+    runs-on: ubuntu-20.04
+    # Skip any PR created by dependabot to avoid permission issues
+    container:
+      image: returntocorp/semgrep
+    if: (github.actor != 'dependabot[bot]')
+    steps:
+      - uses: actions/checkout@v3
+      - run: semgrep scan --sarif --output=semgrep.sarif --no-error
+        env:
+          SEMGREP_RULES:
+            p/r2c
+            p/owasp-top-ten
+            p/r2c-ci
+            p/xss
+            p/ci
+            p/jwt
+            p/nodejs
+            p/nodejsscan
+      - name: Upload SARIF file for GitHub Advanced Security Dashboard
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: semgrep.sarif
+        if: always()

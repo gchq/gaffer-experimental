@@ -44,7 +44,7 @@ export default function AddCollaborator(props: any) {
             );
 
             setOutcome(AlertType.SUCCESS);
-            setOutcomeMessage(`${graphId} was successfully added collaborator`);
+            setOutcomeMessage(`${username} was successfully added as a collaborator to ${graphId}`);
 
             resetForm();
         } catch (e: any) {

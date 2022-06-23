@@ -98,7 +98,17 @@ public class GafferClient {
         try {
             return deploymentHandler.getGraphCollaborators(graphId, kubernetesClient);
         } catch (ApiException e) {
-            LOGGER.error("Failed to list all Gaffers", e);
+            LOGGER.error("Failed to list collaborators", e);
+            throw from(e);
+        }
+    }
+
+    public List<GraphCollaborator> getGraphCollaboratorsByUsername(final String graphId, final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.getGraphCollaboratorsByUsername(graphId, username, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to list collaborators", e);
             throw from(e);
         }
     }
@@ -129,6 +139,26 @@ public class GafferClient {
             return deploymentHandler.onGafferDeleteByUsername(crdName, kubernetesClient, username);
         } catch (ApiException e) {
             LOGGER.debug("Failed to delete CRD. Kubernetes client returned Status Code: " + e.getCode(), e);
+            throw from(e);
+        }
+    }
+
+    public boolean deleteCollaborator(final String graphId, final String collaboratorToDelete) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.deleteCollaborator(graphId, collaboratorToDelete, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to delete collaborator");
+            throw from(e);
+        }
+    }
+
+    public boolean deleteCollaboratorByUsername(final String graphId, final String collaboratorToDelete, final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.deleteCollaboratorByUsername(graphId, collaboratorToDelete, username, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to delete collaborator");
             throw from(e);
         }
     }
