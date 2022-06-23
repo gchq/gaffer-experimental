@@ -197,8 +197,6 @@ public class DeploymentHandler {
      * @throws ApiException exception
      */
     public boolean onGafferDelete(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
-        getGraphCollaborators(gaffer, kubernetesClient);
-        ;
         try {
             List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(workerNamespace).withLabel("app.kubernetes.io/instance", gaffer).list().getItems();
             if (!deploymentList.isEmpty()) {
