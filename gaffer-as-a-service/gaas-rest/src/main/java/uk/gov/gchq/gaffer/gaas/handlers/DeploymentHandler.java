@@ -346,7 +346,7 @@ public class DeploymentHandler {
      *
      * @param graphId           The Gaffer Object
      * @param kubernetesClient kubernetesClient
-     * @return
+     * @return list of graph collaborators
      * @throws ApiException exception
      */
     public List<GraphCollaborator> getGraphCollaborators(final String graphId, final KubernetesClient kubernetesClient) throws ApiException {
@@ -517,7 +517,7 @@ public class DeploymentHandler {
                         .collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
 
         if (collaborator != null) {
-            for (Map.Entry<String, String> entry : collaborator.entrySet()) {
+            for (final Map.Entry<String, String> entry : collaborator.entrySet()) {
                 GraphCollaborator graphCollaborator = new GraphCollaborator();
                 graphCollaborator.graphId(graphId);
                 graphCollaborator.username(entry.getKey());

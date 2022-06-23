@@ -538,7 +538,7 @@ class DeploymentHandlerTest {
         assertTrue(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().containsValue("someUser"));
         assertTrue(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().containsValue("someUser"));
     }
-    
+
 
     private Gaffer getGaffer() {
         GafferSpec gafferSpec = new GafferSpec();

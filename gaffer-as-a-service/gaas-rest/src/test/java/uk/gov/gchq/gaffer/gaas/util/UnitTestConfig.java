@@ -33,6 +33,7 @@ import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteCollaboratorService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
+import uk.gov.gchq.gaffer.gaas.services.GetCollaboratorsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
@@ -102,8 +103,13 @@ public class UnitTestConfig {
     }
 
     @Bean
-    public DeleteCollaboratorService deleteCollaboratorService(){
+    public DeleteCollaboratorService deleteCollaboratorService() {
         return new DeleteCollaboratorService();
+    }
+
+    @Bean
+    public GetCollaboratorsService getCollaboratorsService() {
+        return new GetCollaboratorsService();
     }
 
     @Bean

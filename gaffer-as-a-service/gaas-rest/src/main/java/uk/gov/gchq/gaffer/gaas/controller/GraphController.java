@@ -173,8 +173,7 @@ public class GraphController {
         final Map<String, Object> responseBody = new HashMap<>();
         if (isAdmin(headers.getFirst("username"))) {
             responseBody.put("collaborators", getCollaboratorsService.getGraphCollaborators(graphId));
-        }
-        else {
+        } else {
             responseBody.put("collaborators", getCollaboratorsService.getGraphCollaboratorsByUsername(graphId, emailStripper(headers.getFirst("username"))));
         }
         return new ResponseEntity(responseBody, HttpStatus.OK);
