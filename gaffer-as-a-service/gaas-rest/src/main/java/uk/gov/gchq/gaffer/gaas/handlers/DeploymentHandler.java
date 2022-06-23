@@ -107,6 +107,38 @@ public class DeploymentHandler {
         return true;
     }
 
+    public boolean deleteCollaborator(final String graphId, final String collaboratorToDelete, final KubernetesClient kubernetesClient) throws ApiException {
+        try {
+            deleteCollaboratorLabel(graphId + "-gaffer-api", collaboratorToDelete, kubernetesClient);
+            deleteCollaboratorLabel(graphId + "-gaffer-ui", collaboratorToDelete, kubernetesClient);
+            return true;
+        } catch (KubernetesClientException e) {
+            LOGGER.error("Failed to delete collaborator", e);
+            throw new ApiException(e.getCode(), e.getMessage());
+        }
+    }
+
+    public boolean deleteCollaboratorByUsername(final String graphId, final String collaboratorToDelete, final String username, final KubernetesClient kubernetesClient) throws ApiException {
+        try {
+            if (kubernetesClient.apps().deployments().inNamespace(NAMESPACE).withName(graphId + "-gaffer-api").get().getMetadata().getLabels().get("creator").equals(username)) {
+                deleteCollaboratorLabel(graphId + "-gaffer-api", collaboratorToDelete, kubernetesClient);
+                deleteCollaboratorLabel(graphId + "-gaffer-ui", collaboratorToDelete, kubernetesClient);
+                return true;
+            }
+            return false;
+        } catch (KubernetesClientException e) {
+            LOGGER.error("Failed to delete collaborator", e);
+            throw new ApiException(e.getCode(), e.getMessage());
+        }
+    }
+
+    private void deleteCollaboratorLabel(final String deploymentName, final String collaboratorToDelete, final KubernetesClient kubernetesClient) {
+        kubernetesClient.apps().deployments().inNamespace(NAMESPACE)
+                .withName(deploymentName).edit(
+                d -> new DeploymentBuilder(d).editMetadata().removeFromLabels("collaborator/" + collaboratorToDelete).endMetadata().build()
+        );
+    }
+
     public boolean addGraphCollaborator(final String gaffer, final KubernetesClient kubernetesClient, final String usernameToAdd) throws ApiException {
         try {
             updateDeploymentLabels(gaffer + "-gaffer-api", kubernetesClient, usernameToAdd);

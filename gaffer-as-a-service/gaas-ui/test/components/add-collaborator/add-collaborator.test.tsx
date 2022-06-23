@@ -75,7 +75,7 @@ describe("AddCollaborator UI component", () => {
             await clickSubmit();
             await wrapper.update();
             await wrapper.update();
-           expect(wrapper.find("div#notification-alert").text()).toBe("graphId was successfully added collaborator");
+           expect(wrapper.find("div#notification-alert").text()).toBe("John was successfully added as a collaborator to graphId");
             expect(mock).toHaveBeenLastCalledWith("graphId", "John");
       
         });

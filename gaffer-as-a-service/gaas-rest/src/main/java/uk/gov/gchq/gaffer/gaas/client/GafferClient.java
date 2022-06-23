@@ -133,6 +133,26 @@ public class GafferClient {
         }
     }
 
+    public boolean deleteCollaborator(final String graphId, final String collaboratorToDelete) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.deleteCollaborator(graphId, collaboratorToDelete, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to delete collaborator");
+            throw from(e);
+        }
+    }
+
+    public boolean deleteCollaboratorByUsername(final String graphId, final String collaboratorToDelete, final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.deleteCollaboratorByUsername(graphId, collaboratorToDelete, username, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to delete collaborator");
+            throw from(e);
+        }
+    }
+
     public List<String> getAllNameSpaces() throws GaaSRestApiException {
         try {
             final V1NamespaceList v1NamespaceList =
