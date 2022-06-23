@@ -41,6 +41,7 @@ import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.util.TestAppender;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -482,7 +483,7 @@ class DeploymentHandlerTest {
         assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().get("collaborator/someUser"));
         assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().get("collaborator/someUser"));
 
-        handler.deleteCollaborator("test","someUser" ,kubernetesClient);
+        handler.deleteCollaborator("test", "someUser", kubernetesClient);
 
         assertFalse(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().containsValue("someUser"));
         assertFalse(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().containsValue("someUser"));
@@ -507,7 +508,7 @@ class DeploymentHandlerTest {
         assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().get("collaborator/someUser"));
         assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().get("collaborator/someUser"));
 
-        handler.deleteCollaboratorByUsername("test","someUser", "myUser" ,kubernetesClient);
+        handler.deleteCollaboratorByUsername("test", "someUser", "myUser", kubernetesClient);
 
         assertFalse(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().containsValue("someUser"));
         assertFalse(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().containsValue("someUser"));
@@ -532,11 +533,12 @@ class DeploymentHandlerTest {
         assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().get("collaborator/someUser"));
         assertEquals("someUser", kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().get("collaborator/someUser"));
 
-        handler.deleteCollaboratorByUsername("test","someUser", "someRandomUser" ,kubernetesClient);
+        handler.deleteCollaboratorByUsername("test", "someUser", "someRandomUser", kubernetesClient);
 
         assertTrue(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(0).getMetadata().getLabels().containsValue("someUser"));
         assertTrue(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().containsValue("someUser"));
     }
+    
 
     private Gaffer getGaffer() {
         GafferSpec gafferSpec = new GafferSpec();
