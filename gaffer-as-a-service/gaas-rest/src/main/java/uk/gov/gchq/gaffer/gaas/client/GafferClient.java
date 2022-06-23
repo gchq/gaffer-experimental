@@ -98,7 +98,17 @@ public class GafferClient {
         try {
             return deploymentHandler.getGraphCollaborators(graphId, kubernetesClient);
         } catch (ApiException e) {
-            LOGGER.error("Failed to list all Gaffers", e);
+            LOGGER.error("Failed to list collaborators", e);
+            throw from(e);
+        }
+    }
+
+    public List<GraphCollaborator> getGraphCollaboratorsByUsername(final String graphId, final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.getGraphCollaboratorsByUsername(graphId, username, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to list collaborators", e);
             throw from(e);
         }
     }

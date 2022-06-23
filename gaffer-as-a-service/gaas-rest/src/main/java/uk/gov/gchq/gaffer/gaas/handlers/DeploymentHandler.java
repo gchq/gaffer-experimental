@@ -46,6 +46,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -343,21 +344,40 @@ public class DeploymentHandler {
     /**
      * Starts the Uninstallation process for a Gaffer Graph.
      *
-     * @param gaffer           The Gaffer Object
+     * @param graphId           The Gaffer Object
      * @param kubernetesClient kubernetesClient
      * @return
      * @throws ApiException exception
      */
-    public List<GraphCollaborator> getGraphCollaborators(final String gaffer, final KubernetesClient kubernetesClient) throws ApiException {
-        List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(workerNamespace).withLabel("app.kubernetes.io/instance", gaffer).list().getItems();
-        Map<String, String> labels = null;
+    public List<GraphCollaborator> getGraphCollaborators(final String graphId, final KubernetesClient kubernetesClient) throws ApiException {
+        Map<String, String> labels = new HashMap<>();
         try {
+            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(workerNamespace).withLabel("app.kubernetes.io/instance", graphId).list().getItems();
             if (!deploymentList.isEmpty()) {
                 for (final Deployment deployment : deploymentList) {
                     labels = deployment.getMetadata().getLabels();
                 }
             }
-            List<GraphCollaborator> graphCollaborators = listGraphCollaborators(labels, gaffer);
+            List<GraphCollaborator> graphCollaborators = listGraphCollaborators(labels, graphId);
+            //graphCollaborators.forEach(graphCollaborator -> System.out.println(graphCollaborator.getUserName().toLowerCase()));
+            return graphCollaborators;
+
+        } catch (Exception e) {
+            LOGGER.error("Failed to list all graph collaborators.", e);
+            throw new ApiException(e.getLocalizedMessage());
+        }
+    }
+
+    public List<GraphCollaborator> getGraphCollaboratorsByUsername(final String graphId, final String username, final KubernetesClient kubernetesClient) throws ApiException {
+        Map<String, String> labels = new HashMap<>();
+        try {
+            List<Deployment> deploymentList = kubernetesClient.apps().deployments().inNamespace(workerNamespace).withLabel("app.kubernetes.io/instance", graphId).withLabel("creator", username).list().getItems();
+            if (!deploymentList.isEmpty()) {
+                for (final Deployment deployment : deploymentList) {
+                    labels = deployment.getMetadata().getLabels();
+                }
+            }
+            List<GraphCollaborator> graphCollaborators = listGraphCollaborators(labels, graphId);
             //graphCollaborators.forEach(graphCollaborator -> System.out.println(graphCollaborator.getUserName().toLowerCase()));
             return graphCollaborators;
 

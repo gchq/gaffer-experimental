@@ -43,6 +43,7 @@ import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteCollaboratorService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
+import uk.gov.gchq.gaffer.gaas.services.GetCollaboratorsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
@@ -86,6 +87,8 @@ public class GraphController {
     private UpdateGraphCollaboratorsService updateGraphCollaboratorsService;
     @Autowired
     private DeleteCollaboratorService deleteCollaboratorService;
+    @Autowired
+    private GetCollaboratorsService getCollaboratorsService;
     @Value("${admin.users: {}}")
     private String[] admins;
 
@@ -169,11 +172,11 @@ public class GraphController {
 
         final Map<String, Object> responseBody = new HashMap<>();
         if (isAdmin(headers.getFirst("username"))) {
-            responseBody.put("collaborators", getGaffersService.getGraphCollaborators(graphId));
+            responseBody.put("collaborators", getCollaboratorsService.getGraphCollaborators(graphId));
         }
-//        else {
-//            responseBody.put("graphs", getGaffersService.getUserCreatedGraphs(emailStripper(headers.getFirst("username"))));
-//        }
+        else {
+            responseBody.put("graphs", getCollaboratorsService.getGraphCollaboratorsByUsername(graphId, emailStripper(headers.getFirst("username"))));
+        }
         return new ResponseEntity(responseBody, HttpStatus.OK);
 
     }

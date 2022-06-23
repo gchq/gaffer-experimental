@@ -28,12 +28,14 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSAddCollaboratorRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSCreateRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GafferConfigSpec;
+import uk.gov.gchq.gaffer.gaas.model.GraphCollaborator;
 import uk.gov.gchq.gaffer.gaas.model.ProxySubGraph;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
 import uk.gov.gchq.gaffer.gaas.services.CreateFederatedStoreGraphService;
 import uk.gov.gchq.gaffer.gaas.services.CreateGraphService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteCollaboratorService;
 import uk.gov.gchq.gaffer.gaas.services.DeleteGraphService;
+import uk.gov.gchq.gaffer.gaas.services.GetCollaboratorsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaaSGraphConfigsService;
 import uk.gov.gchq.gaffer.gaas.services.GetGaffersService;
 import uk.gov.gchq.gaffer.gaas.services.GetNamespacesService;
@@ -80,6 +82,8 @@ class GraphControllerTest extends AbstractTest {
     private HelmValuesOverridesHandler helmValuesOverridesHandler;
     @MockBean
     private DeleteCollaboratorService deleteCollaboratorService;
+    @MockBean
+    private GetCollaboratorsService getCollaboratorsService;
 
     @Test
     void getStoretypes_ReturnsStoretypesAsList_whenSuccessful() throws Exception {
@@ -599,6 +603,25 @@ class GraphControllerTest extends AbstractTest {
         verify(deleteCollaboratorService, times(1)).deleteCollaboratorByUsername(any(String.class), any(String.class), eq("creator"));
 
         assertEquals(204, result.getResponse().getStatus());
+    }
+
+    @Test
+    void getCollaborators_ReturnsCollaboratorsAsList_whenSuccessful() throws Exception {
+        final GraphCollaborator graphCollaborator = new GraphCollaborator().graphId("someGraph").username("test@test.com");
+
+        final List<GraphCollaborator> collaborators = new ArrayList<>();
+        collaborators.add(graphCollaborator);
+        when(getCollaboratorsService.getGraphCollaborators("someGraph")).thenReturn(collaborators);
+
+        final MvcResult getGraphsResponse = mvc.perform(get("/collaborators/someGraph")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "test@test.com"))
+                .andReturn();
+
+        final String expected = "{\"collaborators\":[{\"graphId\":\"someGraph\",\"username\":\"test@test.com\"}]}";
+        assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
+        assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 
     private LinkedHashMap<String, Object> getSchema() {

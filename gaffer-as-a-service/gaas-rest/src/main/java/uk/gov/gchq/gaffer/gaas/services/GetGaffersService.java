@@ -26,6 +26,7 @@ import uk.gov.gchq.gaffer.gaas.client.GafferClient;
 import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphCollaborator;
+
 import java.util.List;
 
 @Service
@@ -44,16 +45,11 @@ public class GetGaffersService {
         LOGGER.info("Get all graphs = ");
         return gafferClient.listAllGaffers();
     }
+
     @Timed(value = "getUserCreatedGraphs.time", description = "Time taken to get user graphs", percentiles = 0)
     public List<GaaSGraph> getUserCreatedGraphs(final String username) throws GaaSRestApiException {
         meterRegistry.counter("GetGafferService", "action", "get").increment();
 
         return gafferClient.listUserCreatedGaffers(username);
-    }
-
-    public List<GraphCollaborator> getGraphCollaborators(final String graphId) throws GaaSRestApiException {
-        meterRegistry.counter("GetGafferService", "action", "get").increment();
-        LOGGER.info("Get all graphs = ");
-        return gafferClient.getGraphCollaborators(graphId);
     }
 }
