@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from "react";
+import React, { useState } from "react";
 import { Box, CardContent, Container, Grid, Paper, Toolbar, Typography } from "@material-ui/core";
 import { GetAllGraphCollaboratorsRepo } from "../../rest/repositories/get-all-graph-collaborators-repo";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
@@ -21,39 +21,38 @@ import { Copyright } from "../copyright/copyright";
 import Gauge from "./gauge";
 import { ViewCollaboratorsTable } from "./view-collaborators-table";
 import { GraphCollaborator } from "../../domain/graph-collaborator";
-
+import { useLocation } from "react-router-dom";
 import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import DOMPurify from "dompurify";
+import { encode } from "html-entities";
 
-interface IState {
+interface IProps {
     graphCollaborators: GraphCollaborator[];
     errorMessage: string;
 }
 
-export default class ViewCollaborator extends React.Component<{}, IState> {
-    constructor(props: Object) {
-        super(props);
-        this.state = {
-            graphCollaborators: [],
-            errorMessage: "",
-        };
-    }
+export default function ViewCollaborator(props: IProps) {
+    const location: any = useLocation();
 
-    public async componentDidMount() {
-        await this.getGraphCollaborators();
-    }
+    const [graphCollaborators, setGraphCollaborators] = useState(location.state.graphCollaborators);
+    const [errorMessage, setErrorMessage] = useState("");
+    console.log("graphCollaborators:" + graphCollaborators);
 
-    private async getGraphCollaborators() {
+    const getGraphCollaborators = async () => {
         try {
-            const graphCollaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll();
-            this.setState({ graphCollaborators, errorMessage: "" });
+            const collaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
+                encode(DOMPurify.sanitize("redgraph"))
+            );
+            console.log("collaborators:" + collaborators[0]);
+            // setGraphCollaborators(collaborators);
         } catch (e) {
-            this.setState({
-                errorMessage: `Failed to get all graph collaborators. ${(e as GaaSAPIErrorResponse).title}: ${
+            setErrorMessage(
+                `Failed to get all graph collaborators. ${(e as GaaSAPIErrorResponse).title}: ${
                     (e as GaaSAPIErrorResponse).detail
-                }`,
-            });
+                }`
+            );
         }
-    }
+    };
 
     // private async deleteGraph(graphName: string) {
     //     try {
@@ -68,34 +67,30 @@ export default class ViewCollaborator extends React.Component<{}, IState> {
     //     }
     // }
 
-    public render() {
-        const { graphCollaborators, errorMessage } = this.state;
-
-        return (
-            <main aria-label={"view-graph-collaborators-page"}>
-                {errorMessage && <NotificationAlert alertType={AlertType.FAILED} message={errorMessage} />}
-                <Toolbar />
-                <Container maxWidth="md">
-                    <Box my={2}>
-                        <Typography
-                            variant="h4"
-                            align={"center"}
-                            id={"view-graph-collaborators-title"}
-                            aria-label={"view-graph-collaborators-title"}
-                        >
-                            View Graph Collaborators
-                        </Typography>
-                    </Box>
-                    <ViewCollaboratorsTable
-                        graphCollaborators={this.state.graphCollaborators}
-                        // deleteGraph={(graphName) => this.deleteGraph(graphName)}
-                        refreshTable={async () => await this.getGraphCollaborators()}
-                    />
-                    <Box pt={4}>
-                        <Copyright />
-                    </Box>
-                </Container>
-            </main>
-        );
-    }
+    return (
+        <main aria-label={"view-graph-collaborators-page"}>
+            {errorMessage && <NotificationAlert alertType={AlertType.FAILED} message={errorMessage} />}
+            <Toolbar />
+            <Container maxWidth="md">
+                <Box my={2}>
+                    <Typography
+                        variant="h4"
+                        align={"center"}
+                        id={"view-graph-collaborators-title"}
+                        aria-label={"view-graph-collaborators-title"}
+                    >
+                        View Graph Collaborators
+                    </Typography>
+                </Box>
+                <ViewCollaboratorsTable
+                    graphCollaborators={[]}
+                    // deleteGraph={(graphName) => this.deleteGraph(graphName)}
+                    refreshTable={async () => await getGraphCollaborators()}
+                />
+                <Box pt={4}>
+                    <Copyright />
+                </Box>
+            </Container>
+        </main>
+    );
 }

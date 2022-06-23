@@ -57,6 +57,10 @@ export class RestClient<T> {
         return this.methodSpec(this);
     }
 
+    public viewCollaborator(): any {
+        return this.methodSpec(this);
+    }
+
     public baseUrl(baseURL: string): any {
         this.baseURL = baseURL;
         return this.methodSpec(this);
@@ -124,6 +128,12 @@ export class RestClient<T> {
         },
         addCollaborator: () => {
             restClient.url = "/addCollaborator";
+            restClient.headers = AuthSidecarClient.setHeaders();
+            return restClient.executeSpec(restClient);
+        },
+        viewCollaborator: (pathVariable?: string) => {
+            const _pathVariable = pathVariable ? `/${pathVariable}` : "";
+            restClient.url = `/collaborators${_pathVariable}`;
             restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },

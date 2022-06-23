@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Graph } from "../../domain/graph";
 import { GetAllGraphIdsRepo } from "../../rest/repositories/gaffer/get-all-graph-ids-repo";
 import {
@@ -46,12 +46,19 @@ import PersonAddOutlinedIcon from "@material-ui/icons/PersonAddOutlined";
 import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { useNavigate } from "react-router-dom";
+import { GraphCollaborator } from "../../domain/graph-collaborator";
+import DOMPurify from "dompurify";
+import { encode } from "html-entities";
+import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
+import { GetAllGraphCollaboratorsRepo } from "../../rest/repositories/get-all-graph-collaborators-repo";
 
 interface IProps {
     graphs: Graph[];
     federatedStores: Array<string>;
     deleteGraph: (graphName: string) => void;
     refreshTable: () => void;
+    graphCollaborators: GraphCollaborator[];
+    errorMessage: string;
 }
 
 interface IGraphRow {
@@ -77,6 +84,9 @@ const useStyles = makeStyles({
 export function ViewGraphsTable(props: IProps) {
     const classes = useStyles();
 
+    const [graphCollaborators, setGraphCollaborators] = useState({});
+    const [errorMessage, setErrorMessage] = useState("");
+
     const navigate = useNavigate();
 
     const navigateToAddcollaborator = (graphId: string) => {
@@ -84,7 +94,25 @@ export function ViewGraphsTable(props: IProps) {
     };
 
     const navigateToViewGraphCollaborator = (graphId: string) => {
-        navigate("/viewcollaborators", { state: { graphId: graphId } });
+        getGraphCollaborators(graphId);
+        navigate("/viewcollaborators", { state: { graphCollaborators: graphCollaborators } });
+    };
+
+    const getGraphCollaborators = async (graphId: string) => {
+        try {
+            const collaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
+                encode(DOMPurify.sanitize(graphId))
+            );
+            console.log("collaborators:" + collaborators[0]);
+            setGraphCollaborators(collaborators);
+            setErrorMessage("");
+        } catch (e) {
+            setErrorMessage(
+                `Failed to get all graph collaborators. ${(e as GaaSAPIErrorResponse).title}: ${
+                    (e as GaaSAPIErrorResponse).detail
+                }`
+            );
+        }
     };
 
     return (

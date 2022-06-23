@@ -23,11 +23,11 @@ import {
 import { GraphCollaborator } from "../../domain/graph-collaborator";
 
 export class GetAllGraphCollaboratorsRepo {
-    public async getAll(): Promise<GraphCollaborator[]> {
+    public async getAll(graphId: string): Promise<GraphCollaborator[]> {
         const response: IApiResponse<IAllGraphCollaboratorsResponse> = await new RestClient()
             .baseUrl(Config.REACT_APP_KAI_REST_API_HOST)
             .get()
-            .graphCollaborators()
+            .viewCollaborator(graphId)
             .execute();
         return response.data.graphCollaborators.map(
             (jsonObject: ICollaboratorByIdResponse) => new GraphCollaborator(jsonObject.graphId, jsonObject.username)
