@@ -624,6 +624,25 @@ class GraphControllerTest extends AbstractTest {
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
 
+    @Test
+    void getCollaboratorsByUsername_ReturnsCollaboratorsAsList_whenSuccessful() throws Exception {
+        final GraphCollaborator graphCollaborator = new GraphCollaborator().graphId("someGraph").username("someCollaborator");
+
+        final List<GraphCollaborator> collaborators = new ArrayList<>();
+        collaborators.add(graphCollaborator);
+        when(getCollaboratorsService.getGraphCollaboratorsByUsername("someGraph", "myUser")).thenReturn(collaborators);
+
+        final MvcResult getGraphsResponse = mvc.perform(get("/collaborators/someGraph")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .header("username", "myUser"))
+                .andReturn();
+
+        final String expected = "{\"collaborators\":[{\"graphId\":\"someGraph\",\"username\":\"someCollaborator\"}]}";
+        assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
+        assertEquals(200, getGraphsResponse.getResponse().getStatus());
+    }
+
     private LinkedHashMap<String, Object> getSchema() {
         final LinkedHashMap<String, Object> elementsSchema = new LinkedHashMap<>();
         elementsSchema.put("entities", new Object());

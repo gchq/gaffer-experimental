@@ -175,7 +175,7 @@ public class GraphController {
             responseBody.put("collaborators", getCollaboratorsService.getGraphCollaborators(graphId));
         }
         else {
-            responseBody.put("graphs", getCollaboratorsService.getGraphCollaboratorsByUsername(graphId, emailStripper(headers.getFirst("username"))));
+            responseBody.put("collaborators", getCollaboratorsService.getGraphCollaboratorsByUsername(graphId, emailStripper(headers.getFirst("username"))));
         }
         return new ResponseEntity(responseBody, HttpStatus.OK);
 
