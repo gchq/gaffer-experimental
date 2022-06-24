@@ -225,23 +225,23 @@ class GafferClientTest {
     }
 
     @Test
-    void getCollaborators_shouldReturnListOfCollaboratorsWhenSuccess() throws ApiException {
+    void getCollaborators_shouldReturnListOfCollaboratorsWhenSuccess() throws ApiException, GaaSRestApiException {
         GraphCollaborator graphCollaborator = new GraphCollaborator().username("someUser").graphId("myGraph");
         List<GraphCollaborator> collaborators = new ArrayList<>();
         collaborators.add(graphCollaborator);
         when(deploymentHandler.getGraphCollaborators(any(), any())).thenReturn(collaborators);
 
-        assertEquals(deploymentHandler.getGraphCollaborators("myGraph", kubernetesClient), collaborators);
+        assertEquals(gafferClient.getGraphCollaborators("myGraph"), collaborators);
     }
 
     @Test
-    void getCollaboratorsByUsername_shouldReturnListOfCollaboratorsWhenSuccess() throws ApiException {
+    void getCollaboratorsByUsername_shouldReturnListOfCollaboratorsWhenSuccess() throws ApiException, GaaSRestApiException {
         GraphCollaborator graphCollaborator = new GraphCollaborator().username("someUser").graphId("myGraph");
         List<GraphCollaborator> collaborators = new ArrayList<>();
         collaborators.add(graphCollaborator);
         when(deploymentHandler.getGraphCollaboratorsByUsername(any(), any(), any())).thenReturn(collaborators);
 
-        assertEquals(deploymentHandler.getGraphCollaboratorsByUsername("myGraph", "myUser", kubernetesClient), collaborators);
+        assertEquals(gafferClient.getGraphCollaboratorsByUsername("myGraph", "myUser"), collaborators);
     }
 
     @Ignore
