@@ -31,6 +31,7 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSAddCollaboratorRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.GraphCollaborator;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
@@ -221,6 +222,26 @@ class GafferClientTest {
     void deleteCollaboratorByUsername_shouldReturnTrueWhenSuccess() throws ApiException, GaaSRestApiException {
         when(deploymentHandler.deleteCollaboratorByUsername(any(), any(), any(), any())).thenReturn(true);
         assertTrue(gafferClient.deleteCollaboratorByUsername("someGraph", "someUser", "myUser"));
+    }
+
+    @Test
+    void getCollaborators_shouldReturnListOfCollaboratorsWhenSuccess() throws ApiException, GaaSRestApiException {
+        GraphCollaborator graphCollaborator = new GraphCollaborator().username("someUser").graphId("myGraph");
+        List<GraphCollaborator> collaborators = new ArrayList<>();
+        collaborators.add(graphCollaborator);
+        when(deploymentHandler.getGraphCollaborators(any(), any())).thenReturn(collaborators);
+
+        assertEquals(gafferClient.getGraphCollaborators("myGraph"), collaborators);
+    }
+
+    @Test
+    void getCollaboratorsByUsername_shouldReturnListOfCollaboratorsWhenSuccess() throws ApiException, GaaSRestApiException {
+        GraphCollaborator graphCollaborator = new GraphCollaborator().username("someUser").graphId("myGraph");
+        List<GraphCollaborator> collaborators = new ArrayList<>();
+        collaborators.add(graphCollaborator);
+        when(deploymentHandler.getGraphCollaboratorsByUsername(any(), any(), any())).thenReturn(collaborators);
+
+        assertEquals(gafferClient.getGraphCollaboratorsByUsername("myGraph", "myUser"), collaborators);
     }
 
     @Ignore
