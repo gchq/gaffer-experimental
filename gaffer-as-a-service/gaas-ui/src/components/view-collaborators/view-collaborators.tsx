@@ -24,6 +24,7 @@ import { useLocation } from "react-router-dom";
 import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
 import DOMPurify from "dompurify";
 import { encode } from "html-entities";
+import { DeleteCollaboratorRepo } from "../../rest/repositories/delete-collaborator-repo";
 
 interface IProps {
     graphId: string;
@@ -39,37 +40,38 @@ export default function ViewCollaborator(props: IProps) {
     const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
-        const getGraphCollaborators = async (graphId: string) => {
-            try {
-                const collaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
-                    encode(DOMPurify.sanitize(graphId))
-                );
-                setErrorMessage("");
-                setGraphCollaborators(collaborators);
-            } catch (e) {
-                setErrorMessage(
-                    `Failed to get all graph collaborators. ${(e as GaaSAPIErrorResponse).title}: ${
-                        (e as GaaSAPIErrorResponse).detail
-                    }`
-                );
-            }
-        };
         setGraphCollaborators([]);
         getGraphCollaborators(graphId);
     }, []);
 
-    // private async deleteGraph(graphName: string) {
-    //     try {
-    //         await new DeleteGraphRepo().delete(graphName);
-    //         await this.getGraphs();
-    //     } catch (e) {
-    //         this.setState({
-    //             errorMessage: `Failed to delete graph "${graphName}". ${(e as GaaSAPIErrorResponse).title}: ${
-    //                 (e as GaaSAPIErrorResponse).detail
-    //             }`,
-    //         });
-    //     }
-    // }
+    const getGraphCollaborators = async (graphId: string) => {
+        try {
+            const collaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
+                encode(DOMPurify.sanitize(graphId))
+            );
+            setErrorMessage("");
+            setGraphCollaborators(collaborators);
+        } catch (e) {
+            setErrorMessage(
+                `Failed to get all graph collaborators. ${(e as GaaSAPIErrorResponse).title}: ${
+                    (e as GaaSAPIErrorResponse).detail
+                }`
+            );
+        }
+    };
+
+    const deleteCollaborator = async (graphId: string, username: string) => {
+        try {
+            await new DeleteCollaboratorRepo().delete(graphId, username);
+            await getGraphCollaborators(graphId);
+        } catch (e) {
+            setErrorMessage(
+                `Failed to delete graph collaborator. ${(e as GaaSAPIErrorResponse).title}: ${
+                    (e as GaaSAPIErrorResponse).detail
+                }`
+            );
+        }
+    };
 
     return (
         <main aria-label={"view-graph-collaborators-page"}>
@@ -86,7 +88,10 @@ export default function ViewCollaborator(props: IProps) {
                         View Graph Collaborators
                     </Typography>
                 </Box>
-                <ViewCollaboratorsTable graphCollaborators={graphCollaborators} />
+                <ViewCollaboratorsTable
+                    graphCollaborators={graphCollaborators}
+                    deleteCollaborator={(graphName, username) => deleteCollaborator(graphName, username)}
+                />
                 <Box pt={4}>
                     <Copyright />
                 </Box>

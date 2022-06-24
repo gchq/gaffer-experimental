@@ -18,6 +18,7 @@ import React from "react";
 import { GraphCollaborator } from "../../domain/graph-collaborator";
 import {
     Grid,
+    IconButton,
     makeStyles,
     Paper,
     Table,
@@ -26,18 +27,21 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Tooltip,
+    Zoom,
 } from "@material-ui/core";
+import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
 
 interface IProps {
     graphCollaborators: GraphCollaborator[];
-    //  deleteGraph: (username: string) => void;
+    deleteCollaborator: (graphId: string, username: string) => void;
     //  refreshTable: () => void;
 }
 
 interface IGraphCollaboratorRow {
     index: number;
     graphCollaborator: GraphCollaborator;
-    //onClickDelete: (graphId: string) => void;
+    onClickDelete: (graphId: string, username: string) => void;
 }
 
 const useStyles = makeStyles({
@@ -72,7 +76,9 @@ export function ViewCollaboratorsTable(props: IProps) {
                                     key={graphCollaborator.getId()}
                                     index={index}
                                     graphCollaborator={graphCollaborator}
-                                    // onClickDelete={(graphId: string) => props.deleteGraph(graphId)}
+                                    onClickDelete={(graphId: string, username: string) =>
+                                        props.deleteCollaborator(graphId, username)
+                                    }
                                 />
                             ))}
                         </TableBody>
@@ -85,7 +91,7 @@ export function ViewCollaboratorsTable(props: IProps) {
 }
 
 function MainGraphCollaboratorTableRow(props: IGraphCollaboratorRow) {
-    const { graphCollaborator, index } = props;
+    const { graphCollaborator, index, onClickDelete } = props;
     const classes = useStyles();
 
     return (
@@ -96,6 +102,19 @@ function MainGraphCollaboratorTableRow(props: IGraphCollaboratorRow) {
                 </TableCell>
                 <TableCell component="th" scope="row" aria-label={"row-id"}>
                     {graphCollaborator.getUsername()}
+                </TableCell>
+                <TableCell aria-label={"delete-collaborator"}>
+                    <Tooltip TransitionComponent={Zoom} title={`Delete ${graphCollaborator.getUsername()}`}>
+                        <IconButton
+                            id={"view-collaborator-delete-button-" + index}
+                            aria-label={graphCollaborator.getUsername() + "-delete-button"}
+                            onClick={async () =>
+                                onClickDelete(graphCollaborator.getId(), graphCollaborator.getUsername())
+                            }
+                        >
+                            <DeleteOutlineOutlinedIcon />
+                        </IconButton>
+                    </Tooltip>
                 </TableCell>
             </TableRow>
         </React.Fragment>

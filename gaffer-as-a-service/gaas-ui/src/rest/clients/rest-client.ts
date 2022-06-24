@@ -137,6 +137,13 @@ export class RestClient<T> {
             restClient.headers = AuthSidecarClient.setHeaders();
             return restClient.executeSpec(restClient);
         },
+        deleteCollaborator: (graphPathVariable?: string, collaboratorPathVariable?: string) => {
+            const _graphPathVariable = graphPathVariable ? `/${graphPathVariable}` : "";
+            const _collaboratorPathVariable = collaboratorPathVariable ? `/${collaboratorPathVariable}` : "";
+            restClient.url = `/deleteCollaborator${_graphPathVariable}${_collaboratorPathVariable}`;
+            restClient.headers = AuthSidecarClient.setHeaders();
+            return restClient.executeSpec(restClient);
+        },
     });
 
     private executeSpec = (restClient: RestClient<any>) => ({
