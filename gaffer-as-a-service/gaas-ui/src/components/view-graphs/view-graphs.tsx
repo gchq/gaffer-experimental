@@ -165,7 +165,6 @@ export default class ViewGraph extends React.Component<{}, IState> {
                         </Grid>
                     </Grid>
                     <ViewGraphsTable
-                        graphCollaborators={[]}
                         errorMessage=""
                         graphs={this.state.graphs}
                         federatedStores={this.state.federatedStores}

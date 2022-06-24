@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, CardContent, Container, Grid, Paper, Toolbar, Typography } from "@material-ui/core";
 import { GetAllGraphCollaboratorsRepo } from "../../rest/repositories/get-all-graph-collaborators-repo";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
@@ -27,23 +27,47 @@ import DOMPurify from "dompurify";
 import { encode } from "html-entities";
 
 interface IProps {
-    graphCollaborators: GraphCollaborator[];
+    graphId: string;
     errorMessage: string;
+
+    graphCollaborators: GraphCollaborator[];
 }
 
 export default function ViewCollaborator(props: IProps) {
     const location: any = useLocation();
-    const [graphCollaborators, setGraphCollaborators] = useState(location.state.graphCollaborators);
+    const [graphId, setGraphId] = useState(location.state.graphId);
+    const [graphCollaborators, setGraphCollaborators] = useState([new GraphCollaborator("", "")]);
     const [errorMessage, setErrorMessage] = useState("");
-    console.log("graphCollaborators:" + graphCollaborators);
 
-    const getGraphCollaborators = async () => {
+    useEffect(() => {
+        const getGraphCollaborators = async (graphId: string) => {
+            try {
+                const collaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
+                    encode(DOMPurify.sanitize(graphId))
+                );
+                setErrorMessage("");
+                setGraphCollaborators(collaborators);
+            } catch (e) {
+                setErrorMessage(
+                    `Failed to get all graph collaborators. ${(e as GaaSAPIErrorResponse).title}: ${
+                        (e as GaaSAPIErrorResponse).detail
+                    }`
+                );
+            }
+        };
+        setGraphCollaborators([]);
+        getGraphCollaborators(graphId);
+    }, []);
+
+    const getGraphCollaborators = async (graphId: string) => {
+        setGraphCollaborators([]);
         try {
             const collaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
-                encode(DOMPurify.sanitize("redgraph"))
+                encode(DOMPurify.sanitize(graphId))
             );
+            setErrorMessage("");
             setGraphCollaborators(collaborators);
-            console.log("collaborators:" + collaborators[0].getUsername());
+            //console.log("collaborators:" + collaborators[0].getUsername());
         } catch (e) {
             setErrorMessage(
                 `Failed to get all graph collaborators. ${(e as GaaSAPIErrorResponse).title}: ${
@@ -84,7 +108,7 @@ export default function ViewCollaborator(props: IProps) {
                 <ViewCollaboratorsTable
                     graphCollaborators={graphCollaborators}
                     // deleteGraph={(graphName) => this.deleteGraph(graphName)}
-                    refreshTable={async () => await getGraphCollaborators()}
+                    refreshTable={async () => await getGraphCollaborators("redgraph")}
                 />
                 <Box pt={4}>
                     <Copyright />

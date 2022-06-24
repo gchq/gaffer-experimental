@@ -29,8 +29,6 @@ export class GetAllGraphCollaboratorsRepo {
             .get()
             .viewCollaborator(graphId)
             .execute();
-        const test = response.data.collaborators[0];
-        console.log(": " + test);
         return response.data.collaborators.map(
             (jsonObject: ICollaboratorByIdResponse) => new GraphCollaborator(jsonObject.graphId, jsonObject.username)
         );
