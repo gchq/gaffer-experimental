@@ -37,12 +37,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.gchq.gaffer.gaas.factories.IKubernetesObjectFactory;
+import uk.gov.gchq.gaffer.gaas.model.GraphCollaborator;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.GafferSpec;
 import uk.gov.gchq.gaffer.gaas.util.TestAppender;
 import uk.gov.gchq.gaffer.gaas.util.UnitTest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -539,6 +541,51 @@ class DeploymentHandlerTest {
         assertTrue(kubernetesClient.apps().deployments().inNamespace("kai-dev").list().getItems().get(1).getMetadata().getLabels().containsValue("someUser"));
     }
 
+    @Test
+    void shouldReturnCollaboratorsListWhenGetCollaboratorsCalledAndIsSuccessful() throws ApiException {
+        // Given
+        ApiClient client = mock(ApiClient.class);
+        when(client.escapeString(anyString())).thenCallRealMethod();
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+        Map<String, String> labels = new HashMap<>();
+        labels.put("creator", "myUser");
+        labels.put("app.kubernetes.io/instance", "test");
+
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build());
+        handler.addGraphCollaborator("test", kubernetesClient, "someUser");
+        final GraphCollaborator graphCollaborator = new GraphCollaborator().graphId("test").username("someUser");
+
+        final List<GraphCollaborator> collaborators = new ArrayList<>();
+        collaborators.add(graphCollaborator);
+
+        assertEquals(collaborators.toString(), handler.getGraphCollaborators("test", kubernetesClient).toString());
+    }
+
+    @Test
+    void shouldReturnCollaboratorsListWhenGetCollaboratorsByUsernameCalledAndIsSuccessful() throws ApiException {
+        // Given
+        ApiClient client = mock(ApiClient.class);
+        when(client.escapeString(anyString())).thenCallRealMethod();
+        DeploymentHandler handler = new DeploymentHandler(environment, kubernetesObjectFactory);
+        handler.setCoreV1Api(mock(CoreV1Api.class));
+        Map<String, String> labels = new HashMap<>();
+        labels.put("creator", "myUser");
+        labels.put("app.kubernetes.io/instance", "test");
+
+
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().build());
+        kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").withLabels(labels).endMetadata().build());
+        handler.addGraphCollaborator("test", kubernetesClient, "someUser");
+        final GraphCollaborator graphCollaborator = new GraphCollaborator().graphId("test").username("someUser");
+
+        final List<GraphCollaborator> collaborators = new ArrayList<>();
+        collaborators.add(graphCollaborator);
+
+        assertEquals(collaborators.toString(), handler.getGraphCollaboratorsByUsername("test", "myUser", kubernetesClient).toString());
+    }
 
     private Gaffer getGaffer() {
         GafferSpec gafferSpec = new GafferSpec();
