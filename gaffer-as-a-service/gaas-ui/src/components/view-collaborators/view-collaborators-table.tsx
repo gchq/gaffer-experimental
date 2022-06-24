@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from "react";
+import React from "react";
 import { GraphCollaborator } from "../../domain/graph-collaborator";
 import {
-    Avatar,
-    Box,
-    Button,
-    Chip,
-    Collapse,
     Grid,
-    IconButton,
     makeStyles,
     Paper,
     Table,
@@ -32,21 +26,12 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Tooltip,
-    Zoom,
 } from "@material-ui/core";
-import RefreshOutlinedIcon from "@material-ui/icons/RefreshOutlined";
-import CheckRoundedIcon from "@material-ui/icons/CheckRounded";
-import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
-import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
-import { sanitizeUrl } from "@braintree/sanitize-url";
 
 interface IProps {
     graphCollaborators: GraphCollaborator[];
     //  deleteGraph: (username: string) => void;
-    refreshTable: () => void;
+    //  refreshTable: () => void;
 }
 
 interface IGraphCollaboratorRow {
@@ -94,50 +79,14 @@ export function ViewCollaboratorsTable(props: IProps) {
                         {props.graphCollaborators.length === 0 && <caption>No Collaborators.</caption>}
                     </Table>
                 </TableContainer>
-
-                <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
-                    <Button
-                        id="view-collaborators-refresh-button"
-                        onClick={() => props.refreshTable()}
-                        startIcon={<RefreshOutlinedIcon />}
-                        variant="contained"
-                        color="primary"
-                    >
-                        Refresh Table
-                    </Button>
-                </Grid>
             </Grid>
         </Grid>
-    );
-}
-
-function StatusChip(graph: { status: string }) {
-    return graph.status === "UP" ? (
-        <Chip
-            icon={<CheckRoundedIcon style={{ color: "#ffffff" }} />}
-            label={graph.status}
-            style={{ color: "#ffffff", backgroundColor: "#5A7C81" }}
-        />
-    ) : (
-        <Chip
-            icon={<WarningRoundedIcon style={{ color: "#ffffff" }} />}
-            label={graph.status}
-            style={{ color: "#ffffff", backgroundColor: "#EB0052" }}
-        />
     );
 }
 
 function MainGraphCollaboratorTableRow(props: IGraphCollaboratorRow) {
     const { graphCollaborator, index } = props;
     const classes = useStyles();
-    const [rowIsExpanded, setRowIsExpanded] = React.useState(false);
-    const sanitizer = (url: string): string => {
-        const regex = new RegExp("[^-A-Za-z0-9+&@#/%?=~_|!:,.;()]");
-        if (regex.test(url)) {
-            return "";
-        }
-        return sanitizeUrl(url);
-    };
 
     return (
         <React.Fragment>

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 import React, { useState, useEffect } from "react";
-import { Box, CardContent, Container, Grid, Paper, Toolbar, Typography } from "@material-ui/core";
+import { Box, Container, Toolbar, Typography } from "@material-ui/core";
 import { GetAllGraphCollaboratorsRepo } from "../../rest/repositories/get-all-graph-collaborators-repo";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { Copyright } from "../copyright/copyright";
-import Gauge from "./gauge";
 import { ViewCollaboratorsTable } from "./view-collaborators-table";
 import { GraphCollaborator } from "../../domain/graph-collaborator";
 import { useLocation } from "react-router-dom";
@@ -59,24 +58,6 @@ export default function ViewCollaborator(props: IProps) {
         getGraphCollaborators(graphId);
     }, []);
 
-    const getGraphCollaborators = async (graphId: string) => {
-        setGraphCollaborators([]);
-        try {
-            const collaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
-                encode(DOMPurify.sanitize(graphId))
-            );
-            setErrorMessage("");
-            setGraphCollaborators(collaborators);
-            //console.log("collaborators:" + collaborators[0].getUsername());
-        } catch (e) {
-            setErrorMessage(
-                `Failed to get all graph collaborators. ${(e as GaaSAPIErrorResponse).title}: ${
-                    (e as GaaSAPIErrorResponse).detail
-                }`
-            );
-        }
-    };
-
     // private async deleteGraph(graphName: string) {
     //     try {
     //         await new DeleteGraphRepo().delete(graphName);
@@ -105,11 +86,7 @@ export default function ViewCollaborator(props: IProps) {
                         View Graph Collaborators
                     </Typography>
                 </Box>
-                <ViewCollaboratorsTable
-                    graphCollaborators={graphCollaborators}
-                    // deleteGraph={(graphName) => this.deleteGraph(graphName)}
-                    refreshTable={async () => await getGraphCollaborators("redgraph")}
-                />
+                <ViewCollaboratorsTable graphCollaborators={graphCollaborators} />
                 <Box pt={4}>
                     <Copyright />
                 </Box>
