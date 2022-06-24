@@ -244,6 +244,26 @@ class GafferClientTest {
         assertEquals(gafferClient.getGraphCollaboratorsByUsername("myGraph", "myUser"), collaborators);
     }
 
+    @Test
+    void getCollaborators_shouldThrowGaaSRestApiExceptionWhenFailure() throws ApiException, GaaSRestApiException {
+        GraphCollaborator graphCollaborator = new GraphCollaborator().username("someUser").graphId("myGraph");
+        List<GraphCollaborator> collaborators = new ArrayList<>();
+        collaborators.add(graphCollaborator);
+        when(deploymentHandler.getGraphCollaborators(any(), any())).thenThrow(new ApiException("Failed to list all graph collaborators"));
+
+        assertThrows(GaaSRestApiException.class, ()-> gafferClient.getGraphCollaborators("myGraph"));
+    }
+
+    @Test
+    void getCollaboratorsByUsername_shouldThrowGaaSRestApiExceptionWhenFailure() throws ApiException, GaaSRestApiException {
+        GraphCollaborator graphCollaborator = new GraphCollaborator().username("someUser").graphId("myGraph");
+        List<GraphCollaborator> collaborators = new ArrayList<>();
+        collaborators.add(graphCollaborator);
+        when(deploymentHandler.getGraphCollaboratorsByUsername(any(), any(), any())).thenThrow(new ApiException("Failed to list all graph collaborators"));
+
+        assertThrows(GaaSRestApiException.class, ()-> gafferClient.getGraphCollaboratorsByUsername("myGraph", "myUser"));
+    }
+
     @Ignore
     void deleteGraph_ShouldThrowGaaSRestApiException_WhenRequestFails() throws ApiException {
         when(deploymentHandler.onGafferDelete(null, kubernetesClient)).thenThrow(new ApiException("Failed to delete Gaffer as it is null"));
