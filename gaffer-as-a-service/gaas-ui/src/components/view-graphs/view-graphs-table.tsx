@@ -46,18 +46,12 @@ import PersonAddOutlinedIcon from "@material-ui/icons/PersonAddOutlined";
 import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { useNavigate } from "react-router-dom";
-import { GraphCollaborator } from "../../domain/graph-collaborator";
-import DOMPurify from "dompurify";
-import { encode } from "html-entities";
-import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-response-interface";
-import { GetAllGraphCollaboratorsRepo } from "../../rest/repositories/get-all-graph-collaborators-repo";
 
 interface IProps {
     graphs: Graph[];
     federatedStores: Array<string>;
     deleteGraph: (graphName: string) => void;
     refreshTable: () => void;
-    graphCollaborators: GraphCollaborator[];
     errorMessage: string;
 }
 
@@ -83,8 +77,6 @@ const useStyles = makeStyles({
 
 export function ViewGraphsTable(props: IProps) {
     const classes = useStyles();
-    const [graphCollaborators, setGraphCollaborators] = useState(props.graphCollaborators);
-    const [errorMessage, setErrorMessage] = useState("");
 
     const navigate = useNavigate();
 
@@ -93,26 +85,7 @@ export function ViewGraphsTable(props: IProps) {
     };
 
     const navigateToViewGraphCollaborator = (graphId: string) => {
-        getGraphCollaborators(graphId);
-        navigate("/viewcollaborators", { state: { graphCollaborators: graphCollaborators } });
-    };
-
-    const getGraphCollaborators = async (graphId: string) => {
-        try {
-            const graphCollaborators: GraphCollaborator[] = await new GetAllGraphCollaboratorsRepo().getAll(
-                encode(DOMPurify.sanitize(graphId))
-            );
-
-            console.log("collaborators:" + graphCollaborators[0].getUsername());
-            setGraphCollaborators(graphCollaborators);
-            setErrorMessage("");
-        } catch (e) {
-            setErrorMessage(
-                `Failed to get all graph collaborators. ${(e as GaaSAPIErrorResponse).title}: ${
-                    (e as GaaSAPIErrorResponse).detail
-                }`
-            );
-        }
+        navigate("/viewcollaborators", { state: { graphId: graphId } });
     };
 
     return (
