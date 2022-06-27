@@ -29,7 +29,6 @@ import { DeleteCollaboratorRepo } from "../../rest/repositories/delete-collabora
 interface IProps {
     graphId: string;
     errorMessage: string;
-
     graphCollaborators: GraphCollaborator[];
 }
 
