@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Crown Copyright
+ * Copyright 2022 Crown Copyright
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,14 +60,21 @@ describe("When ViewCollaborators mounts", () => {
         expect(wrapper.find("tbody").text()).toBe("myGraphmyUser");
         expect(wrapper.find("caption").length).toBe(0);
     });
-    // it("should display No Graphs caption when ", async () => {
-    //     mockGetGraphsToReturn([]);
+    it("should display No Collaborators caption when there are no collaborators", async () => {
+        mockGetAllGraphCollaboratorsToReturn([]);
 
-    //     const component = mount(<ViewGraph />);
-    //     await component.update();
+        const wrapper: ReactWrapper = mount(
+            <ViewCollaborators
+                graphId={"myGraph"}
+                errorMessage={"someMessage"}
+                graphCollaborators={[new GraphCollaborator("myGraph", "myUser")]}
+            />
+        );
+        await wrapper.update();
+        await wrapper.update();
 
-    //     expect(component.find("caption").text()).toBe("No Graphs.");
-    // });
+        expect(wrapper.find("caption").text()).toBe("No Collaborators.");
+    });
     // it("should display Error Message in AlertNotification when GetGraphs request fails", () => {
     //     mockGetAllGraphsThrowsError(() => {
     //         throw new APIError("Client Error", "404 Not Found");
