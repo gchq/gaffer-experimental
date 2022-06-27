@@ -75,17 +75,25 @@ describe("When ViewCollaborators mounts", () => {
 
         expect(wrapper.find("caption").text()).toBe("No Collaborators.");
     });
-    // it("should display Error Message in AlertNotification when GetGraphs request fails", () => {
-    //     mockGetAllGraphsThrowsError(() => {
-    //         throw new APIError("Client Error", "404 Not Found");
-    //     });
+    it("should display Error Message in AlertNotification when GetGraphs request fails", async () => {
+        mockGetAllGraphCollaboratorsThrowsError(() => {
+            throw new APIError("Client Error", "404 Not Found");
+        });
 
-    //     const component = mount(<ViewGraph />);
+        const wrapper: ReactWrapper = mount(
+            <ViewCollaborators
+                graphId={"myGraph"}
+                errorMessage={"someMessage"}
+                graphCollaborators={[new GraphCollaborator("myGraph", "myUser")]}
+            />
+        );
+        await wrapper.update();
+        await wrapper.update();
 
-    //     expect(component.find("div#notification-alert").text()).toBe(
-    //         "Failed to get all graphs. Client Error: 404 Not Found"
-    //     );
-    // });
+        expect(wrapper.find("div#notification-alert").text()).toBe(
+            "Failed to get all graph collaborators. Client Error: 404 Not Found"
+        );
+    });
     // it("should not display Error AlertNotification when GetGraphs request successful", async () => {
     //     mockGetGraphsToReturn([
     //         new Graph(
@@ -322,9 +330,9 @@ function mockGetAllGraphCollaboratorsToReturn(graphCollaborators: GraphCollabora
     }));
 }
 
-function mockGetAllGraphsThrowsError(f: () => void): void {
+function mockGetAllGraphCollaboratorsThrowsError(f: () => void): void {
     // @ts-ignore
-    GetAllGraphsRepo.mockImplementationOnce(() => ({
+    GetAllGraphCollaboratorsRepo.mockImplementationOnce(() => ({
         getAll: f,
     }));
 }
