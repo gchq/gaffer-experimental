@@ -29,7 +29,7 @@ import { GraphCollaborator } from "../../../src/domain/graph-collaborator";
 import ViewCollaborators from "../../../src/components/view-collaborators/view-collaborators";
 import { GetAllGraphCollaboratorsRepo } from "../../../src/rest/repositories/get-all-graph-collaborators-repo";
 
-jest.mock("../../../src/rest/repositories/gaffer/get-all-graph-collaborators-repo");
+jest.mock("../../../src/rest/repositories/get-all-graph-collaborators-repo");
 
 const mockedUsedNavigate = jest.fn();
 
@@ -42,22 +42,22 @@ afterEach(() => {
     jest.resetAllMocks();
 });
 
-describe("When ViewGraphs mounts", () => {
-    it("should display Table Headers and Graphs when GetGraphs successful", async () => {
-        mockGetAllGraphCollaboratorsToReturn([new GraphCollaborator("testId1", "javainuse")]);
+describe("When ViewCollaborators mounts", () => {
+    it("should display Table Headers and Collaborators when GetCollaborators successful", async () => {
+        mockGetAllGraphCollaboratorsToReturn([new GraphCollaborator("myGraph", "myUser")]);
 
         const wrapper: ReactWrapper = mount(
-            <ViewCollaborators graphId="display-id" errorMessage="error message" graphCollaborators=[new GraphCollaborator("", "")] />
+            <ViewCollaborators
+                graphId={"myGraph"}
+                errorMessage={"someMessage"}
+                graphCollaborators={[new GraphCollaborator("myGraph", "myUser")]}
+            />
         );
         await wrapper.update();
         await wrapper.update();
 
-        expect(wrapper.find("thead").text()).toBe(
-            "Graph IDStore TypeStatusUI URLREST URLAdd CollaboratorView Graph CollaboratorsGraph Auto Destroy DateActions"
-        );
-        expect(wrapper.find("tbody").text()).toBe(
-            "testId1 MUPhttp://testId-1.app/uihttp://testId-1.app/rest2022-06-09t15:55:34.006"
-        );
+        expect(wrapper.find("thead").text()).toBe("Graph IDUser NameActions");
+        expect(wrapper.find("tbody").text()).toBe("myGraphmyUser");
         expect(wrapper.find("caption").length).toBe(0);
     });
     // it("should display No Graphs caption when ", async () => {
