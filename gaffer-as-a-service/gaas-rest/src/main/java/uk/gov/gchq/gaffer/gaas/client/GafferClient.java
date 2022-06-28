@@ -29,6 +29,7 @@ import uk.gov.gchq.gaffer.gaas.exception.GaaSRestApiException;
 import uk.gov.gchq.gaffer.gaas.handlers.DeploymentHandler;
 import uk.gov.gchq.gaffer.gaas.model.GaaSAddCollaboratorRequestBody;
 import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
+import uk.gov.gchq.gaffer.gaas.model.GraphCollaborator;
 import uk.gov.gchq.gaffer.gaas.model.GraphUrl;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 
@@ -92,6 +93,26 @@ public class GafferClient {
         }
     }
 
+    public List<GraphCollaborator> getGraphCollaborators(final String graphId) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.getGraphCollaborators(graphId, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to list collaborators", e);
+            throw from(e);
+        }
+    }
+
+    public List<GraphCollaborator> getGraphCollaboratorsByUsername(final String graphId, final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.getGraphCollaboratorsByUsername(graphId, username, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to list collaborators", e);
+            throw from(e);
+        }
+    }
+
     public List<GaaSGraph> listUserCreatedGaffers(final String username) throws GaaSRestApiException {
         KubernetesClient kubernetesClient = new DefaultKubernetesClient();
         try {
@@ -118,6 +139,26 @@ public class GafferClient {
             return deploymentHandler.onGafferDeleteByUsername(crdName, kubernetesClient, username);
         } catch (ApiException e) {
             LOGGER.debug("Failed to delete CRD. Kubernetes client returned Status Code: " + e.getCode(), e);
+            throw from(e);
+        }
+    }
+
+    public boolean deleteCollaborator(final String graphId, final String collaboratorToDelete) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.deleteCollaborator(graphId, collaboratorToDelete, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to delete collaborator");
+            throw from(e);
+        }
+    }
+
+    public boolean deleteCollaboratorByUsername(final String graphId, final String collaboratorToDelete, final String username) throws GaaSRestApiException {
+        KubernetesClient kubernetesClient = new DefaultKubernetesClient();
+        try {
+            return deploymentHandler.deleteCollaboratorByUsername(graphId, collaboratorToDelete, username, kubernetesClient);
+        } catch (ApiException e) {
+            LOGGER.error("Failed to delete collaborator");
             throw from(e);
         }
     }

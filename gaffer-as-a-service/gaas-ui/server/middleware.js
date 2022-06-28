@@ -258,5 +258,14 @@ app.get("/down/graph/status", (req, res) => {
 app.post("/rest/graph/operations/execute", (req, res) => {
     res.status(200).send(["mapEdges", "accEntities"]);
 });
+app.get("/collaborators/:graphId", (req, res) => {
+    try {
+        jwt.verify(req.get("Authorization"), process.env.JWT_SECRET, () => {
+            res.status(200).send({ collaborators: [{ graphId: req.params.graphId, username: "someCollaborator" }] });
+        });
+    } catch (e) {
+        res.status(403).end();
+    }
+});
 
 module.exports = server;

@@ -165,6 +165,7 @@ export default class ViewGraph extends React.Component<{}, IState> {
                         </Grid>
                     </Grid>
                     <ViewGraphsTable
+                        errorMessage=""
                         graphs={this.state.graphs}
                         federatedStores={this.state.federatedStores}
                         deleteGraph={(graphName) => this.deleteGraph(graphName)}
