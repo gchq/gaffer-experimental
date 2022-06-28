@@ -359,7 +359,6 @@ public class DeploymentHandler {
                 }
             }
             List<GraphCollaborator> graphCollaborators = listGraphCollaborators(labels, graphId);
-            //graphCollaborators.forEach(graphCollaborator -> System.out.println(graphCollaborator.getUserName().toLowerCase()));
             return graphCollaborators;
 
         } catch (Exception e) {
@@ -378,7 +377,6 @@ public class DeploymentHandler {
                 }
             }
             List<GraphCollaborator> graphCollaborators = listGraphCollaborators(labels, graphId);
-            //graphCollaborators.forEach(graphCollaborator -> System.out.println(graphCollaborator.getUserName().toLowerCase()));
             return graphCollaborators;
 
         } catch (Exception e) {

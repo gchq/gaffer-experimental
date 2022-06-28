@@ -35,7 +35,6 @@ import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined"
 interface IProps {
     graphCollaborators: GraphCollaborator[];
     deleteCollaborator: (graphId: string, username: string) => void;
-    //  refreshTable: () => void;
 }
 
 interface IGraphCollaboratorRow {
