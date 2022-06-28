@@ -57,4 +57,11 @@ module.exports = function (app) {
             changeOrigin: true,
         })
     );
+    app.use(
+        "/collaborators",
+        createProxyMiddleware({
+            target: "http://localhost:4000",
+            changeOrigin: true,
+        })
+    );
 };
