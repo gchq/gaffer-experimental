@@ -40,14 +40,14 @@ public class GetCollaboratorsService {
     @Timed(value = "getGraphCollaborators.time", description = "Time taken to get collaborators on a graph", percentiles = 0)
     public List<GraphCollaborator> getGraphCollaborators(final String graphId) throws GaaSRestApiException {
         meterRegistry.counter("GetGafferService", "action", "get").increment();
-        LOGGER.info("Get all graphs = ");
+        LOGGER.info("Get all graph collaborators");
         return gafferClient.getGraphCollaborators(graphId);
     }
 
     @Timed(value = "getGraphCollaboratorsByUsername.time", description = "Time taken to get collaborators on a graph", percentiles = 0)
     public List<GraphCollaborator> getGraphCollaboratorsByUsername(final String graphId, final String username) throws GaaSRestApiException {
         meterRegistry.counter("GetGafferService", "action", "get").increment();
-        LOGGER.info("Get all graphs = ");
+        LOGGER.info("Get all graph collaborators");
         return gafferClient.getGraphCollaboratorsByUsername(graphId, username);
     }
 }
