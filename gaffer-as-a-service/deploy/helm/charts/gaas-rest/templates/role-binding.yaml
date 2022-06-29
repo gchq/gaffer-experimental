@@ -22,7 +22,7 @@ rules:
     verbs: ["create", "patch", "list", "get", "delete"]
   - apiGroups: ["apps"]
     resources: ["deployments"]
-    verbs: ["list", "get", "delete", "create"]
+    verbs: ["list", "get", "delete", "create", "patch"]
 ---
 
 kind: RoleBinding
