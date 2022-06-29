@@ -32,7 +32,7 @@ import {
 } from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import AddRoundedIcon from "@material-ui/icons/AddRounded";
-import React from "react";
+import React,{ useState, useEffect } from "react";
 import { CreateStoreTypesGraphRepo, ICreateGraphConfig } from "../../rest/repositories/create-storetypes-graph-repo";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
@@ -56,106 +56,96 @@ import { GaaSAPIErrorResponse } from "../../rest/http-message-interfaces/error-r
 import DOMPurify from "dompurify";
 import { encode } from "html-entities";
 import GraphLifetimeInDaysSelect from "./graph-lifetime-in-days-select";
-interface IState {
-    graphId: string;
-    graphIdIsValid: boolean;
-    graphDescriptionIsValid: boolean;
-    description: string;
-    schemaJson: string;
-    elements: string;
-    elementsFiles: Array<File>;
-    elementsFieldDisabled: boolean;
-    types: string;
-    typesFiles: Array<File>;
-    typesFieldDisabled: boolean;
-    dialogIsOpen: boolean;
-    storeType: string;
-    storeTypes: string[];
-    federatedStoreTypes: string[];
-    graphs: Graph[];
-    proxyURL: string;
-    root: string;
-    selectedGraphs: string[];
-    outcome: AlertType | undefined;
-    outcomeMessage: string;
-    graphLifetimeInDays: string;
-}
+import { useLocation } from "react-router-dom";
+import { GraphType } from "../../domain/graph-type";
+
+
 
 const Transition = React.forwardRef((props: TransitionProps & { children?: React.ReactElement<any, any> }) => (
     <Slide direction="up" {...props} />
 ));
 
-export default class CreateGraph extends React.Component<{}, IState> {
-    constructor(props: object) {
-        super(props);
-        this.state = {
-            graphId: "",
-            graphIdIsValid: false,
-            graphDescriptionIsValid: false,
-            description: "",
-            schemaJson: "",
-            elements: "",
-            elementsFiles: [],
-            elementsFieldDisabled: false,
-            types: "",
-            typesFiles: [],
-            typesFieldDisabled: false,
-            dialogIsOpen: false,
-            storeType: "",
-            storeTypes: [],
-            federatedStoreTypes: [],
-            proxyURL: "",
-            root: "",
-            graphs: [],
-            selectedGraphs: [],
-            outcome: undefined,
-            outcomeMessage: "",
-            graphLifetimeInDays: "",
-        };
-    }
+//export default class CreateGraph extends React.Component<{}, IState> {
+    
+export default function CreateGraph(props: any) {
 
-    public async componentDidMount() {
-        await this.getGraphs();
-        await this.getAllStoreTypes();
-    }
+    const location: any = useLocation();
+    const [existinGraphId, setExistinGraphId] = useState(location.state.graphId);;
+    const [graphId, setGraphId] = useState("");
+    const [graphIdIsValid, setGraphIdIsValid] = useState(false);
+    const [description, setDescription] = useState("");
+    const [graphDescriptionIsValid, setGraphDescriptionIsValid] = useState(false);
+    const [schemaJson, setSchemaJson] = useState("");
+    const [elements, setElements] = useState("");
+    const [elementsFiles, setElementsFiles] = useState<File[]>([]);
+    const [elementsFieldDisabled, setElementsFieldDisabled] = useState(false);
+    const [types, setTypes] = useState("");
+    const [typesFiles, setTypesFiles] = useState<File[]>([]);
+    const [typesFieldDisabled, setTypesFieldDisabled] = useState(false);
+    const [dialogIsOpen, setDialogIsOpen] = useState(false);
+    const [storeType, setStoreType] = useState("");
+    const [storeTypes, setStoreTypes] = useState<string[]>([]);
+    const [federatedStoreTypes, setFederatedStoreTypes] = useState<string[]>([]);
+    const [graphs, setGraphs] = useState([new Graph("","","","","DOWN","", "", GraphType.GAAS_GRAPH)]);
+    const [proxyURL, setProxyURL] = useState("");
+    const [root, setRoot] = useState("");
+    const [selectedGraphs, setSelectedGraphs] = useState<string[]>([]);
+    const [outcome, setOutcome] = React.useState<AlertType | undefined>();
+    const [outcomeMessage, setOutcomeMessage] = useState("");
+    const [graphLifetimeInDays, setGraphLifetimeInDays] = useState("");
 
-    private async getGraphs() {
+    // constructor(props: object) {
+    //     super(props);
+       
+    // }
+   
+
+    useEffect(() => {
+        getGraphs();
+        getAllStoreTypes();
+    }, []);
+
+    const getGraphs = async () => {
         try {
             const graphs: Graph[] = await new GetAllGraphsRepo().getAll();
-            this.setState({ graphs });
+            setGraphs(graphs);
         } catch (e: any) {
-            this.setState({
-                outcome: AlertType.FAILED,
-                outcomeMessage: `Failed to get all graphs. ${(e as GaaSAPIErrorResponse).title}: ${
+            setOutcome(AlertType.FAILED);
+            setOutcomeMessage(
+                `Failed to get all graphs. ${(e as GaaSAPIErrorResponse).title}: ${
                     (e as GaaSAPIErrorResponse).detail
-                }`,
-            });
+                }`
+            );
         }
     }
 
-    private async getAllStoreTypes() {
+    const getAllStoreTypes = async () => {
         try {
             const storeTypes: IStoreTypes = await new GetStoreTypesRepo().get();
-            this.setState({
-                storeTypes: storeTypes.storeTypes,
-                federatedStoreTypes: storeTypes.federatedStoreTypes,
-            });
+            setStoreTypes(storeTypes.storeTypes);
+            setFederatedStoreTypes(storeTypes.federatedStoreTypes)
         } catch (e: any) {
-            this.setState({
-                outcome: AlertType.FAILED,
-                outcomeMessage: `Storetypes unavailable: ${(e as GaaSAPIErrorResponse).title}: ${
+            setOutcome(AlertType.FAILED);
+            setOutcomeMessage(
+                `Storetypes unavailable: ${(e as GaaSAPIErrorResponse).title}: ${
                     (e as GaaSAPIErrorResponse).detail
-                }`,
-            });
+                }`
+            );
         }
     }
 
-    private async submitNewGraph() {
+        
+    const submitNewGraph = async () => {
         //TODO: separate functions
-        const { graphId, description, storeType, graphs, selectedGraphs, graphLifetimeInDays } = this.state;
+        setGraphId(graphId);
+        setDescription(description);
+        setStoreType(storeType);
+        setGraphs(graphs);
+        setSelectedGraphs(selectedGraphs);
+        setGraphLifetimeInDays(graphLifetimeInDays);
 
         let config: ICreateGraphConfig;
-        if (this.currentStoreTypeIsFederated()) {
+        if (currentStoreTypeIsFederated()) {
             const subGraphs: Array<{ graphId: string; host: string; root: string }> = graphs
                 .filter((graph) => selectedGraphs.includes(graph.getId()))
                 .map((subGraph: Graph) => ({
@@ -165,17 +155,17 @@ export default class CreateGraph extends React.Component<{}, IState> {
                 }));
             config = { proxySubGraphs: subGraphs };
         } else {
-            const elements = new ElementsSchema(this.state.elements);
-            const types = new TypesSchema(this.state.types);
-            elements.validate();
-            types.validate();
+            const newElements = new ElementsSchema(elements);
+            const newTypes = new TypesSchema(types);
+            newElements.validate();
+            newTypes.validate();
             config = {
-                schema: { entities: elements.getEntities(), edges: elements.getEdges(), types: types.getTypes() },
+                schema: { entities: newElements.getEntities(), edges: newElements.getEdges(), types: newTypes.getTypes() },
             };
         }
 
         try {
-            if (!this.currentStoreTypeIsFederated()) {
+            if (!currentStoreTypeIsFederated()) {
                 await new CreateStoreTypesGraphRepo().create(
                     encode(DOMPurify.sanitize(graphId)),
                     encode(DOMPurify.sanitize(description)),
@@ -192,117 +182,111 @@ export default class CreateGraph extends React.Component<{}, IState> {
                     config
                 );
             }
-            this.setState({
-                outcome: AlertType.SUCCESS,
-                outcomeMessage: `${graphId} was successfully added`,
-            });
-            this.resetForm();
+            setOutcome(AlertType.SUCCESS);
+            setOutcomeMessage(`${graphId} was successfully added`);
+            resetForm();
         } catch (e: any) {
-            this.setState({
-                outcome: AlertType.FAILED,
-                outcomeMessage: `Failed to Add '${graphId}' Graph. ${(e as GaaSAPIErrorResponse).title}: ${
+            setOutcome(AlertType.FAILED);
+            setOutcomeMessage(
+                `Failed to Add '${graphId}' Graph. ${(e as GaaSAPIErrorResponse).title}: ${
                     (e as GaaSAPIErrorResponse).detail
-                }`,
-            });
+                }`
+            );
         }
     }
 
-    private resetForm() {
-        this.setState({
-            graphId: "",
-            description: "",
-            elementsFiles: [],
-            typesFiles: [],
-            schemaJson: "",
-            elements: "",
-            types: "",
-            proxyURL: "",
-            selectedGraphs: [],
-        });
+
+        const resetForm = () => {
+            setGraphId("");
+            setDescription("");
+            setElementsFiles([]);
+            setTypesFiles([]);
+            setSchemaJson("");
+            setElements("");
+            setTypes("");
+            setProxyURL("");
+            setSelectedGraphs([]);
     }
 
-    private async uploadElementsFiles(elementsFiles: File[]) {
-        this.setState({ elementsFiles: elementsFiles });
+        const uploadElementsFiles = async (elementsFiles: File[]) => {
+        setElementsFiles(elementsFiles);
         if (elementsFiles.length > 0) {
             const elementsSchemaFiles = await elementsFiles[0].text();
-            this.setState({
-                elementsFieldDisabled: true,
-                elements: elementsSchemaFiles,
-            });
+            setElements(elementsSchemaFiles);
+            setElementsFieldDisabled(true);
         } else {
-            this.setState({
-                elementsFieldDisabled: false,
-            });
+            setElementsFieldDisabled(false);
         }
     }
 
-    private async uploadTypesFiles(typesFiles: File[]) {
-        this.setState({ typesFiles: typesFiles });
+        const uploadTypesFiles = async (typesFiles: File[]) => {
+        setTypesFiles(elementsFiles);
         if (typesFiles.length > 0) {
             const typesSchemaFiles = await typesFiles[0].text();
-            this.setState({
-                typesFieldDisabled: true,
-                types: typesSchemaFiles,
-            });
+            setTypes(typesSchemaFiles);
+            setTypesFieldDisabled(true);
         } else {
-            this.setState({
-                typesFieldDisabled: false,
-            });
+            setTypesFieldDisabled(false);
         }
     }
 
-    private disableSubmitButton(): boolean {
-        const { elements, types, graphId, description, selectedGraphs, graphIdIsValid, graphDescriptionIsValid } =
-            this.state;
+        const disableSubmitButton = () => {
+        setGraphId(graphId);
+        setDescription(description);
+        setGraphIdIsValid(graphIdIsValid);
+        setGraphDescriptionIsValid(graphDescriptionIsValid);
+        setElements(elements);
+        setTypes(types);
+
         return (
-            (!this.currentStoreTypeIsFederated() && (!elements || !types)) ||
+            (!currentStoreTypeIsFederated() && (!elements || !types)) ||
             !graphId ||
             !description ||
             !graphIdIsValid ||
             !graphDescriptionIsValid ||
-            (this.currentStoreTypeIsFederated() && selectedGraphs.length === 0) ||
-            (!this.currentStoreTypeIsFederated() && !new ElementsSchema(elements).validate().isEmpty()) ||
-            (!this.currentStoreTypeIsFederated() && !new TypesSchema(types).validate().isEmpty())
+            (currentStoreTypeIsFederated() && selectedGraphs.length === 0) ||
+            (!currentStoreTypeIsFederated() && !new ElementsSchema(elements).validate().isEmpty()) ||
+            (!currentStoreTypeIsFederated() && !new TypesSchema(types).validate().isEmpty())
         );
     }
 
-    private currentStoreTypeIsFederated(): boolean {
-        return this.state.federatedStoreTypes.includes(this.state.storeType);
+        const currentStoreTypeIsFederated = () => {
+        return federatedStoreTypes.includes(storeType);
     }
 
-    private createElementsSchema(): IElementsSchema {
+        const createElementsSchema = () => {
         let elementsSchema: IElementsSchema = { entities: {}, edges: {} };
         try {
-            if (this.state.elements.length !== 0) {
-                elementsSchema = JSON.parse(this.state.elements);
+            if (elements.length !== 0) {
+                elementsSchema = JSON.parse(elements);
             }
         } catch (error) {}
         return elementsSchema;
     }
 
-    private createTypesSchema(): object {
+        const createTypesSchema = () => {
         let typesSchema: object = {};
         try {
-            if (this.state.types.length !== 0) {
-                typesSchema = JSON.parse(this.state.types);
+            if (types.length !== 0) {
+                typesSchema = JSON.parse(types);
             }
         } catch (error) {}
         return typesSchema;
     }
 
-    public render() {
-        const federatedStoreIsNotSelected = (): boolean => !this.currentStoreTypeIsFederated();
+    // public render() {
+        const federatedStoreIsNotSelected = (): boolean => !currentStoreTypeIsFederated();
         const openDialogBox = () => {
-            this.setState({ dialogIsOpen: true });
+            setDialogIsOpen(true);
         };
         const closeDialogBox = () => {
-            this.setState({ dialogIsOpen: false });
+            setDialogIsOpen(false);
         };
 
         return (
             <main aria-label="create-graph-Page" id={"create-graph-page"}>
-                {this.state.outcome && (
-                    <NotificationAlert alertType={this.state.outcome} message={this.state.outcomeMessage} />
+                {outcome && (
+                    <NotificationAlert alertType={outcome} message={outcomeMessage} />
                 )}
                 <Toolbar />
 
@@ -333,12 +317,13 @@ export default class CreateGraph extends React.Component<{}, IState> {
                             <form className={this.classes.form} noValidate>
                                 <Grid container spacing={2}>
                                     <GraphIdDescriptionInput
-                                        graphIdValue={this.state.graphId}
+                                        graphIdValue={graphId}
                                         onChangeGraphId={(graphId, graphIdIsValid) =>
                                             this.setState({ graphId, graphIdIsValid })
                                         }
-                                        descriptionValue={this.state.description}
+                                        descriptionValue={description}
                                         onChangeDescription={(description, graphDescriptionIsValid) =>
+                                            
                                             this.setState({ description, graphDescriptionIsValid })
                                         }
                                     />
@@ -352,20 +337,16 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                     />
                                     <StoreTypeSelect
                                         aria-label="store-type-select"
-                                        allStoreTypes={this.state.storeTypes.concat(this.state.federatedStoreTypes)}
-                                        value={this.state.storeType}
+                                        allStoreTypes={storeTypes.concat(federatedStoreTypes)}
+                                        value={storeType}
                                         onChangeStoreType={(storeType) => {
-                                            this.setState({
-                                                storeType,
-                                            });
+                                            setStoreType(storeType);
                                         }}
                                     />
                                     <GraphLifetimeInDaysSelect
-                                        value={this.state.graphLifetimeInDays}
+                                        value={graphLifetimeInDays}
                                         onChangeGraphLifetimeInDays={(graphLifetimeInDays) => {
-                                            this.setState({
-                                                graphLifetimeInDays,
-                                            });
+                                            setGraphLifetimeInDays(graphLifetimeInDays);
                                         }}
                                     />
                                     {federatedStoreIsNotSelected() && (
@@ -381,13 +362,11 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                             >
                                                 <Tooltip TransitionComponent={Zoom} title="Use Schema builder">
                                                     <SchemaBuilderDialog
-                                                        typesSchema={this.createTypesSchema()}
-                                                        elementsSchema={this.createElementsSchema()}
+                                                        typesSchema={createTypesSchema()}
+                                                        elementsSchema={createElementsSchema()}
                                                         onCreateSchema={(schema) => {
-                                                            this.setState({
-                                                                elements: JSON.stringify(schema.elements),
-                                                                types: JSON.stringify(schema.types),
-                                                            });
+                                                            setElements(JSON.stringify(schema.elements));
+                                                            setTypes(JSON.stringify(schema.types))
                                                         }}
                                                     />
                                                 </Tooltip>
@@ -397,10 +376,8 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                 >
                                                     <IconButton
                                                         onClick={() => {
-                                                            this.setState({
-                                                                elements: '{"entities":{}, "edges":{}}',
-                                                                types: "{}",
-                                                            });
+                                                            setElements('{"entities":{}, "edges":{}}');
+                                                            setTypes("{}")
                                                         }}
                                                     >
                                                         <AddRoundedIcon />
@@ -416,14 +393,12 @@ export default class CreateGraph extends React.Component<{}, IState> {
                                                 </Tooltip>
                                                 <Tooltip TransitionComponent={Zoom} title="Clear All Schemas">
                                                     <IconButton
-                                                        onClick={() =>
-                                                            this.setState({
-                                                                elements: "",
-                                                                elementsFiles: [],
-                                                                types: "",
-                                                                typesFiles: [],
-                                                            })
-                                                        }
+                                                        onClick={() => {
+                                                            setElements("");
+                                                            setTypes("");
+                                                            setElementsFiles([]);
+                                                            setTypes("");
+                                                        }}
                                                     >
                                                         <ClearIcon />
                                                     </IconButton>
