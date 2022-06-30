@@ -119,10 +119,12 @@ public class GaaSGraph {
     }
 
     public String getTypes() {
-        return types; }
+        return types;
+    }
 
     public String getElements() {
-        return elements; }
+        return elements;
+    }
 
     @Override
     public String toString() {
