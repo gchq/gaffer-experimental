@@ -66,13 +66,12 @@ const Transition = React.forwardRef((props: TransitionProps & { children?: React
 //export default class CreateGraph extends React.Component<{}, IState> {
 
 export default function CreateGraph(props: any) {
-    const location: any = useLocation();
-    const [existinGraphId, setExistinGraphId] = useState(location.state.graphId);
+    //const location: any = useLocation();
+    // const [existinGraphId, setExistinGraphId] = useState(location.state.graphId);
     const [graphId, setGraphId] = useState("");
     const [graphIdIsValid, setGraphIdIsValid] = useState(false);
     const [description, setDescription] = useState("");
     const [graphDescriptionIsValid, setGraphDescriptionIsValid] = useState(false);
-    const [schemaJson, setSchemaJson] = useState("");
     const [elements, setElements] = useState("");
     const [elementsFiles, setElementsFiles] = useState<File[]>([]);
     const [elementsFieldDisabled, setElementsFieldDisabled] = useState(false);
@@ -195,7 +194,6 @@ export default function CreateGraph(props: any) {
         setDescription("");
         setElementsFiles([]);
         setTypesFiles([]);
-        setSchemaJson("");
         setElements("");
         setTypes("");
         setProxyURL("");
@@ -314,7 +312,7 @@ export default function CreateGraph(props: any) {
                                     }}
                                     descriptionValue={description}
                                     onChangeDescription={(description, graphDescriptionIsValid) => {
-                                        setDescriptio(description);
+                                        setDescription(description);
                                         setGraphDescriptionIsValid(graphDescriptionIsValid);
                                     }}
                                 />

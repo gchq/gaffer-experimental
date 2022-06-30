@@ -41,7 +41,6 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphCollaborator;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
-
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
@@ -530,7 +528,7 @@ public class DeploymentHandler {
         return graphCollaborators;
     }
 
-    private String getValueOfElementsFromSchema(final Collection<String> inputSchema){
+    private String getValueOfElementsFromSchema(final Collection<String> inputSchema) {
         JSONArray jsonArray = new JSONArray(inputSchema.toString());
         JSONObject jsonObject = jsonArray.getJSONObject(0);
         JSONObject elements = new JSONObject();
@@ -539,7 +537,7 @@ public class DeploymentHandler {
         return elements.toString();
     }
 
-    private String getValueOfTypesFromSchema(final Collection<String> inputSchema){
+    private String getValueOfTypesFromSchema(final Collection<String> inputSchema) {
         JSONArray jsonArray = new JSONArray(inputSchema.toString());
         JSONObject jsonObject = jsonArray.getJSONObject(0);
         JSONObject types = new JSONObject();
