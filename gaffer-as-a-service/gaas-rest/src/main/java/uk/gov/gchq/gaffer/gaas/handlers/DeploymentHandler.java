@@ -475,6 +475,9 @@ public class DeploymentHandler {
                 GaaSGraph gaaSGraph = new GaaSGraph();
                 gaaSGraph.graphId(graphId);
                 Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(graphId + "-gaffer-graph-config").get().getData().values();
+                Collection<String> graphSchema = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(graphId + "-gaffer-schema").get().getData().values();
+                gaaSGraph.elements(getValueOfElementsFromSchema(graphSchema));
+                gaaSGraph.types(getValueOfTypesFromSchema(graphSchema));
                 gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
                 if (getValueOfConfig(graphConfig, "configName") != null) {
                     gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
@@ -525,6 +528,23 @@ public class DeploymentHandler {
 
 
         return graphCollaborators;
+    }
+
+    private String getValueOfElementsFromSchema(final Collection<String> inputSchema){
+        JSONArray jsonArray = new JSONArray(inputSchema.toString());
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+        JSONObject elements = new JSONObject();
+        elements.put("edges", jsonObject.get("edges"));
+        elements.put("entities", jsonObject.get("entities"));
+        return elements.toString();
+    }
+
+    private String getValueOfTypesFromSchema(final Collection<String> inputSchema){
+        JSONArray jsonArray = new JSONArray(inputSchema.toString());
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+        JSONObject types = new JSONObject();
+        types.put("types", jsonObject.get("types"));
+        return types.toString();
     }
 
     private String getValueOfConfig(final Collection<String> value, final String fieldToGet) {

@@ -16,6 +16,7 @@
 
 package uk.gov.gchq.gaffer.gaas.model;
 
+import org.json.JSONObject;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
 
 import java.util.List;
@@ -31,6 +32,19 @@ public class GaaSGraph {
     private String configName;
     private String restUrl;
     private String graphAutoDestroyDate;
+    private String elements;
+    private String types;
+
+
+    public GaaSGraph elements(String elements) {
+        this.elements = elements;
+        return this;
+    }
+
+    public GaaSGraph types(String types) {
+        this.types = types;
+        return this;
+    }
 
     public GaaSGraph configName(final String config) {
         this.configName = config;
@@ -104,6 +118,11 @@ public class GaaSGraph {
     public String getRestUrl() {
         return restUrl;
     }
+
+    public String getTypes() { return types; }
+
+    public String getElements() { return elements; }
+
 
     @Override
     public String toString() {
