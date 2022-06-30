@@ -32,7 +32,7 @@ import {
 } from "@material-ui/core";
 import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 import AddRoundedIcon from "@material-ui/icons/AddRounded";
-import React,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { CreateStoreTypesGraphRepo, ICreateGraphConfig } from "../../rest/repositories/create-storetypes-graph-repo";
 import { AlertType, NotificationAlert } from "../alerts/notification-alert";
 import { GetAllGraphsRepo } from "../../rest/repositories/get-all-graphs-repo";
@@ -59,18 +59,15 @@ import GraphLifetimeInDaysSelect from "./graph-lifetime-in-days-select";
 import { useLocation } from "react-router-dom";
 import { GraphType } from "../../domain/graph-type";
 
-
-
 const Transition = React.forwardRef((props: TransitionProps & { children?: React.ReactElement<any, any> }) => (
     <Slide direction="up" {...props} />
 ));
 
 //export default class CreateGraph extends React.Component<{}, IState> {
-    
-export default function CreateGraph(props: any) {
 
+export default function CreateGraph(props: any) {
     const location: any = useLocation();
-    const [existinGraphId, setExistinGraphId] = useState(location.state.graphId);;
+    const [existinGraphId, setExistinGraphId] = useState(location.state.graphId);
     const [graphId, setGraphId] = useState("");
     const [graphIdIsValid, setGraphIdIsValid] = useState(false);
     const [description, setDescription] = useState("");
@@ -86,7 +83,7 @@ export default function CreateGraph(props: any) {
     const [storeType, setStoreType] = useState("");
     const [storeTypes, setStoreTypes] = useState<string[]>([]);
     const [federatedStoreTypes, setFederatedStoreTypes] = useState<string[]>([]);
-    const [graphs, setGraphs] = useState([new Graph("","","","","DOWN","", "", GraphType.GAAS_GRAPH)]);
+    const [graphs, setGraphs] = useState([new Graph("", "", "", "", "DOWN", "", "", GraphType.GAAS_GRAPH)]);
     const [proxyURL, setProxyURL] = useState("");
     const [root, setRoot] = useState("");
     const [selectedGraphs, setSelectedGraphs] = useState<string[]>([]);
@@ -96,9 +93,8 @@ export default function CreateGraph(props: any) {
 
     // constructor(props: object) {
     //     super(props);
-       
+
     // }
-   
 
     useEffect(() => {
         getGraphs();
@@ -112,29 +108,24 @@ export default function CreateGraph(props: any) {
         } catch (e: any) {
             setOutcome(AlertType.FAILED);
             setOutcomeMessage(
-                `Failed to get all graphs. ${(e as GaaSAPIErrorResponse).title}: ${
-                    (e as GaaSAPIErrorResponse).detail
-                }`
+                `Failed to get all graphs. ${(e as GaaSAPIErrorResponse).title}: ${(e as GaaSAPIErrorResponse).detail}`
             );
         }
-    }
+    };
 
     const getAllStoreTypes = async () => {
         try {
             const storeTypes: IStoreTypes = await new GetStoreTypesRepo().get();
             setStoreTypes(storeTypes.storeTypes);
-            setFederatedStoreTypes(storeTypes.federatedStoreTypes)
+            setFederatedStoreTypes(storeTypes.federatedStoreTypes);
         } catch (e: any) {
             setOutcome(AlertType.FAILED);
             setOutcomeMessage(
-                `Storetypes unavailable: ${(e as GaaSAPIErrorResponse).title}: ${
-                    (e as GaaSAPIErrorResponse).detail
-                }`
+                `Storetypes unavailable: ${(e as GaaSAPIErrorResponse).title}: ${(e as GaaSAPIErrorResponse).detail}`
             );
         }
-    }
+    };
 
-        
     const submitNewGraph = async () => {
         //TODO: separate functions
         setGraphId(graphId);
@@ -160,7 +151,11 @@ export default function CreateGraph(props: any) {
             newElements.validate();
             newTypes.validate();
             config = {
-                schema: { entities: newElements.getEntities(), edges: newElements.getEdges(), types: newTypes.getTypes() },
+                schema: {
+                    entities: newElements.getEntities(),
+                    edges: newElements.getEdges(),
+                    types: newTypes.getTypes(),
+                },
             };
         }
 
@@ -193,22 +188,21 @@ export default function CreateGraph(props: any) {
                 }`
             );
         }
-    }
+    };
 
+    const resetForm = () => {
+        setGraphId("");
+        setDescription("");
+        setElementsFiles([]);
+        setTypesFiles([]);
+        setSchemaJson("");
+        setElements("");
+        setTypes("");
+        setProxyURL("");
+        setSelectedGraphs([]);
+    };
 
-        const resetForm = () => {
-            setGraphId("");
-            setDescription("");
-            setElementsFiles([]);
-            setTypesFiles([]);
-            setSchemaJson("");
-            setElements("");
-            setTypes("");
-            setProxyURL("");
-            setSelectedGraphs([]);
-    }
-
-        const uploadElementsFiles = async (elementsFiles: File[]) => {
+    const uploadElementsFiles = async (elementsFiles: File[]) => {
         setElementsFiles(elementsFiles);
         if (elementsFiles.length > 0) {
             const elementsSchemaFiles = await elementsFiles[0].text();
@@ -217,9 +211,9 @@ export default function CreateGraph(props: any) {
         } else {
             setElementsFieldDisabled(false);
         }
-    }
+    };
 
-        const uploadTypesFiles = async (typesFiles: File[]) => {
+    const uploadTypesFiles = async (typesFiles: File[]) => {
         setTypesFiles(elementsFiles);
         if (typesFiles.length > 0) {
             const typesSchemaFiles = await typesFiles[0].text();
@@ -228,9 +222,9 @@ export default function CreateGraph(props: any) {
         } else {
             setTypesFieldDisabled(false);
         }
-    }
+    };
 
-        const disableSubmitButton = () => {
+    const disableSubmitButton = () => {
         setGraphId(graphId);
         setDescription(description);
         setGraphIdIsValid(graphIdIsValid);
@@ -248,13 +242,11 @@ export default function CreateGraph(props: any) {
             (!currentStoreTypeIsFederated() && !new ElementsSchema(elements).validate().isEmpty()) ||
             (!currentStoreTypeIsFederated() && !new TypesSchema(types).validate().isEmpty())
         );
-    }
+    };
 
-        const currentStoreTypeIsFederated = () => {
-        return federatedStoreTypes.includes(storeType);
-    }
+    const currentStoreTypeIsFederated = () => federatedStoreTypes.includes(storeType);
 
-        const createElementsSchema = () => {
+    const createElementsSchema = () => {
         let elementsSchema: IElementsSchema = { entities: {}, edges: {} };
         try {
             if (elements.length !== 0) {
@@ -262,9 +254,9 @@ export default function CreateGraph(props: any) {
             }
         } catch (error) {}
         return elementsSchema;
-    }
+    };
 
-        const createTypesSchema = () => {
+    const createTypesSchema = () => {
         let typesSchema: object = {};
         try {
             if (types.length !== 0) {
@@ -272,293 +264,273 @@ export default function CreateGraph(props: any) {
             }
         } catch (error) {}
         return typesSchema;
-    }
+    };
 
     // public render() {
-        const federatedStoreIsNotSelected = (): boolean => !currentStoreTypeIsFederated();
-        const openDialogBox = () => {
-            setDialogIsOpen(true);
-        };
-        const closeDialogBox = () => {
-            setDialogIsOpen(false);
-        };
+    const federatedStoreIsNotSelected = (): boolean => !currentStoreTypeIsFederated();
+    const openDialogBox = () => {
+        setDialogIsOpen(true);
+    };
+    const closeDialogBox = () => {
+        setDialogIsOpen(false);
+    };
 
-        return (
-            <main aria-label="create-graph-Page" id={"create-graph-page"}>
-                {outcome && (
-                    <NotificationAlert alertType={outcome} message={outcomeMessage} />
-                )}
-                <Toolbar />
+    return (
+        <main aria-label="create-graph-Page" id={"create-graph-page"}>
+            {outcome && <NotificationAlert alertType={outcome} message={outcomeMessage} />}
+            <Toolbar />
 
-                <Grid container justify="center">
-                    <Container maxWidth="md">
-                        <CssBaseline />
-                        <div className={this.classes.paper}>
-                            <Grid
-                                item
-                                xs={12}
-                                container
-                                direction="row"
-                                justify="center"
-                                alignItems="center"
-                                style={{ margin: 10 }}
-                            >
-                                <Box my={4}>
-                                    <Typography
-                                        variant="h4"
-                                        align={"center"}
-                                        id={"create-graph-title"}
-                                        aria-label={"create-graph-title"}
-                                    >
-                                        Create Graph
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <form className={this.classes.form} noValidate>
-                                <Grid container spacing={2}>
-                                    <GraphIdDescriptionInput
-                                        graphIdValue={graphId}
-                                        onChangeGraphId={(graphId, graphIdIsValid) =>
-                                            this.setState({ graphId, graphIdIsValid })
-                                        }
-                                        descriptionValue={description}
-                                        onChangeDescription={(description, graphDescriptionIsValid) =>
-                                            
-                                            this.setState({ description, graphDescriptionIsValid })
-                                        }
-                                    />
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        container
-                                        direction="row"
-                                        justify="flex-end"
-                                        alignItems="center"
-                                    />
-                                    <StoreTypeSelect
-                                        aria-label="store-type-select"
-                                        allStoreTypes={storeTypes.concat(federatedStoreTypes)}
-                                        value={storeType}
-                                        onChangeStoreType={(storeType) => {
-                                            setStoreType(storeType);
-                                        }}
-                                    />
-                                    <GraphLifetimeInDaysSelect
-                                        value={graphLifetimeInDays}
-                                        onChangeGraphLifetimeInDays={(graphLifetimeInDays) => {
-                                            setGraphLifetimeInDays(graphLifetimeInDays);
-                                        }}
-                                    />
-                                    {federatedStoreIsNotSelected() && (
-                                        <>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                container
-                                                direction="row"
-                                                justify="flex-end"
-                                                alignItems="center"
-                                                id={"test"}
+            <Grid container justify="center">
+                <Container maxWidth="md">
+                    <CssBaseline />
+                    <div className={classes.paper}>
+                        <Grid
+                            item
+                            xs={12}
+                            container
+                            direction="row"
+                            justify="center"
+                            alignItems="center"
+                            style={{ margin: 10 }}
+                        >
+                            <Box my={4}>
+                                <Typography
+                                    variant="h4"
+                                    align={"center"}
+                                    id={"create-graph-title"}
+                                    aria-label={"create-graph-title"}
+                                >
+                                    Create Graph
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        <form className={classes.form} noValidate>
+                            <Grid container spacing={2}>
+                                <GraphIdDescriptionInput
+                                    graphIdValue={graphId}
+                                    onChangeGraphId={(graphId, graphIdIsValid) =>
+                                        this.setState({ graphId, graphIdIsValid })
+                                    }
+                                    descriptionValue={description}
+                                    onChangeDescription={(description, graphDescriptionIsValid) =>
+                                        this.setState({ description, graphDescriptionIsValid })
+                                    }
+                                />
+                                <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center" />
+                                <StoreTypeSelect
+                                    aria-label="store-type-select"
+                                    allStoreTypes={storeTypes.concat(federatedStoreTypes)}
+                                    value={storeType}
+                                    onChangeStoreType={(storeType) => {
+                                        setStoreType(storeType);
+                                    }}
+                                />
+                                <GraphLifetimeInDaysSelect
+                                    value={graphLifetimeInDays}
+                                    onChangeGraphLifetimeInDays={(graphLifetimeInDays) => {
+                                        setGraphLifetimeInDays(graphLifetimeInDays);
+                                    }}
+                                />
+                                {federatedStoreIsNotSelected() && (
+                                    <>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            container
+                                            direction="row"
+                                            justify="flex-end"
+                                            alignItems="center"
+                                            id={"test"}
+                                        >
+                                            <Tooltip TransitionComponent={Zoom} title="Use Schema builder">
+                                                <SchemaBuilderDialog
+                                                    typesSchema={createTypesSchema()}
+                                                    elementsSchema={createElementsSchema()}
+                                                    onCreateSchema={(schema) => {
+                                                        setElements(JSON.stringify(schema.elements));
+                                                        setTypes(JSON.stringify(schema.types));
+                                                    }}
+                                                />
+                                            </Tooltip>
+                                            <Tooltip
+                                                TransitionComponent={Zoom}
+                                                title="Add Empty Elements and Types Schema Templates"
                                             >
-                                                <Tooltip TransitionComponent={Zoom} title="Use Schema builder">
-                                                    <SchemaBuilderDialog
-                                                        typesSchema={createTypesSchema()}
-                                                        elementsSchema={createElementsSchema()}
-                                                        onCreateSchema={(schema) => {
-                                                            setElements(JSON.stringify(schema.elements));
-                                                            setTypes(JSON.stringify(schema.types))
-                                                        }}
-                                                    />
-                                                </Tooltip>
-                                                <Tooltip
-                                                    TransitionComponent={Zoom}
-                                                    title="Add Empty Elements and Types Schema Templates"
+                                                <IconButton
+                                                    onClick={() => {
+                                                        setElements('{"entities":{}, "edges":{}}');
+                                                        setTypes("{}");
+                                                    }}
                                                 >
-                                                    <IconButton
-                                                        onClick={() => {
-                                                            setElements('{"entities":{}, "edges":{}}');
-                                                            setTypes("{}")
-                                                        }}
-                                                    >
-                                                        <AddRoundedIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Tooltip
-                                                    TransitionComponent={Zoom}
-                                                    title="Add Elements and Types Schemas From File"
+                                                    <AddRoundedIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip
+                                                TransitionComponent={Zoom}
+                                                title="Add Elements and Types Schemas From File"
+                                            >
+                                                <IconButton id="attach-file-button" onClick={openDialogBox}>
+                                                    <AttachFileIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip TransitionComponent={Zoom} title="Clear All Schemas">
+                                                <IconButton
+                                                    onClick={() => {
+                                                        setElements("");
+                                                        setTypes("");
+                                                        setElementsFiles([]);
+                                                        setTypes("");
+                                                    }}
                                                 >
-                                                    <IconButton id="attach-file-button" onClick={openDialogBox}>
-                                                        <AttachFileIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Tooltip TransitionComponent={Zoom} title="Clear All Schemas">
-                                                    <IconButton
-                                                        onClick={() => {
-                                                            setElements("");
-                                                            setTypes("");
-                                                            setElementsFiles([]);
-                                                            setTypes("");
-                                                        }}
-                                                    >
+                                                    <ClearIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Dialog
+                                                id="dropzone"
+                                                open={this.state.dialogIsOpen}
+                                                TransitionComponent={Transition}
+                                                keepMounted
+                                                onClose={closeDialogBox}
+                                                style={{ minWidth: "500px" }}
+                                                aria-labelledby="alert-dialog-slide-title"
+                                                aria-describedby="alert-dialog-slide-description"
+                                            >
+                                                <Grid
+                                                    container
+                                                    direction="row"
+                                                    justify="flex-end"
+                                                    alignItems="flex-start"
+                                                >
+                                                    <IconButton id="close-dropzone-button" onClick={closeDialogBox}>
                                                         <ClearIcon />
                                                     </IconButton>
-                                                </Tooltip>
-                                                <Dialog
-                                                    id="dropzone"
-                                                    open={this.state.dialogIsOpen}
-                                                    TransitionComponent={Transition}
-                                                    keepMounted
-                                                    onClose={closeDialogBox}
-                                                    style={{ minWidth: "500px" }}
-                                                    aria-labelledby="alert-dialog-slide-title"
-                                                    aria-describedby="alert-dialog-slide-description"
-                                                >
-                                                    <Grid
-                                                        container
-                                                        direction="row"
-                                                        justify="flex-end"
-                                                        alignItems="flex-start"
-                                                    >
-                                                        <IconButton id="close-dropzone-button" onClick={closeDialogBox}>
-                                                            <ClearIcon />
-                                                        </IconButton>
+                                                </Grid>
+
+                                                <DialogContent>
+                                                    <Grid id="elements-drop-zone">
+                                                        <DropzoneArea
+                                                            showPreviews={true}
+                                                            onChange={async (files) => this.uploadElementsFiles(files)}
+                                                            showPreviewsInDropzone={false}
+                                                            dropzoneText="Drag and drop elements.JSON"
+                                                            useChipsForPreview
+                                                            previewGridProps={{
+                                                                container: { spacing: 1, direction: "row" },
+                                                            }}
+                                                            previewChipProps={{
+                                                                classes: { root: classes.previewChip },
+                                                            }}
+                                                            previewText="Selected files"
+                                                            clearOnUnmount={true}
+                                                            acceptedFiles={["application/json"]}
+                                                            filesLimit={1}
+                                                        />
                                                     </Grid>
+                                                    <Grid id="types-drop-zone">
+                                                        <DropzoneArea
+                                                            showPreviews={true}
+                                                            onChange={async (files) => this.uploadTypesFiles(files)}
+                                                            showPreviewsInDropzone={false}
+                                                            dropzoneText="Drag and drop types.JSON"
+                                                            useChipsForPreview
+                                                            previewGridProps={{
+                                                                container: { spacing: 1, direction: "row" },
+                                                            }}
+                                                            previewChipProps={{
+                                                                classes: { root: classes.previewChip },
+                                                            }}
+                                                            previewText="Selected files"
+                                                            clearOnUnmount={true}
+                                                            acceptedFiles={["application/json"]}
+                                                            filesLimit={1}
+                                                        />
+                                                    </Grid>
+                                                </DialogContent>
+                                            </Dialog>
+                                        </Grid>
+                                    </>
+                                )}
+                                <SchemaInput
+                                    hide={!federatedStoreIsNotSelected()}
+                                    elementsValue={elements}
+                                    onChangeElementsSchema={(elements) => setElements(elements)}
+                                    typesSchemaValue={types}
+                                    onChangeTypesSchema={(types) => setTypes(types)}
+                                />
+                                <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center" />
+                            </Grid>
+                        </form>
 
-                                                    <DialogContent>
-                                                        <Grid id="elements-drop-zone">
-                                                            <DropzoneArea
-                                                                showPreviews={true}
-                                                                onChange={async (files) =>
-                                                                    this.uploadElementsFiles(files)
-                                                                }
-                                                                showPreviewsInDropzone={false}
-                                                                dropzoneText="Drag and drop elements.JSON"
-                                                                useChipsForPreview
-                                                                previewGridProps={{
-                                                                    container: { spacing: 1, direction: "row" },
-                                                                }}
-                                                                previewChipProps={{
-                                                                    classes: { root: this.classes.previewChip },
-                                                                }}
-                                                                previewText="Selected files"
-                                                                clearOnUnmount={true}
-                                                                acceptedFiles={["application/json"]}
-                                                                filesLimit={1}
-                                                            />
-                                                        </Grid>
-                                                        <Grid id="types-drop-zone">
-                                                            <DropzoneArea
-                                                                showPreviews={true}
-                                                                onChange={async (files) => this.uploadTypesFiles(files)}
-                                                                showPreviewsInDropzone={false}
-                                                                dropzoneText="Drag and drop types.JSON"
-                                                                useChipsForPreview
-                                                                previewGridProps={{
-                                                                    container: { spacing: 1, direction: "row" },
-                                                                }}
-                                                                previewChipProps={{
-                                                                    classes: { root: this.classes.previewChip },
-                                                                }}
-                                                                previewText="Selected files"
-                                                                clearOnUnmount={true}
-                                                                acceptedFiles={["application/json"]}
-                                                                filesLimit={1}
-                                                            />
-                                                        </Grid>
-                                                    </DialogContent>
-                                                </Dialog>
-                                            </Grid>
-                                        </>
-                                    )}
-                                    <SchemaInput
-                                        hide={!federatedStoreIsNotSelected()}
-                                        elementsValue={this.state.elements}
-                                        onChangeElementsSchema={(elements) => this.setState({ elements })}
-                                        typesSchemaValue={this.state.types}
-                                        onChangeTypesSchema={(types) => this.setState({ types })}
-                                    />
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        container
-                                        direction="row"
-                                        justify="flex-end"
-                                        alignItems="center"
-                                    />
-                                </Grid>
-                            </form>
-
-                            <AddProxyGraphInput
-                                hide={federatedStoreIsNotSelected()}
-                                proxyURLValue={this.state.proxyURL}
-                                onChangeProxyURL={(proxyURL) => this.setState({ proxyURL })}
-                                onClickAddProxyGraph={(proxyGraph) =>
-                                    this.setState({
-                                        graphs: [...this.state.graphs, proxyGraph],
-                                        selectedGraphs: [...this.state.selectedGraphs, proxyGraph.getId()],
-                                    })
-                                }
-                            />
-                            <ProxyGraphsTable
-                                hide={federatedStoreIsNotSelected()}
-                                graphs={this.state.graphs}
-                                selectedGraphs={this.state.selectedGraphs}
-                                onClickCheckbox={(selectedGraphs) => this.setState({ selectedGraphs })}
-                            />
-                        </div>
-                    </Container>
-                    <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
-                        <Button
-                            id="create-new-graph-button"
-                            onClick={() => {
-                                this.submitNewGraph();
-                            }}
-                            startIcon={<AddCircleOutlineOutlinedIcon />}
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            className={this.classes.submit}
-                            disabled={this.disableSubmitButton()}
-                        >
-                            Create Graph
-                        </Button>
-                    </Grid>
-                    <Box pt={4}>
-                        <Copyright />
-                    </Box>
+                        <AddProxyGraphInput
+                            hide={federatedStoreIsNotSelected()}
+                            proxyURLValue={proxyURL}
+                            onChangeProxyURL={(proxyURL) => setProxyURL(proxyURL)}
+                            onClickAddProxyGraph={(proxyGraph) =>
+                                this.setState({
+                                    graphs: [...this.state.graphs, proxyGraph],
+                                    selectedGraphs: [...this.state.selectedGraphs, proxyGraph.getId()],
+                                })
+                            }
+                        />
+                        <ProxyGraphsTable
+                            hide={federatedStoreIsNotSelected()}
+                            graphs={graphs}
+                            selectedGraphs={selectedGraphs}
+                            onClickCheckbox={(selectedGraphs) => setSelectedGraphs(selectedGraphs)}
+                        />
+                    </div>
+                </Container>
+                <Grid container style={{ margin: 10 }} direction="row" justify="center" alignItems="center">
+                    <Button
+                        id="create-new-graph-button"
+                        onClick={() => {
+                            submitNewGraph();
+                        }}
+                        startIcon={<AddCircleOutlineOutlinedIcon />}
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        className={classes.submit}
+                        disabled={disableSubmitButton()}
+                    >
+                        Create Graph
+                    </Button>
                 </Grid>
-            </main>
-        );
-    }
-
-    private classes: any = makeStyles((theme) => ({
-        root: {
-            width: "100%",
-            marginTop: 40,
-        },
-        paper: {
-            marginTop: theme.spacing(2),
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-        },
-        avatar: {
-            margin: theme.spacing(1),
-            backgroundColor: theme.palette.secondary.main,
-        },
-        form: {
-            width: "100%", // Fix IE 11 issue.
-            marginTop: theme.spacing(3),
-        },
-        submit: {
-            margin: theme.spacing(3, 0, 2),
-        },
-        button: {
-            margin: "10px",
-        },
-        previewChip: {
-            minWidth: 160,
-            maxWidth: 210,
-        },
-    }));
+                <Box pt={4}>
+                    <Copyright />
+                </Box>
+            </Grid>
+        </main>
+    );
 }
+
+const classes: any = makeStyles((theme) => ({
+    root: {
+        width: "100%",
+        marginTop: 40,
+    },
+    paper: {
+        marginTop: theme.spacing(2),
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+        width: "100%", // Fix IE 11 issue.
+        marginTop: theme.spacing(3),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+    button: {
+        margin: "10px",
+    },
+    previewChip: {
+        minWidth: 160,
+        maxWidth: 210,
+    },
+}));
