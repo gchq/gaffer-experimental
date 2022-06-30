@@ -344,7 +344,7 @@ public class DeploymentHandler {
     /**
      * Starts the Uninstallation process for a Gaffer Graph.
      *
-     * @param graphId           The Gaffer Object
+     * @param graphId          The Gaffer Object
      * @param kubernetesClient kubernetesClient
      * @return list of graph collaborators
      * @throws ApiException exception
@@ -530,7 +530,7 @@ public class DeploymentHandler {
         return graphCollaborators;
     }
 
-    private String getValueOfElementsFromSchema(final Collection<String> inputSchema){
+    private String getValueOfElementsFromSchema(final Collection<String> inputSchema) {
         JSONArray jsonArray = new JSONArray(inputSchema.toString());
         JSONObject jsonObject = jsonArray.getJSONObject(0);
         JSONObject elements = new JSONObject();
@@ -539,7 +539,7 @@ public class DeploymentHandler {
         return elements.toString();
     }
 
-    private String getValueOfTypesFromSchema(final Collection<String> inputSchema){
+    private String getValueOfTypesFromSchema(final Collection<String> inputSchema) {
         JSONArray jsonArray = new JSONArray(inputSchema.toString());
         JSONObject jsonObject = jsonArray.getJSONObject(0);
         JSONObject types = new JSONObject();

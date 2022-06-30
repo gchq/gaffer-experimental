@@ -174,9 +174,13 @@ class DeploymentHandlerTest {
         HashMap<String, String> data = new HashMap<>();
         data.put("graphConfig.json", "{\"configName\":\"mapStore\",\"graphLifetimeInDays\":\"10\",\"description\":\"Test Graph Description\",\"graphId\":\"test\",\"hooks\":[]}");
 
+        HashMap<String, String> schema = new HashMap<>();
+        schema.put("data", "{\"entities\":{},\"edges\":{},\"types\":{}}");
+
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
         kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-schema").endMetadata().withData(schema).build());
         assertEquals(1, handler.getDeployments(kubernetesClient).size());
     }
 
@@ -198,13 +202,18 @@ class DeploymentHandlerTest {
         HashMap<String, String> data2 = new HashMap<>();
         data2.put("graphConfig.json", "{\"configName\":\"mapStore\",\"description\":\"Test Graph Description\",\"graphId\":\"test2\",\"hooks\":[]}");
 
+        HashMap<String, String> schema = new HashMap<>();
+        schema.put("data", "{\"entities\":{},\"edges\":{},\"types\":{}}");
+
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
         kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-schema").endMetadata().withData(schema).build());
 
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test2-gaffer-api").withLabels(usernameLabels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test2-gaffer-ui").endMetadata().build());
         kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test2-gaffer-graph-config").endMetadata().withData(data2).build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test2-gaffer-schema").endMetadata().withData(schema).build());
         assertEquals(1, handler.getDeploymentsByUsername(kubernetesClient, "myUser").size());
     }
 
@@ -234,18 +243,24 @@ class DeploymentHandlerTest {
         HashMap<String, String> data3 = new HashMap<>();
         data3.put("graphConfig.json", "{\"configName\":\"mapStore\",\"description\":\"Test Graph Description\",\"graphId\":\"test3\",\"hooks\":[]}");
 
+        HashMap<String, String> schema = new HashMap<>();
+        schema.put("data", "{\"entities\":{},\"edges\":{},\"types\":{}}");
+
 
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-api").withLabels(labels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test-gaffer-ui").endMetadata().build());
         kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-graph-config").endMetadata().withData(data).build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test-gaffer-schema").endMetadata().withData(schema).build());
 
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test2-gaffer-api").withLabels(usernameLabels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test2-gaffer-ui").endMetadata().build());
         kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test2-gaffer-graph-config").endMetadata().withData(data2).build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test2-gaffer-schema").endMetadata().withData(schema).build());
 
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test3-gaffer-api").withLabels(collaboratorLabels).endMetadata().withStatus(new DeploymentStatusBuilder().withAvailableReplicas(1).build()).build());
         kubernetesClient.apps().deployments().inNamespace("kai-dev").create(new DeploymentBuilder().withNewMetadata().withName("test3-gaffer-ui").endMetadata().build());
         kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test3-gaffer-graph-config").endMetadata().withData(data3).build());
+        kubernetesClient.configMaps().inNamespace("kai-dev").create(new ConfigMapBuilder().withNewMetadata().withName("test3-gaffer-schema").endMetadata().withData(schema).build());
 
         assertEquals(2, handler.getDeploymentsByUsername(kubernetesClient, "myUser").size());
     }
