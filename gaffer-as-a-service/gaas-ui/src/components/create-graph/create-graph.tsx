@@ -308,13 +308,15 @@ export default function CreateGraph(props: any) {
                             <Grid container spacing={2}>
                                 <GraphIdDescriptionInput
                                     graphIdValue={graphId}
-                                    onChangeGraphId={(graphId, graphIdIsValid) =>
-                                        this.setState({ graphId, graphIdIsValid })
-                                    }
+                                    onChangeGraphId={(graphId, graphIdIsValid) => {
+                                        setGraphId(graphId);
+                                        setGraphIdIsValid(graphIdIsValid);
+                                    }}
                                     descriptionValue={description}
-                                    onChangeDescription={(description, graphDescriptionIsValid) =>
-                                        this.setState({ description, graphDescriptionIsValid })
-                                    }
+                                    onChangeDescription={(description, graphDescriptionIsValid) => {
+                                        setDescriptio(description);
+                                        setGraphDescriptionIsValid(graphDescriptionIsValid);
+                                    }}
                                 />
                                 <Grid item xs={12} container direction="row" justify="flex-end" alignItems="center" />
                                 <StoreTypeSelect
@@ -387,7 +389,7 @@ export default function CreateGraph(props: any) {
                                             </Tooltip>
                                             <Dialog
                                                 id="dropzone"
-                                                open={this.state.dialogIsOpen}
+                                                open={dialogIsOpen}
                                                 TransitionComponent={Transition}
                                                 keepMounted
                                                 onClose={closeDialogBox}
@@ -410,7 +412,7 @@ export default function CreateGraph(props: any) {
                                                     <Grid id="elements-drop-zone">
                                                         <DropzoneArea
                                                             showPreviews={true}
-                                                            onChange={async (files) => this.uploadElementsFiles(files)}
+                                                            onChange={async (files) => uploadElementsFiles(files)}
                                                             showPreviewsInDropzone={false}
                                                             dropzoneText="Drag and drop elements.JSON"
                                                             useChipsForPreview
@@ -429,7 +431,7 @@ export default function CreateGraph(props: any) {
                                                     <Grid id="types-drop-zone">
                                                         <DropzoneArea
                                                             showPreviews={true}
-                                                            onChange={async (files) => this.uploadTypesFiles(files)}
+                                                            onChange={async (files) => uploadTypesFiles(files)}
                                                             showPreviewsInDropzone={false}
                                                             dropzoneText="Drag and drop types.JSON"
                                                             useChipsForPreview
@@ -465,12 +467,11 @@ export default function CreateGraph(props: any) {
                             hide={federatedStoreIsNotSelected()}
                             proxyURLValue={proxyURL}
                             onChangeProxyURL={(proxyURL) => setProxyURL(proxyURL)}
-                            onClickAddProxyGraph={(proxyGraph) =>
-                                this.setState({
-                                    graphs: [...this.state.graphs, proxyGraph],
-                                    selectedGraphs: [...this.state.selectedGraphs, proxyGraph.getId()],
-                                })
-                            }
+                            onClickAddProxyGraph={(proxyGraph) => {
+                                //graphs: [graphs, proxyGraph];
+                                setGraphs([...graphs, proxyGraph]);
+                                setSelectedGraphs([...selectedGraphs, proxyGraph.getId()]);
+                            }}
                         />
                         <ProxyGraphsTable
                             hide={federatedStoreIsNotSelected()}
