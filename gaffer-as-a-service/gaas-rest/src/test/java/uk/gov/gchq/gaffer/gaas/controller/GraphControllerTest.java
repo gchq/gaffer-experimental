@@ -111,6 +111,8 @@ class GraphControllerTest extends AbstractTest {
                 .restUrl("my-graph-namespace.apps.k8s.cluster/rest")
                 .configName("mapStore")
                 .status(RestApiStatus.UP)
+                .types("{types:{}}")
+                .elements("{entities:{},edges:{}}")
                 .graphAutoDestroyDate(tenDaysLater.toString());
 
         final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
@@ -123,7 +125,7 @@ class GraphControllerTest extends AbstractTest {
                 .header("username", "test@test.com"))
                 .andReturn();
 
-        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"" + tenDaysLater.toString() + "\"}]}";
+        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"" + tenDaysLater.toString() + "\"" + ",\"elements\":\"{entities:{},edges:{}}\",\"types\":\"{types:{}}\"}]}";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
@@ -140,6 +142,8 @@ class GraphControllerTest extends AbstractTest {
                 .restUrl("my-graph-namespace.apps.k8s.cluster/rest")
                 .configName("mapStore")
                 .graphAutoDestroyDate(tenDaysLater.toString())
+                .types("{types:{}}")
+                .elements("{entities:{},edges:{}}")
                 .status(RestApiStatus.UP);
         final List<GaaSGraph> gaaSGraphs = new ArrayList<>();
         gaaSGraphs.add(graph);
@@ -151,7 +155,7 @@ class GraphControllerTest extends AbstractTest {
                 .header("username", "myUser"))
                 .andReturn();
 
-        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"" + tenDaysLater.toString() + "\"}]}";
+        final String expected = "{\"graphs\":[{\"graphId\":\"testgraphid\",\"description\":\"Test Graph Description\",\"url\":\"my-graph-namespace.apps.k8s.cluster/ui\",\"status\":\"UP\",\"problems\":null,\"configName\":\"mapStore\",\"restUrl\":\"my-graph-namespace.apps.k8s.cluster/rest\",\"graphAutoDestroyDate\":\"" + tenDaysLater.toString() + "\"" + ",\"elements\":\"{entities:{},edges:{}}\",\"types\":\"{types:{}}\"}]}";
         assertEquals(expected, getGraphsResponse.getResponse().getContentAsString());
         assertEquals(200, getGraphsResponse.getResponse().getStatus());
     }
@@ -559,6 +563,7 @@ class GraphControllerTest extends AbstractTest {
         verify(updateGraphCollaboratorsService, times(1)).updateCollaborators(any(GaaSAddCollaboratorRequestBody.class));
 
     }
+
     @Test
     void addCollaborator_shouldCallUpdateGraphCollaboratorWithUsernameService_andReturn202_whenSuccess() throws Exception {
         final String request = "{" +
