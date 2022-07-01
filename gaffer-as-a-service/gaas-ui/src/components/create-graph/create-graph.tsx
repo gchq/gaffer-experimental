@@ -67,8 +67,11 @@ const Transition = React.forwardRef((props: TransitionProps & { children?: React
 //export default class CreateGraph extends React.Component<{}, IState> {
 
 export default function CreateGraph(props: TransitionProps) {
-    //const location: any = useLocation();
-    // const [existinGraphId, setExistinGraphId] = useState(location.state.graphId);
+    const location: any = useLocation();
+    const [existinGraphId, setExistinGraphId] = useState(
+        new Graph("", "", "", "", "DOWN", "", "", GraphType.GAAS_GRAPH, "{}", "{}")
+    );
+    //console.log("existinGraphId" + existinGraphId.getId());
     const [graphId, setGraphId] = useState("");
     const [graphIdIsValid, setGraphIdIsValid] = useState(!!graphId);
     const [description, setDescription] = useState("");
@@ -83,7 +86,7 @@ export default function CreateGraph(props: TransitionProps) {
     const [storeType, setStoreType] = useState("");
     const [storeTypes, setStoreTypes] = useState<string[]>([]);
     const [federatedStoreTypes, setFederatedStoreTypes] = useState<string[]>([]);
-    const [graphs, setGraphs] = useState([new Graph("", "", "", "", "DOWN", "", "", GraphType.GAAS_GRAPH)]);
+    const [graphs, setGraphs] = useState([new Graph("", "", "", "", "DOWN", "", "", GraphType.GAAS_GRAPH, "{}", "{}")]);
     const [proxyURL, setProxyURL] = useState("");
     const [root, setRoot] = useState("");
     const [selectedGraphs, setSelectedGraphs] = useState<string[]>([]);
@@ -95,12 +98,15 @@ export default function CreateGraph(props: TransitionProps) {
         getGraphs();
         getAllStoreTypes();
         setGraphId(graphId);
-        setDescription(description);
+        if (location.state != null) {
+            setDescription(location.state.graph.description);
+        }
         setGraphIdIsValid(graphIdIsValid);
         setGraphDescriptionIsValid(graphDescriptionIsValid);
         setElements(elements);
         setTypes(types);
-    }, []);
+        //console.log("location.state.graph.graphId: " + location.state.graph.graphId);
+    }, [location]);
 
     const getGraphs = async () => {
         try {

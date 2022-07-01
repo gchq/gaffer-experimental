@@ -62,6 +62,7 @@ interface IGraphRow {
     onClickDelete: (graphId: string) => void;
     onClickAddcollaborator: (graphId: string) => void;
     onClickViewGraphCollaborator: (graphId: string) => void;
+    onClickDuplicateGraph: (graph: Graph) => void;
 }
 
 const useStyles = makeStyles({
@@ -88,6 +89,10 @@ export function ViewGraphsTable(props: IProps) {
         navigate("/viewcollaborators", { state: { graphId: graphId } });
     };
 
+    const navigateToCreateGraph = (graph: Graph) => {
+        navigate("/creategraph", { state: { graph: graph } });
+    };
+
     return (
         <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -104,6 +109,7 @@ export function ViewGraphsTable(props: IProps) {
                                 <TableCell>Add Collaborator</TableCell>
                                 <TableCell>View Graph Collaborators</TableCell>
                                 <TableCell>Graph Auto Destroy Date</TableCell>
+                                <TableCell>Duplicate Graph</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -118,6 +124,7 @@ export function ViewGraphsTable(props: IProps) {
                                     onClickViewGraphCollaborator={(graphId: string) =>
                                         navigateToViewGraphCollaborator(graphId)
                                     }
+                                    onClickDuplicateGraph={(graph: Graph) => navigateToCreateGraph(graph)}
                                     onClickDelete={(graphId: string) => props.deleteGraph(graphId)}
                                 />
                             ))}
@@ -159,8 +166,15 @@ function StatusChip(graph: { status: string }) {
 }
 
 function MainGraphTableRow(props: IGraphRow) {
-    const { graph, index, federatedStores, onClickDelete, onClickAddcollaborator, onClickViewGraphCollaborator } =
-        props;
+    const {
+        graph,
+        index,
+        federatedStores,
+        onClickDelete,
+        onClickAddcollaborator,
+        onClickViewGraphCollaborator,
+        onClickDuplicateGraph,
+    } = props;
     const classes = useStyles();
     const [rowIsExpanded, setRowIsExpanded] = React.useState(false);
     const [allGraphIdsText, setAllGraphIdsText] = React.useState<string>("");
@@ -269,6 +283,17 @@ function MainGraphTableRow(props: IGraphRow) {
                     </Tooltip>
                 </TableCell>
                 <TableCell aria-label={"graph-lifetim-iIn-days"}>{graph.getGraphAutoDestroyDate()}</TableCell>
+                <TableCell aria-label={"duplicate-graph"}>
+                    <Tooltip TransitionComponent={Zoom} title={`DuplicateGraph ${graph.getId()}`}>
+                        <IconButton
+                            id={"duplicate-graph-button-" + index}
+                            aria-label={graph.getId() + "-duplicate-graph-button"}
+                            onClick={() => onClickDuplicateGraph(graph)}
+                        >
+                            <PeopleAltOutlinedIcon />
+                        </IconButton>
+                    </Tooltip>
+                </TableCell>
                 <TableCell aria-label={"delete-graph"}>
                     <Tooltip TransitionComponent={Zoom} title={`Delete ${graph.getId()}`}>
                         <IconButton
