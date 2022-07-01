@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /*
  * Copyright 2021-2022 Crown Copyright
  *
@@ -42,7 +43,6 @@ import { TypesSchema } from "../../domain/types-schema";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 import ClearIcon from "@material-ui/icons/Clear";
 import { DropzoneArea } from "material-ui-dropzone";
-import { TransitionProps } from "@material-ui/core/transitions";
 import GraphIdDescriptionInput from "./graph-id-description";
 import SchemaInput from "./schema-inputs";
 import StoreTypeSelect from "./storetype-select";
@@ -58,26 +58,27 @@ import { encode } from "html-entities";
 import GraphLifetimeInDaysSelect from "./graph-lifetime-in-days-select";
 import { useLocation } from "react-router-dom";
 import { GraphType } from "../../domain/graph-type";
-
+import { TransitionProps } from "@material-ui/core/transitions";
+import { stringify } from "querystring";
 const Transition = React.forwardRef((props: TransitionProps & { children?: React.ReactElement<any, any> }) => (
     <Slide direction="up" {...props} />
 ));
 
 //export default class CreateGraph extends React.Component<{}, IState> {
 
-export default function CreateGraph(props: any) {
+export default function CreateGraph(props: TransitionProps) {
     //const location: any = useLocation();
     // const [existinGraphId, setExistinGraphId] = useState(location.state.graphId);
     const [graphId, setGraphId] = useState("");
-    const [graphIdIsValid, setGraphIdIsValid] = useState(false);
+    const [graphIdIsValid, setGraphIdIsValid] = useState(!!graphId);
     const [description, setDescription] = useState("");
-    const [graphDescriptionIsValid, setGraphDescriptionIsValid] = useState(false);
+    const [graphDescriptionIsValid, setGraphDescriptionIsValid] = useState(!!description);
     const [elements, setElements] = useState("");
     const [elementsFiles, setElementsFiles] = useState<File[]>([]);
-    const [elementsFieldDisabled, setElementsFieldDisabled] = useState(false);
+    const [elementsFieldDisabled, setElementsFieldDisabled] = useState(!!elementsFiles);
     const [types, setTypes] = useState("");
     const [typesFiles, setTypesFiles] = useState<File[]>([]);
-    const [typesFieldDisabled, setTypesFieldDisabled] = useState(false);
+    const [typesFieldDisabled, setTypesFieldDisabled] = useState(!!typesFiles);
     const [dialogIsOpen, setDialogIsOpen] = useState(false);
     const [storeType, setStoreType] = useState("");
     const [storeTypes, setStoreTypes] = useState<string[]>([]);
@@ -90,14 +91,15 @@ export default function CreateGraph(props: any) {
     const [outcomeMessage, setOutcomeMessage] = useState("");
     const [graphLifetimeInDays, setGraphLifetimeInDays] = useState("");
 
-    // constructor(props: object) {
-    //     super(props);
-
-    // }
-
     useEffect(() => {
         getGraphs();
         getAllStoreTypes();
+        setGraphId(graphId);
+        setDescription(description);
+        setGraphIdIsValid(graphIdIsValid);
+        setGraphDescriptionIsValid(graphDescriptionIsValid);
+        setElements(elements);
+        setTypes(types);
     }, []);
 
     const getGraphs = async () => {
@@ -126,7 +128,7 @@ export default function CreateGraph(props: any) {
     };
 
     const submitNewGraph = async () => {
-        //TODO: separate functions
+        // TODO: separate functions
         setGraphId(graphId);
         setDescription(description);
         setStoreType(storeType);
@@ -222,25 +224,15 @@ export default function CreateGraph(props: any) {
         }
     };
 
-    const disableSubmitButton = () => {
-        setGraphId(graphId);
-        setDescription(description);
-        setGraphIdIsValid(graphIdIsValid);
-        setGraphDescriptionIsValid(graphDescriptionIsValid);
-        setElements(elements);
-        setTypes(types);
-
-        return (
-            (!currentStoreTypeIsFederated() && (!elements || !types)) ||
-            !graphId ||
-            !description ||
-            !graphIdIsValid ||
-            !graphDescriptionIsValid ||
-            (currentStoreTypeIsFederated() && selectedGraphs.length === 0) ||
-            (!currentStoreTypeIsFederated() && !new ElementsSchema(elements).validate().isEmpty()) ||
-            (!currentStoreTypeIsFederated() && !new TypesSchema(types).validate().isEmpty())
-        );
-    };
+    const disableSubmitButton = () =>
+        (!currentStoreTypeIsFederated() && (!elements || !types)) ||
+        !graphId ||
+        !description ||
+        !graphIdIsValid ||
+        !graphDescriptionIsValid ||
+        (currentStoreTypeIsFederated() && selectedGraphs.length === 0) ||
+        (!currentStoreTypeIsFederated() && !new ElementsSchema(elements).validate().isEmpty()) ||
+        (!currentStoreTypeIsFederated() && !new TypesSchema(types).validate().isEmpty());
 
     const currentStoreTypeIsFederated = () => federatedStoreTypes.includes(storeType);
 
@@ -264,7 +256,6 @@ export default function CreateGraph(props: any) {
         return typesSchema;
     };
 
-    // public render() {
     const federatedStoreIsNotSelected = (): boolean => !currentStoreTypeIsFederated();
     const openDialogBox = () => {
         setDialogIsOpen(true);
@@ -369,7 +360,12 @@ export default function CreateGraph(props: any) {
                                                 TransitionComponent={Zoom}
                                                 title="Add Elements and Types Schemas From File"
                                             >
-                                                <IconButton id="attach-file-button" onClick={openDialogBox}>
+                                                <IconButton
+                                                    id="attach-file-button"
+                                                    onClick={() => {
+                                                        openDialogBox();
+                                                    }}
+                                                >
                                                     <AttachFileIcon />
                                                 </IconButton>
                                             </Tooltip>
@@ -390,7 +386,9 @@ export default function CreateGraph(props: any) {
                                                 open={dialogIsOpen}
                                                 TransitionComponent={Transition}
                                                 keepMounted
-                                                onClose={closeDialogBox}
+                                                onClose={() => {
+                                                    closeDialogBox();
+                                                }}
                                                 style={{ minWidth: "500px" }}
                                                 aria-labelledby="alert-dialog-slide-title"
                                                 aria-describedby="alert-dialog-slide-description"
@@ -401,7 +399,12 @@ export default function CreateGraph(props: any) {
                                                     justify="flex-end"
                                                     alignItems="flex-start"
                                                 >
-                                                    <IconButton id="close-dropzone-button" onClick={closeDialogBox}>
+                                                    <IconButton
+                                                        id="close-dropzone-button"
+                                                        onClick={() => {
+                                                            closeDialogBox();
+                                                        }}
+                                                    >
                                                         <ClearIcon />
                                                     </IconButton>
                                                 </Grid>
@@ -466,7 +469,6 @@ export default function CreateGraph(props: any) {
                             proxyURLValue={proxyURL}
                             onChangeProxyURL={(proxyURL) => setProxyURL(proxyURL)}
                             onClickAddProxyGraph={(proxyGraph) => {
-                                //graphs: [graphs, proxyGraph];
                                 setGraphs([...graphs, proxyGraph]);
                                 setSelectedGraphs([...selectedGraphs, proxyGraph.getId()]);
                             }}
