@@ -44,6 +44,7 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
 import PersonAddOutlinedIcon from "@material-ui/icons/PersonAddOutlined";
 import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { useNavigate } from "react-router-dom";
 
@@ -290,7 +291,7 @@ function MainGraphTableRow(props: IGraphRow) {
                             aria-label={graph.getId() + "-duplicate-graph-button"}
                             onClick={() => onClickDuplicateGraph(graph)}
                         >
-                            <PeopleAltOutlinedIcon />
+                            <ContentCopyOutlinedIcon />
                         </IconButton>
                     </Tooltip>
                 </TableCell>
