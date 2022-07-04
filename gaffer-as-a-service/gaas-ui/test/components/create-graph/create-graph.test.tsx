@@ -39,6 +39,10 @@ jest.mock("../../../src/rest/repositories/get-graph-status-repo");
 jest.mock("../../../src/rest/repositories/get-graph-description-repo");
 jest.mock("../../../src/rest/repositories/get-graph-id-repo");
 jest.mock("../../../src/rest/repositories/get-store-types-repo");
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom"),
+    useLocation: () => ({ state: { graph: graph } }),
+}));
 
 let wrapper: ReactWrapper;
 
