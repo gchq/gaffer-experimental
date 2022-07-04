@@ -59,7 +59,7 @@ describe("When ViewGraphs mounts", () => {
         await component.update();
 
         expect(component.find("thead").text()).toBe(
-            "Graph IDStore TypeStatusUI URLREST URLAdd CollaboratorView Graph CollaboratorsGraph Auto Destroy DateActions"
+            "Graph IDStore TypeStatusUI URLREST URLAdd CollaboratorView Graph CollaboratorsGraph Auto Destroy DateDuplicate GraphActions"
         );
         expect(component.find("tbody").text()).toBe(
             "testId1 MUPhttp://testId-1.app/uihttp://testId-1.app/rest2022-06-09t15:55:34.006"

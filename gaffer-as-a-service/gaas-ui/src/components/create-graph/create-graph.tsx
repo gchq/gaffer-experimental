@@ -106,8 +106,11 @@ export default function CreateGraph(props: TransitionProps) {
             setTypes(location.state.graph.types);
             setStoreType(location.state.graph.configName);
         }
+        setElements(elements);
+        setTypes(types);
+        setStoreType(storeType);
         setGraphIdIsValid(graphIdIsValid);
-    }, [graphDescriptionIsValid, graphId, graphIdIsValid, location.state]);
+    }, [graphDescriptionIsValid, graphId, graphIdIsValid, location.state, elements, types, storeType]);
 
     const getGraphs = async () => {
         try {

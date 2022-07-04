@@ -31,6 +31,7 @@ import { APIError } from "../../../src/rest/APIError";
 import { GetStoreTypesRepo, IStoreTypes } from "../../../src/rest/repositories/get-store-types-repo";
 import { CreateFederatedGraphRepo } from "../../../src/rest/repositories/create-federated-graph-repo";
 import { GraphType } from "../../../src/domain/graph-type";
+import { Graph } from "../../domain/graph";
 
 jest.mock("../../../src/rest/repositories/create-storetypes-graph-repo");
 jest.mock("../../../src/rest/repositories/create-federated-graph-repo");
@@ -41,7 +42,22 @@ jest.mock("../../../src/rest/repositories/get-graph-id-repo");
 jest.mock("../../../src/rest/repositories/get-store-types-repo");
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
-    useLocation: () => ({ state: { graph: graph } }),
+    useLocation: () => ({
+        state: {
+            graph: new Graph(
+                "testgraph",
+                "test",
+                "",
+                "",
+                "DOWN",
+                "mapstore",
+                "2022-06-09t15:55:34.006",
+                GraphType.GAAS_GRAPH,
+                "{}",
+                "{}"
+            ),
+        },
+    }),
 }));
 
 let wrapper: ReactWrapper;
