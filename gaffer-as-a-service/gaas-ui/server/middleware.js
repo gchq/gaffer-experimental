@@ -91,6 +91,8 @@ app.get("/graphs", (req, res) => {
                         configName: "federated",
                         graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                         status: "UP",
+                        elements: '{"entities":{}, "edges":{}}',
+                        types: "{}",
                     },
                     {
                         graphId: "mapstore1",
@@ -100,6 +102,8 @@ app.get("/graphs", (req, res) => {
                         configName: "mapStore",
                         graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                         status: "UP",
+                        elements: '{"entities":{}, "edges":{}}',
+                        types: "{}",
                     },
                     {
                         graphId: "accumulodown",
@@ -109,6 +113,8 @@ app.get("/graphs", (req, res) => {
                         configName: "accumuloStore",
                         graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                         status: "DOWN",
+                        elements: '{"entities":{}, "edges":{}}',
+                        types: "{}",
                     },
                     {
                         graphId: "mapstore2",
@@ -118,6 +124,8 @@ app.get("/graphs", (req, res) => {
                         configName: "mapStore",
                         graphAutoDestroyDate: "",
                         status: "UP",
+                        elements: '{"entities":{}, "edges":{}}',
+                        types: "{}",
                     },
                     {
                         graphId: "accumulo1",
@@ -127,6 +135,8 @@ app.get("/graphs", (req, res) => {
                         configName: "accumuloStore",
                         graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                         status: "UP",
+                        elements: '{"entities":{}, "edges":{}}',
+                        types: "{}",
                     },
                     {
                         graphId: "accumulo2",
@@ -136,6 +146,8 @@ app.get("/graphs", (req, res) => {
                         configName: "accumuloStore",
                         graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                         status: "UP",
+                        elements: '{"entities":{}, "edges":{}}',
+                        types: "{}",
                     },
                     {
                         graphId: "mapstoredown",
@@ -145,6 +157,8 @@ app.get("/graphs", (req, res) => {
                         configName: "mapStore",
                         graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                         status: "DOWN",
+                        elements: '{"entities":{}, "edges":{}}',
+                        types: "{}",
                     },
                     {
                         graphId: "mapstore3",
@@ -154,6 +168,8 @@ app.get("/graphs", (req, res) => {
                         configName: "mapStore",
                         graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                         status: "UP",
+                        elements: '{"entities":{}, "edges":{}}',
+                        types: "{}",
                     },
                     {
                         graphId: "mapstore4",
@@ -163,6 +179,8 @@ app.get("/graphs", (req, res) => {
                         configName: "mapStore",
                         graphAutoDestroyDate: "2022-06-09t15:55:34.006",
                         status: "UP",
+                        elements: '{"entities":{}, "edges":{}}',
+                        types: "{}",
                     },
                 ],
             });
