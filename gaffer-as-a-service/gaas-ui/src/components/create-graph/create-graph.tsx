@@ -98,15 +98,16 @@ export default function CreateGraph(props: TransitionProps) {
         getGraphs();
         getAllStoreTypes();
         setGraphId(graphId);
+        setGraphDescriptionIsValid(graphDescriptionIsValid);
         if (location.state != null) {
             setDescription(location.state.graph.description);
+            setGraphDescriptionIsValid(true);
             setElements(location.state.graph.elements);
             setTypes(location.state.graph.types);
             setStoreType(location.state.graph.configName);
         }
         setGraphIdIsValid(graphIdIsValid);
-        setGraphDescriptionIsValid(graphDescriptionIsValid);
-    }, []);
+    }, [graphDescriptionIsValid, graphId, graphIdIsValid, location.state]);
 
     const getGraphs = async () => {
         try {
