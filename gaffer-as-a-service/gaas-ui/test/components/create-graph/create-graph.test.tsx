@@ -31,7 +31,6 @@ import { APIError } from "../../../src/rest/APIError";
 import { GetStoreTypesRepo, IStoreTypes } from "../../../src/rest/repositories/get-store-types-repo";
 import { CreateFederatedGraphRepo } from "../../../src/rest/repositories/create-federated-graph-repo";
 import { GraphType } from "../../../src/domain/graph-type";
-import { Graph } from "../../domain/graph";
 
 jest.mock("../../../src/rest/repositories/create-storetypes-graph-repo");
 jest.mock("../../../src/rest/repositories/create-federated-graph-repo");
@@ -137,7 +136,9 @@ describe("CreateGraph UI component", () => {
                     "UP",
                     "mapStore",
                     "2022-06-09t15:55:34.006",
-                    GraphType.GAAS_GRAPH
+                    GraphType.GAAS_GRAPH,
+                    "{}",
+                    "{}"
                 ),
             ]);
             mockGetStoreTypesRepoToReturn({
@@ -525,12 +526,12 @@ describe("CreateGraph UI component", () => {
             mockCreateStoreTypesGraphRepoWithFunction(() => {});
             inputGraphId("okgraph");
             inputDescription("test");
+            selectStoreType(wrapper, "mapStore");
             selectGraphLifeTime(wrapper, "10");
             inputElements(elementsString);
             inputTypes(typesAsString);
 
             await clickSubmit();
-
             expect(wrapper.find("div#notification-alert").text()).toBe("okgraph was successfully added");
         });
     });
@@ -560,6 +561,7 @@ async function selectStoreType(component: ReactWrapper, storeType: string) {
                 target: { value: storeType },
             });
     });
+    expect(wrapper.find("div#storetype-formcontrol").props().value).toBe(storeType);
 }
 
 async function selectGraphLifeTime(component: ReactWrapper, graphLifetimeInDays: string) {
@@ -571,6 +573,7 @@ async function selectGraphLifeTime(component: ReactWrapper, graphLifetimeInDays:
                 target: { value: graphLifetimeInDays },
             });
     });
+    expect(wrapper.find("div#graph-lifetime-in-days-formcontrol").props().value).toBe(graphLifetimeInDays);
 }
 
 async function inputProxyURL(url: string): Promise<void> {
@@ -618,16 +621,20 @@ function inputDescription(description: string): void {
     expect(wrapper.find("textarea#graph-description-input").props().value).toBe(description);
 }
 
-function inputElements(elementsString: string): void {
-    wrapper.find("textarea#schema-elements-input").simulate("change", {
-        target: { value: elementsString },
+async function inputElements(elementsString: string): Promise<void> {
+    await act(async () => {
+        wrapper.find("textarea#schema-elements-input").simulate("change", {
+            target: { value: elementsString },
+        });
     });
     expect(wrapper.find("textarea#schema-elements-input").props().value).toBe(elementsString);
 }
 
-function inputTypes(typesString: string): void {
-    wrapper.find("textarea#schema-types-input").simulate("change", {
-        target: { value: typesString },
+async function inputTypes(typesString: string): void {
+    await act(async () => {
+        wrapper.find("textarea#schema-types-input").simulate("change", {
+            target: { value: typesString },
+        });
     });
     expect(wrapper.find("textarea#schema-types-input").props().value).toBe(typesString);
 }
