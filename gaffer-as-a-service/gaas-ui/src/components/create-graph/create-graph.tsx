@@ -100,13 +100,14 @@ export default function CreateGraph(props: TransitionProps) {
         setGraphId(graphId);
         if (location.state != null) {
             setDescription(location.state.graph.description);
+            setElements(location.state.graph.elements);
+            setTypes(location.state.graph.types);
+            setGraphLifetimeInDays(location.state.graph.graphLifetimeInDayspes);
+            setStoreType(location.state.graph.configName);
         }
         setGraphIdIsValid(graphIdIsValid);
         setGraphDescriptionIsValid(graphDescriptionIsValid);
-        setElements(elements);
-        setTypes(types);
-        //console.log("location.state.graph.graphId: " + location.state.graph.graphId);
-    }, [location]);
+    }, []);
 
     const getGraphs = async () => {
         try {
