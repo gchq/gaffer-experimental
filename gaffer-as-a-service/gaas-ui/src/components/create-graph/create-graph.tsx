@@ -102,7 +102,6 @@ export default function CreateGraph(props: TransitionProps) {
             setDescription(location.state.graph.description);
             setElements(location.state.graph.elements);
             setTypes(location.state.graph.types);
-            setGraphLifetimeInDays(location.state.graph.graphLifetimeInDayspes);
             setStoreType(location.state.graph.configName);
         }
         setGraphIdIsValid(graphIdIsValid);
