@@ -237,6 +237,7 @@ export default function CreateGraph(props: TransitionProps) {
         !description ||
         !graphIdIsValid ||
         !graphDescriptionIsValid ||
+        !graphLifetimeInDays ||
         (currentStoreTypeIsFederated() && selectedGraphs.length === 0) ||
         (!currentStoreTypeIsFederated() && !new ElementsSchema(elements).validate().isEmpty()) ||
         (!currentStoreTypeIsFederated() && !new TypesSchema(types).validate().isEmpty());
