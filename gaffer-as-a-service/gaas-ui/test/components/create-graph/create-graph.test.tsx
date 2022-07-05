@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { mount, ReactWrapper } from "enzyme";
+import { mount, ReactWrapper, shallow, ShallowWrapper } from "enzyme";
 import React from "react";
 import { act } from "react-dom/test-utils";
 import CreateGraph from "../../../src/components/create-graph/create-graph";
@@ -526,13 +526,14 @@ describe("CreateGraph UI component", () => {
     describe("On Submit Request", () => {
         it("should display success message in the NotificationAlert", async () => {
             mockCreateStoreTypesGraphRepoWithFunction(() => {});
-            inputGraphId("okgraph");
-            inputDescription("test");
-            selectStoreType(wrapper, "mapStore");
-            selectGraphLifeTime(wrapper, "10");
+            await inputGraphId("okgraph");
+            await inputDescription("test");
+            await selectStoreType(wrapper, "mapStore");
+            await selectGraphLifeTime(wrapper, "10");
             inputElements(elementsString);
+            wrapper.update();
             inputTypes(typesAsString);
-
+            wrapper.update();
             await clickSubmit();
             expect(wrapper.find("div#notification-alert").text()).toBe("okgraph was successfully added");
         });
@@ -563,7 +564,6 @@ async function selectStoreType(component: ReactWrapper, storeType: string) {
                 target: { value: storeType },
             });
     });
-    expect(wrapper.find("div#storetype-formcontrol").props().value).toBe(storeType);
 }
 
 async function selectGraphLifeTime(component: ReactWrapper, graphLifetimeInDays: string) {
@@ -575,7 +575,6 @@ async function selectGraphLifeTime(component: ReactWrapper, graphLifetimeInDays:
                 target: { value: graphLifetimeInDays },
             });
     });
-    expect(wrapper.find("div#graph-lifetime-in-days-formcontrol").props().value).toBe(graphLifetimeInDays);
 }
 
 async function inputProxyURL(url: string): Promise<void> {
@@ -674,7 +673,7 @@ function mockGetAllGraphsRepoToThrow(f: () => void): void {
 
 function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypes): void {
     // @ts-ignore
-    GetStoreTypesRepo.mockImplementationOnce(() => ({
+    GetStoreTypesRepo.mockImplementation(() => ({
         get: () =>
             new Promise((resolve) => {
                 resolve(storetypes);
