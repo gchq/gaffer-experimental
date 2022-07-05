@@ -41,22 +41,7 @@ jest.mock("../../../src/rest/repositories/get-graph-id-repo");
 jest.mock("../../../src/rest/repositories/get-store-types-repo");
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
-    useLocation: () => ({
-        state: {
-            graph: new Graph(
-                "testgraph",
-                "test",
-                "",
-                "",
-                "DOWN",
-                "mapstore",
-                "2022-06-09t15:55:34.006",
-                GraphType.GAAS_GRAPH,
-                "{}",
-                "{}"
-            ),
-        },
-    }),
+    useLocation: () => ({}),
 }));
 
 let wrapper: ReactWrapper;
@@ -394,6 +379,7 @@ describe("CreateGraph UI component", () => {
             inputGraphId("accumulograph");
             inputDescription("None");
             selectStoreType(wrapper, "accumulo");
+            wrapper.update();
             selectGraphLifeTime(wrapper, "10");
             await wrapper.update();
             inputElements(elementsString);
@@ -446,8 +432,10 @@ describe("CreateGraph UI component", () => {
             inputTypes(typesAsString);
 
             selectStoreType(wrapper, "mapStore");
+            wrapper.update();
             selectGraphLifeTime(wrapper, "10");
-
+            wrapper.update();
+            wrapper.update();
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(false);
         });
         it("Should be enabled when Graph Name and Graph Description is not empty and Accumulo selected", () => {
@@ -457,7 +445,9 @@ describe("CreateGraph UI component", () => {
             inputTypes(typesAsString);
 
             selectStoreType(wrapper, "accumulo");
+            wrapper.update();
             selectGraphLifeTime(wrapper, "10");
+            wrapper.update();
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(false);
         });
         it("Should be disabled when federated selected and no proxy stores added", async () => {
@@ -656,7 +646,7 @@ function mockCreateFederatedGraphRepoWithFunction(f: () => void): void {
 
 function mockGetAllGraphsRepoToReturn(graphs: Graph[]): void {
     // @ts-ignore
-    GetAllGraphsRepo.mockImplementationOnce(() => ({
+    GetAllGraphsRepo.mockImplementation(() => ({
         getAll: () =>
             new Promise((resolve) => {
                 resolve(graphs);
