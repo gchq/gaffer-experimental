@@ -62,12 +62,14 @@ jest.mock("react-router-dom", () => ({
 let wrapper: ReactWrapper;
 
 beforeEach(async () => {
-    mockGetAllGraphsRepoToReturn([]);
-    mockGetStoreTypesRepoToReturn({
-        storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
-        federatedStoreTypes: ["federated"],
+    await act(async () => {
+        mockGetAllGraphsRepoToReturn([]);
+        mockGetStoreTypesRepoToReturn({
+            storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
+            federatedStoreTypes: ["federated"],
+        });
+        wrapper = mount(<CreateGraph />);
     });
-    wrapper = mount(<CreateGraph />);
 });
 
 afterEach(() => {
@@ -630,7 +632,7 @@ async function inputElements(elementsString: string): Promise<void> {
     expect(wrapper.find("textarea#schema-elements-input").props().value).toBe(elementsString);
 }
 
-async function inputTypes(typesString: string): void {
+async function inputTypes(typesString: string): Promise<void> {
     await act(async () => {
         wrapper.find("textarea#schema-types-input").simulate("change", {
             target: { value: typesString },

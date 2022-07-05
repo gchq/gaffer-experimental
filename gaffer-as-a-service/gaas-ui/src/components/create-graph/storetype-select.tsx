@@ -53,6 +53,7 @@ export default function StoreTypeSelect(props: IProps): ReactElement {
                     {allStoreTypes.map((store: string) => (
                         <MenuItem
                             value={store}
+                            key={store}
                             aria-label={store + "-menu-item"}
                             id={store + "-menu-item"}
                             aria-labelledby={"storetype-select-label"}

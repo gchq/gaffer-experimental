@@ -50,6 +50,7 @@ export default function GraphLifetimeInDaysSelect(props: IProps): ReactElement {
                     aria-label="graphlifetimeindays-select"
                     fullWidth
                     value={value}
+                    key={value}
                     onChange={(event) => {
                         onChangeGraphLifetimeInDays(event.target.value as string);
                     }}
