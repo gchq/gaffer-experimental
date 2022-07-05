@@ -350,11 +350,11 @@ describe("CreateGraph UI component", () => {
             inputGraphId("mapstoregraph");
             inputDescription("Mappy description");
             await selectStoreType(wrapper, "mapStore");
+            inputElements(elementsString);
+            inputTypes(typesAsString);
             await wrapper.update();
             selectGraphLifeTime(wrapper, "10");
             await wrapper.update();
-            inputElements(elementsString);
-            inputTypes(typesAsString);
 
             await clickSubmit();
 
@@ -378,12 +378,12 @@ describe("CreateGraph UI component", () => {
 
             inputGraphId("accumulograph");
             inputDescription("None");
+            inputElements(elementsString);
+            inputTypes(typesAsString);
             selectStoreType(wrapper, "accumulo");
             wrapper.update();
             selectGraphLifeTime(wrapper, "10");
-            await wrapper.update();
-            inputElements(elementsString);
-            inputTypes(typesAsString);
+            wrapper.update();
 
             await clickSubmit();
 
