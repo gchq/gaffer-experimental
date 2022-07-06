@@ -64,24 +64,18 @@ const Transition = React.forwardRef((props: TransitionProps & { children?: React
     <Slide direction="up" {...props} />
 ));
 
-//export default class CreateGraph extends React.Component<{}, IState> {
-
 export default function CreateGraph(props: TransitionProps) {
     const location: any = useLocation();
-    const [existinGraphId, setExistinGraphId] = useState(
-        new Graph("", "", "", "", "DOWN", "", "", GraphType.GAAS_GRAPH, "{}", "{}")
-    );
-    //console.log("existinGraphId" + existinGraphId.getId());
     const [graphId, setGraphId] = useState("");
-    const [graphIdIsValid, setGraphIdIsValid] = useState(!!graphId);
+    const [graphIdIsValid, setGraphIdIsValid] = useState(false);
     const [description, setDescription] = useState("");
-    const [graphDescriptionIsValid, setGraphDescriptionIsValid] = useState(!!description);
+    const [graphDescriptionIsValid, setGraphDescriptionIsValid] = useState(false);
     const [elements, setElements] = useState("");
     const [elementsFiles, setElementsFiles] = useState<File[]>([]);
-    const [elementsFieldDisabled, setElementsFieldDisabled] = useState(!!elementsFiles);
+    const [elementsFieldDisabled, setElementsFieldDisabled] = useState(false);
     const [types, setTypes] = useState("");
     const [typesFiles, setTypesFiles] = useState<File[]>([]);
-    const [typesFieldDisabled, setTypesFieldDisabled] = useState(!!typesFiles);
+    const [typesFieldDisabled, setTypesFieldDisabled] = useState(false);
     const [dialogIsOpen, setDialogIsOpen] = useState(false);
     const [storeType, setStoreType] = useState("");
     const [storeTypes, setStoreTypes] = useState<string[]>([]);
