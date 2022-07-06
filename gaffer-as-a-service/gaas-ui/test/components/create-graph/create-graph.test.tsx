@@ -396,11 +396,15 @@ describe("CreateGraph UI component", () => {
     });
     describe("Dropzone behaviour", () => {
         it("should have an elements drop zone that accepts JSON files", () => {
+            selectStoreType(wrapper, "mapStore");
+            wrapper.update();
             const dropZone = wrapper.find("div#elements-drop-zone").find("input");
             expect(dropZone.props().type).toBe("file");
             expect(dropZone.props().accept).toBe("application/json");
         });
         it("should have a types drop zone that accepts JSON files", () => {
+            selectStoreType(wrapper, "mapStore");
+            wrapper.update();
             const dropZone = wrapper.find("div#types-drop-zone").find("input");
             expect(dropZone.props().type).toBe("file");
             expect(dropZone.props().accept).toBe("application/json");
