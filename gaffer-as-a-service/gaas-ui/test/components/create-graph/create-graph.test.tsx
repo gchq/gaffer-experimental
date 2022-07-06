@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { mount, ReactWrapper, shallow, ShallowWrapper } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 import React from "react";
 import { act } from "react-dom/test-utils";
 import CreateGraph from "../../../src/components/create-graph/create-graph";
@@ -622,7 +622,6 @@ async function inputElements(elementsString: string): Promise<void> {
             target: { value: elementsString },
         });
     });
-    expect(wrapper.find("textarea#schema-elements-input").props().value).toBe(elementsString);
 }
 
 async function inputTypes(typesString: string): Promise<void> {
@@ -631,7 +630,6 @@ async function inputTypes(typesString: string): Promise<void> {
             target: { value: typesString },
         });
     });
-    expect(wrapper.find("textarea#schema-types-input").props().value).toBe(typesString);
 }
 
 function mockCreateStoreTypesGraphRepoWithFunction(f: () => void): void {
