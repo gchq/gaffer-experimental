@@ -62,7 +62,7 @@ jobs:
         node_version:
         - 14
         - 16
-        - 17
+        - 18
     defaults:
       run:
         working-directory: gaffer-as-a-service/gaas-ui/
