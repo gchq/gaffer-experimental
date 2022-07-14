@@ -59,7 +59,6 @@ import GraphLifetimeInDaysSelect from "./graph-lifetime-in-days-select";
 import { useLocation } from "react-router-dom";
 import { GraphType } from "../../domain/graph-type";
 import { TransitionProps } from "@material-ui/core/transitions";
-import { stringify } from "querystring";
 const Transition = React.forwardRef((props: TransitionProps & { children?: React.ReactElement<any, any> }) => (
     <Slide direction="up" {...props} />
 ));
@@ -72,17 +71,13 @@ export default function CreateGraph(props: TransitionProps) {
     const [graphDescriptionIsValid, setGraphDescriptionIsValid] = useState(false);
     const [elements, setElements] = useState("");
     const [elementsFiles, setElementsFiles] = useState<File[]>([]);
-    const [elementsFieldDisabled, setElementsFieldDisabled] = useState(false);
     const [types, setTypes] = useState("");
-    const [typesFiles, setTypesFiles] = useState<File[]>([]);
-    const [typesFieldDisabled, setTypesFieldDisabled] = useState(false);
     const [dialogIsOpen, setDialogIsOpen] = useState(false);
     const [storeType, setStoreType] = useState("");
     const [storeTypes, setStoreTypes] = useState<string[]>([]);
     const [federatedStoreTypes, setFederatedStoreTypes] = useState<string[]>([]);
     const [graphs, setGraphs] = useState([new Graph("", "", "", "", "DOWN", "", "", GraphType.GAAS_GRAPH, "{}", "{}")]);
     const [proxyURL, setProxyURL] = useState("");
-    const [root, setRoot] = useState("");
     const [selectedGraphs, setSelectedGraphs] = useState<string[]>([]);
     const [outcome, setOutcome] = React.useState<AlertType | undefined>();
     const [outcomeMessage, setOutcomeMessage] = useState("");
@@ -199,7 +194,6 @@ export default function CreateGraph(props: TransitionProps) {
         setGraphId("");
         setDescription("");
         setElementsFiles([]);
-        setTypesFiles([]);
         setElements("");
         setTypes("");
         setProxyURL("");
@@ -211,20 +205,14 @@ export default function CreateGraph(props: TransitionProps) {
         if (elementsFiles.length > 0) {
             const elementsSchemaFiles = await elementsFiles[0].text();
             setElements(elementsSchemaFiles);
-            setElementsFieldDisabled(true);
-        } else {
-            setElementsFieldDisabled(false);
         }
     };
 
     const uploadTypesFiles = async (typesFiles: File[]) => {
-        setTypesFiles(elementsFiles);
         if (typesFiles.length > 0) {
             const typesSchemaFiles = await typesFiles[0].text();
             setTypes(typesSchemaFiles);
-            setTypesFieldDisabled(true);
         } else {
-            setTypesFieldDisabled(false);
         }
     };
 
