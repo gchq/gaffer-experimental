@@ -275,7 +275,7 @@
         <!-- Swagger UI -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-webflux-ui</artifactId>
+            <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.9</version>
         </dependency>
     </dependencies>
