@@ -38,7 +38,7 @@ public class CustomFilter implements GlobalFilter {
     public Mono<Void> filter(final ServerWebExchange exchange, final GatewayFilterChain chain) {
         logger.info("Enter custom Filter and check x-email= ");
         ServerHttpRequest request = exchange.getRequest();
-        if (request.getPath().toString().equals("/what-auth")) {
+        if (request.getPath().toString().equals("/what-auth") || request.getPath().toString().equals("/swagger-ui") || request.getPath().toString().equals("/v3/api-docs/swagger-config")) {
             ServerHttpResponse response = exchange.getResponse();
             logger.info("Post Filter = " + response.getStatusCode());
         }

@@ -49,7 +49,7 @@ public class CustomFilter implements GlobalFilter {
     public Mono<Void> filter(final ServerWebExchange exchange, final GatewayFilterChain chain) {
         logger.info("Enter custom Filter = ");
         ServerHttpRequest request = exchange.getRequest();
-        if (request.getPath().toString().equals("/auth") || request.getPath().toString().equals("/what-auth")) {
+        if (request.getPath().toString().equals("/auth") || request.getPath().toString().equals("/what-auth") || request.getPath().toString().startsWith("/swagger-ui") || request.getPath().toString().equals("/v3/api-docs/swagger-config")) {
             logger.info("Found /auth or /what-auth path");
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 ServerHttpResponse response = exchange.getResponse();
