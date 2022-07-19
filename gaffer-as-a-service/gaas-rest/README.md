@@ -96,6 +96,14 @@ How to Access Event Logs on OpenShift
 5. Ensure that URL field in h2 console page is set to `jdbc:h2:file:./logs/logDB`
 6. Log in using username and password
 
+How to Access Swagger On OpenShift
+=======================
+1. Log in to OpenShift using `oc login [token]`.
+2. Get name of pod where gaas-rest is running using `oc get pods`.
+3. Run `oc port-forward [podName] 8080`. This forwards the pod port 8080 (where GaaS-Rest runs) to localhost:8080.
+4. Go to `http://localhost:8080/swagger-ui/index.html`
+5. The swagger UI will then be accessible
+
 GaaS Endpoint Documentation
 =======================
 
