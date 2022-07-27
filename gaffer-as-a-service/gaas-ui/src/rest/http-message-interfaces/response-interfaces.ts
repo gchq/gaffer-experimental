@@ -22,6 +22,8 @@ export interface IGraphByIdResponse {
     status: "UP" | "DOWN";
     configName: string;
     graphAutoDestroyDate: string;
+    elements: string;
+    types: string;
 }
 
 export interface IAllGraphsResponse {

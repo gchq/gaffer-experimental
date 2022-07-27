@@ -39,16 +39,22 @@ jest.mock("../../../src/rest/repositories/get-graph-status-repo");
 jest.mock("../../../src/rest/repositories/get-graph-description-repo");
 jest.mock("../../../src/rest/repositories/get-graph-id-repo");
 jest.mock("../../../src/rest/repositories/get-store-types-repo");
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom"),
+    useLocation: () => ({}),
+}));
 
 let wrapper: ReactWrapper;
 
 beforeEach(async () => {
-    mockGetAllGraphsRepoToReturn([]);
-    mockGetStoreTypesRepoToReturn({
-        storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
-        federatedStoreTypes: ["federated"],
+    await act(async () => {
+        mockGetAllGraphsRepoToReturn([]);
+        mockGetStoreTypesRepoToReturn({
+            storeTypes: ["accumulo", "mapStore", "proxy", "proxyNoContextRoot"],
+            federatedStoreTypes: ["federated"],
+        });
+        wrapper = mount(<CreateGraph />);
     });
-    wrapper = mount(<CreateGraph />);
 });
 
 afterEach(() => {
@@ -117,7 +123,9 @@ describe("CreateGraph UI component", () => {
                     "UP",
                     "mapStore",
                     "2022-06-09t15:55:34.006",
-                    GraphType.GAAS_GRAPH
+                    GraphType.GAAS_GRAPH,
+                    "{}",
+                    "{}"
                 ),
             ]);
             mockGetStoreTypesRepoToReturn({
@@ -342,11 +350,11 @@ describe("CreateGraph UI component", () => {
             inputGraphId("mapstoregraph");
             inputDescription("Mappy description");
             await selectStoreType(wrapper, "mapStore");
+            inputElements(elementsString);
+            inputTypes(typesAsString);
             await wrapper.update();
             selectGraphLifeTime(wrapper, "10");
             await wrapper.update();
-            inputElements(elementsString);
-            inputTypes(typesAsString);
 
             await clickSubmit();
 
@@ -370,11 +378,12 @@ describe("CreateGraph UI component", () => {
 
             inputGraphId("accumulograph");
             inputDescription("None");
-            selectStoreType(wrapper, "accumulo");
-            selectGraphLifeTime(wrapper, "10");
-            await wrapper.update();
             inputElements(elementsString);
             inputTypes(typesAsString);
+            selectStoreType(wrapper, "accumulo");
+            wrapper.update();
+            selectGraphLifeTime(wrapper, "10");
+            wrapper.update();
 
             await clickSubmit();
 
@@ -387,11 +396,15 @@ describe("CreateGraph UI component", () => {
     });
     describe("Dropzone behaviour", () => {
         it("should have an elements drop zone that accepts JSON files", () => {
+            selectStoreType(wrapper, "mapStore");
+            wrapper.update();
             const dropZone = wrapper.find("div#elements-drop-zone").find("input");
             expect(dropZone.props().type).toBe("file");
             expect(dropZone.props().accept).toBe("application/json");
         });
         it("should have a types drop zone that accepts JSON files", () => {
+            selectStoreType(wrapper, "mapStore");
+            wrapper.update();
             const dropZone = wrapper.find("div#types-drop-zone").find("input");
             expect(dropZone.props().type).toBe("file");
             expect(dropZone.props().accept).toBe("application/json");
@@ -423,8 +436,10 @@ describe("CreateGraph UI component", () => {
             inputTypes(typesAsString);
 
             selectStoreType(wrapper, "mapStore");
+            wrapper.update();
             selectGraphLifeTime(wrapper, "10");
-
+            wrapper.update();
+            wrapper.update();
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(false);
         });
         it("Should be enabled when Graph Name and Graph Description is not empty and Accumulo selected", () => {
@@ -434,7 +449,9 @@ describe("CreateGraph UI component", () => {
             inputTypes(typesAsString);
 
             selectStoreType(wrapper, "accumulo");
+            wrapper.update();
             selectGraphLifeTime(wrapper, "10");
+            wrapper.update();
             expect(wrapper.find("button#create-new-graph-button").props().disabled).toBe(false);
         });
         it("Should be disabled when federated selected and no proxy stores added", async () => {
@@ -503,14 +520,15 @@ describe("CreateGraph UI component", () => {
     describe("On Submit Request", () => {
         it("should display success message in the NotificationAlert", async () => {
             mockCreateStoreTypesGraphRepoWithFunction(() => {});
-            inputGraphId("okgraph");
-            inputDescription("test");
-            selectGraphLifeTime(wrapper, "10");
+            await inputGraphId("okgraph");
+            await inputDescription("test");
+            await selectStoreType(wrapper, "mapStore");
+            await selectGraphLifeTime(wrapper, "10");
             inputElements(elementsString);
+            wrapper.update();
             inputTypes(typesAsString);
-
+            wrapper.update();
             await clickSubmit();
-
             expect(wrapper.find("div#notification-alert").text()).toBe("okgraph was successfully added");
         });
     });
@@ -598,18 +616,20 @@ function inputDescription(description: string): void {
     expect(wrapper.find("textarea#graph-description-input").props().value).toBe(description);
 }
 
-function inputElements(elementsString: string): void {
-    wrapper.find("textarea#schema-elements-input").simulate("change", {
-        target: { value: elementsString },
+async function inputElements(elementsString: string): Promise<void> {
+    await act(async () => {
+        wrapper.find("textarea#schema-elements-input").simulate("change", {
+            target: { value: elementsString },
+        });
     });
-    expect(wrapper.find("textarea#schema-elements-input").props().value).toBe(elementsString);
 }
 
-function inputTypes(typesString: string): void {
-    wrapper.find("textarea#schema-types-input").simulate("change", {
-        target: { value: typesString },
+async function inputTypes(typesString: string): Promise<void> {
+    await act(async () => {
+        wrapper.find("textarea#schema-types-input").simulate("change", {
+            target: { value: typesString },
+        });
     });
-    expect(wrapper.find("textarea#schema-types-input").props().value).toBe(typesString);
 }
 
 function mockCreateStoreTypesGraphRepoWithFunction(f: () => void): void {
@@ -628,7 +648,7 @@ function mockCreateFederatedGraphRepoWithFunction(f: () => void): void {
 
 function mockGetAllGraphsRepoToReturn(graphs: Graph[]): void {
     // @ts-ignore
-    GetAllGraphsRepo.mockImplementationOnce(() => ({
+    GetAllGraphsRepo.mockImplementation(() => ({
         getAll: () =>
             new Promise((resolve) => {
                 resolve(graphs);
@@ -645,7 +665,7 @@ function mockGetAllGraphsRepoToThrow(f: () => void): void {
 
 function mockGetStoreTypesRepoToReturn(storetypes: IStoreTypes): void {
     // @ts-ignore
-    GetStoreTypesRepo.mockImplementationOnce(() => ({
+    GetStoreTypesRepo.mockImplementation(() => ({
         get: () =>
             new Promise((resolve) => {
                 resolve(storetypes);

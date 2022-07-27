@@ -41,7 +41,6 @@ import uk.gov.gchq.gaffer.gaas.model.GaaSGraph;
 import uk.gov.gchq.gaffer.gaas.model.GraphCollaborator;
 import uk.gov.gchq.gaffer.gaas.model.v1.Gaffer;
 import uk.gov.gchq.gaffer.gaas.model.v1.RestApiStatus;
-
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAMESPACE_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.GAFFER_NAME_LABEL;
 import static uk.gov.gchq.gaffer.gaas.util.Constants.WORKER_NAMESPACE;
@@ -344,7 +342,7 @@ public class DeploymentHandler {
     /**
      * Starts the Uninstallation process for a Gaffer Graph.
      *
-     * @param graphId           The Gaffer Object
+     * @param graphId          The Gaffer Object
      * @param kubernetesClient kubernetesClient
      * @return list of graph collaborators
      * @throws ApiException exception
@@ -475,6 +473,9 @@ public class DeploymentHandler {
                 GaaSGraph gaaSGraph = new GaaSGraph();
                 gaaSGraph.graphId(graphId);
                 Collection<String> graphConfig = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(graphId + "-gaffer-graph-config").get().getData().values();
+                Collection<String> graphSchema = kubernetesClient.configMaps().inNamespace(NAMESPACE).withName(graphId + "-gaffer-schema").get().getData().values();
+                gaaSGraph.elements(getValueOfElementsFromSchema(graphSchema));
+                gaaSGraph.types(getValueOfTypesFromSchema(graphSchema));
                 gaaSGraph.description(getValueOfConfig(graphConfig, "description"));
                 if (getValueOfConfig(graphConfig, "configName") != null) {
                     gaaSGraph.configName(getValueOfConfig(graphConfig, "configName"));
@@ -525,6 +526,23 @@ public class DeploymentHandler {
 
 
         return graphCollaborators;
+    }
+
+    private String getValueOfElementsFromSchema(final Collection<String> inputSchema) {
+        JSONArray jsonArray = new JSONArray(inputSchema.toString());
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+        JSONObject elements = new JSONObject();
+        elements.put("edges", jsonObject.get("edges"));
+        elements.put("entities", jsonObject.get("entities"));
+        return elements.toString();
+    }
+
+    private String getValueOfTypesFromSchema(final Collection<String> inputSchema) {
+        JSONArray jsonArray = new JSONArray(inputSchema.toString());
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+        JSONObject types = new JSONObject();
+        types.put("types", jsonObject.get("types"));
+        return types.toString();
     }
 
     private String getValueOfConfig(final Collection<String> value, final String fieldToGet) {

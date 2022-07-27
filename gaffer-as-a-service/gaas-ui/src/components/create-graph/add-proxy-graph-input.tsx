@@ -49,7 +49,9 @@ export default function AddProxyGraphInput(props: IProps): ReactElement {
                     status,
                     "proxyStore",
                     "never",
-                    GraphType.PROXY_GRAPH
+                    GraphType.PROXY_GRAPH,
+                    "{}",
+                    "{}"
                 );
                 setSuccessHelperText(`Successfully added Graph at ${proxyURLValue}`);
                 onClickAddProxyGraph(graph);
